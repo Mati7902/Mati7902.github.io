@@ -1,0 +1,241 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ------------------------------------------------------------------
+   Design tokens — "Psicología Matías Sánchez"
+   Paleta: azul petróleo (principal), off-white cálido (fondo),
+   verde menta suave (acento), grises cálidos (texto secundario).
+   Las variables de :root pueden ser sobreescritas desde Configuración
+   (ver <ThemeStyle />) sin tocar código.
+------------------------------------------------------------------- */
+:root {
+  --radius: 1rem;
+
+  /* Superficies */
+  --background: #faf8f5;
+  --foreground: #1e2a2f;
+  --card: #ffffff;
+  --card-foreground: #1e2a2f;
+  --popover: #ffffff;
+  --popover-foreground: #1e2a2f;
+  --surface-muted: #f3f0eb;
+
+  /* Marca */
+  --primary: #1f4e5f;
+  --primary-foreground: #ffffff;
+  --primary-soft: #eef5f7;
+  --secondary: #e3f4ee;
+  --secondary-foreground: #183f4d;
+  --accent: #a8dccb;
+  --accent-foreground: #12303b;
+  --accent-strong: #3e8e7a;
+
+  /* Neutros */
+  --muted: #f3f0eb;
+  --muted-foreground: #5b6b70;
+  --subtle-foreground: #8a979b;
+  --border: #e6e2dc;
+  --divider: #ede9e3;
+  --input: #e6e2dc;
+  --ring: #4f8a9a;
+
+  /* Semánticos */
+  --destructive: #c8554d;
+  --destructive-foreground: #ffffff;
+  --success: #3e8e7a;
+  --success-soft: #e3f4ee;
+  --warning: #d9a441;
+  --warning-soft: #fbf3e2;
+  --info: #3a7ca5;
+  --info-soft: #e8f1f7;
+
+  /* Gráficos (evolución emocional, analytics) */
+  --chart-1: #1f4e5f;
+  --chart-2: #3e8e7a;
+  --chart-3: #a8dccb;
+  --chart-4: #d9a441;
+  --chart-5: #8a979b;
+
+  /* Sidebar admin */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1e2a2f;
+  --sidebar-primary: #1f4e5f;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eef5f7;
+  --sidebar-accent-foreground: #1f4e5f;
+  --sidebar-border: #e6e2dc;
+  --sidebar-ring: #4f8a9a;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-surface-muted: var(--surface-muted);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-strong: var(--accent-strong);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle-foreground: var(--subtle-foreground);
+  --color-border: var(--border);
+  --color-divider: var(--divider);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Escala petróleo */
+  --color-petrol-50: #eef5f7;
+  --color-petrol-100: #d5e6ea;
+  --color-petrol-200: #afccd4;
+  --color-petrol-300: #82adb9;
+  --color-petrol-400: #4f8a9a;
+  --color-petrol-500: #2e6b7c;
+  --color-petrol-600: #1f4e5f;
+  --color-petrol-700: #183f4d;
+  --color-petrol-800: #12303b;
+  --color-petrol-900: #0c2129;
+
+  /* Escala menta */
+  --color-mint-50: #f1faf6;
+  --color-mint-100: #e3f4ee;
+  --color-mint-200: #c7e9dd;
+  --color-mint-300: #a8dccb;
+  --color-mint-400: #7cc4ad;
+  --color-mint-500: #55a991;
+  --color-mint-600: #3e8e7a;
+  --color-mint-700: #2f7062;
+
+  /* Escala arena (neutros cálidos) */
+  --color-sand-50: #faf8f5;
+  --color-sand-100: #f3f0eb;
+  --color-sand-200: #ede9e3;
+  --color-sand-300: #e6e2dc;
+  --color-sand-400: #cfc9c0;
+  --color-sand-500: #a8a39b;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, "Times New Roman", serif;
+
+  --radius-sm: calc(var(--radius) - 8px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  --shadow-soft: 0 1px 2px rgb(30 42 47 / 0.04), 0 8px 24px -12px rgb(30 42 47 / 0.1);
+  --shadow-card: 0 1px 1px rgb(30 42 47 / 0.03), 0 2px 8px -2px rgb(30 42 47 / 0.06);
+  --shadow-float: 0 12px 40px -16px rgb(30 42 47 / 0.22);
+
+  --animate-breathe-in: breathe-in var(--breath-duration, 4s) ease-in-out forwards;
+  --animate-breathe-out: breathe-out var(--breath-duration, 6s) ease-in-out forwards;
+  --animate-fade-up: fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes breathe-in {
+    from { transform: scale(0.6); }
+    to { transform: scale(1); }
+  }
+  @keyframes breathe-out {
+    from { transform: scale(1); }
+    to { transform: scale(0.6); }
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "cv11", "ss01", "ss03";
+    text-rendering: optimizeLegibility;
+    min-height: 100dvh;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight text-balance;
+    font-variation-settings: "opsz" 144, "SOFT" 30;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--accent) 60%, white);
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .text-display {
+    @apply font-display;
+  }
+  .surface-card {
+    @apply rounded-2xl border border-border/70 bg-card shadow-[var(--shadow-card)];
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
