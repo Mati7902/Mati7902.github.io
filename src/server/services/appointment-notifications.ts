@@ -41,6 +41,14 @@ function buildVars(appointment: Appointment, patient: Patient, professionalName:
   };
 }
 
+const SERVICE_WINDOW_MS = 24 * 3600_000;
+
+/** true si el contacto escribió dentro de la ventana de atención de 24 h (margen de 15 min). */
+export function isWithinServiceWindow(lastInboundAt: string | null, now = new Date()): boolean {
+  if (!lastInboundAt) return false;
+  return now.getTime() - new Date(lastInboundAt).getTime() < SERVICE_WINDOW_MS - 15 * 60_000;
+}
+
 /** Botones de respuesta rápida según el tipo de mensaje. */
 function buttonsFor(kind: AppointmentMessageKind, appointmentId: string) {
   const id = appointmentId;
@@ -114,8 +122,10 @@ export async function notifyAppointmentEvent(appointmentId: string, kind: Appoin
     const phone = patient.whatsapp_phone ?? patient.phone;
     if (!phone) return null;
 
-    const { data: contact } = await admin.from("whatsapp_contacts").select("opted_out").eq("phone", phone).maybeSingle();
+    const { data: contact } = await admin.from("whatsapp_contacts").select("opted_out, last_inbound_at").eq("phone", phone).maybeSingle();
     if (contact?.opted_out) return null;
+    // Meta solo admite texto libre/botones dentro de las 24 h posteriores al último mensaje del paciente.
+    const inServiceWindow = isWithinServiceWindow(contact?.last_inbound_at ?? null);
 
     const template = await getTemplate(admin, kind);
     if (!template) {
@@ -127,7 +137,10 @@ export async function notifyAppointmentEvent(appointmentId: string, kind: Appoin
     const buttons = buttonsFor(kind, appointment.id);
 
     let result: SendResult;
-    if (options?.useApprovedTemplate && template.wa_template_name) {
+    if (!inServiceWindow && !template.wa_template_name) {
+      result = { ok: false, error: `Sin plantilla aprobada para "${kind}" y el paciente no escribió en las últimas 24 h.` };
+      log.warn("Aviso de WhatsApp omitido: fuera de la ventana de 24 h y sin plantilla aprobada", { kind, appointmentId });
+    } else if (template.wa_template_name && (options?.useApprovedTemplate || !inServiceWindow)) {
       result = await sendTemplate(phone, template.wa_template_name, template.wa_template_language ?? "es", templateParams(template, vars), buttons.map((b) => b.id));
     } else if (buttons.length > 0) {
       result = await sendInteractiveButtons(phone, body, buttons);

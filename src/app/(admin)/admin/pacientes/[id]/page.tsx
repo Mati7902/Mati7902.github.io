@@ -36,7 +36,7 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
     supabase.from("emotional_logs").select("id", { count: "exact", head: true }).eq("patient_id", id),
   ]);
   if (!overview) notFound();
-  const { patient, appointments, materials: assigned, assignments, profile } = overview;
+  const { patient, appointments, materials: assigned, assignments, profile, adminNote } = overview;
   const now = nowMs();
   const upcoming = appointments
     .filter((a) => new Date(a.end_time).getTime() >= now && !["cancelled", "completed", "no_show"].includes(a.status))
@@ -77,12 +77,12 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
             <Item label="Contacto de emergencia" value={patient.emergency_contact_name ? `${patient.emergency_contact_name}${patient.emergency_contact_phone ? ` · ${patient.emergency_contact_phone}` : ""}` : null} />
             <Item label="Consentimiento" value={patient.consent_accepted_at ? `Aceptado el ${formatShortDate(patient.consent_accepted_at)} (${patient.consent_version ?? "—"})` : "Pendiente"} />
           </dl>
-          {patient.admin_notes ? (
+          {adminNote ? (
             <>
               <Separator />
               <div>
                 <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Notas administrativas</p>
-                <p className="mt-1 text-sm whitespace-pre-line">{patient.admin_notes}</p>
+                <p className="mt-1 text-sm whitespace-pre-line">{adminNote}</p>
               </div>
             </>
           ) : null}

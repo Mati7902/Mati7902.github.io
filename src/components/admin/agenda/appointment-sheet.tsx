@@ -18,7 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { formatDateTime, formatTime, capitalize } from "@/lib/dates";
+import { formatDateTime, formatTime, capitalize, localInputToUtcIso } from "@/lib/dates";
 import {
   adminCancelAppointmentAction,
   adminRescheduleAppointmentAction,
@@ -69,7 +69,7 @@ export function AppointmentSheet({ appointment, onClose, timezone, defaultDurati
       setModality(a.modality);
       setVideoLink(a.video_link ?? "");
       setLocation(a.location ?? "");
-      setAdminNotes(a.admin_notes ?? "");
+      setAdminNotes(a.appointment_admin_notes?.notes ?? "");
     }, 0);
     return () => window.clearTimeout(t);
   }, [a]);
@@ -95,11 +95,13 @@ export function AppointmentSheet({ appointment, onClose, timezone, defaultDurati
   const duration = Math.round((new Date(a.end_time).getTime() - new Date(a.start_time).getTime()) / 60000) || defaultDuration;
   const isFinal = ["cancelled", "completed", "no_show"].includes(a.status);
 
-  const run = (fn: () => Promise<{ ok: boolean; error?: string }>, success: string) =>
+  const run = (fn: () => Promise<{ ok: true; data?: unknown } | { ok: false; error: string }>, success: string) =>
     startTransition(async () => {
       const res = await fn();
       if (!res.ok) return void toast.error(res.error ?? "No se pudo completar la acción.");
-      toast.success(success);
+      const warning = (res.data as { warning?: string } | undefined)?.warning;
+      if (warning) toast.warning(warning);
+      else toast.success(success);
       router.refresh();
       onClose();
     });
@@ -108,7 +110,7 @@ export function AppointmentSheet({ appointment, onClose, timezone, defaultDurati
     run(() => adminSetAppointmentStatusAction({ appointmentId: a.id, status }), success);
 
   const submitReschedule = () => {
-    const start = slot?.start ?? (manualStart ? new Date(manualStart).toISOString() : null);
+    const start = slot?.start ?? (manualStart ? localInputToUtcIso(manualStart, timezone) : null);
     if (!start) return void toast.error("Elegí un horario.");
     run(() => adminRescheduleAppointmentAction({ appointmentId: a.id, start, durationMinutes: duration, reason: reason || null, notify }), "Turno reprogramado.");
   };
@@ -167,10 +169,10 @@ export function AppointmentSheet({ appointment, onClose, timezone, defaultDurati
                     <dd className="rounded-xl bg-surface-muted px-3 py-2">{a.patient_note}</dd>
                   </div>
                 ) : null}
-                {a.admin_notes ? (
+                {a.appointment_admin_notes?.notes ? (
                   <div>
                     <dt className="text-muted-foreground">Notas administrativas</dt>
-                    <dd className="rounded-xl bg-surface-muted px-3 py-2">{a.admin_notes}</dd>
+                    <dd className="rounded-xl bg-surface-muted px-3 py-2">{a.appointment_admin_notes.notes}</dd>
                   </div>
                 ) : null}
                 <div className="flex justify-between gap-3">
@@ -252,7 +254,7 @@ export function AppointmentSheet({ appointment, onClose, timezone, defaultDurati
               ) : (
                 <p className="text-sm text-muted-foreground">No hay horarios libres dentro de la disponibilidad. Podés indicar uno manualmente.</p>
               )}
-              <FormField id="manual-start" label="O indicá fecha y hora manualmente" hint="Fuera de la disponibilidad habitual. Se valida que no se solape con otro turno.">
+              <FormField id="manual-start" label="O indicá fecha y hora manualmente" hint={`Hora de ${timezone}. Fuera de la disponibilidad habitual; se valida que no se solape con otro turno.`}>
                 <Input id="manual-start" type="datetime-local" value={manualStart} onChange={(e) => { setManualStart(e.target.value); setSlot(null); }} />
               </FormField>
               <FormField id="reschedule-reason" label="Motivo" optional>

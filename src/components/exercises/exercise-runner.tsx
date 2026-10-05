@@ -46,11 +46,15 @@ export function ExerciseRunner({ templateId, title, steps, assignmentId, returnT
   const hasValue =
     value !== undefined &&
     (typeof value === "number" || (typeof value === "string" ? value.trim().length > 0 : Array.isArray(value) ? value.filter(Boolean).length === (step.type === "list" ? step.count : 1) : false));
-  const canContinue = !required || hasValue;
+  // Una escala sin tocar vale su punto medio (el control ya lo muestra seleccionado).
+  const canContinue = !required || hasValue || step.type === "scale";
 
   const setValue = (v: string | number | string[]) => setAnswers((a) => ({ ...a, [step.id]: v }));
 
-  const submit = () =>
+  const withScaleDefault = (current: ExerciseAnswers): ExerciseAnswers =>
+    step.type === "scale" && typeof current[step.id] !== "number" ? { ...current, [step.id]: Math.round((step.min + step.max) / 2) } : current;
+
+  const submit = (answers: ExerciseAnswers) =>
     startTransition(async () => {
       const before = steps.find((s) => s.type === "scale" && s.maps_to === "emotion_before");
       const after = steps.find((s) => s.type === "scale" && s.maps_to === "emotion_after");
@@ -71,7 +75,12 @@ export function ExerciseRunner({ templateId, title, steps, assignmentId, returnT
       router.refresh();
     });
 
-  const next = () => (isLast ? submit() : setIndex((i) => i + 1));
+  const next = () => {
+    const completed = withScaleDefault(answers);
+    if (completed !== answers) setAnswers(completed);
+    if (isLast) submit(completed);
+    else setIndex((i) => i + 1);
+  };
 
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-8">
@@ -160,7 +169,6 @@ function StepView({
         <div className="space-y-4">
           <Prompt step={step} />
           <EmotionSlider value={typeof value === "number" ? value : Math.round((step.min + step.max) / 2)} onChange={onChange} min={step.min} max={step.max} minLabel={step.min_label ?? ""} maxLabel={step.max_label ?? ""} label="" />
-          {typeof value !== "number" ? <p className="text-xs text-subtle-foreground">Mové el control para responder.</p> : null}
         </div>
       );
     case "emotion":

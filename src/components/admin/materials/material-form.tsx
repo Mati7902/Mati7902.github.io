@@ -38,7 +38,7 @@ export function MaterialForm({ material, categories, exercises }: { material?: M
   const isFile = ["pdf", "image", "audio", "video"].includes(type);
 
   return (
-    <form action={action} className="space-y-8" noValidate encType="multipart/form-data">
+    <form action={action} className="space-y-8" noValidate>
       {material ? <input type="hidden" name="id" value={material.id} /> : null}
       {material?.storage_path ? <input type="hidden" name="existing_storage_path" value={material.storage_path} /> : null}
       {state && !state.ok && !state.fieldErrors ? (

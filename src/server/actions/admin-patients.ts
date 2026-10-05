@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/server";
 import { normalizePhone } from "@/lib/utils";
 import { parseForm } from "@/lib/validation";
 import { assignExerciseToPatient, assignMaterialToPatient, unassignMaterial } from "@/server/services/admin-materials";
+import { saveAdminNote } from "@/server/services/admin-notes";
 import { createPatient, invitePatient, setPatientAccess, updatePatient } from "@/server/services/admin-patients";
 import { audit } from "@/server/services/audit";
 
@@ -53,9 +54,9 @@ export async function savePatientAction(_prev: ActionResult<{ id: string }> | nu
       modality: d.modality,
       status: d.status,
       admission_date: d.admission_date || null,
-      admin_notes: d.admin_notes || null,
     };
     const patient = d.id ? await updatePatient(supabase, d.id, input) : await createPatient(supabase, input, session.userId);
+    await saveAdminNote(supabase, { kind: "patient", id: patient.id }, d.admin_notes, session.userId);
     await audit(supabase, d.id ? "patient.updated" : "patient.created", { type: "patient", id: patient.id });
     let inviteNote: string | undefined;
     if (d.send_invite && patient.email) {

@@ -20,7 +20,8 @@ begin
     'profiles', 'patients', 'therapy_plans', 'availability_rules', 'appointments',
     'session_preparations', 'exercise_templates', 'emotional_logs', 'materials',
     'whatsapp_contacts', 'whatsapp_conversations', 'calendar_integrations',
-    'emergency_resources', 'faqs', 'chatbot_intents', 'notification_templates', 'settings'
+    'emergency_resources', 'faqs', 'chatbot_intents', 'notification_templates', 'settings',
+    'patient_admin_notes', 'appointment_admin_notes'
   ] loop
     execute format(
       'create trigger %I_set_updated_at before update on public.%I for each row execute function public.set_updated_at()',
@@ -56,12 +57,16 @@ language sql stable security definer set search_path = public as $$
   );
 $$;
 
--- true cuando la sesión es service_role (webhooks, crons) o no hay JWT (migraciones/seed),
--- o cuando el usuario autenticado es administrador.
+-- true cuando:
+--   · la sesión es una conexión directa a la base SIN ningún JWT (migraciones, seed, SQL editor),
+--   · la sesión es service_role (webhooks, crons, servidor),
+--   · el usuario autenticado es administrador.
+-- IMPORTANTE: una petición anónima de PostgREST (clave pública) SÍ trae JWT con role=anon y sin "sub";
+-- por eso no alcanza con auth.uid() is null: se exige que no exista JWT en absoluto.
 create or replace function public.is_privileged()
 returns boolean
 language sql stable security definer set search_path = public as $$
-  select auth.uid() is null
+  select auth.jwt() is null
       or coalesce(auth.jwt() ->> 'role', '') = 'service_role'
       or public.is_admin();
 $$;
@@ -72,8 +77,7 @@ language sql stable security definer set search_path = public as $$
   select id from public.patients where profile_id = auth.uid();
 $$;
 
-grant execute on function public.current_user_role(), public.is_admin(), public.is_staff(),
-  public.is_privileged(), public.current_patient_id() to anon, authenticated, service_role;
+-- Los permisos de ejecución se definen al final del archivo (sección "Permisos de ejecución").
 
 -- ---------------------------------------------------------------------------
 -- Alta de perfil al crear usuario en auth.users (invitación / creación por admin)
@@ -183,7 +187,8 @@ begin
      or new.modality is distinct from old.modality
      or new.status is distinct from old.status
      or new.admission_date is distinct from old.admission_date
-     or new.admin_notes is distinct from old.admin_notes
+     -- El número de WhatsApp identifica al paciente ante la secretaria virtual: solo lo cambia el profesional.
+     or new.whatsapp_phone is distinct from old.whatsapp_phone
      or new.created_by is distinct from old.created_by
      or new.invited_at is distinct from old.invited_at then
     raise exception 'No tenés permiso para modificar estos campos' using errcode = '42501';
@@ -249,7 +254,6 @@ returns jsonb
 language sql stable security definer set search_path = public as $$
   select value from public.settings where key = p_key;
 $$;
-grant execute on function public.setting_value(text) to authenticated, service_role;
 
 -- ---------------------------------------------------------------------------
 -- Turnos: historial de cambios
@@ -301,6 +305,13 @@ begin
     return new;
   end if;
 
+  -- Cambios hechos por reschedule_appointment_tx: la RPC ya validó propiedad, ventana,
+  -- grilla de disponibilidad y superposición. El flag es local a la transacción y solo
+  -- puede fijarse desde funciones SECURITY DEFINER (PostgREST no expone set_config).
+  if coalesce(current_setting('app.trusted_rpc', true), '') = 'reschedule' then
+    return new;
+  end if;
+
   -- Campos que el paciente jamás puede tocar directamente.
   if new.patient_id is distinct from old.patient_id
      or new.start_time is distinct from old.start_time
@@ -309,7 +320,6 @@ begin
      or new.plan_id is distinct from old.plan_id
      or new.video_link is distinct from old.video_link
      or new.location is distinct from old.location
-     or new.admin_notes is distinct from old.admin_notes
      or new.source is distinct from old.source
      or new.reminder_24h_sent_at is distinct from old.reminder_24h_sent_at
      or new.reminder_2h_sent_at is distinct from old.reminder_2h_sent_at
@@ -344,6 +354,78 @@ create trigger appointments_guard_patient_update
   for each row execute function public.guard_patient_appointment_update();
 
 -- ---------------------------------------------------------------------------
+-- Turnos: validación de la grilla de disponibilidad (espejo de src/lib/scheduling/slots.ts)
+-- Un rango es reservable por un paciente si coincide EXACTAMENTE con un turno generado por
+-- alguna regla activa: mismo día de semana, dentro de la franja, duración de la regla y
+-- alineado a pasos de (duración + intervalo) desde el inicio de la franja.
+-- ---------------------------------------------------------------------------
+create or replace function public.is_bookable_slot(
+  p_start    timestamptz,
+  p_end      timestamptz,
+  p_modality public.appointment_modality
+)
+returns boolean
+language sql stable security definer set search_path = public as $$
+  with tz as (
+    select coalesce(public.setting_value('scheduling') ->> 'timezone', 'America/Asuncion') as name
+  ), l as (
+    select (p_start at time zone tz.name) as ls, (p_end at time zone tz.name) as le from tz
+  )
+  select exists (
+    select 1
+    from public.availability_rules r, l
+    where r.is_active
+      and r.weekday = extract(dow from l.ls)::int
+      and l.ls::date = l.le::date
+      and (r.modality = 'mixta' or r.modality::text = p_modality::text)
+      and (r.valid_from is null or l.ls::date >= r.valid_from)
+      and (r.valid_until is null or l.ls::date <= r.valid_until)
+      and l.ls::time >= r.start_time
+      and l.le::time <= r.end_time
+      and p_end - p_start = make_interval(mins => r.slot_duration_minutes)
+      and mod(
+            extract(epoch from (l.ls::time - r.start_time))::bigint,
+            ((r.slot_duration_minutes + r.buffer_minutes) * 60)::bigint
+          ) = 0
+  );
+$$;
+
+-- Reglas de reserva comunes para pacientes (anticipación mínima, máximo de días y grilla).
+create or replace function public.assert_patient_bookable(
+  p_start    timestamptz,
+  p_end      timestamptz,
+  p_modality public.appointment_modality
+)
+returns void
+language plpgsql stable security definer set search_path = public as $$
+declare
+  v_scheduling jsonb := coalesce(public.setting_value('scheduling'), '{}'::jsonb);
+  v_min_hours  numeric := coalesce((v_scheduling ->> 'min_hours_before_booking')::numeric, 12);
+  v_max_days   integer := coalesce((v_scheduling ->> 'max_days_in_advance')::integer, 45);
+begin
+  if p_start < now() + (v_min_hours * interval '1 hour') then
+    raise exception 'Ese horario ya no admite reservas desde la aplicación. Elegí otro o escribinos.' using errcode = '22023';
+  end if;
+  if p_start > now() + (v_max_days * interval '1 day') then
+    raise exception 'Ese horario supera la anticipación máxima permitida.' using errcode = '22023';
+  end if;
+  if not public.is_bookable_slot(p_start, p_end, p_modality) then
+    raise exception 'Ese horario está fuera de la disponibilidad del profesional.' using errcode = '22023';
+  end if;
+end;
+$$;
+
+-- Estado inicial de una reserva hecha por el paciente: lo decide la configuración, nunca el cliente.
+create or replace function public.patient_booking_status()
+returns public.appointment_status
+language sql stable security definer set search_path = public as $$
+  select case
+    when coalesce(public.setting_value('scheduling') ->> 'booking_mode', 'approval') = 'auto' then 'confirmed'::public.appointment_status
+    else 'requested'::public.appointment_status
+  end;
+$$;
+
+-- ---------------------------------------------------------------------------
 -- Turnos: creación transaccional (anti double booking)
 -- ---------------------------------------------------------------------------
 create or replace function public.create_appointment_tx(
@@ -369,16 +451,13 @@ begin
     if p_patient_id is distinct from public.current_patient_id() then
       raise exception 'No podés reservar turnos para otra persona' using errcode = '42501';
     end if;
-    if p_status not in ('requested', 'pending', 'confirmed') then
-      raise exception 'Estado inicial no permitido' using errcode = '42501';
-    end if;
+    -- El paciente no elige el estado, el origen ni los datos administrativos.
+    p_status      := public.patient_booking_status();
     p_source      := 'app';
     p_video_link  := null;
     p_location    := null;
     p_admin_notes := null;
-    if p_start < now() then
-      raise exception 'No es posible reservar un horario pasado' using errcode = '22023';
-    end if;
+    perform public.assert_patient_bookable(p_start, p_end, p_modality);
   end if;
 
   if p_end <= p_start then
@@ -405,13 +484,19 @@ begin
 
   insert into public.appointments (
     patient_id, plan_id, start_time, end_time, modality, status, source,
-    patient_note, video_link, location, admin_notes, confirmed_at, created_by
+    patient_note, video_link, location, confirmed_at, created_by
   ) values (
     p_patient_id, p_plan_id, p_start, p_end, p_modality, p_status, p_source,
-    nullif(btrim(coalesce(p_patient_note, '')), ''), p_video_link, p_location, p_admin_notes,
+    nullif(btrim(coalesce(p_patient_note, '')), ''), p_video_link, p_location,
     case when p_status = 'confirmed' then now() end, auth.uid()
   )
   returning * into v_appt;
+
+  -- Las notas administrativas viven en una tabla aparte, invisible para el paciente.
+  if nullif(btrim(coalesce(p_admin_notes, '')), '') is not null then
+    insert into public.appointment_admin_notes (appointment_id, notes, updated_by)
+    values (v_appt.id, btrim(p_admin_notes), auth.uid());
+  end if;
 
   return v_appt;
 end;
@@ -457,12 +542,9 @@ begin
     if v_appt.start_time - (v_min_hours * interval '1 hour') < now() then
       raise exception 'Este turno ya no puede reprogramarse desde la aplicación. Escribinos para coordinar.' using errcode = 'P0001';
     end if;
-    if p_new_start < now() then
-      raise exception 'No es posible elegir un horario pasado' using errcode = '22023';
-    end if;
-    if p_new_status not in ('requested', 'confirmed') then
-      p_new_status := 'requested';
-    end if;
+    -- El nuevo horario debe ser un turno válido de la grilla, con la misma modalidad.
+    perform public.assert_patient_bookable(p_new_start, p_new_end, v_appt.modality);
+    p_new_status := public.patient_booking_status();
     p_source := 'app';
   end if;
 
@@ -488,6 +570,7 @@ begin
 
   perform set_config('app.change_source', p_source::text, true);
   perform set_config('app.change_reason', coalesce(p_reason, ''), true);
+  perform set_config('app.trusted_rpc', 'reschedule', true);
 
   update public.appointments
      set start_time            = p_new_start,
@@ -500,6 +583,8 @@ begin
          google_sync_status    = 'pending'
    where id = p_appointment_id
    returning * into v_appt;
+
+  perform set_config('app.trusted_rpc', '', true);
 
   return v_appt;
 end;
@@ -597,13 +682,6 @@ begin
   return v_appt;
 end;
 $$;
-
-grant execute on function
-  public.create_appointment_tx(uuid, timestamptz, timestamptz, public.appointment_modality, public.appointment_status, public.appointment_source, text, uuid, text, text, text),
-  public.reschedule_appointment_tx(uuid, timestamptz, timestamptz, public.appointment_status, text, public.appointment_source),
-  public.cancel_appointment_tx(uuid, text, public.appointment_source),
-  public.confirm_appointment_tx(uuid, public.appointment_source)
-to authenticated, service_role;
 
 -- ---------------------------------------------------------------------------
 -- Notificaciones in-app automáticas (consistentes sin importar el canal de origen)
@@ -755,7 +833,6 @@ begin
   return v_hits <= p_limit;
 end;
 $$;
-grant execute on function public.check_rate_limit(text, integer, integer) to authenticated, service_role;
 
 create or replace function public.cleanup_rate_limits()
 returns integer
@@ -767,8 +844,9 @@ begin
   return v_count;
 end;
 $$;
-grant execute on function public.cleanup_rate_limits() to service_role;
 
+-- Registro de auditoría. El actor SIEMPRE es el usuario autenticado (no se puede suplantar);
+-- las llamadas sin usuario solo se aceptan desde service_role. Tamaños acotados contra abuso.
 create or replace function public.audit_log(
   p_action      text,
   p_entity_type text default null,
@@ -778,11 +856,19 @@ create or replace function public.audit_log(
 returns void
 language plpgsql security definer set search_path = public as $$
 begin
+  if auth.uid() is null and coalesce(auth.jwt() ->> 'role', '') <> 'service_role' and auth.jwt() is not null then
+    raise exception 'No autorizado' using errcode = '42501';
+  end if;
+  if length(coalesce(p_action, '')) not between 1 and 100
+     or length(coalesce(p_entity_type, '')) > 60
+     or length(coalesce(p_entity_id, '')) > 100
+     or pg_column_size(coalesce(p_metadata, '{}'::jsonb)) > 4096 then
+    raise exception 'Registro de auditoría inválido' using errcode = '22023';
+  end if;
   insert into public.audit_logs (actor_id, actor_role, action, entity_type, entity_id, metadata)
   values (auth.uid(), public.current_user_role(), p_action, p_entity_type, p_entity_id, coalesce(p_metadata, '{}'::jsonb));
 end;
 $$;
-grant execute on function public.audit_log(text, text, text, jsonb) to authenticated, service_role;
 
 -- ---------------------------------------------------------------------------
 -- Métricas administrativas (sin contenido clínico)
@@ -827,4 +913,49 @@ language sql stable security definer set search_path = public as $$
   limit 8;
 $$;
 
-grant execute on function public.admin_monthly_stats(timestamptz, timestamptz), public.admin_popular_hours(timestamptz, timestamptz) to authenticated, service_role;
+-- ---------------------------------------------------------------------------
+-- Permisos de ejecución (mínimo privilegio)
+-- PostgreSQL otorga EXECUTE a PUBLIC por defecto y Supabase además a anon/authenticated.
+-- Se revoca todo y se otorga explícitamente solo lo que cada rol necesita. Las funciones
+-- SECURITY DEFINER (triggers, RPCs) siguen pudiendo invocar helpers internos porque se
+-- ejecutan con los permisos de su dueño.
+-- ---------------------------------------------------------------------------
+revoke execute on all functions in schema public from public, anon, authenticated;
+alter default privileges in schema public revoke execute on functions from public;
+alter default privileges in schema public revoke execute on functions from anon, authenticated;
+
+-- Helpers usados por las políticas RLS: deben poder evaluarse para cualquier rol.
+grant execute on function
+  public.current_user_role(),
+  public.is_admin(),
+  public.is_staff(),
+  public.is_privileged(),
+  public.current_patient_id()
+to anon, authenticated, service_role;
+
+-- RPCs de agenda (validan propiedad, ventanas y grilla internamente).
+grant execute on function
+  public.create_appointment_tx(uuid, timestamptz, timestamptz, public.appointment_modality, public.appointment_status, public.appointment_source, text, uuid, text, text, text),
+  public.reschedule_appointment_tx(uuid, timestamptz, timestamptz, public.appointment_status, text, public.appointment_source),
+  public.cancel_appointment_tx(uuid, text, public.appointment_source),
+  public.confirm_appointment_tx(uuid, public.appointment_source)
+to authenticated, service_role;
+
+-- Auditoría (actor forzado = usuario autenticado) y métricas administrativas (devuelven 0 si no es admin).
+grant execute on function
+  public.audit_log(text, text, text, jsonb),
+  public.admin_monthly_stats(timestamptz, timestamptz),
+  public.admin_popular_hours(timestamptz, timestamptz)
+to authenticated, service_role;
+
+-- Solo servidor: rate limiting (una clave arbitraria permitiría bloquear cuentas ajenas),
+-- limpieza y lectura de configuración privada.
+grant execute on function
+  public.check_rate_limit(text, integer, integer),
+  public.cleanup_rate_limits(),
+  public.setting_value(text),
+  public.is_bookable_slot(timestamptz, timestamptz, public.appointment_modality),
+  public.patient_booking_status()
+to service_role;
+-- notify_admins, assert_patient_bookable, format_appointment_datetime y las funciones de trigger
+-- quedan sin EXECUTE para roles de cliente: solo se invocan desde otras funciones SECURITY DEFINER.

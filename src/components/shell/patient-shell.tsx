@@ -74,7 +74,7 @@ export function PatientShell({ children, platformName, userName, avatarUrl, unre
                 </span>
               ) : null}
             </Link>
-            <Link href="/app/perfil" className="md:hidden" aria-label="Mi perfil">
+            <Link href="/app/perfil" className="flex size-11 items-center justify-center rounded-full outline-none focus-visible:ring-[3px] focus-visible:ring-ring/40 md:hidden" aria-label="Mi perfil">
               <Avatar className="size-9">
                 {avatarUrl ? <AvatarImage src={avatarUrl} alt="" /> : null}
                 <AvatarFallback>{getInitials(userName)}</AvatarFallback>

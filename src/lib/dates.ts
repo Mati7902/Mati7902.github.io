@@ -2,7 +2,6 @@ import {
   addDays,
   addMinutes,
   differenceInMinutes,
-  format,
   isBefore,
   isSameDay,
   parseISO,
@@ -58,6 +57,16 @@ export function zonedToUtc(dateKey: string, time: string, tz = DEFAULT_TIMEZONE)
   return fromZonedTime(`${dateKey}T${time}:00`, tz);
 }
 
+/**
+ * Convierte el valor de un <input type="datetime-local"> ("2026-10-13T18:00") a ISO UTC
+ * interpretándolo en la zona operativa (no en la del navegador, que puede ser otra).
+ */
+export function localInputToUtcIso(value: string, tz = DEFAULT_TIMEZONE): string | null {
+  const match = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/.exec(value);
+  if (!match) return null;
+  return zonedToUtc(match[1]!, match[2]!, tz).toISOString();
+}
+
 /** Devuelve el "ahora" expresado como fecha de pared en la zona dada. */
 export function nowInZone(tz = DEFAULT_TIMEZONE): Date {
   return toZonedTime(new Date(), tz);
@@ -102,7 +111,7 @@ export function formatDuration(minutes: number): string {
   return `${m} min`;
 }
 
-export function formatRelative(value: DateInput): string {
+export function formatRelative(value: DateInput, tz = DEFAULT_TIMEZONE): string {
   const date = toDate(value);
   const diff = Date.now() - date.getTime();
   const minutes = Math.round(diff / 60000);
@@ -112,5 +121,5 @@ export function formatRelative(value: DateInput): string {
   if (hours < 24) return `hace ${hours} h`;
   const days = Math.round(hours / 24);
   if (days < 7) return `hace ${days} d`;
-  return format(date, "d MMM", { locale: es });
+  return formatInTimeZone(date, tz, "d MMM", { locale: es });
 }

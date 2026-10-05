@@ -25,7 +25,7 @@ export default async function AdminTodayPage() {
   const dayEnd = addDays(dayStart, 1);
   const weekEnd = addDays(dayStart, 8);
 
-  const [today, upcoming, requests, { data: patients }, { data: cancelledToday }] = await Promise.all([
+  const [today, upcoming, requests, { data: patients }, { count: cancelledToday }] = await Promise.all([
     listAppointmentsBetween(supabase, dayStart, dayEnd),
     listAppointmentsBetween(supabase, dayEnd, weekEnd, ["pending", "confirmed", "rescheduled", "requested"]),
     supabase
@@ -59,7 +59,7 @@ export default async function AdminTodayPage() {
         <StatCard label="Pacientes del día" value={active.length} icon={Users} />
         <StatCard label="Confirmados" value={confirmed} icon={CalendarCheck} tone="success" />
         <StatCard label="Pendientes" value={pendingToday} icon={CalendarClock} tone="warning" />
-        <StatCard label="Cancelaciones hoy" value={cancelledToday?.length ?? 0} icon={CalendarX} tone="destructive" hint="Canceladas durante el día" />
+        <StatCard label="Cancelaciones hoy" value={cancelledToday ?? 0} icon={CalendarX} tone="destructive" hint="Canceladas durante el día" />
       </div>
 
       {(requests.data ?? []).length > 0 ? (

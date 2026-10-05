@@ -1,5 +1,6 @@
 import "server-only";
 
+import { toDateKey } from "@/lib/dates";
 import { AppError, fromDatabaseError } from "@/lib/errors";
 import { getServerEnv } from "@/lib/env";
 import { createLogger, errorMeta } from "@/lib/logger";
@@ -11,25 +12,30 @@ const log = createLogger("admin-patients");
 
 export type PatientListItem = Patient & { next_appointment?: string | null; profile_active?: boolean | null };
 
+/** Quita los caracteres con significado en la sintaxis de filtros de PostgREST (evita inyección en .or()). */
+function sanitizeSearchTerm(raw: string): string {
+  return raw.trim().replace(/[%,()"\\*:]/g, " ").replace(/\s+/g, " ").slice(0, 80);
+}
+
 export async function listPatients(client: ServerSupabaseClient, options: { query?: string; status?: Patient["status"] | "all" } = {}): Promise<PatientListItem[]> {
   let q = client.from("patients").select("*, profiles!patients_profile_id_fkey(is_active)").order("last_name").order("first_name");
   if (options.status && options.status !== "all") q = q.eq("status", options.status);
   if (options.query) {
-    const term = options.query.trim().replace(/[%,()]/g, "");
+    const term = sanitizeSearchTerm(options.query);
     if (term) q = q.or(`first_name.ilike.%${term}%,last_name.ilike.%${term}%,email.ilike.%${term}%,phone.ilike.%${term}%`);
   }
   const { data, error } = await q;
   if (error) throw fromDatabaseError(error);
   const patients = (data ?? []) as (Patient & { profiles: { is_active: boolean } | null })[];
-  const ids = patients.map((p) => p.id);
-  const { data: upcoming } = ids.length
+  // Próximos turnos activos (consulta acotada por fecha, sin pasar la lista de ids por la URL).
+  const { data: upcoming } = patients.length
     ? await client
         .from("appointments")
         .select("patient_id, start_time")
-        .in("patient_id", ids)
         .in("status", ["pending", "confirmed", "rescheduled", "requested"])
         .gte("start_time", new Date().toISOString())
         .order("start_time", { ascending: true })
+        .limit(2000)
     : { data: [] as { patient_id: string; start_time: string }[] };
   const nextByPatient = new Map<string, string>();
   for (const row of upcoming ?? []) if (!nextByPatient.has(row.patient_id)) nextByPatient.set(row.patient_id, row.start_time);
@@ -48,7 +54,6 @@ export type PatientInput = {
   modality: Patient["modality"];
   status: Patient["status"];
   admission_date?: string | null;
-  admin_notes?: string | null;
 };
 
 export async function createPatient(client: ServerSupabaseClient, input: PatientInput, createdBy: string): Promise<Patient> {
@@ -66,8 +71,7 @@ export async function createPatient(client: ServerSupabaseClient, input: Patient
       guardian_name: input.guardian_name || null,
       modality: input.modality,
       status: input.status,
-      admission_date: input.admission_date || new Date().toISOString().slice(0, 10),
-      admin_notes: input.admin_notes || null,
+      admission_date: input.admission_date || toDateKey(new Date()),
       created_by: createdBy,
     })
     .select("*")
@@ -87,7 +91,6 @@ export async function updatePatient(client: ServerSupabaseClient, id: string, in
     modality: input.modality,
     status: input.status,
     admission_date: input.admission_date || undefined,
-    admin_notes: input.admin_notes === undefined ? undefined : input.admin_notes || null,
   };
   if (input.email !== undefined) payload.email = input.email?.toLowerCase() || null;
   if (input.phone !== undefined) {
@@ -145,13 +148,14 @@ export async function setPatientAccess(client: ServerSupabaseClient, patient: Pa
 }
 
 export async function getPatientOverview(client: ServerSupabaseClient, id: string) {
-  const [{ data: patient }, { data: appointments }, { data: materials }, { data: assignments }, { data: profile }] = await Promise.all([
-    client.from("patients").select("*").eq("id", id).maybeSingle(),
-    client.from("appointments").select("*").eq("patient_id", id).order("start_time", { ascending: false }).limit(30),
+  const { data: patient } = await client.from("patients").select("*, profiles!patients_profile_id_fkey(id, is_active, last_seen_at, email)").eq("id", id).maybeSingle();
+  if (!patient) return null;
+  const [{ data: appointments }, { data: materials }, { data: assignments }, { data: note }] = await Promise.all([
+    client.from("appointments").select("*, appointment_admin_notes(notes)").eq("patient_id", id).order("start_time", { ascending: false }).limit(30),
     client.from("patient_materials").select("*, materials(id, title, type)").eq("patient_id", id).not("assigned_by", "is", null).order("assigned_at", { ascending: false }),
     client.from("exercise_assignments").select("*, exercise_templates(id, title, slug)").eq("patient_id", id).order("assigned_at", { ascending: false }),
-    client.from("profiles").select("id, is_active, last_seen_at, email").eq("id", (await client.from("patients").select("profile_id").eq("id", id).maybeSingle()).data?.profile_id ?? "00000000-0000-0000-0000-000000000000").maybeSingle(),
+    client.from("patient_admin_notes").select("notes").eq("patient_id", id).maybeSingle(),
   ]);
-  if (!patient) return null;
-  return { patient, appointments: appointments ?? [], materials: materials ?? [], assignments: assignments ?? [], profile: profile ?? null };
+  const { profiles: profile, ...rest } = patient as Patient & { profiles: { id: string; is_active: boolean; last_seen_at: string | null; email: string | null } | null };
+  return { patient: rest as Patient, appointments: appointments ?? [], materials: materials ?? [], assignments: assignments ?? [], profile: profile ?? null, adminNote: note?.notes ?? null };
 }

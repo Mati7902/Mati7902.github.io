@@ -46,7 +46,7 @@ export function EmotionalLogList({ logs }: { logs: EmotionalLog[] }) {
                 {log.thought ? <p className="text-sm text-muted-foreground">Pensamiento: {log.thought}</p> : null}
                 {log.need ? <p className="text-sm text-muted-foreground">Necesitaba: {log.need}</p> : null}
               </div>
-              <Button variant="ghost" size="icon-sm" className="text-muted-foreground" onClick={() => remove(log.id)} disabled={pending} aria-label="Eliminar registro">
+              <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => remove(log.id)} disabled={pending} aria-label="Eliminar registro">
                 <Trash2 />
               </Button>
             </div>

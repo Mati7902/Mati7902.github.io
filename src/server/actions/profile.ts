@@ -27,9 +27,9 @@ export async function updateContactAction(_prev: ActionResult | null, formData: 
   try {
     const { patient } = await assertPatient();
     const supabase = await createClient();
+    // El número de WhatsApp (identidad ante la secretaria virtual) solo lo cambia el profesional.
     await updateOwnPatientRecord(supabase, patient.id, {
       phone,
-      whatsapp_phone: phone,
       emergency_contact_name: parsed.data.emergency_contact_name || null,
       emergency_contact_phone: emergencyPhone,
     });

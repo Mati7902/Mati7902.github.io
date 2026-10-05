@@ -146,9 +146,12 @@ export function BreathingExercise({ config, title, onComplete }: Props) {
           className="absolute inset-6 rounded-full bg-[radial-gradient(circle_at_30%_30%,_var(--color-mint-200),_var(--color-petrol-400))] shadow-[var(--shadow-soft)]"
           style={{ transform: `scale(${running || done ? scale : 0.62})`, transition }}
         />
-        <div className="relative z-10 flex flex-col items-center text-center" aria-live="polite" aria-atomic>
-          <p className="font-display text-3xl font-medium tracking-wide text-primary-foreground drop-shadow-sm">{running ? PHASE_LABEL[phase] : done ? "LISTO" : "PREPARATE"}</p>
-          <p className="mt-1 text-base text-primary-foreground/90">
+        <div className="relative z-10 flex flex-col items-center text-center">
+          {/* Solo se anuncia el cambio de fase: la cuenta regresiva segundo a segundo saturaría al lector de pantalla. */}
+          <p className="font-display text-3xl font-medium tracking-wide text-primary-foreground drop-shadow-sm" aria-live="polite" aria-atomic>
+            {running ? PHASE_LABEL[phase] : done ? "LISTO" : "PREPARATE"}
+          </p>
+          <p className="mt-1 text-base text-primary-foreground/90" aria-hidden={running}>
             {running ? `${Math.max(phaseLeft, 1)} ${phaseLeft === 1 ? "segundo" : "segundos"}` : done ? "Bien hecho" : "Cuando quieras"}
           </p>
         </div>

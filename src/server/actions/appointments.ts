@@ -19,6 +19,7 @@ import {
   type AvailabilityDay,
 } from "@/server/services/appointments";
 import { audit } from "@/server/services/audit";
+import { allowAttempt } from "@/server/services/rate-limit";
 import { notifyAppointmentEvent } from "@/server/services/appointment-notifications";
 import { getSetting } from "@/server/services/settings";
 
@@ -43,10 +44,11 @@ export async function getAvailabilityAction(input: { modality: "presencial" | "v
   }
 }
 
+// `end` se acepta por compatibilidad pero se ignora: la duración la decide la grilla del servidor.
 const requestSchema = z.object({
   modality: modalitySchema,
   start: z.string().datetime(),
-  end: z.string().datetime(),
+  end: z.string().datetime().optional(),
   note: z.string().trim().max(500).optional().nullable(),
   planSlug: z.string().trim().max(80).optional().nullable(),
 });
@@ -57,12 +59,12 @@ export async function requestAppointmentAction(input: z.infer<typeof requestSche
   try {
     const { patient } = await assertPatient();
     const supabase = await createClient();
-    const { data: allowed } = await supabase.rpc("check_rate_limit", { p_key: `booking:${patient.id}`, p_limit: 10, p_window_seconds: 3600 });
-    if (allowed === false) throw new AppError("RATE_LIMITED", "Hiciste muchas solicitudes seguidas. Esperá unos minutos.");
+    if (!(await allowAttempt(`booking:${patient.id}`, 10, 3600))) {
+      throw new AppError("RATE_LIMITED", "Hiciste muchas solicitudes seguidas. Esperá unos minutos.");
+    }
 
     const start = new Date(parsed.data.start);
-    const end = new Date(parsed.data.end);
-    const settings = await assertSlotAvailable(start, end, parsed.data.modality);
+    const { settings, end } = await assertSlotAvailable(start, parsed.data.modality);
     const status = initialStatusForPatientBooking(settings);
 
     let planId: string | null = null;
@@ -91,7 +93,7 @@ export async function requestAppointmentAction(input: z.infer<typeof requestSche
   }
 }
 
-const rescheduleSchema = z.object({ appointmentId: z.string().uuid(), start: z.string().datetime(), end: z.string().datetime(), reason: z.string().trim().max(300).optional().nullable() });
+const rescheduleSchema = z.object({ appointmentId: z.string().uuid(), start: z.string().datetime(), end: z.string().datetime().optional(), reason: z.string().trim().max(300).optional().nullable() });
 
 export async function rescheduleAppointmentAction(input: z.infer<typeof rescheduleSchema>): Promise<ActionResult<{ status: string }>> {
   const parsed = rescheduleSchema.safeParse(input);
@@ -105,9 +107,11 @@ export async function rescheduleAppointmentAction(input: z.infer<typeof reschedu
     if (!canPatientModify(current, scheduling, "reschedule")) {
       throw new AppError("VALIDATION", "Este turno ya no puede reprogramarse desde la aplicación. Escribinos para coordinar.");
     }
+    if (!(await allowAttempt(`booking:${patient.id}`, 10, 3600))) {
+      throw new AppError("RATE_LIMITED", "Hiciste muchos cambios seguidos. Esperá unos minutos.");
+    }
     const start = new Date(parsed.data.start);
-    const end = new Date(parsed.data.end);
-    const settings = await assertSlotAvailable(start, end, current.modality, current.id);
+    const { settings, end } = await assertSlotAvailable(start, current.modality, current.id);
     const newStatus = settings.booking_mode === "auto" ? "confirmed" : "requested";
     const updated = await rescheduleAppointment(supabase, { appointmentId: current.id, start, end, newStatus, reason: parsed.data.reason ?? "Reprogramado por el paciente", source: "app" });
     await audit(supabase, "appointment.rescheduled_by_patient", { type: "appointment", id: updated.id });

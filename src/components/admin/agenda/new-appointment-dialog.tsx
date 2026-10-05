@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { localInputToUtcIso } from "@/lib/dates";
 import { adminCreateAppointmentAction, getAdminAvailabilityAction } from "@/server/actions/admin-appointments";
 import type { SerializedAvailabilityDay } from "@/server/actions/appointments";
 
@@ -69,12 +70,13 @@ export function NewAppointmentDialog({ patients, timezone, defaultDuration, defa
 
   const submit = () =>
     startTransition(async () => {
-      const start = slot?.start ?? (manualStart ? new Date(manualStart).toISOString() : null);
+      const start = slot?.start ?? (manualStart ? localInputToUtcIso(manualStart, timezone) : null);
       if (!patientId) return void toast.error("Elegí un paciente.");
       if (!start) return void toast.error("Elegí un horario.");
       const res = await adminCreateAppointmentAction({ patientId, start, durationMinutes: duration, modality, status, videoLink: videoLink || null, location: location || null, adminNotes: notes || null, notify });
       if (!res.ok) return void toast.error(res.error);
-      toast.success("Turno creado.");
+      if (res.data.warning) toast.warning(res.data.warning);
+      else toast.success("Turno creado.");
       setOpen(false);
       setSlot(null);
       setManualStart("");
@@ -143,7 +145,7 @@ export function NewAppointmentDialog({ patients, timezone, defaultDuration, defa
               <p className="text-sm text-muted-foreground">No hay horarios libres dentro de la disponibilidad configurada.</p>
             )}
           </div>
-          <FormField id="np-manual" label="O fecha y hora manual" hint="Para turnos fuera del horario habitual.">
+          <FormField id="np-manual" label="O fecha y hora manual" hint={`Hora de ${timezone}. Para turnos fuera del horario habitual.`}>
             <Input id="np-manual" type="datetime-local" value={manualStart} onChange={(e) => { setManualStart(e.target.value); setSlot(null); }} />
           </FormField>
           {modality === "virtual" ? (

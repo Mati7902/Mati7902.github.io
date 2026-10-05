@@ -26,7 +26,13 @@ create table if not exists auth.users (
   created_at timestamptz default now(),
   updated_at timestamptz default now(),
   confirmation_token text,
-  recovery_token text
+  recovery_token text,
+  email_change text,
+  email_change_token_new text,
+  email_change_token_current text,
+  phone_change text,
+  phone_change_token text,
+  reauthentication_token text
 );
 
 create or replace function auth.jwt() returns jsonb language sql stable as $$

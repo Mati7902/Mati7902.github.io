@@ -189,7 +189,12 @@ export function CalendarGrid({ view, dateKey, appointments, blocked, timezone, o
   }
 
   const days = view === "semana" ? Array.from({ length: 7 }, (_, i) => addDaysKey(startOfWeekKey(dateKey), i)) : [dateKey];
-  const hours = Array.from({ length: dayEndHour - dayStartHour }, (_, i) => dayStartHour + i);
+  // Un turno cargado manualmente fuera del horario habitual también tiene que verse:
+  // el rango de horas se amplía para incluir el primero y el último turno visibles.
+  const visibleHours = days.flatMap((k) => (byDay.get(k) ?? []).map((a) => Number(formatTime(a.start_time, timezone).slice(0, 2))));
+  const firstHour = Math.min(dayStartHour, ...visibleHours);
+  const lastHour = Math.max(dayEndHour, ...visibleHours.map((h) => h + 1));
+  const hours = Array.from({ length: lastHour - firstHour }, (_, i) => firstHour + i);
 
   return (
     <div className="overflow-x-auto rounded-2xl border border-border/70 bg-card">

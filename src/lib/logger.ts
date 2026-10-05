@@ -60,11 +60,11 @@ export function errorMeta(error: unknown): Record<string, unknown> {
     return { error: error.message, name: error.name, stack: process.env.NODE_ENV === "production" ? undefined : error.stack };
   }
   if (error && typeof error === "object") {
-    const e = error as { message?: unknown; code?: unknown; details?: unknown; hint?: unknown; status?: unknown };
+    // `details` de Postgres puede incluir valores de la fila (p. ej. "Key (email)=(...)"): no se registra.
+    const e = error as { message?: unknown; code?: unknown; status?: unknown };
     return {
-      error: typeof e.message === "string" ? e.message : JSON.stringify(error).slice(0, 500),
+      error: typeof e.message === "string" ? e.message : "error sin mensaje",
       code: e.code,
-      details: typeof e.details === "string" ? e.details : undefined,
       status: e.status,
     };
   }

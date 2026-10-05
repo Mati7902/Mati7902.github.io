@@ -17,7 +17,7 @@ import type { Patient } from "@/types/domain";
 
 type Result = ActionResult<{ id: string; note?: string }>;
 
-export function PatientForm({ patient }: { patient?: Patient }) {
+export function PatientForm({ patient, adminNote, defaultAdmissionDate }: { patient?: Patient; adminNote?: string | null; defaultAdmissionDate: string }) {
   const router = useRouter();
   const [state, action, pending] = useActionState<Result | null, FormData>(savePatientAction as (prev: Result | null, formData: FormData) => Promise<Result>, null);
   const id = useId();
@@ -96,11 +96,11 @@ export function PatientForm({ patient }: { patient?: Patient }) {
             </select>
           </FormField>
           <FormField id={`${id}-admission`} label="Fecha de ingreso">
-            <Input id={`${id}-admission`} name="admission_date" type="date" defaultValue={patient?.admission_date ?? new Date().toISOString().slice(0, 10)} />
+            <Input id={`${id}-admission`} name="admission_date" type="date" defaultValue={patient?.admission_date ?? defaultAdmissionDate} />
           </FormField>
         </div>
-        <FormField id={`${id}-notes`} label="Notas administrativas" optional hint="Horarios preferidos, forma de pago, derivación. No es historia clínica.">
-          <Textarea id={`${id}-notes`} name="admin_notes" defaultValue={patient?.admin_notes ?? ""} maxLength={2000} />
+        <FormField id={`${id}-notes`} label="Notas administrativas" optional hint="Horarios preferidos, forma de pago, derivación. Solo las ves vos: el paciente no tiene acceso. No es historia clínica.">
+          <Textarea id={`${id}-notes`} name="admin_notes" defaultValue={adminNote ?? ""} maxLength={2000} />
         </FormField>
       </section>
 

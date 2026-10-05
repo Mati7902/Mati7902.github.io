@@ -9,7 +9,32 @@ export type Database = {
   
   "public": {
           Tables: {
-            "appointment_history": {
+            "appointment_admin_notes": {
+                  Row: {
+                    "appointment_id": string,"notes": string,"updated_at": string,"updated_by": string | null
+                  }
+                  Insert: {
+                    "appointment_id": string,"notes": string,"updated_at"?: string,"updated_by"?: string | null
+                  }
+                  Update: {
+                    "appointment_id"?: string,"notes"?: string,"updated_at"?: string,"updated_by"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "appointment_admin_notes_appointment_id_fkey"
+      columns: ["appointment_id"]
+isOneToOne: true
+      referencedRelation: "appointments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "appointment_admin_notes_updated_by_fkey"
+      columns: ["updated_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"appointment_history": {
                   Row: {
                     "appointment_id": string,"change_source": Database["public"]['Enums']["appointment_source"],"changed_by": string | null,"created_at": string,"id": string,"new_start_time": string | null,"new_status": Database["public"]['Enums']["appointment_status"],"previous_start_time": string | null,"previous_status": Database["public"]['Enums']["appointment_status"] | null,"reason": string | null
                   }
@@ -36,13 +61,13 @@ isOneToOne: false
                   ]
                 },"appointments": {
                   Row: {
-                    "admin_notes": string | null,"cancellation_reason": string | null,"cancelled_at": string | null,"cancelled_by": string | null,"change_notice_sent_at": string | null,"completed_at": string | null,"confirmed_at": string | null,"created_at": string,"created_by": string | null,"end_time": string,"google_event_id": string | null,"google_sync_status": Database["public"]['Enums']["calendar_sync_status"],"google_synced_at": string | null,"id": string,"location": string | null,"modality": Database["public"]['Enums']["appointment_modality"],"patient_id": string,"patient_note": string | null,"plan_id": string | null,"reminder_24h_sent_at": string | null,"reminder_2h_sent_at": string | null,"source": Database["public"]['Enums']["appointment_source"],"start_time": string,"status": Database["public"]['Enums']["appointment_status"],"updated_at": string,"video_link": string | null
+                    "cancellation_reason": string | null,"cancelled_at": string | null,"cancelled_by": string | null,"change_notice_sent_at": string | null,"completed_at": string | null,"confirmed_at": string | null,"created_at": string,"created_by": string | null,"end_time": string,"google_event_id": string | null,"google_sync_status": Database["public"]['Enums']["calendar_sync_status"],"google_synced_at": string | null,"id": string,"location": string | null,"modality": Database["public"]['Enums']["appointment_modality"],"patient_id": string,"patient_note": string | null,"plan_id": string | null,"reminder_24h_sent_at": string | null,"reminder_2h_sent_at": string | null,"source": Database["public"]['Enums']["appointment_source"],"start_time": string,"status": Database["public"]['Enums']["appointment_status"],"updated_at": string,"video_link": string | null
                   }
                   Insert: {
-                    "admin_notes"?: string | null,"cancellation_reason"?: string | null,"cancelled_at"?: string | null,"cancelled_by"?: string | null,"change_notice_sent_at"?: string | null,"completed_at"?: string | null,"confirmed_at"?: string | null,"created_at"?: string,"created_by"?: string | null,"end_time": string,"google_event_id"?: string | null,"google_sync_status"?: Database["public"]['Enums']["calendar_sync_status"],"google_synced_at"?: string | null,"id"?: string,"location"?: string | null,"modality"?: Database["public"]['Enums']["appointment_modality"],"patient_id": string,"patient_note"?: string | null,"plan_id"?: string | null,"reminder_24h_sent_at"?: string | null,"reminder_2h_sent_at"?: string | null,"source"?: Database["public"]['Enums']["appointment_source"],"start_time": string,"status"?: Database["public"]['Enums']["appointment_status"],"updated_at"?: string,"video_link"?: string | null
+                    "cancellation_reason"?: string | null,"cancelled_at"?: string | null,"cancelled_by"?: string | null,"change_notice_sent_at"?: string | null,"completed_at"?: string | null,"confirmed_at"?: string | null,"created_at"?: string,"created_by"?: string | null,"end_time": string,"google_event_id"?: string | null,"google_sync_status"?: Database["public"]['Enums']["calendar_sync_status"],"google_synced_at"?: string | null,"id"?: string,"location"?: string | null,"modality"?: Database["public"]['Enums']["appointment_modality"],"patient_id": string,"patient_note"?: string | null,"plan_id"?: string | null,"reminder_24h_sent_at"?: string | null,"reminder_2h_sent_at"?: string | null,"source"?: Database["public"]['Enums']["appointment_source"],"start_time": string,"status"?: Database["public"]['Enums']["appointment_status"],"updated_at"?: string,"video_link"?: string | null
                   }
                   Update: {
-                    "admin_notes"?: string | null,"cancellation_reason"?: string | null,"cancelled_at"?: string | null,"cancelled_by"?: string | null,"change_notice_sent_at"?: string | null,"completed_at"?: string | null,"confirmed_at"?: string | null,"created_at"?: string,"created_by"?: string | null,"end_time"?: string,"google_event_id"?: string | null,"google_sync_status"?: Database["public"]['Enums']["calendar_sync_status"],"google_synced_at"?: string | null,"id"?: string,"location"?: string | null,"modality"?: Database["public"]['Enums']["appointment_modality"],"patient_id"?: string,"patient_note"?: string | null,"plan_id"?: string | null,"reminder_24h_sent_at"?: string | null,"reminder_2h_sent_at"?: string | null,"source"?: Database["public"]['Enums']["appointment_source"],"start_time"?: string,"status"?: Database["public"]['Enums']["appointment_status"],"updated_at"?: string,"video_link"?: string | null
+                    "cancellation_reason"?: string | null,"cancelled_at"?: string | null,"cancelled_by"?: string | null,"change_notice_sent_at"?: string | null,"completed_at"?: string | null,"confirmed_at"?: string | null,"created_at"?: string,"created_by"?: string | null,"end_time"?: string,"google_event_id"?: string | null,"google_sync_status"?: Database["public"]['Enums']["calendar_sync_status"],"google_synced_at"?: string | null,"id"?: string,"location"?: string | null,"modality"?: Database["public"]['Enums']["appointment_modality"],"patient_id"?: string,"patient_note"?: string | null,"plan_id"?: string | null,"reminder_24h_sent_at"?: string | null,"reminder_2h_sent_at"?: string | null,"source"?: Database["public"]['Enums']["appointment_source"],"start_time"?: string,"status"?: Database["public"]['Enums']["appointment_status"],"updated_at"?: string,"video_link"?: string | null
                   }
                   Relationships: [
                     {
@@ -369,6 +394,31 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"patient_admin_notes": {
+                  Row: {
+                    "notes": string,"patient_id": string,"updated_at": string,"updated_by": string | null
+                  }
+                  Insert: {
+                    "notes": string,"patient_id": string,"updated_at"?: string,"updated_by"?: string | null
+                  }
+                  Update: {
+                    "notes"?: string,"patient_id"?: string,"updated_at"?: string,"updated_by"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "patient_admin_notes_patient_id_fkey"
+      columns: ["patient_id"]
+isOneToOne: true
+      referencedRelation: "patients"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "patient_admin_notes_updated_by_fkey"
+      columns: ["updated_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"patient_materials": {
                   Row: {
                     "assigned_at": string,"assigned_by": string | null,"completed_at": string | null,"id": string,"material_id": string,"note": string | null,"patient_id": string,"viewed_at": string | null
@@ -402,13 +452,13 @@ isOneToOne: false
                   ]
                 },"patients": {
                   Row: {
-                    "admin_notes": string | null,"admission_date": string,"birth_date": string | null,"consent_accepted_at": string | null,"consent_version": string | null,"created_at": string,"created_by": string | null,"email": string | null,"emergency_contact_name": string | null,"emergency_contact_phone": string | null,"first_name": string,"guardian_name": string | null,"id": string,"invited_at": string | null,"last_name": string,"modality": Database["public"]['Enums']["care_modality"],"phone": string | null,"profile_id": string | null,"share_records_with_professional": boolean,"status": Database["public"]['Enums']["patient_status"],"updated_at": string,"whatsapp_phone": string | null
+                    "admission_date": string,"birth_date": string | null,"consent_accepted_at": string | null,"consent_version": string | null,"created_at": string,"created_by": string | null,"email": string | null,"emergency_contact_name": string | null,"emergency_contact_phone": string | null,"first_name": string,"guardian_name": string | null,"id": string,"invited_at": string | null,"last_name": string,"modality": Database["public"]['Enums']["care_modality"],"phone": string | null,"profile_id": string | null,"share_records_with_professional": boolean,"status": Database["public"]['Enums']["patient_status"],"updated_at": string,"whatsapp_phone": string | null
                   }
                   Insert: {
-                    "admin_notes"?: string | null,"admission_date"?: string,"birth_date"?: string | null,"consent_accepted_at"?: string | null,"consent_version"?: string | null,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"emergency_contact_name"?: string | null,"emergency_contact_phone"?: string | null,"first_name": string,"guardian_name"?: string | null,"id"?: string,"invited_at"?: string | null,"last_name": string,"modality"?: Database["public"]['Enums']["care_modality"],"phone"?: string | null,"profile_id"?: string | null,"share_records_with_professional"?: boolean,"status"?: Database["public"]['Enums']["patient_status"],"updated_at"?: string,"whatsapp_phone"?: string | null
+                    "admission_date"?: string,"birth_date"?: string | null,"consent_accepted_at"?: string | null,"consent_version"?: string | null,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"emergency_contact_name"?: string | null,"emergency_contact_phone"?: string | null,"first_name": string,"guardian_name"?: string | null,"id"?: string,"invited_at"?: string | null,"last_name": string,"modality"?: Database["public"]['Enums']["care_modality"],"phone"?: string | null,"profile_id"?: string | null,"share_records_with_professional"?: boolean,"status"?: Database["public"]['Enums']["patient_status"],"updated_at"?: string,"whatsapp_phone"?: string | null
                   }
                   Update: {
-                    "admin_notes"?: string | null,"admission_date"?: string,"birth_date"?: string | null,"consent_accepted_at"?: string | null,"consent_version"?: string | null,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"emergency_contact_name"?: string | null,"emergency_contact_phone"?: string | null,"first_name"?: string,"guardian_name"?: string | null,"id"?: string,"invited_at"?: string | null,"last_name"?: string,"modality"?: Database["public"]['Enums']["care_modality"],"phone"?: string | null,"profile_id"?: string | null,"share_records_with_professional"?: boolean,"status"?: Database["public"]['Enums']["patient_status"],"updated_at"?: string,"whatsapp_phone"?: string | null
+                    "admission_date"?: string,"birth_date"?: string | null,"consent_accepted_at"?: string | null,"consent_version"?: string | null,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"emergency_contact_name"?: string | null,"emergency_contact_phone"?: string | null,"first_name"?: string,"guardian_name"?: string | null,"id"?: string,"invited_at"?: string | null,"last_name"?: string,"modality"?: Database["public"]['Enums']["care_modality"],"phone"?: string | null,"profile_id"?: string | null,"share_records_with_professional"?: boolean,"status"?: Database["public"]['Enums']["patient_status"],"updated_at"?: string,"whatsapp_phone"?: string | null
                   }
                   Relationships: [
                     {
@@ -625,13 +675,15 @@ isOneToOne: false
               "bookings": number,"hour_label": string
             }[]
                            },
+"assert_patient_bookable":
+{ Args: { "p_end": string,"p_modality": Database["public"]['Enums']["appointment_modality"],"p_start": string }; Returns: undefined
+                           },
 "audit_log":
 { Args: { "p_action": string,"p_entity_id"?: string,"p_entity_type"?: string,"p_metadata"?: Json }; Returns: undefined
                            },
 "cancel_appointment_tx":
 { Args: { "p_appointment_id": string,"p_reason"?: string,"p_source"?: Database["public"]['Enums']["appointment_source"] }; Returns: {
-              "admin_notes": string | null,
-"cancellation_reason": string | null,
+              "cancellation_reason": string | null,
 "cancelled_at": string | null,
 "cancelled_by": string | null,
 "change_notice_sent_at": string | null,
@@ -671,8 +723,7 @@ isOneToOne: false
                            },
 "confirm_appointment_tx":
 { Args: { "p_appointment_id": string,"p_source"?: Database["public"]['Enums']["appointment_source"] }; Returns: {
-              "admin_notes": string | null,
-"cancellation_reason": string | null,
+              "cancellation_reason": string | null,
 "cancelled_at": string | null,
 "cancelled_by": string | null,
 "change_notice_sent_at": string | null,
@@ -706,8 +757,7 @@ isOneToOne: false
       } },
 "create_appointment_tx":
 { Args: { "p_admin_notes"?: string,"p_end": string,"p_location"?: string,"p_modality": Database["public"]['Enums']["appointment_modality"],"p_patient_id": string,"p_patient_note"?: string,"p_plan_id"?: string,"p_source"?: Database["public"]['Enums']["appointment_source"],"p_start": string,"p_status"?: Database["public"]['Enums']["appointment_status"],"p_video_link"?: string }; Returns: {
-              "admin_notes": string | null,
-"cancellation_reason": string | null,
+              "cancellation_reason": string | null,
 "cancelled_at": string | null,
 "cancelled_by": string | null,
 "change_notice_sent_at": string | null,
@@ -760,6 +810,9 @@ isOneToOne: false
 "is_admin":
 { Args: Record<PropertyKey, never>; Returns: boolean
                            },
+"is_bookable_slot":
+{ Args: { "p_end": string,"p_modality": Database["public"]['Enums']["appointment_modality"],"p_start": string }; Returns: boolean
+                           },
 "is_privileged":
 { Args: Record<PropertyKey, never>; Returns: boolean
                            },
@@ -769,13 +822,15 @@ isOneToOne: false
 "notify_admins":
 { Args: { "p_body": string,"p_data": Json,"p_title": string,"p_type": Database["public"]['Enums']["notification_type"] }; Returns: undefined
                            },
+"patient_booking_status":
+{ Args: Record<PropertyKey, never>; Returns: Database["public"]['Enums']["appointment_status"]
+                           },
 "pgp_armor_headers":
 { Args: { "": string }; Returns: Record<string, unknown>[]
                            },
 "reschedule_appointment_tx":
 { Args: { "p_appointment_id": string,"p_new_end": string,"p_new_start": string,"p_new_status"?: Database["public"]['Enums']["appointment_status"],"p_reason"?: string,"p_source"?: Database["public"]['Enums']["appointment_source"] }; Returns: {
-              "admin_notes": string | null,
-"cancellation_reason": string | null,
+              "cancellation_reason": string | null,
 "cancelled_at": string | null,
 "cancelled_by": string | null,
 "change_notice_sent_at": string | null,

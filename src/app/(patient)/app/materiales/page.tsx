@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Library } from "lucide-react";
 
 import { MaterialCard } from "@/components/materials/material-card";
@@ -68,12 +69,12 @@ export default async function MaterialsPage({ searchParams }: { searchParams: Pr
 
 function CategoryChip({ href, label, active }: { href: string; label: string; active: boolean }) {
   return (
-    <a
+    <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={`shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground hover:bg-surface-muted"}`}
+      className={`inline-flex min-h-11 shrink-0 items-center rounded-full border px-4 text-sm font-medium transition-colors ${active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground hover:bg-surface-muted"}`}
     >
       {label}
-    </a>
+    </Link>
   );
 }

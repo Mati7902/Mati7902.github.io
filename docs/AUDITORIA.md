@@ -10,7 +10,7 @@ Cada punto indica **estado** (✅ cubierto · ⚠️ cubierto con observaciones 
 | Autenticación con Supabase Auth, cookies httpOnly, verificación `getUser()` en servidor | ✅ | `src/lib/auth/session.ts`, `src/lib/supabase/*` |
 | Alta de pacientes solo por invitación; rol tomado de `app_metadata` (no editable por el usuario) y vínculo por email verificado | ✅ | `handle_new_user` en `0003_functions_and_triggers.sql`, `admin-patients.ts` |
 | Rate limiting (login, recuperación, reservas) | ✅ | `check_rate_limit` + `actions/auth.ts`, `actions/appointments.ts` |
-| Anti open-redirect en `next=` | ✅ | `safeNext()` en `actions/auth.ts`, `auth/callback/route.ts` |
+| Anti open-redirect en `next=` (incluye `/\host`, caracteres de control y URLs absolutas) | ✅ | `src/lib/safe-redirect.ts`, tests `safe-redirect.test.ts` |
 | Claves privadas nunca en el cliente; `service_role` solo en servidor con `server-only` | ✅ | `src/lib/supabase/admin.ts`, `src/lib/env.ts` |
 | Firma HMAC de webhooks en tiempo constante + idempotencia | ✅ | `whatsapp/webhook.ts`, `api/webhooks/whatsapp/route.ts`, tests |
 | Crons protegidos con `CRON_SECRET` (fallan cerrados si no está) | ✅ | `api/cron/*` |
@@ -33,7 +33,7 @@ Cada punto indica **estado** (✅ cubierto · ⚠️ cubierto con observaciones 
 | Anónimo: solo planes, FAQs, settings públicos | ✅ | bloque 6 |
 | Storage: bucket `materials` privado con política por material accesible | ✅ | `0005_storage.sql` |
 
-Resultado: `pnpm test:db` → 46 aserciones OK sobre las migraciones reales (PostgreSQL 16 local con stub de `auth`/`storage`).
+Resultado: `pnpm test:db` → 81 aserciones OK sobre las migraciones reales (PostgreSQL 16 local con stub de `auth`/`storage`).
 
 ## Agenda
 
@@ -113,7 +113,29 @@ Resultado: `pnpm test:db` → 46 aserciones OK sobre las migraciones reales (Pos
 
 ## Verificación final
 
-* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (74 tests) · `pnpm build` ✅ · `pnpm test:db` ✅ (46 aserciones)
+* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (87 tests) · `pnpm build` ✅ · `pnpm test:db` ✅ (81 aserciones)
+
+## Segunda ronda de auditoría (revisión adversarial)
+
+Una revisión adversarial posterior encontró problemas reales que ya están corregidos y cubiertos por tests:
+
+| Hallazgo | Severidad | Corrección |
+| --- | --- | --- |
+| `is_privileged()` consideraba privilegiada a cualquier petición sin `auth.uid()`, incluida la API anónima: un visitante podía confirmar, cancelar o crear turnos por RPC | Crítica | Solo son privilegiadas las conexiones sin JWT, `service_role` y administradores; `EXECUTE` revocado a `public`/`anon`/`authenticated` y otorgado explícitamente. Tests "anon no puede…" |
+| `check_rate_limit` invocable por usuarios con claves arbitrarias (bloqueo del login de otra cuenta) | Alta | Solo `service_role` (`allowAttempt` en `services/rate-limit.ts`) |
+| Un paciente podía reservar por RPC fuera de la grilla publicada, con duración arbitraria o elegir el estado inicial | Alta | `is_bookable_slot` + `assert_patient_bookable` en SQL; el fin del turno lo decide el servidor; estado según `booking_mode` |
+| Reprogramación del paciente bloqueada por su propio trigger de guarda | Media | Bandera transaccional `app.trusted_rpc` solo dentro de la RPC |
+| Notas administrativas legibles por el paciente (columnas en sus filas) | Alta | Tablas `patient_admin_notes` / `appointment_admin_notes` solo admin |
+| `audit_log` aceptaba actor anónimo y tamaños ilimitados | Media | Actor obligatorio y límites de tamaño |
+| El paciente podía cambiar su `whatsapp_phone` y suplantar a otro ante el bot; identificación por teléfono no determinística | Alta | Campo solo editable por el profesional; búsqueda determinística que descarta ambigüedades |
+| Conversaciones derivadas sin salida (bot mudo indefinidamente) | Media | Expiración a 24 h, botón "Volver al menú", reenvío del protocolo ante crisis y "Reactivar asistente" en el panel |
+| Avisos fuera de la ventana de 24 h enviados como texto libre (Meta los rechaza) | Media | Plantilla obligatoria fuera de la ventana; si falta, se informa en el panel |
+| Webhooks guardaban el payload completo (texto del paciente) sin retención | Media | Solo metadatos y purga a 30 días |
+| Agenda: turnos fuera del horario habitual invisibles en vistas día/semana; contador de cancelaciones siempre 0 | Baja | Rango de horas dinámico; uso de `count` |
+| Asistente de reserva: cambio de modalidad conservaba un horario de otra grilla | Baja | Se limpia la selección y se recarga ante conflicto o validación |
+| Accesibilidad: texto secundario con contraste 2,8:1, lector de pantalla saturado por la cuenta regresiva, áreas táctiles de 36 px, escala sin tocar bloqueaba "Continuar" | Media | Contraste ≥ 4,5:1, `aria-live` solo en el cambio de fase, objetivos de 44 px, escala con valor medio por defecto |
+| Privacidad: la política no mencionaba el proveedor de IA opcional ni Google Calendar; sin re-consentimiento al cambiar la versión legal | Media | Texto actualizado (pendiente de revisión profesional) y página `/consentimiento` |
+| Logs con `details` de Postgres (pueden incluir valores de filas) | Baja | `errorMeta` ya no los registra |
 
 ## Pendientes recomendados antes de abrir al público
 

@@ -64,13 +64,14 @@ export async function POST(request: NextRequest) {
   const toProcess: { key: string; kind: "message" | "status"; index: number }[] = [];
   for (const [index, m] of events.messages.entries()) {
     const key = eventKeyFor("message", m.waMessageId);
-    const { error } = await admin.from("whatsapp_webhook_events").insert({ event_key: key, event_type: `message.${m.rawType}`, payload: m as never });
+    // Solo metadatos: el contenido del mensaje se guarda una vez, en whatsapp_messages.
+    const { error } = await admin.from("whatsapp_webhook_events").insert({ event_key: key, event_type: `message.${m.rawType}`, payload: { wa_message_id: m.waMessageId, type: m.rawType, received_at: m.timestamp.toISOString() } });
     if (!error) toProcess.push({ key, kind: "message", index });
     else if (error.code !== "23505") log.warn("No se pudo registrar el evento", { key, ...errorMeta(error) });
   }
   for (const [index, s] of events.statuses.entries()) {
     const key = eventKeyFor("status", s.waMessageId, s.status);
-    const { error } = await admin.from("whatsapp_webhook_events").insert({ event_key: key, event_type: `status.${s.status}`, payload: s as never });
+    const { error } = await admin.from("whatsapp_webhook_events").insert({ event_key: key, event_type: `status.${s.status}`, payload: { wa_message_id: s.waMessageId, status: s.status, error: s.error } });
     if (!error) toProcess.push({ key, kind: "status", index });
   }
 

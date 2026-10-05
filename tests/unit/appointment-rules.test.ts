@@ -21,7 +21,6 @@ function appointment(hoursFromNow: number, status: Appointment["status"] = "conf
     video_link: null,
     location: null,
     patient_note: null,
-    admin_notes: null,
     confirmed_at: null,
     cancelled_at: null,
     cancelled_by: null,

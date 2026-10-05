@@ -72,7 +72,12 @@ export function NotificationCenter({ notifications, basePath }: { notifications:
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-foreground">{n.title}</p>
                 {n.body ? <p className="text-sm text-muted-foreground">{n.body}</p> : null}
-                <p className="mt-1 text-xs text-subtle-foreground">{formatRelative(n.created_at)}</p>
+                <p className="mt-1 text-xs text-subtle-foreground">
+                  {/* El texto relativo depende de la hora del navegador: puede diferir del render del servidor. */}
+                  <time dateTime={n.created_at} suppressHydrationWarning>
+                    {formatRelative(n.created_at)}
+                  </time>
+                </p>
               </div>
               {!n.read_at ? <span className="mt-2 size-2 shrink-0 rounded-full bg-primary" aria-label="Sin leer" /> : null}
             </div>

@@ -41,11 +41,18 @@ export default async function PrivacyPage() {
       <p>
         La asistente virtual de WhatsApp atiende cuestiones administrativas. WhatsApp es un servicio de un tercero (Meta) con sus propias condiciones; no garantiza confidencialidad clínica ni respuesta inmediata. Ante una emergencia, contactá a los servicios de urgencia de tu zona.
       </p>
-      <h2>7. Conservación y derechos</h2>
+      <p>
+        Para entender mensajes escritos con libertad, el profesional puede activar un proveedor de inteligencia artificial. En ese caso, el texto del mensaje (sin tu historial ni tus registros personales) se envía a ese proveedor solo para identificar qué trámite necesitás. La IA no toma decisiones: las acciones sobre turnos las ejecuta la plataforma con reglas fijas.
+      </p>
+      <h2>7. Calendario del profesional</h2>
+      <p>
+        Si el profesional conecta su calendario de Google, cada turno se refleja allí con tus iniciales, la modalidad y el estado, sin datos clínicos. Así se evitan superposiciones con otras actividades del profesional.
+      </p>
+      <h2>8. Conservación y derechos</h2>
       <p>
         Conservamos los datos mientras dure la relación profesional y el tiempo que exija la normativa aplicable. Podés solicitar acceso, rectificación, actualización o eliminación de tus datos escribiendo al profesional. Para menores de edad, los derechos se ejercen a través de madre, padre o tutor.
       </p>
-      <h2>8. Cambios</h2>
+      <h2>9. Cambios</h2>
       <p>Esta política puede actualizarse. Publicaremos la versión vigente en esta página e indicaremos la fecha de la última modificación.</p>
     </LegalPage>
   );

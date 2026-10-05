@@ -225,8 +225,22 @@ Desde **Pacientes › Nuevo paciente** con "Enviar invitación" marcado (o "Envi
 2. Anotá `Phone Number ID`, `WhatsApp Business Account ID` y creá un **System User** con un token permanente (permisos `whatsapp_business_messaging`, `whatsapp_business_management`). Van a `META_WHATSAPP_PHONE_NUMBER_ID`, `META_WHATSAPP_BUSINESS_ACCOUNT_ID` y `META_WHATSAPP_TOKEN`.
 3. En **App Settings › Basic** copiá el **App Secret** → `META_APP_SECRET`. Definí un `META_WEBHOOK_VERIFY_TOKEN` arbitrario.
 4. **WhatsApp › Configuration › Webhook**: URL `https://TU-DOMINIO/api/webhooks/whatsapp`, *Verify token* = `META_WEBHOOK_VERIFY_TOKEN`. Suscribí el campo `messages`.
-5. **Plantillas**: los mensajes iniciados por el negocio fuera de la ventana de 24 h (recordatorios, cambios de turno) requieren plantillas aprobadas. Creá en WhatsApp Manager plantillas con los parámetros en el mismo orden que las variables de cada plantilla en **Admin › WhatsApp › Plantillas** (p. ej. `recordatorio_sesion_24h` con `{{1}}` nombre, `{{2}}` profesional, `{{3}}` hora y botones de respuesta rápida *Confirmar / Reprogramar / Cancelar* con payloads `CONFIRM:{{id}}`…). Cargá el nombre aprobado en el campo "nombre de plantilla".
+5. **Plantillas**: fuera de la ventana de atención de 24 h (contada desde el último mensaje del paciente, con 15 min de margen) Meta solo acepta plantillas aprobadas. Si un aviso cae fuera de la ventana y no tiene plantilla cargada, **no se envía**: queda registrado como error y el panel muestra una advertencia. Creá en WhatsApp Manager estas plantillas (categoría *Utility*), con los parámetros en el mismo orden que las variables de **Admin › WhatsApp › Plantillas**, y cargá el nombre aprobado en "nombre de plantilla":
+
+   | Clave interna | Plantilla sugerida | Parámetros | Botones de respuesta rápida (payload) |
+   | --- | --- | --- | --- |
+   | `booking_registered` | `turno_registrado` | nombre, fecha, hora, modalidad | Confirmar (`CONFIRM:<id>`), Reprogramar (`RESCHEDULE:<id>`) |
+   | `booking_requested` | `solicitud_recibida` | nombre, fecha, hora | — |
+   | `request_approved` | `turno_aprobado` | nombre, fecha, hora, modalidad | Confirmar, Reprogramar |
+   | `reminder_24h` | `recordatorio_sesion_24h` | nombre, profesional, hora | Confirmar, Reprogramar, Cancelar (`CANCEL:<id>`) |
+   | `reminder_2h` | `recordatorio_sesion_2h` | nombre, profesional, hora, acceso | — |
+   | `appointment_changed` | `cambio_de_turno` | nombre, profesional, fecha, hora | Confirmar, Reprogramar, Cancelar |
+   | `cancellation_done` | `turno_cancelado` | nombre, fecha, hora | — |
+
+   Los recordatorios usan siempre la plantilla aprobada cuando está cargada, aunque la ventana esté abierta.
 6. Activá la secretaria en **Admin › WhatsApp › Configuración**.
+
+Derivación al profesional: cuando el contacto pide hablar con una persona (o ante una señal de crisis) la conversación queda **derivada** y la asistente deja de responder; el contacto puede volver al menú con un botón, la derivación expira sola a las 24 h y el profesional puede reactivar la asistente desde **Admin › WhatsApp** ("Reactivar asistente"). Los números se vinculan a una ficha por `whatsapp_phone` (o `phone` si aquel está vacío); si hay ambigüedad, el bot no identifica a nadie. El número de WhatsApp de la ficha solo lo cambia el profesional.
 
 Comportamiento: intents `BOOK_APPOINTMENT`, `RESCHEDULE_APPOINTMENT`, `CANCEL_APPOINTMENT`, `CONFIRM_APPOINTMENT`, `CHECK_AVAILABILITY`, `PRICING`, `PLANS`, `LOCATION`, `ONLINE_SESSION`, `LOGIN_HELP`, `SPEAK_TO_HUMAN`, `OTHER` (más `GREETING`/`THANKS`). Las reservas se confirman sólo tras una **segunda verificación** de disponibilidad y la RPC transaccional. Ante señales de crisis responde con el protocolo de emergencia configurado (recursos verificados por el profesional) y deriva; nunca hace psicoterapia. Los contactos pueden optar por no recibir mensajes (`STOP`).
 
@@ -273,10 +287,14 @@ Checklist antes de abrir al público: textos legales revisados y marcados como r
 ## 12. Seguridad y privacidad
 
 * **Autenticación**: Supabase Auth, cookies `httpOnly` gestionadas por `@supabase/ssr`, verificación con `getUser()` en el servidor, "mantener sesión" opcional (cookies de sesión), rate limiting en login/recuperación/reservas (`check_rate_limit`), sin enumeración de usuarios en "olvidé mi contraseña".
-* **RBAC + RLS**: roles `admin`, `professional`, `receptionist`, `guardian`, `patient` (preparados para crecer). Un paciente solo ve y escribe sus propios datos; triggers impiden cambiar rol, estado administrativo o campos ajenos aunque el frontend falle. 46 aserciones SQL lo verifican (`pnpm test:db`).
+* **RBAC + RLS**: roles `admin`, `professional`, `receptionist`, `guardian`, `patient` (preparados para crecer). Un paciente solo ve y escribe sus propios datos; triggers impiden cambiar rol, estado administrativo o campos ajenos aunque el frontend falle. 81 aserciones SQL lo verifican (`pnpm test:db`).
+* **Modelo de privilegios en la base**: `is_privileged()` es verdadero solo para conexiones directas sin JWT (migraciones, seed, cron interno), para `service_role` y para administradores; una petición anónima de la API **no** es privilegiada. Se revoca `EXECUTE` de todas las funciones a `public`/`anon`/`authenticated` y se otorga explícitamente lo necesario (p. ej. `check_rate_limit` y `cleanup_rate_limits` solo a `service_role`). Las RPC de agenda validan, para pacientes, que el horario pertenezca a la grilla publicada (`is_bookable_slot`), la anticipación mínima y el máximo de días; el estado inicial lo decide la base según `booking_mode`.
+* **Notas administrativas**: viven en tablas separadas (`patient_admin_notes`, `appointment_admin_notes`) con RLS solo para administradores, de modo que nunca viajan en las consultas que hace el paciente sobre su ficha o sus turnos.
+* **Consentimiento versionado**: si cambia `legal.consent_version`, el paciente debe aceptar de nuevo los textos en `/consentimiento` antes de seguir usando la app.
 * **Accesos cruzados**: la disponibilidad se calcula en el servidor con `service_role` y devuelve únicamente horarios libres; las notificaciones son por usuario; los registros emocionales/ejercicios se comparten con el profesional solo si el paciente lo permite (`share_records_with_professional`).
 * **Datos sensibles**: no se registran contenidos clínicos en logs (redacción automática en el logger); los eventos de Google solo llevan iniciales; los tokens OAuth van cifrados; el bucket de materiales es privado (URLs firmadas de 15 min).
-* **Webhooks**: firma HMAC en tiempo constante, idempotencia por `wa_message_id`, procesamiento diferido.
+* **Webhooks**: firma HMAC en tiempo constante, idempotencia por `wa_message_id`, procesamiento diferido. La tabla de idempotencia guarda solo metadatos (no el texto) y se purga a los 30 días (`/api/cron/housekeeping`).
+* **IA opcional**: si se activa un proveedor de IA, solo recibe el texto del mensaje entrante para clasificar el trámite; nunca ejecuta acciones y su salida se valida con Zod. La política de privacidad lo informa.
 * **Headers**: HSTS, `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`.
 * **Auditoría**: acciones críticas en `audit_logs` (inicios de sesión, cambios de turno, invitaciones, configuración, integraciones).
 * **Legal**: `/privacidad`, `/terminos` y el consentimiento en `/bienvenida` son **borradores** que deben revisarse con un profesional competente en derecho paraguayo (protección de datos personales y sensibles, información sanitaria, consentimiento informado, menores, ejercicio profesional de la psicología) antes de producción. La app muestra un aviso hasta que se marque como revisado.
@@ -298,10 +316,11 @@ Checklist antes de abrir al público: textos legales revisados y marcados como r
 ## 14. Tests
 
 ```bash
-pnpm test        # Vitest: 74 tests (motor de slots, reglas de agenda, clasificador, crisis,
+pnpm test        # Vitest: 87 tests (motor de slots, reglas de agenda, clasificador, crisis,
                  # firma/normalización de webhook, deduplicación de recordatorios, plantillas,
-                 # utilidades, esquemas de ejercicios, errores y componentes)
-pnpm test:db     # Migraciones + seed + 46 aserciones de RLS/permisos/double booking
+                 # ventana de 24 h, redirecciones seguras, utilidades, esquemas de ejercicios,
+                 # errores y componentes)
+pnpm test:db     # Migraciones + seed + 81 aserciones de RLS/permisos/grilla/double booking
 ```
 
 `pnpm test:db` funciona de dos formas:
@@ -309,7 +328,7 @@ pnpm test:db     # Migraciones + seed + 46 aserciones de RLS/permisos/double boo
 * **Supabase local** (`supabase start`): `SUPABASE_DB_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres pnpm test:db`
 * **PostgreSQL local sin Docker**: `PG_SUPERUSER_URL=postgresql://postgres@localhost:5432/postgres pnpm test:db` (crea la base `psicologia_test` con un stub mínimo de `auth`/`storage`).
 
-Qué cubren los tests SQL: aislamiento entre pacientes, imposibilidad de escalar rol o editar campos administrativos, reserva solo vía RPC, double booking y solapamientos rechazados, bloqueos respetados, ventanas de cancelación, notificaciones automáticas, privacidad de registros no compartidos, acceso anónimo limitado a contenido público y rate limiting.
+Qué cubren los tests SQL: aislamiento entre pacientes, imposibilidad de escalar rol o editar campos administrativos, reserva solo vía RPC y solo en horarios de la grilla publicada, double booking y solapamientos rechazados, bloqueos respetados, ventanas de cancelación y reprogramación, notificaciones automáticas, privacidad de registros no compartidos y de notas administrativas, RPC inaccesibles para `anon`, acceso anónimo limitado a contenido público y rate limiting.
 
 ## 15. Design System
 

@@ -7,6 +7,8 @@
 alter table public.roles                    enable row level security;
 alter table public.profiles                 enable row level security;
 alter table public.patients                 enable row level security;
+alter table public.patient_admin_notes      enable row level security;
+alter table public.appointment_admin_notes  enable row level security;
 alter table public.therapy_plans            enable row level security;
 alter table public.availability_rules       enable row level security;
 alter table public.blocked_slots            enable row level security;
@@ -51,6 +53,10 @@ create policy "patients: ver propio" on public.patients for select to authentica
 create policy "patients: actualizar propio" on public.patients for update to authenticated using (profile_id = auth.uid()) with check (profile_id = auth.uid());
 create policy "patients: admin gestiona" on public.patients for all to authenticated using (public.is_admin()) with check (public.is_admin());
 
+-- Notas administrativas: exclusivas del profesional (el paciente nunca las ve) -----
+create policy "patient_notes: admin gestiona" on public.patient_admin_notes for all to authenticated using (public.is_admin()) with check (public.is_admin());
+create policy "appointment_notes: admin gestiona" on public.appointment_admin_notes for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
 -- Therapy plans (públicos para la landing) ----------------------------------
 create policy "plans: lectura pública de activos" on public.therapy_plans for select to anon, authenticated using (is_active or public.is_admin());
 create policy "plans: admin gestiona" on public.therapy_plans for all to authenticated using (public.is_admin()) with check (public.is_admin());
@@ -81,7 +87,8 @@ create policy "prep: paciente gestiona propias" on public.session_preparations f
     patient_id = public.current_patient_id()
     and exists (select 1 from public.appointments a where a.id = session_preparations.appointment_id and a.patient_id = public.current_patient_id())
   );
-create policy "prep: admin lee" on public.session_preparations for select to authenticated using (public.is_admin());
+-- El profesional solo ve la preparación cuando el paciente la envía (los borradores son privados).
+create policy "prep: admin lee enviadas" on public.session_preparations for select to authenticated using (public.is_admin() and submitted_at is not null);
 
 -- Exercise templates --------------------------------------------------------
 create policy "exercises: lectura de activos" on public.exercise_templates for select to authenticated using (is_active or public.is_admin());

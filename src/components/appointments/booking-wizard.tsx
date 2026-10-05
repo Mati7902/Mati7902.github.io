@@ -74,13 +74,20 @@ export function BookingWizard({ mode, appointmentId, fixedModality, modalitiesEn
           : await rescheduleAppointmentAction({ appointmentId: appointmentId!, start: slot.start, end: slot.end });
       if (!res.ok) {
         toast.error(res.error);
-        if (res.code === "CONFLICT") {
+        // El horario dejó de estar disponible o ya no cumple las reglas: se recarga la grilla.
+        if (res.code === "CONFLICT" || res.code === "VALIDATION") {
           setSlot(null);
+          setSelectedDate(null);
           setStepIndex(steps.indexOf("slot"));
           const key = `${modality}:${appointmentId ?? ""}`;
           setAvailability(null);
           getAvailabilityAction({ modality, excludeAppointmentId: appointmentId }).then((r) => {
-            if (r.ok) setAvailability({ key, days: r.data.days, bookingMode: r.data.bookingMode, error: null });
+            if (!r.ok) {
+              setAvailability({ key, days: [], bookingMode: "approval", error: r.error });
+              return;
+            }
+            setAvailability({ key, days: r.data.days, bookingMode: r.data.bookingMode, error: null });
+            setSelectedDate(r.data.days[0]?.dateKey ?? null);
           });
         }
         return;
@@ -135,7 +142,13 @@ export function BookingWizard({ mode, appointmentId, fixedModality, modalitiesEn
                 <button
                   key={m}
                   type="button"
-                  onClick={() => setModality(m)}
+                  onClick={() => {
+                    if (modality === m) return;
+                    // Cada modalidad tiene su propia grilla: un horario elegido antes deja de valer.
+                    setModality(m);
+                    setSlot(null);
+                    setSelectedDate(null);
+                  }}
                   aria-pressed={selected}
                   className={cn(
                     "flex flex-col items-start gap-3 rounded-2xl border p-5 text-left transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/40 outline-none",

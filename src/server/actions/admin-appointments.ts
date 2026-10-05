@@ -8,12 +8,20 @@ import { type ActionResult, fail, ok, validationFail, AppError, fromDatabaseErro
 import { createClient } from "@/lib/supabase/server";
 import { zodFieldErrors } from "@/lib/validation";
 import { cancelAppointment, confirmAppointment, createAppointment, getAvailableSlots, rescheduleAppointment } from "@/server/services/appointments";
-import { notifyAppointmentEvent } from "@/server/services/appointment-notifications";
+import { notifyAppointmentEvent, type AppointmentMessageKind } from "@/server/services/appointment-notifications";
+import { saveAdminNote } from "@/server/services/admin-notes";
 import { audit } from "@/server/services/audit";
 import { syncAppointmentToGoogle } from "@/server/services/google-calendar/sync";
 import type { SerializedAvailabilityDay } from "@/server/actions/appointments";
 
 const sourceAdmin = "admin" as const;
+
+/** Envía el aviso por WhatsApp y devuelve una advertencia legible si el envío falló (no bloquea la acción). */
+async function notifyWithWarning(appointmentId: string, kind: AppointmentMessageKind): Promise<string | undefined> {
+  const result = await notifyAppointmentEvent(appointmentId, kind);
+  if (result && !result.ok) return `El cambio se guardó, pero no pudimos avisar por WhatsApp (${result.error}).`;
+  return undefined;
+}
 
 function revalidateAgenda(patientId?: string) {
   revalidatePath("/admin");
@@ -47,7 +55,7 @@ const createSchema = z.object({
   notify: z.boolean().default(true),
 });
 
-export async function adminCreateAppointmentAction(input: z.infer<typeof createSchema>): Promise<ActionResult<{ id: string }>> {
+export async function adminCreateAppointmentAction(input: z.infer<typeof createSchema>): Promise<ActionResult<{ id: string; warning?: string }>> {
   const parsed = createSchema.safeParse(input);
   if (!parsed.success) return validationFail(zodFieldErrors(parsed.error));
   try {
@@ -66,11 +74,11 @@ export async function adminCreateAppointmentAction(input: z.infer<typeof createS
       location: parsed.data.location || null,
       adminNotes: parsed.data.adminNotes || null,
     });
-    await audit(supabase, "appointment.created_by_admin", { type: "appointment", id: appointment.id }, { status: appointment.status });
-    if (parsed.data.notify) await notifyAppointmentEvent(appointment.id, "booking_registered");
+    const warning = parsed.data.notify ? await notifyWithWarning(appointment.id, "booking_registered") : undefined;
+    await audit(supabase, "appointment.created_by_admin", { type: "appointment", id: appointment.id }, { status: appointment.status, whatsapp_failed: Boolean(warning) });
     await syncAppointmentToGoogle(appointment.id);
     revalidateAgenda(appointment.patient_id);
-    return ok({ id: appointment.id });
+    return ok({ id: appointment.id, warning });
   } catch (error) {
     return fail(error);
   }
@@ -88,7 +96,7 @@ export async function adminUpdateAppointmentDetailsAction(input: z.infer<typeof 
   const parsed = updateSchema.safeParse(input);
   if (!parsed.success) return validationFail(zodFieldErrors(parsed.error));
   try {
-    await assertAdmin();
+    const session = await assertAdmin();
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("appointments")
@@ -96,13 +104,15 @@ export async function adminUpdateAppointmentDetailsAction(input: z.infer<typeof 
         ...(parsed.data.modality ? { modality: parsed.data.modality } : {}),
         video_link: parsed.data.videoLink || null,
         location: parsed.data.location || null,
-        admin_notes: parsed.data.adminNotes || null,
         google_sync_status: "pending",
       })
       .eq("id", parsed.data.appointmentId)
       .select("id, patient_id")
       .single();
     if (error) throw fromDatabaseError(error);
+    if (parsed.data.adminNotes !== undefined) {
+      await saveAdminNote(supabase, { kind: "appointment", id: data.id }, parsed.data.adminNotes, session.userId);
+    }
     await audit(supabase, "appointment.details_updated", { type: "appointment", id: data.id });
     await syncAppointmentToGoogle(data.id);
     revalidateAgenda(data.patient_id);
@@ -114,7 +124,7 @@ export async function adminUpdateAppointmentDetailsAction(input: z.infer<typeof 
 
 const rescheduleSchema = z.object({ appointmentId: z.string().uuid(), start: z.string().datetime(), durationMinutes: z.number().int().min(15).max(240), reason: z.string().trim().max(300).optional().nullable(), notify: z.boolean().default(true) });
 
-export async function adminRescheduleAppointmentAction(input: z.infer<typeof rescheduleSchema>): Promise<ActionResult> {
+export async function adminRescheduleAppointmentAction(input: z.infer<typeof rescheduleSchema>): Promise<ActionResult<{ warning?: string }>> {
   const parsed = rescheduleSchema.safeParse(input);
   if (!parsed.success) return validationFail(zodFieldErrors(parsed.error));
   try {
@@ -123,11 +133,11 @@ export async function adminRescheduleAppointmentAction(input: z.infer<typeof res
     const start = new Date(parsed.data.start);
     const end = new Date(start.getTime() + parsed.data.durationMinutes * 60_000);
     const updated = await rescheduleAppointment(supabase, { appointmentId: parsed.data.appointmentId, start, end, newStatus: "rescheduled", reason: parsed.data.reason ?? "Modificado por el profesional", source: sourceAdmin });
-    await audit(supabase, "appointment.rescheduled_by_admin", { type: "appointment", id: updated.id });
-    if (parsed.data.notify) await notifyAppointmentEvent(updated.id, "appointment_changed");
+    const warning = parsed.data.notify ? await notifyWithWarning(updated.id, "appointment_changed") : undefined;
+    await audit(supabase, "appointment.rescheduled_by_admin", { type: "appointment", id: updated.id }, { whatsapp_failed: Boolean(warning) });
     await syncAppointmentToGoogle(updated.id);
     revalidateAgenda(updated.patient_id);
-    return ok(undefined);
+    return ok({ warning });
   } catch (error) {
     return fail(error);
   }
@@ -135,7 +145,7 @@ export async function adminRescheduleAppointmentAction(input: z.infer<typeof res
 
 const statusSchema = z.object({ appointmentId: z.string().uuid(), status: z.enum(["confirmed", "completed", "no_show", "pending"]), reason: z.string().trim().max(300).optional().nullable() });
 
-export async function adminSetAppointmentStatusAction(input: z.infer<typeof statusSchema>): Promise<ActionResult> {
+export async function adminSetAppointmentStatusAction(input: z.infer<typeof statusSchema>): Promise<ActionResult<{ warning?: string }>> {
   const parsed = statusSchema.safeParse(input);
   if (!parsed.success) return validationFail(zodFieldErrors(parsed.error));
   try {
@@ -153,28 +163,28 @@ export async function adminSetAppointmentStatusAction(input: z.infer<typeof stat
         .eq("id", current.id);
       if (error) throw fromDatabaseError(error);
     }
-    await audit(supabase, `appointment.status_${parsed.data.status}`, { type: "appointment", id: current.id }, { previous: current.status });
-    if (wasRequest && parsed.data.status === "confirmed") await notifyAppointmentEvent(current.id, "request_approved");
+    const warning = wasRequest && parsed.data.status === "confirmed" ? await notifyWithWarning(current.id, "request_approved") : undefined;
+    await audit(supabase, `appointment.status_${parsed.data.status}`, { type: "appointment", id: current.id }, { previous: current.status, whatsapp_failed: Boolean(warning) });
     await syncAppointmentToGoogle(current.id);
     revalidateAgenda(current.patient_id);
-    return ok(undefined);
+    return ok({ warning });
   } catch (error) {
     return fail(error);
   }
 }
 
-export async function adminCancelAppointmentAction(input: { appointmentId: string; reason?: string | null; notify?: boolean }): Promise<ActionResult> {
+export async function adminCancelAppointmentAction(input: { appointmentId: string; reason?: string | null; notify?: boolean }): Promise<ActionResult<{ warning?: string }>> {
   const parsed = z.object({ appointmentId: z.string().uuid(), reason: z.string().trim().max(300).optional().nullable(), notify: z.boolean().default(true) }).safeParse(input);
   if (!parsed.success) return validationFail(zodFieldErrors(parsed.error));
   try {
     await assertAdmin();
     const supabase = await createClient();
     const updated = await cancelAppointment(supabase, parsed.data.appointmentId, parsed.data.reason ?? null, sourceAdmin);
-    await audit(supabase, "appointment.cancelled_by_admin", { type: "appointment", id: updated.id });
-    if (parsed.data.notify) await notifyAppointmentEvent(updated.id, "cancellation_done");
+    const warning = parsed.data.notify ? await notifyWithWarning(updated.id, "cancellation_done") : undefined;
+    await audit(supabase, "appointment.cancelled_by_admin", { type: "appointment", id: updated.id }, { whatsapp_failed: Boolean(warning) });
     await syncAppointmentToGoogle(updated.id);
     revalidateAgenda(updated.patient_id);
-    return ok(undefined);
+    return ok({ warning });
   } catch (error) {
     return fail(error);
   }

@@ -25,6 +25,11 @@ export async function GET(request: NextRequest) {
   try {
     const admin = createAdminClient();
     const [{ data: cleaned }, google] = await Promise.all([admin.rpc("cleanup_rate_limits"), pullGoogleChanges()]);
+    // Retención mínima: los eventos de webhook solo sirven para idempotencia (30 días alcanzan).
+    const { count: purgedEvents } = await admin
+      .from("whatsapp_webhook_events")
+      .delete({ count: "exact" })
+      .lt("received_at", new Date(Date.now() - 30 * 24 * 3600_000).toISOString());
     const twoDaysAgo = new Date(Date.now() - 2 * 24 * 3600_000).toISOString();
     const { data: stale } = await admin
       .from("appointments")
@@ -32,7 +37,7 @@ export async function GET(request: NextRequest) {
       .in("status", ["pending", "rescheduled"])
       .lt("end_time", twoDaysAgo)
       .select("id");
-    return NextResponse.json({ ok: true, rate_limit_rows_removed: cleaned ?? 0, google, stale_marked_no_show: stale?.length ?? 0 });
+    return NextResponse.json({ ok: true, rate_limit_rows_removed: cleaned ?? 0, webhook_events_purged: purgedEvents ?? 0, google, stale_marked_no_show: stale?.length ?? 0 });
   } catch (error) {
     log.error("Housekeeping falló", errorMeta(error));
     return NextResponse.json({ ok: false }, { status: 500 });

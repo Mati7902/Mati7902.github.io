@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { ConversationList, MessageThread, type ConversationRow } from "@/components/admin/whatsapp/conversation-viewer";
+import { ResumeConversationButton } from "@/components/admin/whatsapp/resume-conversation-button";
 import { TemplateEditor, type TemplateRow } from "@/components/admin/whatsapp/template-editor";
 import { WhatsAppSettingsForm } from "@/components/admin/whatsapp/whatsapp-settings-form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -52,6 +53,17 @@ export default async function WhatsAppAdminPage({ searchParams }: { searchParams
           <div className="grid gap-6 lg:grid-cols-[1fr_1.4fr]">
             <ConversationList conversations={(conversations ?? []) as ConversationRow[]} selectedId={selected?.id ?? null} />
             <div className="space-y-3">
+              {selected?.status === "handed_off" ? (
+                <Alert variant="warning">
+                  <AlertTitle>Conversación derivada al profesional</AlertTitle>
+                  <AlertDescription>
+                    <p>La asistente no responde mientras la conversación esté derivada (vuelve sola a las 24 h). Reactivala cuando hayas atendido el mensaje.</p>
+                    <div className="mt-3">
+                      <ResumeConversationButton conversationId={selected.id} />
+                    </div>
+                  </AlertDescription>
+                </Alert>
+              ) : null}
               {selected ? (
                 <div className="flex items-center justify-between text-sm">
                   <p className="font-medium">{selected.whatsapp_contacts?.display_name ?? selected.whatsapp_contacts?.phone}</p>

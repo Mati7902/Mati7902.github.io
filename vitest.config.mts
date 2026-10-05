@@ -13,9 +13,9 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(import.meta.dirname, "./src"),
       // Los módulos marcados "server-only" se pueden importar en tests unitarios de lógica pura.
-      "server-only": path.resolve(__dirname, "./tests/mocks/server-only.ts"),
+      "server-only": path.resolve(import.meta.dirname, "./tests/mocks/server-only.ts"),
     },
   },
 });

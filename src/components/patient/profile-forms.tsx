@@ -29,7 +29,7 @@ export function ContactForm({ patient }: { patient: Patient }) {
           <AlertDescription>{state.error}</AlertDescription>
         </Alert>
       ) : null}
-      <FormField id={`${id}-phone`} label="Teléfono / WhatsApp" error={errors.phone} hint="Lo usamos para recordatorios de sesión.">
+      <FormField id={`${id}-phone`} label="Teléfono de contacto" error={errors.phone} hint={patient.whatsapp_phone ? `Los recordatorios por WhatsApp llegan al ${patient.whatsapp_phone}. Para cambiar ese número, avisale al profesional.` : "Para recibir recordatorios por WhatsApp, pedile al profesional que registre tu número."}>
         <Input id={`${id}-phone`} name="phone" type="tel" inputMode="tel" autoComplete="tel" defaultValue={patient.phone ?? ""} placeholder="0981 123 456" />
       </FormField>
       <div className="grid gap-5 sm:grid-cols-2">

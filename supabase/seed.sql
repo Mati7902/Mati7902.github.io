@@ -19,19 +19,35 @@ declare
   v_cat_ansiedad uuid; v_cat_regulacion uuid; v_cat_sueno uuid; v_cat_psico uuid; v_cat_autoestima uuid;
 begin
   -- Usuarios de auth (el trigger handle_new_user crea los perfiles). -----------
+  -- GoTrue no admite NULL en las columnas de tokens/cambios: se inicializan con cadena vacía.
   insert into auth.users (
     id, instance_id, aud, role, email, encrypted_password, email_confirmed_at,
-    raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token
+    raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+    confirmation_token, recovery_token, email_change, email_change_token_new,
+    email_change_token_current, phone_change, phone_change_token, reauthentication_token
   ) values
   (v_admin_id, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'admin@demo.local',
    crypt('DemoAdmin!2026', gen_salt('bf')), now(),
    '{"provider":"email","providers":["email"],"role":"admin"}'::jsonb,
-   '{"first_name":"Matías","last_name":"Sánchez"}'::jsonb, now(), now(), '', ''),
+   '{"first_name":"Matías","last_name":"Sánchez"}'::jsonb, now(), now(), '', '', '', '', '', '', '', ''),
   (v_juan_id, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'juan.perez@demo.local',
    crypt('DemoPaciente!2026', gen_salt('bf')), now(),
    '{"provider":"email","providers":["email"]}'::jsonb,
-   '{"first_name":"Juan","last_name":"Pérez"}'::jsonb, now(), now(), '', '')
+   '{"first_name":"Juan","last_name":"Pérez"}'::jsonb, now(), now(), '', '', '', '', '', '', '', '')
   on conflict (id) do nothing;
+
+  -- Identidades de email (requeridas por GoTrue para iniciar sesión con contraseña).
+  if to_regclass('auth.identities') is not null then
+    execute $q$
+      insert into auth.identities (id, user_id, provider_id, provider, identity_data, last_sign_in_at, created_at, updated_at)
+      select gen_random_uuid(), u.id, u.id::text, 'email',
+             jsonb_build_object('sub', u.id::text, 'email', u.email, 'email_verified', true),
+             now(), now(), now()
+      from auth.users u
+      where u.id in ('11111111-1111-4111-8111-111111111111', '22222222-2222-4222-8222-222222222222')
+        and not exists (select 1 from auth.identities i where i.user_id = u.id and i.provider = 'email')
+    $q$;
+  end if;
 
   -- Si el trigger no corrió (entornos de prueba), asegurar perfiles. ---------
   insert into public.profiles (id, role, email, first_name, last_name)

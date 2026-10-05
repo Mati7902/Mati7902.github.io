@@ -4,8 +4,8 @@ import { addDays } from "date-fns";
 
 import { AppError, fromDatabaseError } from "@/lib/errors";
 import { createLogger } from "@/lib/logger";
-import { generateDaySlots, isWithinAvailability, upcomingAvailableDates, type BusyRange, type Slot } from "@/lib/scheduling/slots";
-import { toDateKey } from "@/lib/dates";
+import { generateDaySlots, upcomingAvailableDates, type BusyRange, type Slot } from "@/lib/scheduling/slots";
+import { toDateKey, zonedToUtc } from "@/lib/dates";
 import { createAdminClient, type AdminSupabaseClient } from "@/lib/supabase/admin";
 import type { ServerSupabaseClient } from "@/lib/supabase/server";
 import { getGoogleBusyRanges } from "@/server/services/google-calendar/sync";
@@ -54,19 +54,18 @@ export async function listPatientAppointments(client: AnyClient, patientId: stri
   return { upcoming: upcoming.data ?? [], past: past.data ?? [] };
 }
 
+/** Columnas para vistas del profesional: datos del paciente y nota administrativa (tabla aparte, solo admin). */
+export const ADMIN_APPOINTMENT_SELECT = "*, patients(id, first_name, last_name, phone, whatsapp_phone, email, profile_id), appointment_admin_notes(notes)";
+
 export async function getAppointmentById(client: AnyClient, id: string): Promise<AppointmentWithPatient | null> {
-  const { data } = await client
-    .from("appointments")
-    .select("*, patients(id, first_name, last_name, phone, whatsapp_phone, email, profile_id)")
-    .eq("id", id)
-    .maybeSingle();
+  const { data } = await client.from("appointments").select(ADMIN_APPOINTMENT_SELECT).eq("id", id).maybeSingle();
   return (data as AppointmentWithPatient | null) ?? null;
 }
 
 export async function listAppointmentsBetween(client: AnyClient, from: Date, to: Date, statuses?: AppointmentStatus[]): Promise<AppointmentWithPatient[]> {
   let query = client
     .from("appointments")
-    .select("*, patients(id, first_name, last_name, phone, whatsapp_phone, email, profile_id)")
+    .select(ADMIN_APPOINTMENT_SELECT)
     .gte("start_time", from.toISOString())
     .lt("start_time", to.toISOString())
     .order("start_time", { ascending: true });
@@ -90,12 +89,12 @@ export async function getAppointmentHistory(client: AnyClient, appointmentId: st
 /* ------------------------------------------------------------------------ */
 export type AvailabilityDay = { dateKey: string; slots: Slot[] };
 
-async function loadAvailabilityContext(admin: AdminSupabaseClient, from: Date, to: Date) {
+async function loadAvailabilityContext(admin: AdminSupabaseClient, from: Date, to: Date, excludeAppointmentId?: string) {
   const [{ data: rules }, { data: appointments }, { data: blocked }] = await Promise.all([
     admin.from("availability_rules").select("*").eq("is_active", true),
     admin
       .from("appointments")
-      .select("start_time, end_time")
+      .select("id, start_time, end_time")
       .neq("status", "cancelled")
       .lt("start_time", to.toISOString())
       .gt("end_time", from.toISOString()),
@@ -105,11 +104,16 @@ async function loadAvailabilityContext(admin: AdminSupabaseClient, from: Date, t
       .lt("start_time", to.toISOString())
       .gt("end_time", from.toISOString()),
   ]);
+  const own = excludeAppointmentId ? (appointments ?? []).find((a) => a.id === excludeAppointmentId) : undefined;
   const busy: BusyRange[] = [
-    ...(appointments ?? []).map((a) => ({ start: new Date(a.start_time), end: new Date(a.end_time) })),
+    ...(appointments ?? []).filter((a) => a.id !== excludeAppointmentId).map((a) => ({ start: new Date(a.start_time), end: new Date(a.end_time) })),
     ...(blocked ?? []).map((b) => ({ start: new Date(b.start_time), end: new Date(b.end_time) })),
   ];
-  return { rules: (rules ?? []) as AvailabilityRule[], busy };
+  return {
+    rules: (rules ?? []) as AvailabilityRule[],
+    busy,
+    ownRange: own ? { start: new Date(own.start_time), end: new Date(own.end_time) } : null,
+  };
 }
 
 /**
@@ -134,20 +138,8 @@ export async function getAvailableSlots(options: {
   from.setUTCDate(from.getUTCDate() - 1);
   const to = addDays(from, days + 2);
 
-  const [{ rules, busy: localBusy }, googleBusy] = await Promise.all([loadAvailabilityContext(admin, from, to), getGoogleBusyRanges(from, to)]);
-  const busy = [...localBusy, ...googleBusy];
-
-  // Al reprogramar, el turno propio no debe bloquear su propio horario.
-  let filteredBusy = busy;
-  if (options.excludeAppointmentId) {
-    const { data: own } = await admin.from("appointments").select("start_time, end_time").eq("id", options.excludeAppointmentId).maybeSingle();
-    if (own) {
-      const s = new Date(own.start_time).getTime();
-      const e = new Date(own.end_time).getTime();
-      filteredBusy = busy.filter((b) => !(b.start.getTime() === s && b.end.getTime() === e));
-    }
-  }
-  if (options.externalBusy?.length) filteredBusy = [...filteredBusy, ...options.externalBusy];
+  const { rules, busy } = await loadBusyContext(admin, from, to, options.excludeAppointmentId);
+  const filteredBusy = options.externalBusy?.length ? [...busy, ...options.externalBusy] : busy;
 
   const dateKeys = upcomingAvailableDates(rules, tz, days, new Date(`${startKey}T12:00:00Z`));
   const result: AvailabilityDay[] = dateKeys.map((dateKey) => ({
@@ -158,7 +150,8 @@ export async function getAvailableSlots(options: {
       rules,
       busy: filteredBusy,
       modality: options.modality,
-      durationMinutes: options.durationMinutes ?? settings.default_duration_minutes,
+      // Sin duración explícita se usa la de cada regla (pueden convivir franjas de 50 y 60 min).
+      durationMinutes: options.durationMinutes,
       now,
       minHoursBeforeBooking: settings.min_hours_before_booking,
       maxDaysInAdvance: settings.max_days_in_advance,
@@ -168,24 +161,44 @@ export async function getAvailableSlots(options: {
   return { days: result.filter((d) => d.slots.length > 0), settings };
 }
 
-/** Valida que un instante concreto sea reservable según reglas y ocupación (segunda verificación). */
-export async function assertSlotAvailable(start: Date, end: Date, modality: AppointmentModality, excludeAppointmentId?: string) {
+/**
+ * Reglas + ocupación (turnos, bloqueos, calendario externo) de una ventana. Al reprogramar,
+ * el turno propio no bloquea su propio horario: se excluye por id (no por coincidencia de hora,
+ * para no ocultar por error un bloqueo externo que empiece a la misma hora).
+ */
+async function loadBusyContext(admin: AdminSupabaseClient, from: Date, to: Date, excludeAppointmentId?: string) {
+  const [{ rules, busy: localBusy, ownRange }, googleBusy] = await Promise.all([
+    loadAvailabilityContext(admin, from, to, excludeAppointmentId),
+    getGoogleBusyRanges(from, to),
+  ]);
+  // El evento de Google del propio turno (si está sincronizado) también se ignora.
+  const external = ownRange
+    ? googleBusy.filter((b) => !(b.start.getTime() === ownRange.start.getTime() && b.end.getTime() === ownRange.end.getTime()))
+    : googleBusy;
+  return { rules, busy: [...localBusy, ...external] };
+}
+
+/**
+ * Segunda verificación antes de reservar o reprogramar: el inicio pedido debe coincidir con un
+ * turno generado por la grilla (regla, duración, intervalo, anticipación, máximo de días) y estar
+ * libre. El FIN lo decide el servidor (duración de la regla): nunca se confía en el del cliente.
+ */
+export async function assertSlotAvailable(start: Date, modality: AppointmentModality, excludeAppointmentId?: string): Promise<{ settings: SchedulingSettings; end: Date }> {
   const admin = createAdminClient();
   const settings = await getSetting(admin, "scheduling");
-  const [{ rules, busy: localBusy }, googleBusy] = await Promise.all([loadAvailabilityContext(admin, start, end), getGoogleBusyRanges(start, end)]);
-  const busy = [...localBusy, ...googleBusy];
-  if (!isWithinAvailability(start, end, rules, settings.timezone, modality)) {
-    throw new AppError("VALIDATION", "Ese horario está fuera de la disponibilidad del profesional.");
-  }
-  let effectiveBusy = busy;
-  if (excludeAppointmentId) {
-    const { data: own } = await admin.from("appointments").select("start_time, end_time").eq("id", excludeAppointmentId).maybeSingle();
-    if (own) effectiveBusy = busy.filter((b) => !(b.start.getTime() === new Date(own.start_time).getTime()));
-  }
-  if (effectiveBusy.some((b) => start < b.end && b.start < end)) {
-    throw new AppError("CONFLICT", "Ese horario ya no está disponible. Elegí otro.");
-  }
-  return settings;
+  const tz = settings.timezone;
+  const dateKey = toDateKey(start, tz);
+  const dayStart = zonedToUtc(dateKey, "00:00", tz);
+  const dayEnd = addDays(dayStart, 1);
+  const { rules, busy } = await loadBusyContext(admin, dayStart, dayEnd, excludeAppointmentId);
+  const base = { dateKey, timezone: tz, rules, modality, now: new Date(), minHoursBeforeBooking: settings.min_hours_before_booking, maxDaysInAdvance: settings.max_days_in_advance };
+
+  const match = generateDaySlots({ ...base, busy }).find((s) => s.start.getTime() === start.getTime());
+  if (match) return { settings, end: match.end };
+
+  const existsInGrid = generateDaySlots({ ...base, busy: [] }).some((s) => s.start.getTime() === start.getTime());
+  if (existsInGrid) throw new AppError("CONFLICT", "Ese horario ya no está disponible. Elegí otro.");
+  throw new AppError("VALIDATION", "Ese horario está fuera de la disponibilidad del profesional.");
 }
 
 /* ------------------------------------------------------------------------ */

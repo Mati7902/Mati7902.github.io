@@ -34,6 +34,8 @@ export type AuditLog = Tables<"audit_logs">;
 
 export type AppointmentWithPatient = Appointment & {
   patients: Pick<Patient, "id" | "first_name" | "last_name" | "phone" | "whatsapp_phone" | "email" | "profile_id"> | null;
+  /** Solo presente en consultas del profesional (RLS la oculta al paciente). */
+  appointment_admin_notes?: { notes: string } | null;
 };
 
 export const APPOINTMENT_STATUS_LABEL: Record<AppointmentStatus, string> = {

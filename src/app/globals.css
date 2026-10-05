@@ -35,7 +35,7 @@
   /* Neutros */
   --muted: #f3f0eb;
   --muted-foreground: #5b6b70;
-  --subtle-foreground: #8a979b;
+  --subtle-foreground: #5f6f74; /* ≥ 4.5:1 sobre fondo y superficies (WCAG AA) */
   --border: #e6e2dc;
   --divider: #ede9e3;
   --input: #e6e2dc;

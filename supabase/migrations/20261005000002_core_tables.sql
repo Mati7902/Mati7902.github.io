@@ -52,7 +52,6 @@ create table public.patients (
   modality                         public.care_modality not null default 'mixta',
   status                           public.patient_status not null default 'active',
   admission_date                   date not null default current_date,
-  admin_notes                      text,          -- notas administrativas, NO clínicas
   share_records_with_professional  boolean not null default true,
   consent_accepted_at              timestamptz,
   consent_version                  text,
@@ -63,7 +62,17 @@ create table public.patients (
 );
 create unique index patients_email_unique on public.patients (lower(email)) where email is not null;
 create index patients_phone_idx on public.patients (phone);
+create index patients_whatsapp_phone_idx on public.patients (whatsapp_phone);
 create index patients_status_idx on public.patients (status);
+
+-- Notas administrativas del profesional sobre el paciente (horarios, pagos, derivación).
+-- Tabla separada: el paciente puede leer su propia ficha, pero NUNCA estas notas.
+create table public.patient_admin_notes (
+  patient_id uuid primary key references public.patients (id) on delete cascade,
+  notes      text not null,
+  updated_by uuid references public.profiles (id) on delete set null,
+  updated_at timestamptz not null default now()
+);
 
 -- ---------------------------------------------------------------------------
 -- Planes / servicios
@@ -135,7 +144,6 @@ create table public.appointments (
   video_link            text,
   location              text,
   patient_note          text,     -- comentario breve del paciente al solicitar (no clínico)
-  admin_notes           text,     -- notas administrativas
   confirmed_at          timestamptz,
   cancelled_at          timestamptz,
   cancelled_by          uuid references public.profiles (id) on delete set null,
@@ -159,9 +167,18 @@ create table public.appointments (
 create index appointments_patient_idx on public.appointments (patient_id, start_time desc);
 create index appointments_start_idx on public.appointments (start_time);
 create index appointments_status_idx on public.appointments (status);
+-- Coincide con la consulta del job de recordatorios (estados activos dentro de una ventana de start_time).
 create index appointments_reminder_idx on public.appointments (start_time)
-  where status = 'confirmed' and reminder_24h_sent_at is null;
+  where status in ('pending', 'confirmed', 'rescheduled');
 create unique index appointments_google_event_idx on public.appointments (google_event_id) where google_event_id is not null;
+
+-- Notas administrativas del turno (solo profesional).
+create table public.appointment_admin_notes (
+  appointment_id uuid primary key references public.appointments (id) on delete cascade,
+  notes          text not null,
+  updated_by     uuid references public.profiles (id) on delete set null,
+  updated_at     timestamptz not null default now()
+);
 
 create table public.appointment_history (
   id                  uuid primary key default gen_random_uuid(),

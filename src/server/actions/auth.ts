@@ -4,15 +4,16 @@ import { headers, cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-import { getServerEnv, publicEnv } from "@/lib/env";
+import { publicEnv } from "@/lib/env";
 import { type ActionResult, fail, ok, validationFail, AppError } from "@/lib/errors";
 import { createLogger, errorMeta } from "@/lib/logger";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { SESSION_ONLY_COOKIE } from "@/lib/supabase/cookies";
 import { createClient } from "@/lib/supabase/server";
 import { parseForm } from "@/lib/validation";
 import { getSession } from "@/lib/auth/session";
+import { safeInternalPath } from "@/lib/safe-redirect";
 import { audit } from "@/server/services/audit";
+import { allowAttempt } from "@/server/services/rate-limit";
 
 const log = createLogger("auth");
 
@@ -29,31 +30,12 @@ const signInSchema = z.object({
   next: z.string().optional(),
 });
 
-/** Solo permitimos redirecciones internas (evita open redirects). */
-function safeNext(next: string | undefined, fallback: string): string {
-  if (!next) return fallback;
-  if (!next.startsWith("/") || next.startsWith("//") || next.includes("://")) return fallback;
-  return next;
-}
 
 async function clientIp(): Promise<string> {
   const h = await headers();
   return h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip") || "unknown";
 }
 
-/** Rate limit opcional (si hay service role). Falla abierto para no bloquear el login por infraestructura. */
-async function allowAttempt(key: string, limit: number, windowSeconds: number): Promise<boolean> {
-  try {
-    const env = getServerEnv();
-    if (!env.SUPABASE_SERVICE_ROLE_KEY) return true;
-    const admin = createAdminClient();
-    const { data, error } = await admin.rpc("check_rate_limit", { p_key: key, p_limit: limit, p_window_seconds: windowSeconds });
-    if (error) return true;
-    return data !== false;
-  } catch {
-    return true;
-  }
-}
 
 export async function signInAction(_prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
   const parsed = parseForm(signInSchema, formData);
@@ -87,7 +69,7 @@ export async function signInAction(_prev: ActionResult | null, formData: FormDat
 
   await audit(supabase, "auth.sign_in", { type: "profile", id: data.user.id }, { ip });
   const isAdmin = profile.role === "admin" || profile.role === "professional";
-  redirect(safeNext(next, isAdmin ? "/admin" : "/app"));
+  redirect(safeInternalPath(next, isAdmin ? "/admin" : "/app"));
 }
 
 export async function signOutAction(): Promise<void> {
@@ -152,6 +134,38 @@ const completeInvitationSchema = z
   })
   .refine((v) => v.password === v.confirm, { message: "Las contraseñas no coinciden.", path: ["confirm"] });
 
+const consentSchema = z.object({
+  consent: z.coerce.boolean().refine((v) => v, "Necesitamos tu aceptación para continuar."),
+});
+
+/** Versión vigente del consentimiento según la configuración (`legal.consent_version`). */
+async function currentConsentVersion(supabase: Awaited<ReturnType<typeof createClient>>): Promise<string> {
+  const { data: legal } = await supabase.from("settings").select("value").eq("key", "legal").maybeSingle();
+  return (legal?.value as { consent_version?: string } | null)?.consent_version ?? "draft";
+}
+
+/** Re-aceptación cuando cambian los textos legales (la pide el layout del paciente). */
+export async function acceptConsentAction(_prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
+  const parsed = parseForm(consentSchema, formData);
+  if (parsed.errors) return validationFail(parsed.errors);
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return fail(new AppError("UNAUTHENTICATED", "Tu sesión expiró. Volvé a ingresar."));
+  const version = await currentConsentVersion(supabase);
+  const { error } = await supabase
+    .from("patients")
+    .update({ consent_accepted_at: new Date().toISOString(), consent_version: version })
+    .eq("profile_id", user.id);
+  if (error) {
+    log.warn("No se pudo registrar el consentimiento", errorMeta(error));
+    return fail(new AppError("UNKNOWN", "No pudimos guardar tu aceptación. Intentá de nuevo."));
+  }
+  await audit(supabase, "auth.consent_accepted", { type: "profile", id: user.id }, { consent_version: version });
+  redirect("/app");
+}
+
 export async function completeInvitationAction(_prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
   const parsed = parseForm(completeInvitationSchema, formData);
   if (parsed.errors) return validationFail(parsed.errors);
@@ -165,8 +179,7 @@ export async function completeInvitationAction(_prev: ActionResult | null, formD
   const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
   if (error) return fail(new AppError("VALIDATION", "No pudimos guardar la contraseña. Intentá de nuevo."));
 
-  const { data: legal } = await supabase.from("settings").select("value").eq("key", "legal").maybeSingle();
-  const version = (legal?.value as { consent_version?: string } | null)?.consent_version ?? "draft";
+  const version = await currentConsentVersion(supabase);
   await supabase
     .from("patients")
     .update({ consent_accepted_at: new Date().toISOString(), consent_version: version })
