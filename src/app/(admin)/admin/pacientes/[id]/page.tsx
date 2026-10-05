@@ -16,7 +16,7 @@ import { formatCompactDate, formatShortDate, formatTime, capitalize, nowMs } fro
 import { createClient } from "@/lib/supabase/server";
 import { getPatientOverview } from "@/server/services/admin-patients";
 import { getSetting } from "@/server/services/settings";
-import type { AppointmentWithPatient, Patient } from "@/types/domain";
+import { APPOINTMENT_STATUS_LABEL, type AppointmentWithPatient, type Patient } from "@/types/domain";
 
 export const metadata: Metadata = { title: "Ficha del paciente" };
 
@@ -102,7 +102,7 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
 
       <section className="space-y-3">
         <h2 className="font-display text-lg font-medium">Próximos turnos</h2>
-        <AppointmentListClient appointments={upcoming} preps={prepRows ?? []} timezone={scheduling.timezone} defaultDuration={scheduling.default_duration_minutes} emptyText="Sin turnos próximos." />
+        <AppointmentListClient appointments={upcoming} preps={prepRows ?? []} timezone={scheduling.timezone} defaultDuration={scheduling.default_duration_minutes} emptyText="Sin turnos próximos." showDate showPatient={false} />
         {past.length > 0 ? (
           <details className="rounded-2xl border border-border/70 bg-card px-5 py-3 text-sm">
             <summary className="cursor-pointer font-medium">Historial reciente ({past.length})</summary>
@@ -110,7 +110,7 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
               {past.map((a) => (
                 <li key={a.id} className="flex items-center justify-between py-2">
                   <span>{capitalize(formatCompactDate(a.start_time, scheduling.timezone))} · {formatTime(a.start_time, scheduling.timezone)}</span>
-                  <span className="text-muted-foreground capitalize">{a.status.replace("_", " ")}</span>
+                  <span className="text-muted-foreground">{APPOINTMENT_STATUS_LABEL[a.status]}</span>
                 </li>
               ))}
             </ul>

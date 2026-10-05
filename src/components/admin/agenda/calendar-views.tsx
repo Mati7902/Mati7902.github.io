@@ -98,7 +98,7 @@ export function CalendarToolbar({ view, dateKey, todayKey }: { view: CalendarVie
         <Button variant="ghost" size="sm" onClick={() => go({ fecha: todayKey })}>
           Hoy
         </Button>
-        <h2 className="ml-2 font-display text-xl font-medium capitalize">{title}</h2>
+        <h2 className="ml-2 font-display text-xl font-medium first-letter:uppercase">{title}</h2>
       </div>
       <Tabs value={view} onValueChange={(v) => go({ vista: v as CalendarView })}>
         <TabsList>
@@ -116,10 +116,19 @@ function Chip({ a, onSelect, timezone, compact }: { a: AppointmentWithPatient; o
     <button
       type="button"
       onClick={() => onSelect(a)}
-      className={cn("w-full rounded-lg border px-2 py-1.5 text-left text-xs transition-colors hover:brightness-95 focus-visible:ring-[3px] focus-visible:ring-ring/40 outline-none", STATUS_CLASS[a.status])}
+      className={cn(
+        "block w-full overflow-hidden rounded-lg border text-left transition-colors hover:brightness-95 focus-visible:ring-[3px] focus-visible:ring-ring/40 outline-none",
+        compact ? "px-0.5 py-0.5 text-center text-[10px] sm:px-2 sm:py-1.5 sm:text-left sm:text-xs" : "px-2 py-1.5 text-xs",
+        STATUS_CLASS[a.status],
+      )}
       title={`${formatTime(a.start_time, timezone)} · ${patientName(a)} · ${MODALITY_LABEL[a.modality]} · ${APPOINTMENT_STATUS_LABEL[a.status]}`}
+      aria-label={`${formatTime(a.start_time, timezone)}, ${patientName(a)}, ${MODALITY_LABEL[a.modality]}, ${APPOINTMENT_STATUS_LABEL[a.status]}`}
     >
-      <span className="font-semibold">{formatTime(a.start_time, timezone)}</span> <span className="truncate">{patientName(a)}</span>
+      <span className="block truncate">
+        <span className="font-semibold">{formatTime(a.start_time, timezone)}</span>{" "}
+        {/* En celdas angostas (mes en móvil) solo entra la hora; el nombre aparece desde sm. */}
+        <span className={compact ? "hidden sm:inline" : undefined}>{patientName(a)}</span>
+      </span>
       {!compact ? <span className="block truncate opacity-80">{MODALITY_LABEL[a.modality]} · {APPOINTMENT_STATUS_LABEL[a.status]}</span> : null}
     </button>
   );
@@ -169,7 +178,7 @@ export function CalendarGrid({ view, dateKey, appointments, blocked, timezone, o
             const blocks = blockedByDay.get(k) ?? [];
             const inMonth = d.getMonth() === month;
             return (
-              <div key={k} className={cn("min-h-24 border-r border-b border-border/50 p-1.5 last:border-r-0", !inMonth && "bg-surface-muted/40")}>
+              <div key={k} className={cn("min-h-24 border-r border-b border-border/50 p-1 last:border-r-0 sm:p-1.5", !inMonth && "bg-surface-muted/40")}>
                 <Link href={`/admin/agenda?vista=dia&fecha=${k}`} className={cn("mb-1 inline-flex size-6 items-center justify-center rounded-full text-xs font-medium hover:bg-surface-muted", !inMonth && "text-subtle-foreground")}>
                   {d.getDate()}
                 </Link>

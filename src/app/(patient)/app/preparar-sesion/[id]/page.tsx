@@ -6,7 +6,7 @@ import { SessionPrepForm } from "@/components/patient/session-prep-form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
-import { formatDateTime, capitalize } from "@/lib/dates";
+import { formatDateTime } from "@/lib/dates";
 import { requirePatient } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import { canPrepareSession } from "@/server/services/appointments";
@@ -29,7 +29,7 @@ export default async function PrepareSessionPage({ params }: { params: Promise<{
 
   return (
     <div className="space-y-8">
-      <PageHeader eyebrow="Antes de la sesión" title="Preparar mi sesión" description={`Sesión del ${capitalize(formatDateTime(appointment.start_time, scheduling.timezone))}. Unas pocas preguntas para aprovechar mejor el encuentro.`} />
+      <PageHeader eyebrow="Antes de la sesión" title="Preparar mi sesión" description={`Sesión del ${formatDateTime(appointment.start_time, scheduling.timezone)}. Unas pocas preguntas para aprovechar mejor el encuentro.`} />
       {enabled ? (
         <SessionPrepForm appointmentId={appointment.id} existing={existing} />
       ) : (

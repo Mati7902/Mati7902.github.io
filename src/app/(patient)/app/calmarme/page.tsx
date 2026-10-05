@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Wind } from "lucide-react";
+import { ArrowRight, Hand, Hourglass, Square, Wind, type LucideIcon } from "lucide-react";
 
 import { CrisisBanner } from "@/components/calm/crisis-banner";
 import { PageHeader } from "@/components/ui/page-header";
@@ -10,6 +10,14 @@ import { getActiveEmergencyResources } from "@/server/services/public-content";
 import { getPublicSettingsSafe } from "@/server/services/public-settings";
 
 export const metadata: Metadata = { title: "Calmarme" };
+
+/** Ícono por ejercicio: ayuda a reconocerlos de un vistazo en momentos de malestar. */
+function iconFor(kind: string, slug: string): LucideIcon {
+  if (kind === "grounding") return Hand;
+  if (kind === "mindful_pause") return Hourglass;
+  if (slug.includes("cuadrada")) return Square;
+  return Wind;
+}
 
 export default async function CalmPage() {
   await requirePatient();
@@ -26,11 +34,12 @@ export default async function CalmPage() {
       <ul className="grid gap-3 sm:grid-cols-2">
         {(templates ?? []).map((t) => {
           const href = t.kind === "breathing" ? `/app/calmarme/respiracion/${t.slug}` : `/app/calmarme/${t.slug}`;
+          const Icon = iconFor(t.kind, t.slug);
           return (
             <li key={t.id}>
               <Link href={href} className="group flex h-full items-start gap-4 rounded-2xl border border-border/70 bg-card p-5 shadow-[var(--shadow-card)] transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)] focus-visible:outline-2 focus-visible:outline-ring">
                 <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-mint-100 text-mint-700">
-                  <Wind className="size-5" aria-hidden />
+                  <Icon className="size-5" aria-hidden />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block font-display text-lg font-medium">{t.title}</span>

@@ -4,6 +4,7 @@ import { Activity, CalendarCheck, CalendarX, UserX, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatCard } from "@/components/ui/stat-card";
+import { auditActionLabel } from "@/lib/audit-labels";
 import { requireAdmin } from "@/lib/auth/session";
 import { formatCompactDate, formatTime, capitalize } from "@/lib/dates";
 import { createClient } from "@/lib/supabase/server";
@@ -33,7 +34,7 @@ export default async function ActivityPage() {
 
       <section className="space-y-4">
         <h2 className="font-display text-xl font-medium">Este mes</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-5">
           <StatCard label="Turnos" value={stats.total} icon={Activity} />
           <StatCard label="Confirmados / completados" value={stats.confirmed + stats.completed} icon={CalendarCheck} tone="success" />
           <StatCard label="Cancelados" value={stats.cancelled} icon={CalendarX} tone="destructive" />
@@ -99,7 +100,10 @@ export default async function ActivityPage() {
                     <td className="px-4 py-2.5 whitespace-nowrap text-muted-foreground">
                       {capitalize(formatCompactDate(l.created_at))} {formatTime(l.created_at)}
                     </td>
-                    <td className="px-4 py-2.5 font-mono text-xs">{l.action}</td>
+                    <td className="px-4 py-2.5">
+                      <span className="block">{auditActionLabel(l.action)}</span>
+                      <span className="block font-mono text-[11px] text-muted-foreground">{l.action}</span>
+                    </td>
                     <td className="hidden px-4 py-2.5 md:table-cell">{l.actor_name ?? "—"}</td>
                     <td className="hidden px-4 py-2.5 text-xs text-muted-foreground lg:table-cell">
                       {l.entity_type ? `${l.entity_type} · ${l.entity_id?.slice(0, 8) ?? ""}` : "—"}

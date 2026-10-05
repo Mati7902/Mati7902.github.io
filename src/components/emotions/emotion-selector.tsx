@@ -26,7 +26,7 @@ export function EmotionSelector({ value, onChange, max = 3, single = false, id }
     onChange([...value, key]);
   };
   return (
-    <div id={id} role="group" aria-label="Emociones" className="grid grid-cols-3 gap-2.5 sm:grid-cols-3">
+    <div id={id} role="group" aria-label="Emociones" className="grid grid-cols-2 gap-2.5 min-[420px]:grid-cols-3">
       {EMOTIONS.map((emotion) => {
         const selected = value.includes(emotion.key);
         return (
@@ -37,7 +37,7 @@ export function EmotionSelector({ value, onChange, max = 3, single = false, id }
             aria-pressed={selected}
             data-selected={selected}
             className={cn(
-              "min-h-14 rounded-2xl border border-border bg-card px-3 py-3 text-sm font-medium text-foreground transition-all hover:bg-surface-muted focus-visible:ring-[3px] focus-visible:ring-ring/40 outline-none",
+              "min-h-14 rounded-2xl border border-border bg-card px-2.5 py-3 text-sm font-medium leading-snug [overflow-wrap:anywhere] text-foreground transition-all hover:bg-surface-muted focus-visible:ring-[3px] focus-visible:ring-ring/40 outline-none",
               TONE_CLASSES[emotion.tone],
             )}
           >

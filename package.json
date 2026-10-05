@@ -17,6 +17,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:db": "bash scripts/test-db.sh",
+    "preview:local": "bash scripts/preview/start.sh",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "icons": "node scripts/generate-icons.mjs",
     "db:types": "supabase gen types typescript --local --schema public > src/types/database.ts"

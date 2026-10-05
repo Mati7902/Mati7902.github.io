@@ -25,7 +25,7 @@ export function AssignMaterialForm({ patientId, materials }: { patientId: string
     } else if (state && !state.ok) toast.error(state.error);
   }, [state, router]);
   return (
-    <form action={action} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+    <form action={action} className="grid gap-3">
       <input type="hidden" name="patient_id" value={patientId} />
       <FormField id={`${id}-material`} label="Material">
         <select id={`${id}-material`} name="material_id" required className={selectClass} defaultValue="">
@@ -38,7 +38,7 @@ export function AssignMaterialForm({ patientId, materials }: { patientId: string
       <FormField id={`${id}-note`} label="Nota para el paciente" optional>
         <Input id={`${id}-note`} name="note" maxLength={500} placeholder="Ej.: leelo antes de la próxima sesión" />
       </FormField>
-      <Button type="submit" loading={pending} disabled={materials.length === 0}>Asignar</Button>
+      <Button type="submit" className="justify-self-start" loading={pending} disabled={materials.length === 0}>Asignar</Button>
     </form>
   );
 }
@@ -54,7 +54,7 @@ export function AssignExerciseForm({ patientId, templates }: { patientId: string
     } else if (state && !state.ok) toast.error(state.error);
   }, [state, router]);
   return (
-    <form action={action} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-end">
+    <form action={action} className="grid gap-3">
       <input type="hidden" name="patient_id" value={patientId} />
       <FormField id={`${id}-template`} label="Ejercicio">
         <select id={`${id}-template`} name="template_id" required className={selectClass} defaultValue="">
@@ -64,13 +64,15 @@ export function AssignExerciseForm({ patientId, templates }: { patientId: string
           ))}
         </select>
       </FormField>
-      <FormField id={`${id}-note`} label="Nota" optional>
-        <Input id={`${id}-note`} name="note" maxLength={500} placeholder="Ej.: una vez por día" />
-      </FormField>
-      <FormField id={`${id}-due`} label="Hasta" optional>
-        <Input id={`${id}-due`} name="due_at" type="date" />
-      </FormField>
-      <Button type="submit" loading={pending}>Sugerir</Button>
+      <div className="grid gap-3 sm:grid-cols-[1fr_11rem]">
+        <FormField id={`${id}-note`} label="Nota" optional>
+          <Input id={`${id}-note`} name="note" maxLength={500} placeholder="Ej.: una vez por día" />
+        </FormField>
+        <FormField id={`${id}-due`} label="Hasta" optional>
+          <Input id={`${id}-due`} name="due_at" type="date" />
+        </FormField>
+      </div>
+      <Button type="submit" className="justify-self-start" loading={pending}>Sugerir</Button>
     </form>
   );
 }

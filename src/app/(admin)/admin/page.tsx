@@ -55,7 +55,7 @@ export default async function AdminTodayPage() {
         actions={<NewAppointmentDialog patients={patients ?? []} timezone={tz} defaultDuration={scheduling.default_duration_minutes} />}
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <StatCard label="Pacientes del día" value={active.length} icon={Users} />
         <StatCard label="Confirmados" value={confirmed} icon={CalendarCheck} tone="success" />
         <StatCard label="Pendientes" value={pendingToday} icon={CalendarClock} tone="warning" />
@@ -84,7 +84,7 @@ export default async function AdminTodayPage() {
             <Link href="/admin/agenda?vista=semana">Ver agenda completa</Link>
           </Button>
         </div>
-        <AppointmentListClient appointments={upcoming.slice(0, 12)} preps={preps ?? []} timezone={tz} defaultDuration={scheduling.default_duration_minutes} emptyText="No hay turnos en los próximos días." />
+        <AppointmentListClient appointments={upcoming.slice(0, 12)} preps={preps ?? []} timezone={tz} defaultDuration={scheduling.default_duration_minutes} emptyText="No hay turnos en los próximos días." showDate />
       </section>
     </div>
   );

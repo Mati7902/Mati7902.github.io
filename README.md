@@ -145,6 +145,18 @@ Scripts:
 | `pnpm test:db` | migraciones + seed + tests de RLS contra Postgres |
 | `pnpm icons` | regenera iconos PWA y la imagen OpenGraph |
 | `pnpm db:types` | regenera `src/types/database.ts` (requiere Supabase CLI) |
+| `pnpm preview:local` | vista previa completa con datos ficticios, sin proyecto de Supabase (ver abajo) |
+
+### 5.1 Vista previa sin proyecto de Supabase
+
+Para ver la app funcionando con los datos de demostración sin crear un proyecto:
+
+```bash
+PG_SUPERUSER_URL=postgresql://postgres@localhost:5432/postgres pnpm preview:local
+# http://localhost:3000 · admin@demo.local / DemoAdmin!2026 · juan.perez@demo.local / DemoPaciente!2026
+```
+
+El script crea la base `psicologia_preview` (stub de `auth`/`storage`, migraciones, seed), descarga PostgREST en `.preview/`, levanta una pasarela mínima que imita la API de Supabase (`scripts/preview/gateway.mjs`: inicio de sesión con contraseña, sesión y reenvío a PostgREST) y compila la app contra ella. Requiere PostgreSQL 15+ local y acceso a GitHub para descargar PostgREST. **Es solo para desarrollo**: usa un secreto JWT fijo, no envía emails ni WhatsApp, no guarda archivos y deja Google Calendar desconectado.
 
 ## 6. Variables de entorno
 

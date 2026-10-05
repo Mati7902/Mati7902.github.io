@@ -32,14 +32,14 @@ export function LoginForm({ next, initialError }: { next?: string; initialError?
       <FormField id={`${id}-password`} label="Contraseña" error={errors.password}>
         <Input id={`${id}-password`} name="password" type="password" autoComplete="current-password" required aria-invalid={Boolean(errors.password)} />
       </FormField>
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
         <div className="flex items-center gap-2.5">
           <Checkbox id={`${id}-remember`} name="remember" value="true" defaultChecked />
-          <Label htmlFor={`${id}-remember`} className="font-normal text-muted-foreground">
+          <Label htmlFor={`${id}-remember`} className="whitespace-nowrap font-normal text-muted-foreground">
             Mantener sesión iniciada
           </Label>
         </div>
-        <Link href="/recuperar" className="text-sm font-medium text-primary hover:underline">
+        <Link href="/recuperar" className="inline-flex min-h-11 items-center whitespace-nowrap text-sm font-medium text-primary hover:underline">
           Olvidé mi contraseña
         </Link>
       </div>
