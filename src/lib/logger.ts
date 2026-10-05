@@ -59,5 +59,14 @@ export function errorMeta(error: unknown): Record<string, unknown> {
   if (error instanceof Error) {
     return { error: error.message, name: error.name, stack: process.env.NODE_ENV === "production" ? undefined : error.stack };
   }
+  if (error && typeof error === "object") {
+    const e = error as { message?: unknown; code?: unknown; details?: unknown; hint?: unknown; status?: unknown };
+    return {
+      error: typeof e.message === "string" ? e.message : JSON.stringify(error).slice(0, 500),
+      code: e.code,
+      details: typeof e.details === "string" ? e.details : undefined,
+      status: e.status,
+    };
+  }
   return { error: String(error) };
 }

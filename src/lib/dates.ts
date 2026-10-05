@@ -83,6 +83,16 @@ export function humanDay(value: DateInput, tz = DEFAULT_TIMEZONE): string {
   return capitalize(formatLongDate(value, tz));
 }
 
+/** Instante actual en milisegundos (helper para no invocar Date.now() dentro del render). */
+export function nowMs(): number {
+  return Date.now();
+}
+
+/** Fecha N días atrás respecto de ahora. */
+export function daysAgo(days: number): Date {
+  return new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+}
+
 /** Formatea minutos como "1 h 30 min" / "45 min". */
 export function formatDuration(minutes: number): string {
   const h = Math.floor(minutes / 60);

@@ -42,10 +42,17 @@ type ButtonProps = React.ComponentProps<"button"> &
   };
 
 function Button({ className, variant, size, asChild = false, loading = false, children, disabled, ...props }: ButtonProps) {
-  const Comp = asChild ? Slot : "button";
+  if (asChild) {
+    // Slot exige un único hijo React: el indicador de carga no aplica en este modo.
+    return (
+      <Slot data-slot="button" className={cn(buttonVariants({ variant, size, className }))} {...props}>
+        {children}
+      </Slot>
+    );
+  }
 
   return (
-    <Comp
+    <button
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       disabled={disabled || loading}
@@ -54,7 +61,7 @@ function Button({ className, variant, size, asChild = false, loading = false, ch
     >
       {loading ? <Loader2 className="animate-spin" aria-hidden /> : null}
       {children}
-    </Comp>
+    </button>
   );
 }
 
