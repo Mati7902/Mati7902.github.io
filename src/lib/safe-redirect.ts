@@ -11,7 +11,11 @@ export function safeInternalPath(next: string | null | undefined, fallback: stri
     const base = "http://internal.invalid";
     const url = new URL(next, base);
     if (url.origin !== base) return fallback;
-    return `${url.pathname}${url.search}${url.hash}`;
+    // La normalización resuelve segmentos "." y ".." (también codificados): "/..//evil.com"
+    // termina en "//evil.com", que el navegador interpreta como otro host. Se valida el resultado.
+    const out = `${url.pathname}${url.search}${url.hash}`;
+    if (!out.startsWith("/") || out.startsWith("//") || /[\\\u0000-\u001f\u007f]/.test(out)) return fallback;
+    return out;
   } catch {
     return fallback;
   }

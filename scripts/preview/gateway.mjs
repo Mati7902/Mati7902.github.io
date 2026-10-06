@@ -49,7 +49,11 @@ export const SERVICE_ROLE_KEY = signJwt({ role: "service_role", iss: "preview-lo
 /* ------------------------------------------------------------------------ */
 /* Auth                                                                      */
 /* ------------------------------------------------------------------------ */
-const refreshTokens = new Map(); // refresh_token → user id (en memoria)
+// refresh_token → { userId, rotated, rotatedAt } (en memoria). Al rotar, el token viejo sigue
+// devolviendo la MISMA sesión nueva durante unos segundos: varias pestañas o pedidos simultáneos
+// del middleware pueden refrescar a la vez sin cerrar la sesión (como el "reuse interval" de GoTrue).
+const refreshTokens = new Map();
+const REFRESH_REUSE_MS = 10_000;
 
 async function rpc(fn, args) {
   const res = await fetch(`${POSTGREST_URL}/rpc/${fn}`, {
@@ -79,7 +83,7 @@ async function issueSession(userId) {
     exp: now + ACCESS_TTL_SECONDS,
   });
   const refreshToken = randomBytes(24).toString("base64url");
-  refreshTokens.set(refreshToken, user.id);
+  refreshTokens.set(refreshToken, { userId: user.id, rotated: null, rotatedAt: 0 });
   return { access_token: accessToken, token_type: "bearer", expires_in: ACCESS_TTL_SECONDS, expires_at: now + ACCESS_TTL_SECONDS, refresh_token: refreshToken, user };
 }
 
@@ -97,10 +101,17 @@ async function handleAuth(req, url, body) {
       return { status: 200, body: await issueSession(userId) };
     }
     if (grant === "refresh_token") {
-      const userId = refreshTokens.get(String(body?.refresh_token ?? ""));
-      if (!userId) return authError(400, "refresh_token_not_found", "Invalid Refresh Token: Refresh Token Not Found");
-      refreshTokens.delete(body.refresh_token);
-      return { status: 200, body: await issueSession(userId) };
+      const entry = refreshTokens.get(String(body?.refresh_token ?? ""));
+      if (!entry) return authError(400, "refresh_token_not_found", "Invalid Refresh Token: Refresh Token Not Found");
+      if (entry.rotated) {
+        if (Date.now() - entry.rotatedAt <= REFRESH_REUSE_MS) return { status: 200, body: entry.rotated };
+        return authError(400, "refresh_token_already_used", "Invalid Refresh Token: Already Used");
+      }
+      const session = await issueSession(entry.userId);
+      if (!session) return authError(404, "user_not_found", "User not found");
+      entry.rotated = session;
+      entry.rotatedAt = Date.now();
+      return { status: 200, body: session };
     }
     return authError(400, "unsupported_grant_type", "Grant no soportado en la vista previa");
   }
@@ -114,7 +125,13 @@ async function handleAuth(req, url, body) {
     return { status: 200, body: user };
   }
 
-  if (path === "/logout") return { status: 204, body: null };
+  if (path === "/logout") {
+    const claims = verifyJwt(bearer);
+    if (claims?.sub) {
+      for (const [token, entry] of refreshTokens) if (entry.userId === claims.sub) refreshTokens.delete(token);
+    }
+    return { status: 204, body: null };
+  }
   if (path === "/recover" || path === "/otp" || path === "/verify") return { status: 200, body: {} };
   if (path === "/settings") return { status: 200, body: { external: { email: true }, disable_signup: true, mailer_autoconfirm: false } };
   if (path === "/health") return { status: 200, body: { name: "preview-gateway" } };

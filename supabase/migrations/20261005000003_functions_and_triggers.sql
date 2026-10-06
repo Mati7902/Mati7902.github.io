@@ -708,9 +708,13 @@ declare
   v_profile_id uuid;
   v_name       text;
   v_when       text := public.format_appointment_datetime(new.start_time);
+  -- Origen real del cambio (lo fijan las RPC): 'app'/'whatsapp' = lo pidió el propio paciente.
+  v_source     text := coalesce(nullif(current_setting('app.change_source', true), ''), 'system');
+  v_by_patient boolean;
 begin
   select p.profile_id, p.first_name || ' ' || p.last_name into v_profile_id, v_name
   from public.patients p where p.id = new.patient_id;
+  v_by_patient := v_source in ('app', 'whatsapp');
 
   if tg_op = 'INSERT' then
     if new.status = 'requested' then
@@ -728,7 +732,16 @@ begin
   end if;
 
   if v_profile_id is not null then
-    if new.start_time is distinct from old.start_time then
+    if new.start_time is distinct from old.start_time and v_by_patient then
+      -- El paciente eligió el nuevo horario: aviso neutro, sin pedirle que confirme su propio cambio.
+      insert into public.notifications (user_id, type, title, body, data)
+      values (v_profile_id, 'appointment_updated',
+        case when new.status = 'requested' then 'Pedido de cambio registrado' else 'Turno reprogramado' end,
+        case when new.status = 'requested'
+          then 'Pediste pasar tu sesión al ' || v_when || '. Te avisamos cuando el profesional lo apruebe.'
+          else 'Tu sesión quedó para el ' || v_when || '.' end,
+        jsonb_build_object('appointment_id', new.id));
+    elsif new.start_time is distinct from old.start_time then
       insert into public.notifications (user_id, type, title, body, data)
       values (v_profile_id, 'appointment_updated', 'Tu turno cambió de horario',
         'Nuevo horario: ' || v_when || '. Por favor, confirmá si te queda bien.',
@@ -748,6 +761,13 @@ begin
     end if;
   end if;
 
+  if new.start_time is distinct from old.start_time and v_by_patient then
+    perform public.notify_admins(
+      case when new.status = 'requested' then 'appointment_requested'::public.notification_type else 'appointment_updated'::public.notification_type end,
+      case when new.status = 'requested' then 'Solicitud de reprogramación' else 'Un paciente reprogramó su turno' end,
+      coalesce(v_name, 'Un paciente') || case when new.status = 'requested' then ' pidió pasar su sesión al ' else ' pasó su sesión al ' end || v_when || '.',
+      jsonb_build_object('appointment_id', new.id, 'patient_id', new.patient_id));
+  end if;
   if new.status is distinct from old.status and new.status = 'cancelled' and new.cancelled_by = v_profile_id then
     perform public.notify_admins('appointment_cancelled', 'Un paciente canceló su turno',
       coalesce(v_name, 'Un paciente') || ' canceló la sesión del ' || v_when || '.',
@@ -921,7 +941,10 @@ $$;
 -- ejecutan con los permisos de su dueño.
 -- ---------------------------------------------------------------------------
 revoke execute on all functions in schema public from public, anon, authenticated;
-alter default privileges in schema public revoke execute on functions from public;
+-- El EXECUTE para PUBLIC es un default GLOBAL: solo se revoca con la forma sin "in schema"
+-- (aplica a las funciones que cree el rol que corre las migraciones). Los grants por esquema
+-- que agrega Supabase a anon/authenticated sí se revocan por esquema.
+alter default privileges revoke execute on functions from public;
 alter default privileges in schema public revoke execute on functions from anon, authenticated;
 
 -- Helpers usados por las políticas RLS: deben poder evaluarse para cualquier rol.

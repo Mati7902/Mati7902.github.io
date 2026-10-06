@@ -105,7 +105,7 @@ export async function rescheduleAppointmentAction(input: z.infer<typeof reschedu
     if (!current) throw new AppError("NOT_FOUND", "No encontramos ese turno.");
     const scheduling = await getSetting(supabase, "scheduling");
     if (!canPatientModify(current, scheduling, "reschedule")) {
-      throw new AppError("VALIDATION", "Este turno ya no puede reprogramarse desde la aplicación. Escribinos para coordinar.");
+      throw new AppError("FORBIDDEN", "Este turno ya no puede reprogramarse desde la aplicación. Escribinos para coordinar.");
     }
     if (!(await allowAttempt(`booking:${patient.id}`, 10, 3600))) {
       throw new AppError("RATE_LIMITED", "Hiciste muchos cambios seguidos. Esperá unos minutos.");

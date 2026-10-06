@@ -63,8 +63,8 @@ export function fromDatabaseError(error: PostgrestLikeError | null | undefined, 
       return new AppError("CONFLICT", "Ya existe un registro con esos datos.", { details: error });
     case "42501":
       return new AppError("FORBIDDEN", "No tenés permiso para realizar esta acción.", { details: error });
-    case "P0001": // raise exception con mensaje para el usuario
-      return new AppError("VALIDATION", message, { details: error });
+    case "P0001": // regla de negocio que impide la acción (ventanas, estados): mensaje para el usuario
+      return new AppError("FORBIDDEN", message, { details: error });
     case "P0002":
       return new AppError("NOT_FOUND", "No encontramos lo que buscabas.", { details: error });
     case "22023":

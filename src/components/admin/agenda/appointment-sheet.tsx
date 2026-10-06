@@ -116,7 +116,18 @@ export function AppointmentSheet({ appointment, onClose, timezone, defaultDurati
   };
 
   const submitEdit = () =>
-    run(() => adminUpdateAppointmentDetailsAction({ appointmentId: a.id, modality, videoLink: videoLink || null, location: location || null, adminNotes: adminNotes || null }), "Detalles guardados.");
+    run(
+      () =>
+        adminUpdateAppointmentDetailsAction({
+          appointmentId: a.id,
+          modality,
+          videoLink: videoLink || null,
+          location: location || null,
+          // Si el turno se cargó sin sus notas, un campo vacío no debe borrar la nota existente.
+          adminNotes: a.appointment_admin_notes === undefined && !adminNotes ? undefined : adminNotes || null,
+        }),
+      "Detalles guardados.",
+    );
 
   const submitCancel = () => run(() => adminCancelAppointmentAction({ appointmentId: a.id, reason: reason || null, notify }), "Turno cancelado.");
 

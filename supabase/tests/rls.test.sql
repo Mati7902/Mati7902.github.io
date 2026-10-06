@@ -55,6 +55,11 @@ begin
   raise exception 'ASSERTION FAILED: % (la sentencia no falló)', p_msg;
 end $$;
 
+-- Las migraciones quitan el EXECUTE por defecto para PUBLIC: los helpers se otorgan explícitamente
+-- para poder usarlos después de cambiar de rol.
+grant execute on function pg_temp.login(uuid, text), pg_temp.logout(), pg_temp.assert(boolean, text),
+  pg_temp.slot(int, int), pg_temp.expect_error(text, text[], text) to public;
+
 -- Datos de prueba: segundo paciente "Ana Ejemplo" sin relación con Juan -------------
 begin;
 insert into auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token)
@@ -188,6 +193,18 @@ select pg_temp.expect_error(
   $q$update public.appointments set start_time = start_time + interval '1 day', end_time = end_time + interval '1 day' where id = current_setting('test.juan_pending')::uuid$q$,
   array['42501'], 'no puede mover un turno con UPDATE directo');
 select pg_temp.logout();
+select pg_temp.assert(
+  (select count(*) from public.notifications n join public.profiles pr on pr.id = n.user_id
+    where pr.role = 'admin' and n.title = 'Solicitud de reprogramación' and (n.data ->> 'appointment_id') = current_setting('test.juan_pending')) >= 1,
+  'el profesional recibe aviso cuando un paciente reprograma');
+select pg_temp.assert(
+  (select count(*) from public.notifications where user_id = '22222222-2222-4222-8222-222222222222'
+    and title = 'Tu turno cambió de horario' and (data ->> 'appointment_id') = current_setting('test.juan_pending')) = 0,
+  'al paciente no se le pide confirmar el cambio que él mismo pidió');
+select pg_temp.assert(
+  (select count(*) from public.notifications where user_id = '22222222-2222-4222-8222-222222222222'
+    and title = 'Pedido de cambio registrado' and (data ->> 'appointment_id') = current_setting('test.juan_pending')) = 1,
+  'el paciente recibe un aviso neutro de su pedido de cambio');
 rollback;
 
 -- ---------------------------------------------------------------------------
@@ -323,6 +340,13 @@ select pg_temp.assert((select actor_id from public.audit_logs where action = 'pa
 select pg_temp.login('22222222-2222-4222-8222-222222222222');
 select pg_temp.assert((select total from public.admin_monthly_stats(now() - interval '1 year', now() + interval '1 year')) = 0, 'las métricas administrativas no revelan datos a un paciente');
 select pg_temp.logout();
+rollback;
+
+-- Funciones futuras: el default global ya no otorga EXECUTE a PUBLIC.
+begin;
+create function public.tmp_probe_default_privileges() returns integer language sql as 'select 1';
+select pg_temp.assert(not has_function_privilege('anon', 'public.tmp_probe_default_privileges()', 'execute'), 'una función nueva no queda ejecutable por anon');
+select pg_temp.assert(not has_function_privilege('authenticated', 'public.tmp_probe_default_privileges()', 'execute'), 'una función nueva no queda ejecutable por authenticated');
 rollback;
 
 -- ---------------------------------------------------------------------------

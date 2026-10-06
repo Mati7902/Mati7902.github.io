@@ -156,7 +156,7 @@ PG_SUPERUSER_URL=postgresql://postgres@localhost:5432/postgres pnpm preview:loca
 # http://localhost:3000 · admin@demo.local / DemoAdmin!2026 · juan.perez@demo.local / DemoPaciente!2026
 ```
 
-El script crea la base `psicologia_preview` (stub de `auth`/`storage`, migraciones, seed), descarga PostgREST en `.preview/`, levanta una pasarela mínima que imita la API de Supabase (`scripts/preview/gateway.mjs`: inicio de sesión con contraseña, sesión y reenvío a PostgREST) y compila la app contra ella. Requiere PostgreSQL 15+ local y acceso a GitHub para descargar PostgREST. **Es solo para desarrollo**: usa un secreto JWT fijo, no envía emails ni WhatsApp, no guarda archivos y deja Google Calendar desconectado.
+El script crea la base `psicologia_preview` (stub de `auth`/`storage`, migraciones, seed), descarga PostgREST en `.preview/` (Linux x86_64; en otras plataformas instalalo y definí `PREVIEW_POSTGREST_BIN`), levanta una pasarela mínima que imita la API de Supabase (`scripts/preview/gateway.mjs`: inicio de sesión con contraseña, sesión y reenvío a PostgREST), espera a que respondan y compila la app contra ella. PostgREST se conecta por TCP al mismo servidor de `PG_SUPERUSER_URL` (o a `PREVIEW_PG_HOST`/`PREVIEW_PG_PORT`) con un rol `authenticator` cuya contraseña se regenera en cada ejecución y que solo puede conectarse a esa base. Requiere PostgreSQL 15+ y los puertos 3000, 3001 y 54321 libres. **Es solo para desarrollo**: usa un secreto JWT fijo, no envía emails ni WhatsApp, no guarda archivos y deja Google Calendar desconectado. Ese build usa las claves de la vista previa: para tu entorno normal volvé a correr `pnpm build`.
 
 ## 6. Variables de entorno
 
@@ -252,7 +252,7 @@ Desde **Pacientes › Nuevo paciente** con "Enviar invitación" marcado (o "Envi
    Los recordatorios usan siempre la plantilla aprobada cuando está cargada, aunque la ventana esté abierta.
 6. Activá la secretaria en **Admin › WhatsApp › Configuración**.
 
-Derivación al profesional: cuando el contacto pide hablar con una persona (o ante una señal de crisis) la conversación queda **derivada** y la asistente deja de responder; el contacto puede volver al menú con un botón, la derivación expira sola a las 24 h y el profesional puede reactivar la asistente desde **Admin › WhatsApp** ("Reactivar asistente"). Los números se vinculan a una ficha por `whatsapp_phone` (o `phone` si aquel está vacío); si hay ambigüedad, el bot no identifica a nadie. El número de WhatsApp de la ficha solo lo cambia el profesional.
+Derivación al profesional: cuando el contacto pide hablar con una persona (o ante una señal de crisis) la conversación queda **derivada** y la asistente deja de ofrecer menús; el contacto puede volver al menú con un botón, la derivación expira sola a las 24 h y el profesional puede reactivar la asistente desde **Admin › WhatsApp** ("Reactivar asistente"). Aun derivada, la asistente procesa los botones de un turno concreto (confirmar, cancelar, reprogramar desde un recordatorio) y confirma siempre el botón "Avisar al psicólogo". Los horarios ofrecidos se identifican por su fecha y hora (no por su posición en la lista) y una pregunta de cancelación pendiente vence a los 30 minutos; confirmar asistencia nunca se interpreta como "sí, cancelar". Los números se vinculan a una ficha por `whatsapp_phone` (o `phone` si aquel está vacío); si hay ambigüedad, el bot no identifica a nadie. El número de WhatsApp de la ficha solo lo cambia el profesional.
 
 Comportamiento: intents `BOOK_APPOINTMENT`, `RESCHEDULE_APPOINTMENT`, `CANCEL_APPOINTMENT`, `CONFIRM_APPOINTMENT`, `CHECK_AVAILABILITY`, `PRICING`, `PLANS`, `LOCATION`, `ONLINE_SESSION`, `LOGIN_HELP`, `SPEAK_TO_HUMAN`, `OTHER` (más `GREETING`/`THANKS`). Las reservas se confirman sólo tras una **segunda verificación** de disponibilidad y la RPC transaccional. Ante señales de crisis responde con el protocolo de emergencia configurado (recursos verificados por el profesional) y deriva; nunca hace psicoterapia. Los contactos pueden optar por no recibir mensajes (`STOP`).
 
@@ -299,14 +299,14 @@ Checklist antes de abrir al público: textos legales revisados y marcados como r
 ## 12. Seguridad y privacidad
 
 * **Autenticación**: Supabase Auth, cookies `httpOnly` gestionadas por `@supabase/ssr`, verificación con `getUser()` en el servidor, "mantener sesión" opcional (cookies de sesión), rate limiting en login/recuperación/reservas (`check_rate_limit`), sin enumeración de usuarios en "olvidé mi contraseña".
-* **RBAC + RLS**: roles `admin`, `professional`, `receptionist`, `guardian`, `patient` (preparados para crecer). Un paciente solo ve y escribe sus propios datos; triggers impiden cambiar rol, estado administrativo o campos ajenos aunque el frontend falle. 81 aserciones SQL lo verifican (`pnpm test:db`).
-* **Modelo de privilegios en la base**: `is_privileged()` es verdadero solo para conexiones directas sin JWT (migraciones, seed, cron interno), para `service_role` y para administradores; una petición anónima de la API **no** es privilegiada. Se revoca `EXECUTE` de todas las funciones a `public`/`anon`/`authenticated` y se otorga explícitamente lo necesario (p. ej. `check_rate_limit` y `cleanup_rate_limits` solo a `service_role`). Las RPC de agenda validan, para pacientes, que el horario pertenezca a la grilla publicada (`is_bookable_slot`), la anticipación mínima y el máximo de días; el estado inicial lo decide la base según `booking_mode`.
+* **RBAC + RLS**: roles `admin`, `professional`, `receptionist`, `guardian`, `patient` (preparados para crecer). Un paciente solo ve y escribe sus propios datos; triggers impiden cambiar rol, estado administrativo o campos ajenos aunque el frontend falle. 86 aserciones SQL lo verifican (`pnpm test:db`).
+* **Modelo de privilegios en la base**: `is_privileged()` es verdadero solo para conexiones directas sin JWT (migraciones, seed, cron interno), para `service_role` y para administradores; una petición anónima de la API **no** es privilegiada. Se revoca `EXECUTE` de todas las funciones a `public`/`anon`/`authenticated` y se otorga explícitamente lo necesario (p. ej. `check_rate_limit` y `cleanup_rate_limits` solo a `service_role`). También se quita el `EXECUTE` por defecto para `PUBLIC` en funciones futuras: **toda función nueva en una migración necesita su `grant execute` explícito**. Las RPC de agenda validan, para pacientes, que el horario pertenezca a la grilla publicada (`is_bookable_slot`), la anticipación mínima y el máximo de días; el estado inicial lo decide la base según `booking_mode`.
 * **Notas administrativas**: viven en tablas separadas (`patient_admin_notes`, `appointment_admin_notes`) con RLS solo para administradores, de modo que nunca viajan en las consultas que hace el paciente sobre su ficha o sus turnos.
-* **Consentimiento versionado**: si cambia `legal.consent_version`, el paciente debe aceptar de nuevo los textos en `/consentimiento` antes de seguir usando la app.
+* **Consentimiento versionado**: si cambia `legal.consent_version`, el paciente debe aceptar de nuevo los textos en `/consentimiento` (donde también puede cerrar sesión) antes de seguir. Lo exigen tanto las páginas (`requirePatient`) como las acciones del servidor (`assertPatient`).
 * **Accesos cruzados**: la disponibilidad se calcula en el servidor con `service_role` y devuelve únicamente horarios libres; las notificaciones son por usuario; los registros emocionales/ejercicios se comparten con el profesional solo si el paciente lo permite (`share_records_with_professional`).
 * **Datos sensibles**: no se registran contenidos clínicos en logs (redacción automática en el logger); los eventos de Google solo llevan iniciales; los tokens OAuth van cifrados; el bucket de materiales es privado (URLs firmadas de 15 min).
 * **Webhooks**: firma HMAC en tiempo constante, idempotencia por `wa_message_id`, procesamiento diferido. La tabla de idempotencia guarda solo metadatos (no el texto) y se purga a los 30 días (`/api/cron/housekeeping`).
-* **IA opcional**: si se activa un proveedor de IA, solo recibe el texto del mensaje entrante para clasificar el trámite; nunca ejecuta acciones y su salida se valida con Zod. La política de privacidad lo informa.
+* **IA opcional**: si se activa un proveedor de IA, recibe el mensaje entrante y los últimos mensajes de esa conversación de WhatsApp (nunca registros de la app) para clasificar el trámite; nunca ejecuta acciones y su salida se valida con Zod. La política de privacidad lo informa.
 * **Headers**: HSTS, `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`.
 * **Auditoría**: acciones críticas en `audit_logs` (inicios de sesión, cambios de turno, invitaciones, configuración, integraciones).
 * **Legal**: `/privacidad`, `/terminos` y el consentimiento en `/bienvenida` son **borradores** que deben revisarse con un profesional competente en derecho paraguayo (protección de datos personales y sensibles, información sanitaria, consentimiento informado, menores, ejercicio profesional de la psicología) antes de producción. La app muestra un aviso hasta que se marque como revisado.
@@ -328,11 +328,11 @@ Checklist antes de abrir al público: textos legales revisados y marcados como r
 ## 14. Tests
 
 ```bash
-pnpm test        # Vitest: 87 tests (motor de slots, reglas de agenda, clasificador, crisis,
+pnpm test        # Vitest: 117 tests (motor de slots, reglas de agenda, clasificador, crisis,
                  # firma/normalización de webhook, deduplicación de recordatorios, plantillas,
                  # ventana de 24 h, redirecciones seguras, utilidades, esquemas de ejercicios,
                  # errores y componentes)
-pnpm test:db     # Migraciones + seed + 81 aserciones de RLS/permisos/grilla/double booking
+pnpm test:db     # Migraciones + seed + 86 aserciones de RLS/permisos/grilla/double booking
 ```
 
 `pnpm test:db` funciona de dos formas:

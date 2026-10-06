@@ -10,8 +10,9 @@ import { StatCard } from "@/components/ui/stat-card";
 import { requireAdmin } from "@/lib/auth/session";
 import { toDateKey, zonedToUtc, addDays } from "@/lib/dates";
 import { createClient } from "@/lib/supabase/server";
-import { listAppointmentsBetween } from "@/server/services/appointments";
+import { ADMIN_APPOINTMENT_SELECT, listAppointmentsBetween } from "@/server/services/appointments";
 import { getSetting } from "@/server/services/settings";
+import type { AppointmentWithPatient } from "@/types/domain";
 
 export const metadata: Metadata = { title: "Hoy" };
 
@@ -30,7 +31,8 @@ export default async function AdminTodayPage() {
     listAppointmentsBetween(supabase, dayEnd, weekEnd, ["pending", "confirmed", "rescheduled", "requested"]),
     supabase
       .from("appointments")
-      .select("*, patients(id, first_name, last_name, phone, whatsapp_phone, email, profile_id)")
+      // Misma selección que la agenda: el panel de detalle necesita las notas administrativas.
+      .select(ADMIN_APPOINTMENT_SELECT)
       .eq("status", "requested")
       .gte("start_time", new Date().toISOString())
       .order("created_at", { ascending: false }),
@@ -68,7 +70,7 @@ export default async function AdminTodayPage() {
             <h2 className="font-display text-xl font-medium">Solicitudes por aprobar</h2>
             <span className="rounded-full bg-warning-soft px-2.5 py-0.5 text-xs font-semibold text-[#8a6418]">{requests.data?.length}</span>
           </div>
-          <AppointmentListClient appointments={requests.data ?? []} preps={preps ?? []} timezone={tz} defaultDuration={scheduling.default_duration_minutes} emptyText="" />
+          <AppointmentListClient appointments={(requests.data ?? []) as AppointmentWithPatient[]} preps={preps ?? []} timezone={tz} defaultDuration={scheduling.default_duration_minutes} emptyText="" showDate />
         </section>
       ) : null}
 

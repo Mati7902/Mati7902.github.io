@@ -10,6 +10,9 @@ describe("manejo de errores", () => {
     expect(fromDatabaseError({ code: "23P01", message: "El horario está bloqueado" }).message).toContain("bloqueado");
     expect(fromDatabaseError({ code: "42501", message: "permission denied" })).toMatchObject({ code: "FORBIDDEN", status: 403 });
     expect(fromDatabaseError({ code: "P0001", message: "Este turno ya no puede cancelarse" }).message).toBe("Este turno ya no puede cancelarse");
+    // Una regla de negocio no es un problema de datos del formulario: no se debe reintentar igual.
+    expect(fromDatabaseError({ code: "P0001", message: "Este turno ya no puede cancelarse" }).code).toBe("FORBIDDEN");
+    expect(fromDatabaseError({ code: "22023", message: "Ese horario está fuera de la disponibilidad del profesional." }).code).toBe("VALIDATION");
     expect(fromDatabaseError(null).code).toBe("UNKNOWN");
   });
 

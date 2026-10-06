@@ -42,7 +42,7 @@ export default async function PrivacyPage() {
         La asistente virtual de WhatsApp atiende cuestiones administrativas. WhatsApp es un servicio de un tercero (Meta) con sus propias condiciones; no garantiza confidencialidad clínica ni respuesta inmediata. Ante una emergencia, contactá a los servicios de urgencia de tu zona.
       </p>
       <p>
-        Para entender mensajes escritos con libertad, el profesional puede activar un proveedor de inteligencia artificial. En ese caso, el texto del mensaje (sin tu historial ni tus registros personales) se envía a ese proveedor solo para identificar qué trámite necesitás. La IA no toma decisiones: las acciones sobre turnos las ejecuta la plataforma con reglas fijas.
+        Para entender mensajes escritos con libertad, el profesional puede activar un proveedor de inteligencia artificial. En ese caso, el texto del mensaje y los últimos mensajes de esa conversación de WhatsApp se envían a ese proveedor solo para identificar qué trámite necesitás. Nunca se envían tus registros emocionales, ejercicios ni datos de la aplicación. La IA no toma decisiones: las acciones sobre turnos las ejecuta la plataforma con reglas fijas.
       </p>
       <h2>7. Calendario del profesional</h2>
       <p>

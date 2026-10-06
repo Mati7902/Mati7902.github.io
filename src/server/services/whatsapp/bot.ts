@@ -15,6 +15,7 @@ import { assertSlotAvailable, cancelAppointment, canPatientModify, confirmAppoin
 import { createNotification } from "@/server/services/notifications";
 import { getSettings } from "@/server/services/settings";
 import { isWhatsAppConfigured, markAsRead, sendInteractiveButtons, sendInteractiveList, sendText, type SendResult } from "@/server/services/whatsapp/client";
+import { classifyCancelAnswer, isCrisisHandoff, slotKey, slotKeyToDate } from "@/server/services/whatsapp/answers";
 import { type ConversationContext, type ConversationState, recordInbound, recordOutbound, resolveConversation, saveState } from "@/server/services/whatsapp/conversation";
 import { renderTemplate, getTemplate } from "@/server/services/whatsapp/templates";
 import type { NormalizedInbound } from "@/server/services/whatsapp/webhook";
@@ -114,11 +115,16 @@ export async function handleInboundMessage(inbound: NormalizedInbound): Promise<
   await recordInbound(admin, ctx, inbound, intent.intent, intent.confidence);
 
   // 4) Flujo activo (slot filling) tiene prioridad si el mensaje no cambia claramente de tema.
-  //    La confirmación de una cancelación pendiente se resuelve SIEMPRE dentro del flujo
-  //    (un "sí" ahí significa "sí, cancelar", nunca "confirmo asistencia").
+  //    Una pregunta de cancelación pendiente se responde dentro del flujo, salvo que haya vencido
+  //    (30 min) o que la persona pida hablar con el profesional.
   if (ctx.state.flow === "cancel" && ctx.state.step === "confirm") {
-    await continueCancel(admin, ctx, settings, inbound.text, intent);
-    return;
+    const askedAt = ctx.state.updatedAt ? Date.parse(ctx.state.updatedAt) : 0;
+    if (Date.now() - askedAt > CANCEL_PROMPT_TTL_MS || intent.intent === "SPEAK_TO_HUMAN") {
+      await saveState(admin, ctx, { flow: null, step: null, appointmentId: null });
+    } else {
+      await continueCancel(admin, ctx, settings, inbound.text, intent);
+      return;
+    }
   }
   if (ctx.state.flow && !["CANCEL_APPOINTMENT", "SPEAK_TO_HUMAN", "GREETING", "THANKS"].includes(intent.intent)) {
     const handled = await continueFlow(admin, ctx, settings, inbound.text, intent);
@@ -153,6 +159,8 @@ function greet(ctx: ConversationContext, settings: Settings): string {
   return name ? base.replace(/^Hola\.?/, `Hola, ${name}.`) : base;
 }
 
+const CANCEL_PROMPT_TTL_MS = 30 * 60_000;
+
 const MAIN_MENU = [
   { id: "MENU:BOOK", title: "Agendar sesión" },
   { id: "MENU:AVAIL", title: "Ver horarios" },
@@ -171,7 +179,8 @@ async function handleCrisis(admin: AdminSupabaseClient, ctx: ConversationContext
     resources: resources ?? [],
     professionalName: settings["site.identity"].professional_name,
   });
-  await saveState(admin, ctx, { ...ctx.state, flow: null, step: null }, { crisis_flagged_at: new Date().toISOString(), status: "handed_off", handed_off_at: new Date().toISOString() });
+  const now = new Date().toISOString(); // mismo instante: la derivación vigente es "por crisis"
+  await saveState(admin, ctx, { ...ctx.state, flow: null, step: null }, { crisis_flagged_at: now, status: "handed_off", handed_off_at: now });
   await reply(admin, ctx, settings.emergency.show_contact_professional
     ? { kind: "buttons", body, buttons: [{ id: "HUMAN:CRISIS", title: "Avisar al psicólogo" }] }
     : { kind: "text", body }, "crisis");
@@ -188,13 +197,18 @@ async function notifyAdminsHandoff(admin: AdminSupabaseClient, ctx: Conversation
 
 const HANDOFF_EXPIRY_MS = 24 * 3600_000;
 const HANDOFF_ACK_INTERVAL_MS = 60 * 60_000;
+/** Respuestas a mensajes del propio sistema sobre un turno (recordatorios, cambios, reprogramación en curso). */
+const APPOINTMENT_PAYLOADS = new Set(["CONFIRM", "CANCEL", "CANCELYES", "CANCELNO", "RESCHEDULE", "DATE", "SLOT"]);
 
 /**
  * Conversación derivada: el profesional se ocupa personalmente. La asistente no vuelve a
  * ofrecer menús ni turnos (sería frío e inadecuado tras una crisis). Solo:
  *  - re-envía el protocolo si aparece una nueva señal de crisis,
  *  - avisa al profesional y responde un acuse breve como máximo una vez por hora,
- *  - permite volver al menú si la derivación NO fue por crisis (botón "Volver al menú").
+ *  - permite volver al menú si la derivación NO fue por crisis (botón "Volver al menú"),
+ *  - procesa los botones de un turno concreto (confirmar, cancelar, reprogramar) que llegan con
+ *    recordatorios o avisos, sin levantar la derivación,
+ *  - confirma siempre un pedido explícito de avisar al profesional (botón "Avisar al psicólogo").
  * A las 24 h sin novedades la derivación vence y la conversación vuelve a la normalidad.
  * Devuelve false si la conversación debe procesarse normalmente.
  */
@@ -206,15 +220,42 @@ async function handleHandedOff(admin: AdminSupabaseClient, ctx: ConversationCont
     return false;
   }
 
-  const isCrisisThread = Boolean(ctx.conversation.crisis_flagged_at);
+  const isCrisisThread = isCrisisHandoff(ctx.conversation);
   if (inbound.type !== "unsupported" && detectCrisis(inbound.text).detected) {
     await recordInbound(admin, ctx, inbound, "CRISIS", 1);
     await handleCrisis(admin, ctx, settings);
     return true;
   }
+  const action = inbound.payloadId ? inbound.payloadId.split(":")[0]! : null;
   if (inbound.payloadId === "RESUME:BOT" && !isCrisisThread) {
     await recordInbound(admin, ctx, inbound, "PAYLOAD:RESUME", 1);
     await handlePayload(admin, ctx, settings, inbound.payloadId);
+    return true;
+  }
+  if (inbound.payloadId && action && APPOINTMENT_PAYLOADS.has(action)) {
+    await recordInbound(admin, ctx, inbound, `PAYLOAD:${action}`, 1);
+    await handlePayload(admin, ctx, settings, inbound.payloadId);
+    return true;
+  }
+  if (action === "HUMAN") {
+    await recordInbound(admin, ctx, inbound, "PAYLOAD:HUMAN", 1);
+    const professional = settings["site.identity"].professional_name;
+    await notifyAdminsHandoff(
+      admin,
+      ctx,
+      isCrisisThread ? "Pidió que le avises desde el mensaje de crisis. Escribile cuanto antes." : "Pidió hablar con el profesional por WhatsApp.",
+    );
+    await reply(
+      admin,
+      ctx,
+      {
+        kind: "text",
+        body: isCrisisThread
+          ? `Listo, ya le avisé al ${professional}. ${settings.emergency.message}`.trim()
+          : settings.whatsapp.handoff_message || `Listo, ya le avisé al ${professional}; te va a escribir personalmente.`,
+      },
+      "handoff_ack",
+    );
     return true;
   }
 
@@ -271,11 +312,14 @@ async function handlePayload(admin: AdminSupabaseClient, ctx: ConversationContex
       return startReschedule(admin, ctx, settings, arg ?? null);
     case "MOD":
       if (arg === "presencial" || arg === "virtual") {
-        if (ctx.state.flow === "reschedule") {
-          await saveState(admin, ctx, { ...ctx.state, modality: arg, step: "date" });
-          return offerDates(admin, ctx, settings);
+        // Dentro de un flujo activo se conserva lo ya elegido (por ejemplo, el día pedido).
+        if (ctx.state.flow === "booking" || ctx.state.flow === "reschedule") {
+          const dateKey = ctx.state.flow === "booking" ? (ctx.state.dateKey ?? null) : null;
+          await saveState(admin, ctx, { ...ctx.state, modality: arg, step: dateKey ? "slot" : "date" });
+          return dateKey ? offerSlots(admin, ctx, settings, dateKey) : offerDates(admin, ctx, settings);
         }
-        return startBooking(admin, ctx, settings, { modality: arg });
+        // Botón suelto (sin flujo): quien no es paciente igual puede ver horarios.
+        return startBooking(admin, ctx, settings, { modality: arg, onlyShow: !ctx.patient || ctx.conversation.current_intent === "CHECK_AVAILABILITY" });
       }
       return;
     case "DATE":
@@ -406,19 +450,41 @@ async function offerSlots(admin: AdminSupabaseClient, ctx: ConversationContext, 
   const offered = slots.slice(0, settings.whatsapp.max_slots_to_offer).map((s) => ({ start: s.start.toISOString(), end: s.end.toISOString(), label: s.label }));
   await saveState(admin, ctx, { ...ctx.state, step: "slot", dateKey, offered });
   const body = `${capitalize(formatLongDate(`${dateKey}T12:00:00`, tz))} · ${MODALITY_LABEL[modality]}. Tengo disponibles estos horarios:\n${offered.map((s) => `• ${s.label}`).join("\n")}\n¿Cuál preferís?`;
-  // Ids cortos por índice: los ISO contienen ":" y además consumen el límite de 200 caracteres del id.
-  return reply(admin, ctx, { kind: "list", body, button: "Elegir horario", section: "Horarios", rows: offered.map((s, i) => ({ id: `SLOT:${i}`, title: s.label, description: MODALITY_LABEL[modality] })) });
+  // Id derivado del horario (no de la posición): un toque en una lista anterior no reserva otro horario.
+  return reply(admin, ctx, { kind: "list", body, button: "Elegir horario", section: "Horarios", rows: offered.map((s) => ({ id: `SLOT:${slotKey(s.start)}`, title: s.label, description: MODALITY_LABEL[modality] })) });
 }
 
-/** Elige un horario ofrecido por su índice en la última lista enviada (payload "SLOT:<n>"). */
-async function chooseSlot(admin: AdminSupabaseClient, ctx: ConversationContext, settings: Settings, indexArg: string | null) {
-  const index = indexArg !== null && /^\d{1,2}$/.test(indexArg) ? Number(indexArg) : -1;
-  const slot = index >= 0 ? ctx.state.offered?.[index] : undefined;
-  if (!slot) return reply(admin, ctx, { kind: "text", body: "Ese horario ya no figura entre las opciones. Escribime el día que preferís y te paso los horarios de nuevo." });
-  const modality = ctx.state.modality ?? "presencial";
+/**
+ * Elige un horario de la última lista enviada por su clave (payload "SLOT:<yyyymmddThhmm>").
+ * Si la clave no está en la lista vigente (lista vieja o formato anterior), no se reserva nada.
+ */
+async function chooseSlot(admin: AdminSupabaseClient, ctx: ConversationContext, settings: Settings, key: string | null) {
   const tz = settings.scheduling.timezone;
+  const slot = key ? ctx.state.offered?.find((s) => slotKey(s.start) === key) : undefined;
+  if (!slot) {
+    const tapped = key ? slotKeyToDate(key) : null;
+    if ((ctx.state.flow === "booking" || ctx.state.flow === "reschedule") && tapped && tapped.getTime() > Date.now()) {
+      await reply(admin, ctx, { kind: "text", body: "Esa lista ya no está vigente. Te paso los horarios actualizados de ese día." });
+      const dateKey = toDateKey(tapped, tz);
+      await saveState(admin, ctx, { ...ctx.state, dateKey, step: "slot" });
+      return offerSlots(admin, ctx, settings, dateKey);
+    }
+    return reply(admin, ctx, { kind: "buttons", body: "Ese horario ya no figura entre las opciones vigentes. ¿Querés ver los horarios de nuevo?", buttons: MAIN_MENU.slice(0, 2) });
+  }
+  const modality = ctx.state.modality ?? "presencial";
   const start = new Date(slot.start);
   const when = `${capitalize(formatLongDate(start, tz))} a las ${formatTime(start, tz)}`;
+
+  // Reprogramación: el turno puede haber cambiado desde que se ofrecieron los horarios
+  // (cancelado por el profesional, o ya dentro de la ventana mínima). La RPC corre con
+  // service_role, así que las reglas del paciente se vuelven a aplicar acá.
+  if (ctx.state.flow === "reschedule") {
+    const current = ctx.state.appointmentId ? await findTargetAppointment(admin, ctx, ctx.state.appointmentId) : null;
+    if (!current || current.id !== ctx.state.appointmentId || !canPatientModify(current, settings.scheduling, "reschedule")) {
+      await saveState(admin, ctx, { flow: null, step: null, offered: [], appointmentId: null });
+      return reply(admin, ctx, { kind: "buttons", body: "Este turno ya no se puede cambiar desde acá. ¿Querés que le avise al profesional para coordinarlo?", buttons: [{ id: "HUMAN:RESCHEDULE", title: "Sí, avisale" }] });
+    }
+  }
 
   try {
     // Segunda verificación de disponibilidad justo antes de confirmar (el fin lo define la grilla).
@@ -461,9 +527,9 @@ async function continueFlow(admin: AdminSupabaseClient, ctx: ConversationContext
     return true;
   }
   if (state.step === "slot" && intent.requested_time && state.dateKey) {
-    const matchIndex = state.offered?.findIndex((s) => s.label === intent.requested_time) ?? -1;
-    if (matchIndex >= 0) {
-      await chooseSlot(admin, ctx, settings, String(matchIndex));
+    const match = state.offered?.find((s) => s.label === intent.requested_time);
+    if (match) {
+      await chooseSlot(admin, ctx, settings, slotKey(match.start));
       return true;
     }
     await reply(admin, ctx, { kind: "text", body: `A las ${intent.requested_time} no tengo lugar ese día. Elegí uno de los horarios de la lista o decime otro día.` });
@@ -472,9 +538,9 @@ async function continueFlow(admin: AdminSupabaseClient, ctx: ConversationContext
   if (state.step === "slot" && /^\s*\d{1,2}(:\d{2})?\s*(hs|h)?\s*$/i.test(text)) {
     const normalized = text.replace(/\D/g, "").padStart(4, "0");
     const label = `${normalized.slice(0, 2)}:${normalized.slice(2)}`;
-    const matchIndex = state.offered?.findIndex((s) => s.label === label || s.label.startsWith(`${normalized.slice(0, 2)}:`)) ?? -1;
-    if (matchIndex >= 0) {
-      await chooseSlot(admin, ctx, settings, String(matchIndex));
+    const match = state.offered?.find((s) => s.label === label || s.label.startsWith(`${normalized.slice(0, 2)}:`));
+    if (match) {
+      await chooseSlot(admin, ctx, settings, slotKey(match.start));
       return true;
     }
   }
@@ -488,28 +554,24 @@ async function continueFlow(admin: AdminSupabaseClient, ctx: ConversationContext
   return false;
 }
 
-function normalizeAnswer(text: string): string {
-  return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[!.,¡¿?]/g, " ").replace(/\s+/g, " ").trim();
-}
-
-/** Respuesta libre a "¿Querés cancelar tu sesión…?": sí → cancela, no → mantiene, cambio → reprograma. */
+/** Respuesta libre a "¿Querés cancelar tu sesión…?" (ver classifyCancelAnswer). */
 async function continueCancel(admin: AdminSupabaseClient, ctx: ConversationContext, settings: Settings, text: string, intent: IntentResult) {
-  const t = normalizeAnswer(text);
   const appointmentId = ctx.state.appointmentId ?? null;
-  if (/^no\b|mantener|dejalo|mejor no/.test(t)) {
-    await saveState(admin, ctx, { ...ctx.state, flow: null, step: null, appointmentId: null });
-    await reply(admin, ctx, { kind: "text", body: "Perfecto, tu turno sigue en pie." });
-    return;
+  switch (classifyCancelAnswer(text, intent.intent)) {
+    case "cancel":
+      return doCancel(admin, ctx, settings, appointmentId);
+    case "reschedule":
+      return startReschedule(admin, ctx, settings, appointmentId);
+    case "confirm_attendance":
+      // "Confirmo que voy": se descarta la pregunta de cancelación y se registra la confirmación.
+      await saveState(admin, ctx, { ...ctx.state, flow: null, step: null, appointmentId: null });
+      return doConfirm(admin, ctx, settings, appointmentId);
+    case "keep":
+      await saveState(admin, ctx, { ...ctx.state, flow: null, step: null, appointmentId: null });
+      return reply(admin, ctx, { kind: "text", body: "Perfecto, tu turno sigue en pie." });
+    default:
+      return askCancelConfirmation(admin, ctx, settings, appointmentId);
   }
-  if (intent.intent === "RESCHEDULE_APPOINTMENT" || /cambiar|reprogram|otro dia|otro horario/.test(t)) {
-    await startReschedule(admin, ctx, settings, appointmentId);
-    return;
-  }
-  if (/^(si|dale|ok|okay|listo|confirmo|de acuerdo|claro)\b|cancel/.test(t) || intent.intent === "CONFIRM_APPOINTMENT" || intent.intent === "CANCEL_APPOINTMENT") {
-    await doCancel(admin, ctx, settings, appointmentId);
-    return;
-  }
-  await askCancelConfirmation(admin, ctx, settings, appointmentId);
 }
 
 /* ------------------------------------------------------------------------ */

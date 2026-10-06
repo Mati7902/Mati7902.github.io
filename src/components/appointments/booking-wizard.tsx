@@ -74,7 +74,13 @@ export function BookingWizard({ mode, appointmentId, fixedModality, modalitiesEn
           : await rescheduleAppointmentAction({ appointmentId: appointmentId!, start: slot.start, end: slot.end });
       if (!res.ok) {
         toast.error(res.error);
-        // El horario dejó de estar disponible o ya no cumple las reglas: se recarga la grilla.
+        // El cambio ya no está permitido (ventana vencida, turno modificado): elegir otro horario no ayuda.
+        if (res.code === "FORBIDDEN" && mode === "reschedule") {
+          router.push("/app/agenda");
+          router.refresh();
+          return;
+        }
+        // El horario dejó de estar disponible o ya no cumple las reglas de la grilla: se recarga.
         if (res.code === "CONFLICT" || res.code === "VALIDATION") {
           setSlot(null);
           setSelectedDate(null);

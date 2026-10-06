@@ -5,13 +5,19 @@
 -- Se aplica DESPUÉS de las migraciones y el seed, solo en la base de vista previa.
 -- ============================================================================
 
--- Rol con el que se conecta PostgREST (como en Supabase).
+-- Rol con el que se conecta PostgREST (como en Supabase). La contraseña la genera start.sh en
+-- cada ejecución (variable psql :authenticator_password); nunca queda una clave fija conocida.
 do $$ begin
   if not exists (select 1 from pg_roles where rolname = 'authenticator') then
-    create role authenticator login noinherit password 'preview-local';
+    create role authenticator nologin noinherit;
   end if;
 end $$;
+alter role authenticator with login noinherit password :'authenticator_password';
 grant anon, authenticated, service_role to authenticator;
+
+-- Solo puede conectarse a la base de vista previa.
+revoke connect on database psicologia_preview from public;
+grant connect on database psicologia_preview to authenticator;
 
 -- En Supabase, service_role tiene acceso completo al esquema public.
 grant all on all tables in schema public to service_role;

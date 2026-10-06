@@ -66,11 +66,32 @@ export async function requireAdmin(): Promise<SessionContext> {
   return session;
 }
 
-/** Exige rol paciente con ficha vinculada. */
-export async function requirePatient(): Promise<SessionContext & { patient: Patient }> {
+/**
+ * Versión vigente del consentimiento (`legal.consent_version`). Devuelve null si no se pudo leer:
+ * una falla de lectura no bloquea el acceso. Memoizado por request.
+ */
+export const getRequiredConsentVersion = cache(async (): Promise<string | null> => {
+  const supabase = await createClient();
+  const { data } = await supabase.from("settings").select("value").eq("key", "legal").maybeSingle();
+  const version = (data?.value as { consent_version?: unknown } | null)?.consent_version;
+  return typeof version === "string" ? version : null;
+});
+
+/** El paciente debe (re)aceptar los textos legales vigentes. */
+export function needsConsent(patient: Pick<Patient, "consent_version">, requiredVersion: string | null): boolean {
+  return requiredVersion !== null && patient.consent_version !== requiredVersion;
+}
+
+/**
+ * Exige rol paciente con ficha vinculada y consentimiento vigente (si cambió la versión de los
+ * textos legales, redirige a /consentimiento). La propia página de consentimiento pasa
+ * `allowPendingConsent` para no entrar en un bucle.
+ */
+export async function requirePatient(options: { allowPendingConsent?: boolean } = {}): Promise<SessionContext & { patient: Patient }> {
   const session = await requireSession("/app");
   if (session.isAdmin) redirect("/admin");
   if (!session.patient) redirect("/sin-ficha");
+  if (!options.allowPendingConsent && needsConsent(session.patient, await getRequiredConsentVersion())) redirect("/consentimiento");
   return { ...session, patient: session.patient };
 }
 
@@ -90,5 +111,10 @@ export async function assertAdmin(): Promise<SessionContext> {
 export async function assertPatient(): Promise<SessionContext & { patient: Patient }> {
   const session = await assertSession();
   if (!session.patient) throw new AppError("FORBIDDEN", "Tu cuenta no tiene una ficha de paciente vinculada.");
+  // Las acciones también respetan el consentimiento vigente (la navegación del cliente no
+  // vuelve a pasar por el layout).
+  if (needsConsent(session.patient, await getRequiredConsentVersion())) {
+    throw new AppError("FORBIDDEN", "Actualizamos los términos de uso. Recargá la página para revisarlos y aceptarlos antes de seguir.");
+  }
   return { ...session, patient: session.patient };
 }

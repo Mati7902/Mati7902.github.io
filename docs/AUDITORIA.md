@@ -33,7 +33,7 @@ Cada punto indica **estado** (✅ cubierto · ⚠️ cubierto con observaciones 
 | Anónimo: solo planes, FAQs, settings públicos | ✅ | bloque 6 |
 | Storage: bucket `materials` privado con política por material accesible | ✅ | `0005_storage.sql` |
 
-Resultado: `pnpm test:db` → 81 aserciones OK sobre las migraciones reales (PostgreSQL 16 local con stub de `auth`/`storage`).
+Resultado: `pnpm test:db` → 86 aserciones OK sobre las migraciones reales (PostgreSQL 16 local con stub de `auth`/`storage`).
 
 ## Agenda
 
@@ -113,7 +113,7 @@ Resultado: `pnpm test:db` → 81 aserciones OK sobre las migraciones reales (Pos
 
 ## Verificación final
 
-* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (87 tests) · `pnpm build` ✅ · `pnpm test:db` ✅ (81 aserciones)
+* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (117 tests) · `pnpm build` ✅ · `pnpm test:db` ✅ (86 aserciones)
 
 ## Segunda ronda de auditoría (revisión adversarial)
 
@@ -136,6 +136,29 @@ Una revisión adversarial posterior encontró problemas reales que ya están cor
 | Accesibilidad: texto secundario con contraste 2,8:1, lector de pantalla saturado por la cuenta regresiva, áreas táctiles de 36 px, escala sin tocar bloqueaba "Continuar" | Media | Contraste ≥ 4,5:1, `aria-live` solo en el cambio de fase, objetivos de 44 px, escala con valor medio por defecto |
 | Privacidad: la política no mencionaba el proveedor de IA opcional ni Google Calendar; sin re-consentimiento al cambiar la versión legal | Media | Texto actualizado (pendiente de revisión profesional) y página `/consentimiento` |
 | Logs con `details` de Postgres (pueden incluir valores de filas) | Baja | `errorMeta` ya no los registra |
+
+## Tercera ronda (revisión de las correcciones)
+
+Revisión adversarial de las dos rondas anteriores: cuatro revisores por área (base de datos, servidor, interfaz, flujos) y dos verificadores independientes por hallazgo. Se corrigieron los 12 confirmados por ambos verificadores y los de veredicto dividido con impacto real:
+
+| Hallazgo | Severidad | Corrección |
+| --- | --- | --- |
+| `safeInternalPath` devolvía `//evil.com` para `/..//evil.com` (la normalización de la URL resuelve los puntos): open redirect después del login | Alta | Se valida la ruta ya normalizada; tests con segmentos `.`/`..` literales y codificados |
+| El botón "Avisar al psicólogo" del mensaje de crisis no tenía respuesta ni aviso | Alta | En conversaciones derivadas, un pedido explícito de hablar con el profesional siempre se confirma y notifica |
+| Los horarios de WhatsApp se identificaban por posición: tocar una lista vieja reservaba otro horario | Media | Id derivado de la fecha y hora (`SLOT:20261007T2100`) y verificación contra la lista vigente |
+| "Ver horarios" → modalidad pedía identificarse a quien no es paciente y perdía el día pedido | Media | El botón de modalidad continúa el flujo activo |
+| Con una cancelación pendiente, "confirmo que voy" cancelaba y "No voy a poder ir" mantenía el turno; la pregunta no vencía | Media | Reglas puras con tests (`answers.ts`), confirmar asistencia nunca cancela, vencimiento a 30 min |
+| Conversaciones derivadas ignoraban los botones de recordatorios (confirmar/cancelar) | Media | Esos botones se procesan aunque la conversación esté derivada |
+| Reprogramación por WhatsApp sin volver a validar estado y ventana del turno | Media | Se recarga el turno y se aplica `canPatientModify` antes de moverlo |
+| Una crisis ya atendida marcaba como crisis toda derivación posterior | Baja | Solo es crisis si la señal es de la derivación vigente (mismo instante) |
+| El panel "Hoy" cargaba solicitudes sin notas: guardar detalles desde ahí borraba la nota | Alta | Misma selección que la agenda y el formulario no borra notas que no cargó |
+| La política de privacidad decía que la IA no recibe historial (recibe los últimos mensajes) | Media | Texto corregido (pendiente de revisión profesional) |
+| En `/consentimiento` no se podía cerrar sesión | Media | Botón para salir; el consentimiento se exige también en páginas y acciones |
+| Reprogramar desde la app pedía al paciente confirmar su propio cambio y no avisaba al profesional | Baja | Aviso neutro al paciente y notificación al profesional (tests SQL) |
+| El `revoke` de privilegios por defecto para `PUBLIC` por esquema no tenía efecto | Baja | Forma global del `alter default privileges`; test que crea una función y verifica que `anon` no puede ejecutarla |
+| Reglas de negocio (P0001) llegaban como error de validación: el asistente de reserva reintentaba sin fin | Baja | Se informan como "no permitido" y el asistente vuelve a la agenda |
+| Vista semanal en móvil sin nombres; solicitudes del panel sin fecha | Baja | Nombre oculto solo en la vista mensual; fecha visible |
+| Vista previa local: puerto fijo, sin verificación de arranque, rol con clave fija, refresco de sesión sin margen | Baja | Host/puerto de `PG_SUPERUSER_URL`, espera activa, clave por ejecución y acceso solo a la base de vista previa, ventana de reutilización de 10 s |
 
 ## Pendientes recomendados antes de abrir al público
 
