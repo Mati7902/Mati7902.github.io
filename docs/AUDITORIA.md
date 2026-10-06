@@ -113,7 +113,7 @@ Resultado: `pnpm test:db` → 86 aserciones OK sobre las migraciones reales (Pos
 
 ## Verificación final
 
-* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (117 tests) · `pnpm build` ✅ · `pnpm test:db` ✅ (86 aserciones)
+* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (144 tests) · `pnpm build` ✅ · `pnpm test:db` ✅ (86 aserciones)
 
 ## Segunda ronda de auditoría (revisión adversarial)
 
@@ -159,6 +159,21 @@ Revisión adversarial de las dos rondas anteriores: cuatro revisores por área (
 | Reglas de negocio (P0001) llegaban como error de validación: el asistente de reserva reintentaba sin fin | Baja | Se informan como "no permitido" y el asistente vuelve a la agenda |
 | Vista semanal en móvil sin nombres; solicitudes del panel sin fecha | Baja | Nombre oculto solo en la vista mensual; fecha visible |
 | Vista previa local: puerto fijo, sin verificación de arranque, rol con clave fija, refresco de sesión sin margen | Baja | Host/puerto de `PG_SUPERUSER_URL`, espera activa, clave por ejecución y acceso solo a la base de vista previa, ventana de reutilización de 10 s |
+
+## Cuarta ronda (revisión de la tercera)
+
+Una nueva revisión adversarial de la tercera ronda encontró regresiones en las propias correcciones, ya resueltas:
+
+| Hallazgo | Severidad | Corrección |
+| --- | --- | --- |
+| Un "Sí" escrito a "¿Querés cancelar?" confirmaba asistencia (el clasificador etiqueta "sí" como confirmación) | Alta | La respuesta se interpreta por el texto; tests con la intención real del clasificador por reglas |
+| "No voy a cancelar" o "no quiero cancelarla" cancelaban; "No voy a ir" confirmaba | Alta | Negación del verbo cancelar, "no puedo/voy a ir" como cancelación y dudas ("no sé si…") que vuelven a preguntar |
+| Tras derivar en medio de una reprogramación, tocar la lista vieja creaba un segundo turno | Alta | Derivar descarta la lista y un horario solo se reserva con un flujo activo |
+| En derivaciones, los botones posteriores (por ejemplo "Pedir otro turno") quedaban sin respuesta | Media | Derivación común: los botones de turno retoman la conversación; crisis: solo confirmar/cancelar, el resto recibe acuse inmediato |
+| El botón de modalidad podía reservar una modalidad deshabilitada | Baja | Se valida contra las modalidades habilitadas y el menú solo muestra esas |
+| Toques repetidos de "Avisar al psicólogo" notificaban cada vez | Baja | Una notificación cada 10 minutos por esa vía; la persona siempre recibe respuesta |
+| `/app/notificaciones` no exigía el consentimiento vigente | Baja | Usa `requirePatient` |
+| Vista previa: URL de socket rechazadas, archivo de configuración legible por otros usuarios, binario de PostgREST del PATH no aceptado, rol activo después de cerrar | Baja | Parser tolerante, permisos 600, `command -v` y rol sin inicio de sesión al salir |
 
 ## Pendientes recomendados antes de abrir al público
 

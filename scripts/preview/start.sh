@@ -39,10 +39,23 @@ for port in "$GATEWAY_PORT" "$POSTGREST_PORT" 3000; do
   fi
 done
 
-# Host y puerto TCP para PostgREST: los mismos del servidor donde se crea la base.
+# Host y puerto TCP para PostgREST: los mismos del servidor donde se crea la base. Las URL de
+# socket (postgresql:///db?host=/run/postgresql, postgres@/db, %2Frun%2F…) no sirven para el
+# rol authenticator (pg_hba local suele ser peer): en ese caso se usa 127.0.0.1.
 read -r URL_HOST URL_PORT < <(node -e '
-  const u = new URL(process.argv[1]);
-  console.log(`${u.hostname || "-"} ${u.port || "5432"}`);
+  const raw = process.argv[1];
+  let host = "", port = "";
+  try {
+    const u = new URL(raw);
+    host = decodeURIComponent(u.hostname);
+    port = u.port || u.searchParams.get("port") || "";
+  } catch {
+    const m = /^[a-z]+:\/\/(?:[^@/]*@)?([^/:?]*)(?::(\d+))?/i.exec(raw);
+    host = m ? decodeURIComponent(m[1] || "") : "";
+    port = (m && m[2]) || (/[?&]port=(\d+)/.exec(raw) || [])[1] || "";
+  }
+  if (!host || host.startsWith("/")) host = "-";
+  console.log(`${host} ${port || "5432"}`);
 ' "$SUPERUSER_URL")
 PG_HOST="${PREVIEW_PG_HOST:-$([[ "$URL_HOST" == "-" ]] && echo 127.0.0.1 || echo "$URL_HOST")}"
 PG_PORT="${PREVIEW_PG_PORT:-$URL_PORT}"
@@ -61,7 +74,13 @@ for f in supabase/migrations/*.sql; do run_sql "$DB_URL" -f "$f"; done
 run_sql "$DB_URL" -f supabase/seed.sql
 run_sql "$DB_URL" -v authenticator_password="$AUTH_PASSWORD" -f scripts/preview/setup.sql
 
-POSTGREST_BIN="${PREVIEW_POSTGREST_BIN:-$WORK_DIR/postgrest}"
+if [[ -n "${PREVIEW_POSTGREST_BIN:-}" ]]; then
+  # Acepta una ruta o un comando del PATH (p. ej. "postgrest" instalado con Homebrew).
+  POSTGREST_BIN="$(command -v "$PREVIEW_POSTGREST_BIN" || true)"
+  [[ -n "$POSTGREST_BIN" && -x "$POSTGREST_BIN" ]] || fail "No se encontró el ejecutable de PostgREST indicado en PREVIEW_POSTGREST_BIN ($PREVIEW_POSTGREST_BIN)."
+else
+  POSTGREST_BIN="$WORK_DIR/postgrest"
+fi
 if [[ ! -x "$POSTGREST_BIN" ]]; then
   if [[ "$(uname -s)" != "Linux" || "$(uname -m)" != "x86_64" ]]; then
     fail "El binario automático de PostgREST es para Linux x86_64. Instalá PostgREST $POSTGREST_VERSION y definí PREVIEW_POSTGREST_BIN."
@@ -82,6 +101,7 @@ server-host = "127.0.0.1"
 server-port = $POSTGREST_PORT
 EOF
 umask 022
+chmod 600 "$WORK_DIR/postgrest.conf" # también si el archivo ya existía de una ejecución anterior
 
 KEYS="$(PREVIEW_JWT_SECRET="$JWT_SECRET" node scripts/preview/gateway.mjs --print-keys)"
 PREVIEW_ANON_KEY="$(sed -n 's/^PREVIEW_ANON_KEY=//p' <<<"$KEYS")"
@@ -89,7 +109,11 @@ PREVIEW_SERVICE_ROLE_KEY="$(sed -n 's/^PREVIEW_SERVICE_ROLE_KEY=//p' <<<"$KEYS")
 [[ -n "$PREVIEW_ANON_KEY" && -n "$PREVIEW_SERVICE_ROLE_KEY" ]] || fail "No se pudieron generar las claves de la vista previa."
 
 pids=()
-cleanup() { for pid in "${pids[@]}"; do kill "$pid" 2>/dev/null || true; done; }
+cleanup() {
+  for pid in "${pids[@]}"; do kill "$pid" 2>/dev/null || true; done
+  # El rol authenticator es de todo el servidor: al terminar deja de poder iniciar sesión.
+  psql -X -q "$SUPERUSER_URL" -c "alter role authenticator nologin;" >/dev/null 2>&1 || true
+}
 trap cleanup EXIT INT TERM
 
 "$POSTGREST_BIN" "$WORK_DIR/postgrest.conf" > "$WORK_DIR/postgrest.log" 2>&1 &

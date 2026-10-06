@@ -2,14 +2,15 @@ import type { Metadata } from "next";
 
 import { NotificationCenter } from "@/components/notifications/notification-center";
 import { PageHeader } from "@/components/ui/page-header";
-import { requireSession } from "@/lib/auth/session";
+import { requirePatient } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import { listNotifications } from "@/server/services/notifications";
 
 export const metadata: Metadata = { title: "Notificaciones" };
 
 export default async function PatientNotificationsPage() {
-  const session = await requireSession("/app/notificaciones");
+  // requirePatient también exige el consentimiento vigente (la navegación del cliente no pasa por el layout).
+  const session = await requirePatient();
   const supabase = await createClient();
   const notifications = await listNotifications(supabase, session.userId);
   return (
