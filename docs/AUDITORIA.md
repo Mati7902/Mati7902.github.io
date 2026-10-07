@@ -113,7 +113,7 @@ Resultado: `pnpm test:db` → 86 aserciones OK sobre las migraciones reales (Pos
 
 ## Verificación final
 
-* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (144 tests) · `pnpm build` ✅ · `pnpm test:db` ✅ (86 aserciones)
+* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (163 tests) · `pnpm build` ✅ · `pnpm test:db` ✅ (86 aserciones)
 
 ## Segunda ronda de auditoría (revisión adversarial)
 
@@ -174,6 +174,19 @@ Una nueva revisión adversarial de la tercera ronda encontró regresiones en las
 | Toques repetidos de "Avisar al psicólogo" notificaban cada vez | Baja | Una notificación cada 10 minutos por esa vía; la persona siempre recibe respuesta |
 | `/app/notificaciones` no exigía el consentimiento vigente | Baja | Usa `requirePatient` |
 | Vista previa: URL de socket rechazadas, archivo de configuración legible por otros usuarios, binario de PostgREST del PATH no aceptado, rol activo después de cerrar | Baja | Parser tolerante, permisos 600, `command -v` y rol sin inicio de sesión al salir |
+
+## Quinta ronda (diseño seguro de la cancelación por texto)
+
+La revisión de la cuarta ronda confirmó 16 hallazgos. Ocho venían de la misma causa: inferir la intención de un texto libre antes de cancelar es frágil ("No, voy a ir" pierde la coma al normalizarse y se lee "No voy a ir"; "llego tarde", "si no puedo ir te aviso" o "te confirmo mañana" se malinterpretaban). Se cambió el diseño en lugar de seguir afinando expresiones regulares:
+
+| Cambio | Efecto |
+| --- | --- |
+| El texto nunca cancela ni confirma por sí solo | Si suena a cancelar, se muestran los botones "Sí, cancelar / No, mantener"; solo el botón ejecuta la acción. Mantener sí se acepta por texto porque no cambia nada |
+| La respuesta escrita solo cuenta si la pregunta de cancelación es el último mensaje enviado (y tiene menos de 30 min) | Un "ok, gracias" posterior a otro mensaje ya no se toma como respuesta a una pregunta vieja |
+| "Sí" escrito a "¿Le aviso al profesional?" ejecuta ese botón | Antes se interpretaba como confirmar asistencia |
+| Avisos al profesional deduplicados por conversación y motivo, con el registro real de notificaciones | Un acuse sin aviso ya no silencia un pedido explícito ni los mensajes escritos posteriores |
+| "Otros días", "Ver horarios" y listas viejas respetan la reprogramación en curso | Ya no se crea un segundo turno en lugar de mover el existente |
+| Una fecha de una lista vieja sin flujo activo inicia una reserva para ese día | Antes ofrecía horarios que después rechazaba |
 
 ## Pendientes recomendados antes de abrir al público
 

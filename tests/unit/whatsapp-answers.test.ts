@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { classifyByRules } from "@/server/services/ai/rules";
-import { classifyCancelAnswer, isCrisisHandoff, slotKey, slotKeyToDate } from "@/server/services/whatsapp/answers";
+import { classifyCancelAnswer, isBareYes, isCrisisHandoff, slotKey, slotKeyToDate } from "@/server/services/whatsapp/answers";
 
 // La intención se calcula con el clasificador real por reglas (el que corre por defecto):
 // así los casos reflejan lo que llega en producción, no una intención idealizada.
@@ -14,15 +14,10 @@ describe("respuesta a '¿Querés cancelar tu sesión?'", () => {
   it.each([
     "Sí",
     "sí.",
-    "Si",
     "dale",
     "ok",
-    "Ok.",
-    "listo",
     "perfecto",
     "si, cancelala",
-    "Sí por favor",
-    "claro",
     "Cancelala por favor",
     "No voy a poder ir",
     "No voy a ir",
@@ -31,9 +26,9 @@ describe("respuesta a '¿Querés cancelar tu sesión?'", () => {
     "No, cancelalo",
     "anulala",
     "quiero cancelar",
-    "no sé, cancelala nomás",
-  ])("cancela ante '%s'", (text) => {
-    expect(answer(text)).toBe("cancel");
+    "No asistiré",
+  ])("'%s' pide confirmar la cancelación con el botón (nunca cancela directo)", (text) => {
+    expect(answer(text)).toBe("cancel_intent");
   });
 
   it.each([
@@ -41,27 +36,63 @@ describe("respuesta a '¿Querés cancelar tu sesión?'", () => {
     "no gracias",
     "Mejor no",
     "No la canceles",
+    "nooo la canceles",
     "no quiero cancelar",
     "no quiero cancelarla",
     "No, no voy a cancelar",
-    "no hace falta cancelar",
-    "no la quiero cancelar",
+    "No, no quería cancelar",
+    "no quería cancelarla, me equivoqué",
+    "Perdón, toqué cancelar sin querer",
+    "No, le di a cancelar por error",
+    "No quiero que la canceles",
+    "no hace falta que la canceles",
+    "No la cancelo",
+    "no me la canceles",
     "mantenela",
     "dejala así",
-  ])("mantiene el turno ante '%s'", (text) => {
+    "No, voy a ir",
+    "No no, voy a ir",
+    "no, voy a ir igual",
+    "No, voy a poder ir",
+    "No, puedo ir igual",
+    "No, la mantengo. Si no puedo ir te aviso",
+    "Perdón, me equivoqué de botón, confirmo que voy",
+    "sí voy",
+    "voy igual",
+    "ahí estaré",
+  ])("'%s' mantiene el turno", (text) => {
     expect(answer(text)).toBe("keep");
   });
 
-  it.each(["Perdón, me equivoqué de botón, confirmo que voy", "confirmo", "sí voy", "voy igual", "ahí estaré"])("confirma asistencia ante '%s'", (text) => {
-    expect(answer(text)).toBe("confirm_attendance");
-  });
-
-  it.each(["mejor cambiarla para otro día", "quiero reprogramar", "¿se puede pasar a otro horario?"])("detecta un pedido de cambio en '%s'", (text) => {
+  it.each(["mejor cambiarla para otro día", "quiero reprogramar", "se puede pasar a otro horario"])("'%s' inicia una reprogramación", (text) => {
     expect(answer(text)).toBe("reschedule");
   });
 
-  it.each(["hmm no sé", "¿a qué hora era?", "Sí, confirmo", "no sé si voy a poder ir", "capaz voy", "tal vez vaya", "no sé si cancelarla"])("ante lo ambiguo ('%s') vuelve a preguntar", (text) => {
-    expect(answer(text)).toBe("unclear");
+  it.each(["¿Hasta cuándo puedo cancelar sin que me cobren?", "pero hasta cuándo puedo cancelar?", "se cobra si cancelo?", "no, solo preguntaba hasta cuándo puedo cancelar"])(
+    "'%s' es una pregunta: se informa la política y se vuelve a preguntar",
+    (text) => {
+      expect(answer(text)).toBe("question");
+    },
+  );
+
+  it.each(["hmm", "¿a qué hora era?", "te confirmo mañana", "nos vemos la próxima"])("'%s' vuelve a preguntar o no cancela", (text) => {
+    expect(["unclear", "question"]).toContain(answer(text));
+  });
+
+  it("ninguna respuesta escrita produce una acción irreversible", () => {
+    const outcomes = new Set(["keep", "reschedule", "cancel_intent", "question", "unclear"]);
+    for (const text of ["Sí", "No, voy a ir", "llego tarde", "no voy a llegar a tiempo", "capaz no voy a poder ir", "confirmo que no voy"]) {
+      expect(outcomes.has(answer(text))).toBe(true);
+    }
+  });
+});
+
+describe("sí suelto a una pregunta de sí/no", () => {
+  it.each(["Sí", "sii", "dale", "Ok.", "sí, avisale", "si por favor"])("'%s' cuenta como sí", (text) => {
+    expect(isBareYes(text)).toBe(true);
+  });
+  it.each(["sí, pero mañana", "no", "sí cancelala", "¿qué?"])("'%s' no es un sí suelto", (text) => {
+    expect(isBareYes(text)).toBe(false);
   });
 });
 

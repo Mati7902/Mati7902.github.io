@@ -15,6 +15,8 @@ export type ConversationState = {
   dateKey?: string | null;
   appointmentId?: string | null;
   offered?: { start: string; end: string; label: string }[];
+  /** Payload que ejecuta un "sí" escrito a la última pregunta de sí/no (p. ej. "¿Le aviso al profesional?"). */
+  pendingYes?: string | null;
   updatedAt?: string;
 };
 

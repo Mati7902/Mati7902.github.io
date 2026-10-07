@@ -31,54 +31,63 @@ export function slotKeyToDate(key: string): Date | null {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-export type CancelAnswer = "cancel" | "keep" | "confirm_attendance" | "reschedule" | "unclear";
-
-const YES_WORDS = "si|dale|ok|okay|listo|perfecto|de acuerdo|claro|correcto|exacto|bueno";
-
 /**
- * Interpreta la respuesta libre a "¿Querés cancelar tu sesión…?".
- *
- * Se decide por el TEXTO, no por la intención del clasificador: el clasificador no conoce la
- * pregunta y etiqueta un "sí" suelto como CONFIRM_APPOINTMENT, cuando acá significa "sí, cancelar".
- * Criterio: un sí explícito o un pedido claro cancela; una negación del verbo cancelar mantiene;
- * lo ambiguo ("sí, confirmo", "no sé si voy a poder") vuelve a preguntar con botones.
+ * Resultado de interpretar la respuesta escrita a "¿Querés cancelar tu sesión…?".
+ * Ninguno ejecuta una acción irreversible: cancelar requiere SIEMPRE tocar el botón
+ * "Sí, cancelar" (CANCELYES). El texto libre es ambiguo ("No, voy a ir" pierde la coma al
+ * normalizarse y se lee como "No voy a ir"), así que solo decide entre:
+ *  - "keep": mantener el turno (no cambia nada),
+ *  - "reschedule": iniciar una reprogramación (que igual exige elegir horario),
+ *  - "cancel_intent": parece un pedido de cancelar → se muestran los botones para confirmarlo,
+ *  - "question": pregunta sobre la política de cancelación → se informa y se vuelve a preguntar,
+ *  - "unclear": se vuelve a preguntar con botones.
  */
+export type CancelAnswer = "keep" | "reschedule" | "cancel_intent" | "question" | "unclear";
+
+/** Separadores de cláusula que se conservan antes de normalizar ("No, voy a ir" ≠ "No voy a ir"). */
+function clauses(text: string): string[] {
+  return text
+    .split(/[,.;:!?¡¿\n]+/)
+    .map((c) => normalizeAnswer(c))
+    .filter(Boolean);
+}
+
 export function classifyCancelAnswer(text: string, intent: string | null): CancelAnswer {
   const t = normalizeAnswer(text);
   if (!t) return "unclear";
+  const parts = clauses(text);
+  const first = parts[0] ?? "";
 
-  // "no quiero cancelar(la)", "no voy a cancelar", "no la canceles", "no hace falta cancelar".
-  // No incluye "no, cancelala" (imperativo afirmativo después de una coma).
+  // Mantener: negación del verbo cancelar, un "no" que responde a la pregunta seguido de algo
+  // que no es otra negación ("No, voy a ir"), o pedidos explícitos de mantenerla.
   const negatedCancel =
-    /\bno (la |lo )?(quiero |deseo |voy a |vamos a |vas a |vayas a |hace falta |hay que |necesito |es necesario )?(cancelar(la|lo)?|cancele[sn]?|anular(la|lo)?|anule[sn]?)\b/.test(t);
-  // "no voy a ir", "no voy a poder ir", "no puedo asistir", "no podré llegar".
-  const cantGo = /\bno (voy a |vamos a )?(poder |puedo |podre |podria |podemos )?(ir|asistir|llegar|venir)\b/.test(t);
-  const cancelWord = /\b(cancel|anul)\w*/.test(t) && !negatedCancel;
-  const negatedChange = /\bno (la |lo )?(quiero |hace falta )?(cambiar\w*|reprogram\w*|mover\w*)/.test(t);
+    /\bno+ (me |la |lo |te )*(quiero |quisiera |queria |deseo |voy a |vamos a |vas a |vayas a |hace falta |hay que |necesito |es necesario |es para )?(que (la |lo )?)?(cancel\w*|anul\w*)/.test(t) &&
+    !/\bno+ (cancela(la|lo)?|anula(la|lo)?)\b/.test(t);
+  const mistake = /\b(sin querer|por error|me equivoque|equivocacion|toque mal|apurado)\b/.test(t);
+  const leadingNoThenGoing = /^no+( no+)*$/.test(first) && parts.length > 1 && !/^no\b/.test(parts[1] ?? "") && /\b(voy|puedo ir|asisto|asistire|estare|mantener|manten\w*)\b/.test(parts.slice(1).join(" "));
+  const keepWords = /^(no+|no gracias|mejor no|no por ahora|no no|nop|nah|para nada)$/.test(t) || /\b(manten\w*|dejal[ao]|sigue en pie|que siga)\b/.test(t);
+  const negation = /\b(no+|nunca|ni|falt\w*)\b/.test(t);
+  const attendance = !negation && /\b(voy a ir|si voy|voy igual|asisto|asistire|ahi estare|alli estare|ahi voy a estar|confirmo que voy|confirmo asistencia|confirmo mi asistencia)\b/.test(t);
+
+  const question = /[?¿]/.test(text) || /\b(hasta cuando|cuanto (tiempo|antes)|se cobra|me cobran|que pasa si|se puede|puedo cancelar)\b/.test(t);
+  const negatedChange = /\bno+ (la |lo )?(quiero |hace falta )?(cambiar\w*|reprogram\w*|mover\w*)/.test(t);
   const wantsChange =
     !negatedChange &&
-    (/\b(cambiar\w*|reprogram\w*|otro dia|otro horario|otra fecha|otra hora|moverla|moverlo|pasarla|pasarlo)\b/.test(t) ||
-      (intent === "RESCHEDULE_APPOINTMENT" && !cancelWord && !cantGo));
-  const yesPrefix = new RegExp(`^(${YES_WORDS})\\b`).test(t);
-  const bareYes = new RegExp(`^(${YES_WORDS})( (si|por favor|gracias|cancelala|cancelalo|cancela|cancelar))*$`).test(t);
-  const attendanceWords = /\b(confirmo|voy a ir|si voy|voy igual|asisto|asistire|ahi estare|alli estare|ahi voy a estar|nos vemos)\b/.test(t);
-  const explicitGoing = /\b(voy|asisto|asistire|estare)\b/.test(t);
-  // Dudas ("no sé si voy", "capaz", "tal vez"): nunca se toman como confirmación.
-  const uncertain = /\b(no se si|no se|no estoy segur[oa]|capaz|tal vez|quizas?|a lo mejor|puede ser|todavia no se)\b/.test(t);
-  const keepWords = /^(no|no gracias|mejor no|no por ahora|no no|nop|nah|para nada)$/.test(t) || /\b(manten\w*|dejal[ao]|sigue en pie|que siga)\b/.test(t);
+    (/\b(cambiar\w*|reprogram\w*|otro dia|otro horario|otra fecha|otra hora|moverla|moverlo|pasarla|pasarlo)\b/.test(t) || intent === "RESCHEDULE_APPOINTMENT");
 
-  // Orden explícito: "cancelala", "cancelá", "anulalo".
-  const imperativeCancel = /\b(cancela(la|lo|le)?|anula(la|lo)?)\b/.test(t);
-
-  if (negatedCancel) return "keep";
+  if (negatedCancel || mistake || leadingNoThenGoing || keepWords || attendance) return "keep";
   if (wantsChange) return "reschedule";
-  if (uncertain && !imperativeCancel && !cantGo) return "unclear";
-  if (cantGo || cancelWord) return "cancel";
-  if (bareYes) return "cancel";
-  // "Sí, confirmo" puede leerse como "confirmo la cancelación": se vuelve a preguntar.
-  if (attendanceWords && !(yesPrefix && !explicitGoing)) return "confirm_attendance";
-  if (keepWords) return "keep";
+  if (question) return "question";
+  // Cualquier otra cosa que suene a cancelar o a "sí" pide confirmar con el botón.
+  const cancelish = /\b(cancel\w*|anul\w*)\b/.test(t) || /\bno+ (voy a |vamos a )?(poder |puedo |podre |podria |podemos )?(ir|asistir|venir)\b/.test(t) || /\bno+ (asisto|asistire|estare)\b/.test(t);
+  const yes = /^(si+|dale|ok|okay|listo|perfecto|de acuerdo|claro|correcto|exacto|bueno)\b/.test(t);
+  if (cancelish || yes) return "cancel_intent";
   return "unclear";
+}
+
+/** "Sí" escrito sin más contenido (respuesta a una pregunta de sí/no). */
+export function isBareYes(text: string): boolean {
+  return /^(si+|sii+|dale|ok|okay|listo|perfecto|de acuerdo|claro|bueno|por favor|si por favor|si gracias|avisale|si avisale|dale avisale)$/.test(normalizeAnswer(text));
 }
 
 /**
