@@ -23,8 +23,19 @@ describe("clasificador por reglas", () => {
     ["quiero hablar con Matías", "SPEAK_TO_HUMAN"],
     ["hola", "GREETING"],
     ["muchas gracias!", "THANKS"],
+    // Un pedido de cancelar o cambiar gana sobre el agradecimiento o el "confirmo" que lo acompaña.
+    ["Gracias por avisar, pero no voy a poder ir", "CANCEL_APPOINTMENT"],
+    ["Gracias, quiero cancelar el turno", "CANCEL_APPOINTMENT"],
+    ["Gracias, quiero cambiar el horario", "RESCHEDULE_APPOINTMENT"],
+    ["Te confirmo que no voy a poder ir", "CANCEL_APPOINTMENT"],
+    ["confirmo que no voy", "CANCEL_APPOINTMENT"],
+    ["Hola, no puedo ir el jueves", "CANCEL_APPOINTMENT"],
   ])("«%s» → %s", (text, intent) => {
     expect(classify(text).intent).toBe(intent);
+  });
+
+  it("elegir otro día durante una reserva no es cancelar", () => {
+    expect(classify("no voy a poder el lunes, mejor el martes").intent).not.toBe("CANCEL_APPOINTMENT");
   });
 
   it("marca contenido clínico sin inventar una intención administrativa", () => {

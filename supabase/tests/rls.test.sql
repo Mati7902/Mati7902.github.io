@@ -234,6 +234,30 @@ select pg_temp.expect_error(
 select pg_temp.logout();
 rollback;
 
+-- Cancelación por WhatsApp (la RPC corre con service_role, sin usuario): avisa al profesional y el
+-- paciente no recibe "Turno cancelado" como si lo hubiera cancelado otra persona.
+begin;
+select pg_temp.login(null, 'service_role');
+select public.cancel_appointment_tx((select id from public.appointments where status = 'pending' limit 1), 'Cancelado por WhatsApp', 'whatsapp');
+select pg_temp.logout();
+select pg_temp.assert(
+  (select count(*) from public.notifications where user_id = '11111111-1111-4111-8111-111111111111' and title = 'Un paciente canceló su turno') = 1,
+  'una cancelación por WhatsApp avisa al profesional');
+select pg_temp.assert(
+  (select count(*) from public.notifications where user_id = '22222222-2222-4222-8222-222222222222' and title = 'Turno cancelado') = 0,
+  'el paciente no recibe "Turno cancelado" por su propia cancelación por WhatsApp');
+rollback;
+
+-- Cancelación hecha por el profesional: el paciente sí recibe el aviso.
+begin;
+select pg_temp.login('11111111-1111-4111-8111-111111111111');
+select public.cancel_appointment_tx((select id from public.appointments where status = 'pending' limit 1), 'Imprevisto', 'admin');
+select pg_temp.logout();
+select pg_temp.assert(
+  (select count(*) from public.notifications where user_id = '22222222-2222-4222-8222-222222222222' and title = 'Turno cancelado') = 1,
+  'el paciente recibe aviso cuando el profesional cancela');
+rollback;
+
 -- ---------------------------------------------------------------------------
 -- 5. Administrador: acceso completo y notificaciones automáticas
 -- ---------------------------------------------------------------------------

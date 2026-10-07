@@ -12,7 +12,7 @@ import type { AIProvider, ClassifyInput, IntentKey, IntentResult } from "@/serve
  */
 const KEYWORDS: { intent: IntentKey; patterns: RegExp[]; weight: number }[] = [
   { intent: "CONFIRM_APPOINTMENT", patterns: [/\bconfirm[oa]r?\b/, /\bs[ií]\s*(voy|asisto|estar[eé])\b/, /\bah[ií] (voy|estar[eé])\b/, /^\s*(dale|ok|listo|perfecto|s[ií])\s*[.!]?\s*$/], weight: 0.9 },
-  { intent: "CANCEL_APPOINTMENT", patterns: [/\bcancel/, /\bno (voy a )?poder (ir|asistir)/, /\banular/, /\bsuspender/], weight: 0.85 },
+  { intent: "CANCEL_APPOINTMENT", patterns: [/\bcancel/, /\bno (voy a )?poder (ir|asistir)/, /\bno (puedo|podre|voy a) (ir|asistir)\b/, /\bno (voy|asisto|asistire)\s*([,.!?]|$)/, /\banular/, /\bsuspender/], weight: 0.85 },
   { intent: "RESCHEDULE_APPOINTMENT", patterns: [/\breprogram/, /\bcambiar (el |mi )?(turno|hora|horario|d[ií]a|sesi[oó]n)/, /\bmover (el |mi )?(turno|sesi[oó]n)/, /\bpasar (el |mi )?turno/, /\botro horario\b/, /\botro d[ií]a\b/], weight: 0.85 },
   { intent: "CHECK_AVAILABILITY", patterns: [/\bdisponib/, /\bten[eé]s (algo|lugar|horario|hora|turno)/, /\bqu[eé] horarios?/, /\bhay (lugar|turno|hora)/, /\bhorarios? libres?/, /\bcu[aá]ndo (pod[eé]s|atend[eé]s)/], weight: 0.8 },
   { intent: "BOOK_APPOINTMENT", patterns: [/\b(sacar|pedir|agendar|reservar|solicitar|coordinar)\s*(un |una )?(turno|cita|hora|sesi[oó]n|consulta)/, /\bquiero (un |una )?(turno|cita|sesi[oó]n|consulta)/, /\bnecesito (un |una )?(turno|cita|sesi[oó]n|consulta)/, /\bprimera (consulta|sesi[oó]n|vez)/, /\bturno\b/], weight: 0.75 },
@@ -103,13 +103,22 @@ export function resolveModality(text: string): IntentResult["modality"] {
 export function classifyByRules(input: ClassifyInput): IntentResult {
   const text = normalize(input.message);
   const crisis = detectCrisis(input.message);
-  let best: { intent: IntentKey; score: number } = { intent: "OTHER", score: 0 };
+  const matched: { intent: IntentKey; score: number }[] = [];
   for (const rule of KEYWORDS) {
     const hits = rule.patterns.filter((p) => p.test(text)).length;
     if (hits === 0) continue;
-    const score = Math.min(0.98, rule.weight + (hits - 1) * 0.05);
-    if (score > best.score) best = { intent: rule.intent, score };
+    matched.push({ intent: rule.intent, score: Math.min(0.98, rule.weight + (hits - 1) * 0.05) });
   }
+  // Prioridades por sentido, no por puntaje: "Gracias por avisar, pero no voy a poder ir" es una
+  // cancelación, y "Te confirmo que no voy" no confirma nada.
+  const has = (intent: IntentKey) => matched.some((m) => m.intent === intent);
+  const candidates = matched.filter(
+    (m) =>
+      !((m.intent === "THANKS" || m.intent === "GREETING") && matched.some((o) => o.intent !== "THANKS" && o.intent !== "GREETING")) &&
+      !(m.intent === "CONFIRM_APPOINTMENT" && (has("CANCEL_APPOINTMENT") || has("RESCHEDULE_APPOINTMENT"))),
+  );
+  let best: { intent: IntentKey; score: number } = { intent: "OTHER", score: 0 };
+  for (const m of candidates) if (m.score > best.score) best = m;
   // Un relato clínico con palabras como "turno" sigue siendo pedido de turno, pero marcamos el contenido.
   const clinical = CLINICAL_HINTS.test(input.message);
   if (best.intent === "OTHER" && clinical) best = { intent: "OTHER", score: 0.6 };

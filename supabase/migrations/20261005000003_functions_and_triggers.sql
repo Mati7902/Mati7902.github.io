@@ -711,10 +711,15 @@ declare
   -- Origen real del cambio (lo fijan las RPC): 'app'/'whatsapp' = lo pidió el propio paciente.
   v_source     text := coalesce(nullif(current_setting('app.change_source', true), ''), 'system');
   v_by_patient boolean;
+  -- Lo canceló el propio paciente: desde la app (cancelled_by = su perfil) o por WhatsApp (la RPC
+  -- corre con service_role, sin usuario, y marca el origen 'whatsapp').
+  v_cancelled_by_patient boolean;
 begin
   select p.profile_id, p.first_name || ' ' || p.last_name into v_profile_id, v_name
   from public.patients p where p.id = new.patient_id;
   v_by_patient := v_source in ('app', 'whatsapp');
+  v_cancelled_by_patient := (v_profile_id is not null and new.cancelled_by = v_profile_id)
+                         or (new.cancelled_by is null and v_by_patient);
 
   if tg_op = 'INSERT' then
     if new.status = 'requested' then
@@ -752,7 +757,7 @@ begin
         values (v_profile_id, 'appointment_confirmed', 'Tu solicitud fue aprobada',
           'Tu sesión quedó confirmada para el ' || v_when || '.',
           jsonb_build_object('appointment_id', new.id));
-      elsif new.status = 'cancelled' and coalesce(new.cancelled_by, '00000000-0000-0000-0000-000000000000'::uuid) <> v_profile_id then
+      elsif new.status = 'cancelled' and not v_cancelled_by_patient then
         insert into public.notifications (user_id, type, title, body, data)
         values (v_profile_id, 'appointment_cancelled', 'Turno cancelado',
           'La sesión del ' || v_when || ' fue cancelada. Podés solicitar un nuevo horario cuando quieras.',
@@ -768,7 +773,7 @@ begin
       coalesce(v_name, 'Un paciente') || case when new.status = 'requested' then ' pidió pasar su sesión al ' else ' pasó su sesión al ' end || v_when || '.',
       jsonb_build_object('appointment_id', new.id, 'patient_id', new.patient_id));
   end if;
-  if new.status is distinct from old.status and new.status = 'cancelled' and new.cancelled_by = v_profile_id then
+  if new.status is distinct from old.status and new.status = 'cancelled' and v_cancelled_by_patient then
     perform public.notify_admins('appointment_cancelled', 'Un paciente canceló su turno',
       coalesce(v_name, 'Un paciente') || ' canceló la sesión del ' || v_when || '.',
       jsonb_build_object('appointment_id', new.id, 'patient_id', new.patient_id));

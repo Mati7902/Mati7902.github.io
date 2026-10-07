@@ -33,7 +33,7 @@ Cada punto indica **estado** (✅ cubierto · ⚠️ cubierto con observaciones 
 | Anónimo: solo planes, FAQs, settings públicos | ✅ | bloque 6 |
 | Storage: bucket `materials` privado con política por material accesible | ✅ | `0005_storage.sql` |
 
-Resultado: `pnpm test:db` → 86 aserciones OK sobre las migraciones reales (PostgreSQL 16 local con stub de `auth`/`storage`).
+Resultado: `pnpm test:db` → 89 aserciones OK sobre las migraciones reales (PostgreSQL 16 local con stub de `auth`/`storage`).
 
 ## Agenda
 
@@ -113,7 +113,7 @@ Resultado: `pnpm test:db` → 86 aserciones OK sobre las migraciones reales (Pos
 
 ## Verificación final
 
-* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (188 tests) · `pnpm test:bot` ✅ (13 recorridos) · `pnpm build` ✅ · `pnpm test:db` ✅ (86 aserciones)
+* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (249 tests) · `pnpm test:bot` ✅ (33 recorridos) · `pnpm build` ✅ · `pnpm test:db` ✅ (89 aserciones)
 
 ## Segunda ronda de auditoría (revisión adversarial)
 
@@ -203,6 +203,35 @@ La revisión de la quinta ronda encontró 11 hallazgos más en el chatbot. Se co
 | Los recordatorios no contaban como "último mensaje" y la respuesta automática a audios sí | Se mira el último mensaje enviado al contacto (incluidos los avisos del sistema), sin contar la respuesta a audios ni los envíos fallidos |
 | El primer mensaje después de derivar recibía un acuse duplicado | El mensaje de derivación y el de crisis cuentan como acuse |
 | Un "sí" a "¿Le aviso?" vencía a los 30 minutos | Vale durante 24 h |
+
+## Séptima ronda (revisión de la sexta)
+
+Cuatro revisores independientes (estados y agenda, interpretación de texto, crisis y avisos, datos y documentación) encontraron 27 hallazgos. Cada corrección del bot quedó cubierta por un recorrido de `pnpm test:bot` que falla con el código anterior y pasa con el nuevo (20 recorridos nuevos o actualizados).
+
+| Hallazgo | Corrección |
+| --- | --- |
+| "A las 15 no puedo, ¿tenés otro día?" reservaba o movía el turno a las 15 | Un horario se elige por texto solo si el mensaje es únicamente la hora; si no, se vuelve a mostrar la lista (que ahora incluye "Otros días") |
+| "Quiero cambiar mi turno" durante una reserva (o "otro turno" durante una reprogramación) creaba un segundo turno o movía el existente | Se pregunta "¿sesión nueva o cambiar la que tenés?" conservando el día pedido |
+| Un horario de una lista vieja sin flujo activo llevaba a reservar un segundo turno; confirmar otro turno cortaba la reprogramación en curso | La lista vieja pregunta igual que los días; confirmar solo cierra el flujo de ese mismo turno |
+| "Agendar virtual" durante una reprogramación movía un turno presencial validándolo como virtual | Reprogramar conserva la modalidad del turno; el cambio de modalidad lo coordina el profesional |
+| Doble toque simultáneo del mismo horario revivía el flujo con una lista nueva | Si el horario ya quedó a nombre de la persona, se informa y no se ofrece otra lista |
+| Botones viejos sobre turnos cancelados o pasados respondían "por la cercanía de la fecha" y avisaban al profesional | "Ese turno ya está cancelado / ya no está vigente" en confirmar, cancelar y reprogramar |
+| En crisis, "necesito hablar con el psicólogo" con una pregunta de cancelación pendiente volvía a preguntar si cancelaba | Se toma como pedido al profesional y se le avisa |
+| En una derivación, "sí, confirmo" a un recordatorio no confirmaba | La regla del recordatorio vale también durante una derivación |
+| Escribir la modalidad perdía el día ya pedido | Igual que el botón: se muestran los horarios de ese día |
+| El clasificador tomaba "Gracias por avisar, pero no voy a poder ir" como agradecimiento y "Te confirmo que no voy" como confirmación | Cancelar y cambiar tienen prioridad sobre agradecer y confirmar |
+| "No, la voy a tener que cancelar", "Sí, la reservé por error", "No la puedo mantener" se tomaban como "mantener" (y un "bueno" posterior confirmaba) | "Mantener" se reconoce por gramática cerrada: todo el mensaje tiene que ser frases inequívocas; lo demás muestra los botones |
+| "Sí, quiero" o "Sí, avisale por favor" a "Avisar al psicólogo" quedaban sin respuesta y sin aviso; "Sí, avisale" podía confirmar un turno si en el medio llegaba un aviso | Se ignoran cortesías, emojis y repeticiones; "avisale" responde a la pregunta de avisar aunque no sea el último mensaje y nunca confirma un turno |
+| Las respuestas a un aviso de cambio actuaban sobre el próximo turno y no sobre el del aviso | Se usa el turno del último aviso (si sigue vigente) |
+| En crisis, cualquier respuesta a "¿Le aviso?" que no fuera "sí" recibía "Ya le avisé" sin aviso | Un "no" se respeta; otra cosa vuelve a preguntar con el botón |
+| Un pedido al profesional tapaba otro distinto durante 10 minutos (por ejemplo, una cancelación fuera de plazo) | Deduplicación por motivo y tema |
+| "Avisar al psicólogo" de un mensaje de crisis viejo llegaba como aviso común | Sigue siendo urgente y la derivación vuelve a ser por crisis |
+| La derivación por crisis vencía a las 24 h aunque la persona siguiera escribiendo | Vence tras 24 h sin mensajes |
+| Un contacto dado de baja que escribía un mensaje de crisis no recibía nada | Recibe el protocolo y se avisa al profesional |
+| Un audio después del mensaje de crisis quedaba sin respuesta | Los audios y archivos siempre reciben respuesta; en crisis, con el mensaje de emergencia |
+| Un botón con el turno de otra persona actuaba sobre el próximo turno propio; un número compartido entre dos fichas identificaba a una | Con un id ajeno no se actúa; un número que corresponde a dos fichas no identifica a nadie |
+| Una cancelación por WhatsApp no avisaba al profesional y al paciente le llegaba "Turno cancelado" como si lo hubiera cancelado otro | El trigger reconoce la cancelación del propio paciente por WhatsApp (3 aserciones SQL nuevas) |
+| La limpieza de `test:bot` dejaba avisos; un test podía fallar según la hora; un test unitario era tautológico | Limpieza completa con verificación de errores, horarios que se corren si chocan y aserciones con contenido |
 
 ## Pendientes recomendados antes de abrir al público
 

@@ -1,7 +1,20 @@
 import { describe, expect, it } from "vitest";
 
 import { classifyByRules } from "@/server/services/ai/rules";
-import { classifyCancelAnswer, isBareConfirm, isBareYes, isCrisisHandoff, slotKey, slotKeyToDate } from "@/server/services/whatsapp/answers";
+import {
+  asksForAnotherAppointment,
+  asksForProfessional,
+  classifyCancelAnswer,
+  isBareConfirm,
+  isBareNo,
+  isBareTimeChoice,
+  isBareYes,
+  isCrisisHandoff,
+  mentionsNotify,
+  refersToExistingAppointment,
+  slotKey,
+  slotKeyToDate,
+} from "@/server/services/whatsapp/answers";
 
 // La intención se calcula con el clasificador real por reglas (el que corre por defecto):
 // así los casos reflejan lo que llega en producción, no una intención idealizada.
@@ -36,6 +49,14 @@ describe("respuesta a '¿Querés cancelar tu sesión?'", () => {
     "No puedo ir, no la mantengas",
     "Dejala, no voy a ir",
     "confirmo que no voy",
+    "No, la voy a tener que cancelar",
+    "Sí, la reservé por error",
+    "Sí, me equivoqué de día",
+    "Si, la pedí sin querer",
+    "Sí, voy a estar de viaje",
+    "Sí, no la puedo mantener",
+    "No voy a poder mantenerla",
+    "Dejala sin efecto",
   ])("'%s' pide confirmar la cancelación con el botón (nunca cancela directo)", (text) => {
     expect(answer(text)).toBe("cancel_intent");
   });
@@ -65,6 +86,8 @@ describe("respuesta a '¿Querés cancelar tu sesión?'", () => {
     "No, voy a poder ir",
     "No, puedo ir igual",
     "No, la mantengo. Si no puedo ir te aviso",
+    "Perdón, me equivoqué de botón",
+    "Sí, voy",
     "Perdón, me equivoqué de botón, confirmo que voy",
     "sí voy",
     "voy igual",
@@ -73,7 +96,7 @@ describe("respuesta a '¿Querés cancelar tu sesión?'", () => {
     expect(answer(text)).toBe("keep");
   });
 
-  it.each(["mejor cambiarla para otro día", "quiero reprogramar", "se puede pasar a otro horario"])("'%s' inicia una reprogramación", (text) => {
+  it.each(["mejor cambiarla para otro día", "quiero reprogramar", "se puede pasar a otro horario", "Dejala para otro día"])("'%s' inicia una reprogramación", (text) => {
     expect(answer(text)).toBe("reschedule");
   });
 
@@ -84,24 +107,44 @@ describe("respuesta a '¿Querés cancelar tu sesión?'", () => {
     },
   );
 
-  it.each(["hmm", "¿a qué hora era?", "te confirmo mañana", "nos vemos la próxima"])("'%s' vuelve a preguntar o no cancela", (text) => {
-    expect(["unclear", "question"]).toContain(answer(text));
+  it.each(["hmm", "¿a qué hora era?", "te confirmo mañana", "nos vemos la próxima", "No, me voy de viaje", "llego tarde", "no sé"])("'%s' vuelve a preguntar con botones", (text) => {
+    expect(["unclear", "question", "cancel_intent"]).toContain(answer(text));
   });
 
-  it("ninguna respuesta escrita produce una acción irreversible", () => {
-    const outcomes = new Set(["keep", "reschedule", "cancel_intent", "question", "unclear"]);
-    for (const text of ["Sí", "No, voy a ir", "llego tarde", "no voy a llegar a tiempo", "capaz no voy a poder ir", "confirmo que no voy"]) {
-      expect(outcomes.has(answer(text))).toBe(true);
-    }
+  // "Mantener" es la única respuesta que se ejecuta por texto (y la que después habilita confirmar
+  // con un "sí"): ningún mensaje que mencione no ir, cancelar o un error al reservar puede darla.
+  it.each([
+    "no voy a llegar a tiempo",
+    "capaz no voy a poder ir",
+    "No, me voy de viaje",
+    "No, la voy a tener que cancelar",
+    "Sí, la reservé por error",
+    "Dejala, no puedo",
+    "no la puedo mantener",
+    "Mantenela, no. Cancelala",
+    "sí voy a cancelar",
+    "No voy, mantené el horario para otro",
+  ])("'%s' nunca se toma como «mantener»", (text) => {
+    expect(answer(text)).not.toBe("keep");
   });
 });
 
 describe("sí suelto a una pregunta de sí/no", () => {
-  it.each(["Sí", "sii", "dale", "Ok.", "sí, avisale", "si por favor"])("'%s' cuenta como sí", (text) => {
-    expect(isBareYes(text)).toBe(true);
-  });
-  it.each(["sí, pero mañana", "no", "sí cancelala", "¿qué?"])("'%s' no es un sí suelto", (text) => {
+  it.each(["Sí", "sii", "dale", "Ok.", "sí, avisale", "si por favor", "Sí, quiero", "si porfa", "Sí, avisale por favor", "sí 🙏", "Sí sí", "Sí, avisá", "avisale", "que me llame"])(
+    "'%s' cuenta como sí",
+    (text) => {
+      expect(isBareYes(text)).toBe(true);
+    },
+  );
+  it.each(["sí, pero mañana", "no", "sí cancelala", "¿qué?", "no, no le avises"])("'%s' no es un sí suelto", (text) => {
     expect(isBareYes(text)).toBe(false);
+  });
+  it.each(["no", "No, gracias", "mejor no", "no hace falta"])("'%s' es un no", (text) => {
+    expect(isBareNo(text)).toBe(true);
+  });
+  it("«avisale» nombra la pregunta de avisar al profesional", () => {
+    expect(mentionsNotify("Sí, avisale")).toBe(true);
+    expect(mentionsNotify("sí")).toBe(false);
   });
 });
 
@@ -109,8 +152,32 @@ describe("confirmación escrita a un recordatorio", () => {
   it.each(["Sí", "confirmo", "Confirmo, gracias", "sí, confirmo", "Ahí estaré", "voy", "dale", "Confirmado!"])("'%s' confirma", (text) => {
     expect(isBareConfirm(text)).toBe(true);
   });
-  it.each(["no", "no voy", "sí, pero cambiala", "confirmo que no voy", "voy a llegar tarde", "¿a qué hora era?", "gracias", ""])("'%s' no confirma", (text) => {
+  it.each(["no", "no voy", "sí, pero cambiala", "confirmo que no voy", "voy a llegar tarde", "¿a qué hora era?", "gracias", "", "Sí, avisale", "por favor avisale"])("'%s' no confirma", (text) => {
     expect(isBareConfirm(text)).toBe(false);
+  });
+});
+
+describe("elección de horario por texto", () => {
+  it.each(["15", "a las 15", "15:30", "las 15 hs", "a las 3 de la tarde", "16 por favor", "dale, a las 17"])("'%s' elige un horario", (text) => {
+    expect(isBareTimeChoice(text)).toBe(true);
+  });
+  it.each(["a las 15 no puedo, tenés otro día?", "¿tenés algo después de las 17?", "las 14 no me sirve", "puedo después de las 18", "15?"])("'%s' no elige ningún horario", (text) => {
+    expect(isBareTimeChoice(text)).toBe(false);
+  });
+});
+
+describe("mensajes que contradicen el flujo en curso", () => {
+  it("cambiar un turno existente durante una reserva", () => {
+    expect(refersToExistingAppointment("quiero cambiar mi turno para el 12/11")).toBe(true);
+    expect(refersToExistingAppointment("¿tenés otro día?")).toBe(false);
+  });
+  it("pedir otra sesión durante una reprogramación", () => {
+    expect(asksForAnotherAppointment("quiero sacar otro turno para el viernes")).toBe(true);
+    expect(asksForAnotherAppointment("mejor el viernes")).toBe(false);
+  });
+  it("pedir hablar con el profesional", () => {
+    expect(asksForProfessional("No sé, necesito hablar con el psicólogo por favor")).toBe(true);
+    expect(asksForProfessional("no sé")).toBe(false);
   });
 });
 

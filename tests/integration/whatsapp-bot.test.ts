@@ -5,7 +5,8 @@
  * conversación, turnos, avisos al profesional) es real.
  *
  * Requiere la vista previa corriendo (pnpm preview:local) y se ejecuta con: pnpm test:bot
- * Crea pacientes ficticios propios y los borra al terminar. Nunca usar contra producción.
+ * Crea pacientes ficticios propios y los borra al terminar (turnos, mensajes y avisos incluidos).
+ * No correr dos ejecuciones a la vez sobre la misma base. Nunca usar contra producción.
  */
 import { createHmac } from "node:crypto";
 
@@ -66,50 +67,71 @@ async function setup() {
 }
 
 async function teardown() {
-  if (originalWhatsApp) await db.from("settings").update({ value: originalWhatsApp as never }).eq("key", "whatsapp");
+  const must = (label: string, result: { error: { message: string } | null }) => {
+    if (result.error) throw new Error(`Limpieza incompleta (${label}): ${result.error.message}`);
+  };
+  if (originalWhatsApp) must("settings", await db.from("settings").update({ value: originalWhatsApp as never }).eq("key", "whatsapp"));
   const { data: contacts } = await db.from("whatsapp_contacts").select("id").in("phone", createdPhones);
   const contactIds = (contacts ?? []).map((c) => c.id);
+  const { data: appts } = await db.from("appointments").select("id").in("patient_id", createdPatients);
+  // Avisos al profesional y al paciente: por contacto, por paciente y por turno.
+  for (const id of contactIds) must("avisos por contacto", await db.from("notifications").delete().eq("data->>contact_id", id));
+  for (const id of createdPatients) must("avisos por paciente", await db.from("notifications").delete().eq("data->>patient_id", id));
+  for (const { id } of appts ?? []) must("avisos por turno", await db.from("notifications").delete().eq("data->>appointment_id", id));
   if (contactIds.length) {
-    for (const id of contactIds) await db.from("notifications").delete().eq("data->>contact_id", id);
-    await db.from("whatsapp_messages").delete().in("contact_id", contactIds);
-    await db.from("whatsapp_conversations").delete().in("contact_id", contactIds);
-    await db.from("whatsapp_contacts").delete().in("id", contactIds);
+    must("mensajes", await db.from("whatsapp_messages").delete().in("contact_id", contactIds));
+    must("conversaciones", await db.from("whatsapp_conversations").delete().in("contact_id", contactIds));
+    must("contactos", await db.from("whatsapp_contacts").delete().in("id", contactIds));
   }
   if (createdPatients.length) {
-    await db.from("appointments").update({ status: "cancelled" }).in("patient_id", createdPatients);
-    await db.from("appointments").delete().in("patient_id", createdPatients);
-    await db.from("patients").delete().in("id", createdPatients);
+    must("historial", await db.from("appointment_history").delete().in("appointment_id", (appts ?? []).map((a) => a.id)));
+    must("turnos", await db.from("appointments").delete().in("patient_id", createdPatients));
+    must("pacientes", await db.from("patients").delete().in("id", createdPatients));
   }
 }
 
-/** Paciente ficticio con turnos propios en horarios que no se pisan con otras pruebas. */
-async function newPatient(appointments: { inDays: number; status: Database["public"]["Enums"]["appointment_status"]; at?: Date }[] = []) {
+type ApptSpec = { inDays?: number; inHours?: number; status: Database["public"]["Enums"]["appointment_status"] };
+
+/**
+ * Paciente ficticio con turnos propios. `inDays`: madrugada (03:00 UTC) de un día lejano, fuera de la
+ * grilla y de los turnos de la demo. `inHours`: dentro de unas horas (para probar plazos mínimos); si
+ * el horario choca con otro turno, se corre de a 40 minutos.
+ */
+async function newPatient(appointments: ApptSpec[] = [], options: { phone?: string; whatsapp?: boolean } = {}) {
   const n = ++seq;
-  const phone = `+5959819${String(Date.now()).slice(-4)}${String(n).padStart(2, "0")}`;
+  const phone = options.phone ?? `+5959819${String(Date.now()).slice(-4)}${String(n).padStart(2, "0")}`;
   const { data: patient, error } = await db
     .from("patients")
-    .insert({ first_name: "Prueba", last_name: `Bot ${n}`, phone, whatsapp_phone: phone })
+    .insert({ first_name: "Prueba", last_name: `Bot ${n}`, phone, whatsapp_phone: options.whatsapp === false ? null : phone })
     .select("*")
     .single();
   if (error) throw error;
   createdPatients.push(patient.id);
-  createdPhones.push(phone);
+  if (!createdPhones.includes(phone)) createdPhones.push(phone);
   const ids: string[] = [];
   for (const [i, a] of appointments.entries()) {
-    // 03:00 UTC (madrugada local) de días lejanos: no choca con turnos de la demo ni con otras pruebas.
-    const start = a.at ? new Date(a.at) : new Date();
-    if (!a.at) {
+    let start = new Date();
+    if (a.inHours !== undefined) {
+      start = new Date(Date.now() + a.inHours * 3600_000 + n * 7 * 60_000);
+      start.setUTCSeconds(0, 0);
+    } else {
       start.setUTCHours(3 + i, (n * 7) % 60, 0, 0);
-      start.setUTCDate(start.getUTCDate() + a.inDays + n * 3);
+      start.setUTCDate(start.getUTCDate() + (a.inDays ?? 20) + n * 3);
     }
-    const end = new Date(start.getTime() + 30 * 60_000);
-    const { data, error: e } = await db
-      .from("appointments")
-      .insert({ patient_id: patient.id, start_time: start.toISOString(), end_time: end.toISOString(), modality: "virtual", status: a.status, source: "admin" })
-      .select("id")
-      .single();
-    if (e) throw e;
-    ids.push(data.id);
+    for (let attempt = 0; ; attempt++) {
+      const end = new Date(start.getTime() + 30 * 60_000);
+      const { data, error: e } = await db
+        .from("appointments")
+        .insert({ patient_id: patient.id, start_time: start.toISOString(), end_time: end.toISOString(), modality: "virtual", status: a.status, source: "admin" })
+        .select("id")
+        .single();
+      if (!e) {
+        ids.push(data.id);
+        break;
+      }
+      if (e.code !== "23P01" || attempt >= 8) throw e;
+      start = new Date(start.getTime() + 40 * 60_000);
+    }
   }
   return { patient, phone, ids };
 }
@@ -152,6 +174,33 @@ async function systemMessage(phone: string, kind: string, appointmentId: string)
 async function notificationsFor(contactId: string) {
   const { data } = await db.from("notifications").select("body, data").eq("data->>contact_id", contactId);
   return data ?? [];
+}
+
+async function humanRequests(phone: string) {
+  const { contactId } = await conversationOf(phone);
+  return (await notificationsFor(contactId)).filter((n) => (n.data as { reason?: string }).reason === "human_request");
+}
+
+async function appointmentCount(patientId: string) {
+  const { count } = await db.from("appointments").select("id", { count: "exact", head: true }).eq("patient_id", patientId).neq("status", "cancelled");
+  return count ?? 0;
+}
+
+async function startOf(id: string) {
+  const { data } = await db.from("appointments").select("start_time").eq("id", id).single();
+  return Date.parse(data!.start_time);
+}
+
+/** Primer día de la lista de días enviada (payload DATE:…). */
+function firstDate(out: Sent[]): string {
+  const id = out.flatMap((m) => m.buttons).find((b) => b.startsWith("DATE:"));
+  if (!id) throw new Error(`No se ofrecieron días: ${JSON.stringify(out)}`);
+  return id;
+}
+
+async function offered(phone: string) {
+  const state = (await conversationOf(phone)).conversation.state as { offered?: { start: string; label: string }[] };
+  return state.offered ?? [];
 }
 
 describe.skipIf(!RUN)("chatbot de WhatsApp (vista previa local)", () => {
@@ -206,6 +255,9 @@ describe.skipIf(!RUN)("chatbot de WhatsApp (vista previa local)", () => {
     expect(await status(ids[0]!)).toBe("confirmed");
     await say(phone, "Sí, cancelar", { payload: `CANCELYES:${ids[0]}` });
     expect(await status(ids[0]!)).toBe("cancelled");
+    // El profesional se entera de la cancelación aunque la RPC corra sin usuario (service_role).
+    const { data: notice } = await db.from("notifications").select("id").eq("title", "Un paciente canceló su turno").eq("data->>appointment_id", ids[0]!);
+    expect(notice?.length).toBeGreaterThan(0);
   });
 
   it("crisis: un 'sí' escrito a «Avisar al psicólogo» avisa al profesional", async () => {
@@ -222,9 +274,7 @@ describe.skipIf(!RUN)("chatbot de WhatsApp (vista previa local)", () => {
 
   it("crisis: un 'sí' escrito a «¿Le aviso?» por una cancelación fuera de plazo avisa al profesional", async () => {
     // Turno en ~3 horas (dentro de las 12 h mínimas): la cancelación la coordina el profesional.
-    const soon = new Date(Date.now() + 3 * 3600_000 + 17 * 60_000);
-    soon.setUTCSeconds(0, 0);
-    const { phone, ids } = await newPatient([{ inDays: 0, status: "confirmed", at: soon }]);
+    const { phone, ids } = await newPatient([{ inHours: 3, status: "confirmed" }]);
     await say(phone, "no quiero seguir viviendo");
     const ask = await say(phone, "Sí, cancelar", { payload: `CANCELYES:${ids[0]}` });
     expect(ask.at(-1)?.buttons).toEqual(["HUMAN:CANCEL"]);
@@ -261,7 +311,7 @@ describe.skipIf(!RUN)("chatbot de WhatsApp (vista previa local)", () => {
   it("un día de una lista vieja (sin flujo activo) pregunta si es sesión nueva o cambio", async () => {
     const { phone, ids, patient } = await newPatient([{ inDays: 20, status: "confirmed" }]);
     const out = await say(phone, "Lunes", { payload: "DATE:2030-01-07" });
-    expect(out.at(-1)?.buttons).toEqual(["NEWDATE:2030-01-07", `RESCHEDULE:${ids[0]}`]);
+    expect(out.at(-1)?.buttons).toEqual(["NEWDATE:2030-01-07", `RESCHEDULE:${ids[0]}@2030-01-07`]);
     const { count } = await db.from("appointments").select("id", { count: "exact", head: true }).eq("patient_id", patient.id);
     expect(count).toBe(1);
   });
@@ -282,5 +332,200 @@ describe.skipIf(!RUN)("chatbot de WhatsApp (vista previa local)", () => {
     await db.from("whatsapp_conversations").update({ state: stale }).eq("id", conversation.id);
     await say(phone, "gracias");
     expect((await conversationOf(phone)).conversation.state).toMatchObject({ flow: null });
+  });
+
+  /* ---------------------------------------------------------------------- */
+  /* Séptima ronda: hallazgos de la revisión de la sexta                     */
+  /* ---------------------------------------------------------------------- */
+
+  it("una hora mencionada sin elegirla («a las X no puedo») no mueve el turno; la hora sola sí", async () => {
+    const { phone, ids } = await newPatient([{ inDays: 20, status: "confirmed" }]);
+    const days = await say(phone, "quiero reprogramar mi turno");
+    await say(phone, "día", { payload: firstDate(days) });
+    const [slot] = await offered(phone);
+    expect(slot).toBeDefined();
+    const before = await startOf(ids[0]!);
+    await say(phone, `a las ${slot!.label} no puedo, ¿tenés otro día?`);
+    expect(await startOf(ids[0]!)).toBe(before);
+    await say(phone, `¿tenés algo después de las ${slot!.label}?`);
+    expect(await startOf(ids[0]!)).toBe(before);
+    await say(phone, slot!.label);
+    expect(await startOf(ids[0]!)).toBe(Date.parse(slot!.start));
+  });
+
+  it("«quiero cambiar mi turno» durante una reserva pregunta antes de crear otro turno", async () => {
+    const { phone, ids, patient } = await newPatient([{ inDays: 20, status: "confirmed" }]);
+    await say(phone, "quiero sacar un turno");
+    const out = await say(phone, "quiero cambiar mi turno para el 12/11");
+    expect(out.at(-1)?.buttons.some((b) => b.startsWith(`RESCHEDULE:${ids[0]}`))).toBe(true);
+    expect(out.at(-1)?.buttons.some((b) => b.startsWith("NEWDATE:"))).toBe(true);
+    expect(await appointmentCount(patient.id)).toBe(1);
+  });
+
+  it("un horario de una lista vieja sin flujo activo pregunta en vez de reservar", async () => {
+    const { phone, ids, patient } = await newPatient([{ inDays: 20, status: "confirmed" }]);
+    const out = await say(phone, "16:00", { payload: "SLOT:20300107T1900" });
+    expect(out.at(-1)?.buttons).toContain(`RESCHEDULE:${ids[0]}@2030-01-07`);
+    expect(await appointmentCount(patient.id)).toBe(1);
+  });
+
+  it("durante una reprogramación, cambiar la modalidad no se aplica al turno", async () => {
+    const { phone } = await newPatient([{ inDays: 20, status: "confirmed" }]);
+    await say(phone, "quiero reprogramar mi turno");
+    const out = await say(phone, "Agendar presencial", { payload: "MOD:presencial" });
+    expect(out[0]?.body).toMatch(/modalidad lo coordina el profesional/);
+    expect((await conversationOf(phone)).conversation.state).toMatchObject({ flow: "reschedule", modality: "virtual" });
+  });
+
+  it("doble toque simultáneo del mismo horario: un solo turno y sin lista nueva", async () => {
+    const { phone, patient } = await newPatient();
+    await say(phone, "quiero sacar un turno");
+    const days = await say(phone, "Videollamada", { payload: "MOD:virtual" });
+    await say(phone, "día", { payload: firstDate(days) });
+    const [slot] = await offered(phone);
+    const key = `SLOT:${new Date(slot!.start).toISOString().replace(/[-:]/g, "").slice(0, 13)}`;
+    const before = sent.length;
+    await Promise.all([say(phone, slot!.label, { payload: key }), say(phone, slot!.label, { payload: key })]);
+    expect(await appointmentCount(patient.id)).toBe(1);
+    expect(sent.slice(before).some((m) => m.buttons.some((b) => b.startsWith("SLOT:")))).toBe(false);
+    expect((await conversationOf(phone)).conversation.state).toMatchObject({ flow: null });
+  });
+
+  it("botones viejos sobre un turno cancelado no hablan de «cercanía de la fecha» ni avisan", async () => {
+    const { phone, ids } = await newPatient([{ inDays: 20, status: "cancelled" }]);
+    const out = await say(phone, "Sí, cancelar", { payload: `CANCELYES:${ids[0]}` });
+    expect(out.at(-1)?.body).toMatch(/ya está cancelado/);
+    const again = await say(phone, "Reprogramar", { payload: `RESCHEDULE:${ids[0]}` });
+    expect(again.at(-1)?.body).toMatch(/ya está cancelado/);
+    expect(await humanRequests(phone)).toHaveLength(0);
+  });
+
+  it("crisis: pedir al psicólogo mientras hay una pregunta de cancelación pendiente lo avisa", async () => {
+    const { phone, ids } = await newPatient([{ inDays: 20, status: "confirmed" }]);
+    await say(phone, "no quiero seguir viviendo");
+    await say(phone, "Cancelar", { payload: `CANCEL:${ids[0]}` });
+    const out = await say(phone, "No sé, necesito hablar con el psicólogo por favor");
+    expect(out.at(-1)?.body).toMatch(/ya le avisé/i);
+    expect(await humanRequests(phone)).toHaveLength(1);
+    expect(await status(ids[0]!)).toBe("confirmed");
+  });
+
+  it("derivación común: «sí, confirmo» a un recordatorio confirma ese turno", async () => {
+    const { phone, ids } = await newPatient([{ inDays: 20, status: "pending" }]);
+    await say(phone, "quiero hablar con el psicólogo");
+    await systemMessage(phone, "reminder_24h", ids[0]!);
+    await say(phone, "Sí, confirmo");
+    expect(await status(ids[0]!)).toBe("confirmed");
+  });
+
+  it("si la modalidad se escribe, se mantiene el día pedido", async () => {
+    const { phone } = await newPatient();
+    await say(phone, "quiero un turno el miércoles");
+    const { conversation } = await conversationOf(phone);
+    const day = (conversation.state as { dateKey?: string }).dateKey;
+    expect(day).toBeTruthy();
+    const out = await say(phone, "virtual");
+    expect(out.at(-1)?.buttons.some((b) => b.startsWith("SLOT:") || b === `DATE:${day}`) || /no tengo lugar/.test(out.at(-1)?.body ?? "")).toBe(true);
+  });
+
+  it("crisis: «Sí, quiero» a «Avisar al psicólogo» avisa y responde", async () => {
+    const { phone } = await newPatient();
+    await say(phone, "no quiero seguir viviendo");
+    const out = await say(phone, "Sí, quiero 🙏");
+    expect(out.at(-1)?.body).toMatch(/ya le avisé/i);
+    expect(await humanRequests(phone)).toHaveLength(1);
+  });
+
+  it("«Sí, avisale» responde a «¿Le aviso?» aunque después haya llegado un aviso de otro turno", async () => {
+    const { phone, ids } = await newPatient([{ inHours: 5, status: "confirmed" }, { inDays: 20, status: "pending" }]);
+    const ask = await say(phone, "quiero reprogramar mi turno");
+    expect(ask.at(-1)?.buttons).toEqual(["HUMAN:RESCHEDULE"]);
+    await systemMessage(phone, "appointment_changed", ids[1]!);
+    await say(phone, "Sí, avisale");
+    expect(await status(ids[1]!)).toBe("pending");
+    expect((await humanRequests(phone)).some((n) => /cambio/.test(n.body ?? ""))).toBe(true);
+  });
+
+  it("«no voy a poder ir» después del aviso de un turno se refiere a ESE turno", async () => {
+    const { phone, ids } = await newPatient([{ inDays: 20, status: "confirmed" }, { inDays: 22, status: "rescheduled" }]);
+    await say(phone, "hola");
+    await systemMessage(phone, "appointment_changed", ids[1]!);
+    const out = await say(phone, "No voy a poder ir");
+    expect(out.at(-1)?.buttons).toContain(`CANCELYES:${ids[1]}`);
+  });
+
+  it("crisis: un «no» a «¿Le aviso?» no se responde «ya le avisé»; otra cosa vuelve a preguntar", async () => {
+    const { phone, ids } = await newPatient([{ inHours: 4, status: "confirmed" }]);
+    await say(phone, "no quiero seguir viviendo");
+    await say(phone, "Sí, cancelar", { payload: `CANCELYES:${ids[0]}` });
+    const other = await say(phone, "mmm");
+    expect(other.at(-1)?.buttons).toEqual(["HUMAN:CANCEL"]);
+    const no = await say(phone, "no");
+    expect(no.at(-1)?.body).not.toMatch(/ya le avisé/i);
+    expect((await humanRequests(phone)).filter((n) => /cancelación/.test(n.body ?? ""))).toHaveLength(0);
+  });
+
+  it("un pedido distinto se avisa aunque haya habido otro hace menos de 10 minutos", async () => {
+    const { phone, ids } = await newPatient([{ inHours: 6, status: "confirmed" }]);
+    await say(phone, "quiero hablar con el psicólogo");
+    await say(phone, "Sí, cancelar", { payload: `CANCELYES:${ids[0]}` });
+    await say(phone, "sí");
+    const notices = await humanRequests(phone);
+    expect(notices).toHaveLength(2);
+    expect(notices.some((n) => /cancelación/.test(n.body ?? ""))).toBe(true);
+  });
+
+  it("«Avisar al psicólogo» de un mensaje de crisis anterior sigue siendo urgente", async () => {
+    const { phone } = await newPatient();
+    const out = await say(phone, "Avisar al psicólogo", { payload: "HUMAN:CRISIS" });
+    expect((await humanRequests(phone)).some((n) => /crisis/.test(n.body ?? ""))).toBe(true);
+    const { conversation } = await conversationOf(phone);
+    expect(conversation.status).toBe("handed_off");
+    expect(conversation.crisis_flagged_at).toBeTruthy();
+    expect(out.at(-1)?.body).toMatch(/ya le avisé/i);
+  });
+
+  it("la derivación por crisis no vence mientras la persona sigue escribiendo", async () => {
+    const { phone } = await newPatient();
+    await say(phone, "no quiero seguir viviendo");
+    const { conversation } = await conversationOf(phone);
+    const old = new Date(Date.now() - 25 * 3600_000).toISOString();
+    await db.from("whatsapp_conversations").update({ handed_off_at: old, crisis_flagged_at: old }).eq("id", conversation.id);
+    await say(phone, "sigo esperando, estoy muy mal");
+    expect((await conversationOf(phone)).conversation.status).toBe("handed_off");
+  });
+
+  it("un contacto dado de baja que escribe un mensaje de crisis recibe el protocolo", async () => {
+    const { phone } = await newPatient();
+    await say(phone, "hola");
+    await db.from("whatsapp_contacts").update({ opted_out: true }).eq("phone", phone);
+    const out = await say(phone, "no quiero seguir viviendo");
+    expect(out.at(-1)?.buttons).toContain("HUMAN:CRISIS");
+    await db.from("whatsapp_contacts").update({ opted_out: false }).eq("phone", phone);
+  });
+
+  it("crisis: un audio después del mensaje de crisis recibe respuesta", async () => {
+    const { phone } = await newPatient();
+    await say(phone, "no quiero seguir viviendo");
+    const out = await say(phone, "", { type: "unsupported" });
+    expect(out.at(-1)?.body).toMatch(/no puedo escuchar audios/i);
+  });
+
+  it("un botón con el turno de otra persona no actúa sobre el turno propio", async () => {
+    const other = await newPatient([{ inDays: 20, status: "pending" }]);
+    const { phone, ids } = await newPatient([{ inDays: 21, status: "pending" }]);
+    const out = await say(phone, "Confirmar", { payload: `CONFIRM:${other.ids[0]}` });
+    expect(out.at(-1)?.body).toMatch(/No encuentro/);
+    expect(await status(ids[0]!)).toBe("pending");
+    expect(await status(other.ids[0]!)).toBe("pending");
+  });
+
+  it("un número que es el WhatsApp de una ficha y el teléfono de otra no identifica a nadie", async () => {
+    const shared = `+5959818${String(Date.now()).slice(-6)}`;
+    const daughter = await newPatient([{ inDays: 20, status: "pending" }], { phone: shared });
+    const mother = await newPatient([{ inDays: 21, status: "pending" }], { phone: shared, whatsapp: false });
+    await say(shared, "Confirmar", { payload: `CONFIRM:${mother.ids[0]}` });
+    expect(await status(mother.ids[0]!)).toBe("pending");
+    expect(await status(daughter.ids[0]!)).toBe("pending");
   });
 });

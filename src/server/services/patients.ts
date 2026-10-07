@@ -13,18 +13,20 @@ export async function getPatientById(client: AnyClient, id: string): Promise<Pat
 }
 
 /**
- * Identifica al paciente que escribe por WhatsApp. Prioriza `whatsapp_phone` (lo define el
- * profesional) y solo usa `phone` para fichas sin número de WhatsApp cargado. Si el número
- * coincide con más de una ficha, NO se identifica a nadie: es preferible pedir ayuda humana
- * antes que actuar sobre los turnos de otra persona.
+ * Identifica al paciente que escribe por WhatsApp. El número de WhatsApp de una ficha es
+ * `whatsapp_phone` o, si está vacío, `phone`. Si el número corresponde a más de una ficha (por
+ * ejemplo, el WhatsApp de una hija y el teléfono de su madre), NO se identifica a nadie: es
+ * preferible pedir ayuda humana antes que actuar sobre los turnos de otra persona.
  */
 export async function getPatientByPhone(client: AdminSupabaseClient, phoneE164: string): Promise<Patient | null> {
   if (!/^\+\d{8,15}$/.test(phoneE164)) return null;
-  const { data: byWhatsApp } = await client.from("patients").select("*").eq("whatsapp_phone", phoneE164).neq("status", "discharged").limit(2);
-  if (byWhatsApp && byWhatsApp.length === 1) return byWhatsApp[0] ?? null;
-  if (byWhatsApp && byWhatsApp.length > 1) return null;
-  const { data: byPhone } = await client.from("patients").select("*").eq("phone", phoneE164).is("whatsapp_phone", null).neq("status", "discharged").limit(2);
-  return byPhone && byPhone.length === 1 ? (byPhone[0] ?? null) : null;
+  const { data } = await client
+    .from("patients")
+    .select("*")
+    .or(`whatsapp_phone.eq.${phoneE164},and(phone.eq.${phoneE164},whatsapp_phone.is.null)`)
+    .neq("status", "discharged")
+    .limit(2);
+  return data && data.length === 1 ? (data[0] ?? null) : null;
 }
 
 /** Campos que el propio paciente puede editar (el trigger de la base lo garantiza también). */
