@@ -402,6 +402,8 @@ create table public.whatsapp_messages (
 );
 create index whatsapp_messages_conversation_idx on public.whatsapp_messages (conversation_id, created_at);
 create index whatsapp_messages_appointment_idx on public.whatsapp_messages (appointment_id, kind);
+-- Último mensaje enviado a un contacto (incluye avisos del sistema, que no tienen conversación).
+create index whatsapp_messages_contact_idx on public.whatsapp_messages (contact_id, direction, created_at desc);
 
 -- Idempotencia de webhooks: cada evento (message id / status id) se procesa una sola vez.
 create table public.whatsapp_webhook_events (

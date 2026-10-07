@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { classifyByRules } from "@/server/services/ai/rules";
-import { classifyCancelAnswer, isBareYes, isCrisisHandoff, slotKey, slotKeyToDate } from "@/server/services/whatsapp/answers";
+import { classifyCancelAnswer, isBareConfirm, isBareYes, isCrisisHandoff, slotKey, slotKeyToDate } from "@/server/services/whatsapp/answers";
 
 // La intención se calcula con el clasificador real por reglas (el que corre por defecto):
 // así los casos reflejan lo que llega en producción, no una intención idealizada.
@@ -27,6 +27,15 @@ describe("respuesta a '¿Querés cancelar tu sesión?'", () => {
     "anulala",
     "quiero cancelar",
     "No asistiré",
+    "No, ya no voy a ir",
+    "No, igual no voy a poder ir",
+    "No. Al final no puedo ir",
+    "sí, cancelala, la saqué por error",
+    "Me equivoqué de día al reservar, cancelala",
+    "Estoy apurado, cancelala porfa",
+    "No puedo ir, no la mantengas",
+    "Dejala, no voy a ir",
+    "confirmo que no voy",
   ])("'%s' pide confirmar la cancelación con el botón (nunca cancela directo)", (text) => {
     expect(answer(text)).toBe("cancel_intent");
   });
@@ -93,6 +102,15 @@ describe("sí suelto a una pregunta de sí/no", () => {
   });
   it.each(["sí, pero mañana", "no", "sí cancelala", "¿qué?"])("'%s' no es un sí suelto", (text) => {
     expect(isBareYes(text)).toBe(false);
+  });
+});
+
+describe("confirmación escrita a un recordatorio", () => {
+  it.each(["Sí", "confirmo", "Confirmo, gracias", "sí, confirmo", "Ahí estaré", "voy", "dale", "Confirmado!"])("'%s' confirma", (text) => {
+    expect(isBareConfirm(text)).toBe(true);
+  });
+  it.each(["no", "no voy", "sí, pero cambiala", "confirmo que no voy", "voy a llegar tarde", "¿a qué hora era?", "gracias", ""])("'%s' no confirma", (text) => {
+    expect(isBareConfirm(text)).toBe(false);
   });
 });
 

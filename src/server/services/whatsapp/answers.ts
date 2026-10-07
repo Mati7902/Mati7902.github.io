@@ -58,14 +58,29 @@ export function classifyCancelAnswer(text: string, intent: string | null): Cance
   const parts = clauses(text);
   const first = parts[0] ?? "";
 
-  // Mantener: negación del verbo cancelar, un "no" que responde a la pregunta seguido de algo
-  // que no es otra negación ("No, voy a ir"), o pedidos explícitos de mantenerla.
+  // Señales de no asistir, evaluadas por cláusula ("No, voy a ir" no es "No voy a ir") y sin
+  // condicionales ("si no puedo ir te aviso").
+  const cantGo = parts.some(
+    (c) =>
+      !/\bsi no+ /.test(c) &&
+      (/\bno+ (voy a |vamos a )?(poder |puedo |podre |podria |podemos )?(ir|asistir|venir)\b/.test(c) || /\bno+ (asisto|asistire|estare|voy)$/.test(c) || /\bno+ (asisto|asistire|estare)\b/.test(c)),
+  );
+  // Orden explícita de cancelar ("cancelala", "cancelá", "anulalo", "cancelemos").
+  const imperativeCancel = /\b(cancela(la|lo|le)?|cancelemos|anula(la|lo)?)\b/.test(t);
+  // "no quiero cancelar(la)", "no voy a cancelar", "no la canceles", "no hace falta que la canceles".
   const negatedCancel =
     /\bno+ (me |la |lo |te )*(quiero |quisiera |queria |deseo |voy a |vamos a |vas a |vayas a |hace falta |hay que |necesito |es necesario |es para )?(que (la |lo )?)?(cancel\w*|anul\w*)/.test(t) &&
     !/\bno+ (cancela(la|lo)?|anula(la|lo)?)\b/.test(t);
-  const mistake = /\b(sin querer|por error|me equivoque|equivocacion|toque mal|apurado)\b/.test(t);
-  const leadingNoThenGoing = /^no+( no+)*$/.test(first) && parts.length > 1 && !/^no\b/.test(parts[1] ?? "") && /\b(voy|puedo ir|asisto|asistire|estare|mantener|manten\w*)\b/.test(parts.slice(1).join(" "));
-  const keepWords = /^(no+|no gracias|mejor no|no por ahora|no no|nop|nah|para nada)$/.test(t) || /\b(manten\w*|dejal[ao]|sigue en pie|que siga)\b/.test(t);
+
+  // Cualquier señal clara de no ir u orden de cancelar → botones (nunca "tu turno sigue en pie").
+  if ((cantGo || imperativeCancel) && !(negatedCancel && !cantGo && !imperativeCancel)) return "cancel_intent";
+
+  const mistake = /\b(sin querer|por error|me equivoque|equivocacion|toque mal)\b/.test(t);
+  const leadingNoThenGoing =
+    /^no+( no+)*$/.test(first) && parts.length > 1 && !parts.slice(1).some((c) => /\b(no+|nunca)\b/.test(c)) && /\b(voy|puedo ir|asisto|asistire|estare|mantener|manten\w*)\b/.test(parts.slice(1).join(" "));
+  // Por cláusula: "No, la mantengo" mantiene; "no la mantengas" no.
+  const negatedKeep = parts.some((c) => /\bno+ (la |lo )?(manten\w*|dejes|dejen)\b/.test(c));
+  const keepWords = !negatedKeep && (/^(no+|no gracias|mejor no|no por ahora|no no|nop|nah|para nada)$/.test(t) || /\b(manten\w*|dejal[ao]|sigue en pie)\b/.test(t));
   const negation = /\b(no+|nunca|ni|falt\w*)\b/.test(t);
   const attendance = !negation && /\b(voy a ir|si voy|voy igual|asisto|asistire|ahi estare|alli estare|ahi voy a estar|confirmo que voy|confirmo asistencia|confirmo mi asistencia)\b/.test(t);
 
@@ -79,7 +94,7 @@ export function classifyCancelAnswer(text: string, intent: string | null): Cance
   if (wantsChange) return "reschedule";
   if (question) return "question";
   // Cualquier otra cosa que suene a cancelar o a "sí" pide confirmar con el botón.
-  const cancelish = /\b(cancel\w*|anul\w*)\b/.test(t) || /\bno+ (voy a |vamos a )?(poder |puedo |podre |podria |podemos )?(ir|asistir|venir)\b/.test(t) || /\bno+ (asisto|asistire|estare)\b/.test(t);
+  const cancelish = /\b(cancel\w*|anul\w*)\b/.test(t) || negatedKeep;
   const yes = /^(si+|dale|ok|okay|listo|perfecto|de acuerdo|claro|correcto|exacto|bueno)\b/.test(t);
   if (cancelish || yes) return "cancel_intent";
   return "unclear";
@@ -88,6 +103,16 @@ export function classifyCancelAnswer(text: string, intent: string | null): Cance
 /** "Sí" escrito sin más contenido (respuesta a una pregunta de sí/no). */
 export function isBareYes(text: string): boolean {
   return /^(si+|sii+|dale|ok|okay|listo|perfecto|de acuerdo|claro|bueno|por favor|si por favor|si gracias|avisale|si avisale|dale avisale)$/.test(normalizeAnswer(text));
+}
+
+/**
+ * Respuesta escrita que solo confirma ("sí", "confirmo", "ahí estaré"), sin nada más que pueda
+ * cambiar su sentido. Se usa únicamente cuando lo último enviado fue un pedido de confirmación.
+ */
+export function isBareConfirm(text: string): boolean {
+  const t = normalizeAnswer(text).replace(/\b(gracias|muchas gracias|por favor|porfa)\b/g, "").replace(/\s+/g, " ").trim();
+  if (!t) return false;
+  return isBareYes(t) || /^(si )?(confirmo|confirmado|confirmada|confirmo mi asistencia|confirmo asistencia|confirmo la sesion|voy|si voy|ahi estare|alli estare|ahi voy a estar|nos vemos)$/.test(t);
 }
 
 /**

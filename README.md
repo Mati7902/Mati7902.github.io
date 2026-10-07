@@ -143,6 +143,7 @@ Scripts:
 | `pnpm lint` · `pnpm typecheck` · `pnpm test` | ESLint (flat config) · `tsc --noEmit` · Vitest |
 | `pnpm check` | lint + typecheck + test + build |
 | `pnpm test:db` | migraciones + seed + tests de RLS contra Postgres |
+| `pnpm test:bot` | recorridos de conversación del chatbot contra la vista previa local (con `pnpm preview:local` corriendo) |
 | `pnpm icons` | regenera iconos PWA y la imagen OpenGraph |
 | `pnpm db:types` | regenera `src/types/database.ts` (requiere Supabase CLI) |
 | `pnpm preview:local` | vista previa completa con datos ficticios, sin proyecto de Supabase (ver abajo) |
@@ -252,7 +253,7 @@ Desde **Pacientes › Nuevo paciente** con "Enviar invitación" marcado (o "Envi
    Los recordatorios usan siempre la plantilla aprobada cuando está cargada, aunque la ventana esté abierta.
 6. Activá la secretaria en **Admin › WhatsApp › Configuración**.
 
-Derivación al profesional: cuando el contacto pide hablar con una persona (o ante una señal de crisis) la conversación queda **derivada** y la asistente deja de ofrecer menús; el contacto puede volver al menú con un botón, la derivación expira sola a las 24 h y el profesional puede reactivar la asistente desde **Admin › WhatsApp** ("Reactivar asistente"). En una derivación común, tocar un botón de un turno (confirmar, cancelar, reprogramar desde un recordatorio) retoma la conversación con la asistente; en una derivación por crisis solo se aceptan confirmar o cancelar (los cambios de horario los coordina el profesional) y el botón "Avisar al psicólogo" siempre recibe respuesta. Los horarios ofrecidos se identifican por su fecha y hora (no por su posición en la lista), derivar descarta la lista vigente y una pregunta de cancelación pendiente vence a los 30 minutos. **Un mensaje escrito nunca cancela un turno**: la cancelación se ejecuta solo con el botón "Sí, cancelar". Si la respuesta escrita a "¿Querés cancelar…?" suena a cancelar, la asistente muestra los botones para confirmarlo; si suena a mantener, lo mantiene; una pregunta sobre la política recibe la información. Esa respuesta escrita solo se interpreta si la pregunta es el último mensaje enviado, y un "sí" escrito a "¿Le aviso al profesional?" equivale a tocar ese botón. Los avisos al profesional se deduplican por conversación (no más de uno cada 10 minutos por el mismo motivo). Los números se vinculan a una ficha por `whatsapp_phone` (o `phone` si aquel está vacío); si hay ambigüedad, el bot no identifica a nadie. El número de WhatsApp de la ficha solo lo cambia el profesional.
+Derivación al profesional: cuando el contacto pide hablar con una persona (o ante una señal de crisis) la conversación queda **derivada** y la asistente deja de ofrecer menús; el contacto puede volver al menú con un botón, la derivación expira sola a las 24 h y el profesional puede reactivar la asistente desde **Admin › WhatsApp** ("Reactivar asistente"). En una derivación común, tocar un botón de un turno (confirmar, cancelar, reprogramar desde un recordatorio) retoma la conversación con la asistente; en una derivación por crisis solo se aceptan confirmar o cancelar (los cambios de horario los coordina el profesional) y el botón "Avisar al psicólogo" siempre recibe respuesta. Los horarios ofrecidos se identifican por su fecha y hora (no por su posición en la lista), derivar descarta la lista vigente y una pregunta de cancelación pendiente vence a los 30 minutos. **Un mensaje escrito nunca cancela un turno**: la cancelación se ejecuta solo con el botón "Sí, cancelar". Si la respuesta escrita a "¿Querés cancelar…?" suena a cancelar, la asistente muestra los botones para confirmarlo; si suena a mantener, lo mantiene; una pregunta sobre la política recibe la información. Esa respuesta escrita solo se interpreta si la pregunta es el último mensaje enviado al contacto (incluidos los recordatorios y avisos del sistema; la respuesta automática a audios o fotos no cuenta), y un "sí" escrito a "¿Le aviso al profesional?" o a "Avisar al psicólogo" equivale a tocar ese botón, también en una derivación por crisis. **Un "sí" suelto tampoco confirma asistencia**: solo confirma el turno del recordatorio o pedido de confirmación que se acaba de enviar; en cualquier otro contexto la asistente muestra el turno con el botón "Confirmar asistencia". Una reserva o reprogramación sin actividad por 2 horas se descarta, "Ver horarios" del menú siempre es una consulta nueva y, si se toca un día de una lista vieja sin un flujo activo, la asistente pregunta si es una sesión nueva o el cambio de la que ya tiene. Los avisos al profesional se deduplican por conversación (no más de uno cada 10 minutos por el mismo motivo). Los números se vinculan a una ficha por `whatsapp_phone` (o `phone` si aquel está vacío); si hay ambigüedad, el bot no identifica a nadie. El número de WhatsApp de la ficha solo lo cambia el profesional.
 
 Comportamiento: intents `BOOK_APPOINTMENT`, `RESCHEDULE_APPOINTMENT`, `CANCEL_APPOINTMENT`, `CONFIRM_APPOINTMENT`, `CHECK_AVAILABILITY`, `PRICING`, `PLANS`, `LOCATION`, `ONLINE_SESSION`, `LOGIN_HELP`, `SPEAK_TO_HUMAN`, `OTHER` (más `GREETING`/`THANKS`). Las reservas se confirman sólo tras una **segunda verificación** de disponibilidad y la RPC transaccional. Ante señales de crisis responde con el protocolo de emergencia configurado (recursos verificados por el profesional) y deriva; nunca hace psicoterapia. Los contactos pueden optar por no recibir mensajes (`STOP`).
 
@@ -328,12 +329,15 @@ Checklist antes de abrir al público: textos legales revisados y marcados como r
 ## 14. Tests
 
 ```bash
-pnpm test        # Vitest: 163 tests (motor de slots, reglas de agenda, clasificador, crisis,
-                 # firma/normalización de webhook, deduplicación de recordatorios, plantillas,
-                 # ventana de 24 h, redirecciones seguras, utilidades, esquemas de ejercicios,
-                 # errores y componentes)
+pnpm test        # Vitest: 188 tests (motor de slots, reglas de agenda, clasificador, crisis,
+                 # respuestas escritas al chatbot, firma/normalización de webhook, deduplicación
+                 # de recordatorios, plantillas, ventana de 24 h, redirecciones seguras,
+                 # utilidades, esquemas de ejercicios, errores y componentes)
 pnpm test:db     # Migraciones + seed + 86 aserciones de RLS/permisos/grilla/double booking
+pnpm test:bot    # 13 recorridos de conversación del chatbot contra la vista previa local
 ```
+
+`pnpm test:bot` necesita la vista previa corriendo (`pnpm preview:local` en otra terminal). Simula los envíos a WhatsApp y usa la base real: crea pacientes ficticios propios, verifica estados de turnos, avisos al profesional y el estado de la conversación, y los borra al terminar. Cubre, entre otros: que un "sí" sin contexto no confirma, que "confirmo" después de un recordatorio confirma ese turno, que el texto nunca cancela, el "sí" escrito en una derivación por crisis, listas viejas y flujos vencidos.
 
 `pnpm test:db` funciona de dos formas:
 

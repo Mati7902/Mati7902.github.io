@@ -113,7 +113,7 @@ Resultado: `pnpm test:db` → 86 aserciones OK sobre las migraciones reales (Pos
 
 ## Verificación final
 
-* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (163 tests) · `pnpm build` ✅ · `pnpm test:db` ✅ (86 aserciones)
+* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (188 tests) · `pnpm test:bot` ✅ (13 recorridos) · `pnpm build` ✅ · `pnpm test:db` ✅ (86 aserciones)
 
 ## Segunda ronda de auditoría (revisión adversarial)
 
@@ -187,6 +187,22 @@ La revisión de la cuarta ronda confirmó 16 hallazgos. Ocho venían de la misma
 | Avisos al profesional deduplicados por conversación y motivo, con el registro real de notificaciones | Un acuse sin aviso ya no silencia un pedido explícito ni los mensajes escritos posteriores |
 | "Otros días", "Ver horarios" y listas viejas respetan la reprogramación en curso | Ya no se crea un segundo turno en lugar de mover el existente |
 | Una fecha de una lista vieja sin flujo activo inicia una reserva para ese día | Antes ofrecía horarios que después rechazaba |
+
+## Sexta ronda (revisión de la quinta)
+
+La revisión de la quinta ronda encontró 11 hallazgos más en el chatbot. Se corrigieron todos y, para no depender solo de pruebas de funciones sueltas, se agregó `pnpm test:bot`: recorridos de conversación completos contra la base de la vista previa local.
+
+| Hallazgo | Corrección |
+| --- | --- |
+| Un "sí" o "confirmo" escrito confirmaba el próximo turno aunque respondiera a otra cosa (por ejemplo, a una pregunta de cancelación ya vencida) | Un "sí" suelto confirma solo si lo último enviado fue un recordatorio o pedido de confirmación de ese turno (24 h). En otro caso se muestra el turno con el botón "Confirmar asistencia" |
+| Respuestas como "Estoy apurado, cancelala" o "Me equivoqué de día, cancelala" se leían como "mantener" | Las señales de cancelar o de no asistir se evalúan antes que las de mantener, por cláusula ("No, voy a ir" mantiene; "No, ya no voy a ir" pide los botones) |
+| En una derivación por crisis, un "sí" escrito a "¿Le aviso?" respondía "Ya le avisé" sin avisar | El "sí" escrito equivale al botón también en derivaciones, y el mensaje de crisis acepta un "sí" a "Avisar al psicólogo". El aviso al profesional indica el motivo (cancelación, cambio, sin horarios) |
+| "¿Le aviso?" ante falta de horarios borraba la reprogramación en curso | Esas preguntas conservan el flujo |
+| Un toque en una lista de días vieja podía crear un segundo turno en lugar de mover el existente | Sin un flujo activo, si el paciente tiene una sesión próxima, se pregunta "¿Sesión nueva o cambiar esa?" |
+| "Ver horarios" del menú continuaba una reprogramación abandonada | Siempre es una consulta nueva; un flujo sin actividad por 2 horas se descarta |
+| Los recordatorios no contaban como "último mensaje" y la respuesta automática a audios sí | Se mira el último mensaje enviado al contacto (incluidos los avisos del sistema), sin contar la respuesta a audios ni los envíos fallidos |
+| El primer mensaje después de derivar recibía un acuse duplicado | El mensaje de derivación y el de crisis cuentan como acuse |
+| Un "sí" a "¿Le aviso?" vencía a los 30 minutos | Vale durante 24 h |
 
 ## Pendientes recomendados antes de abrir al público
 

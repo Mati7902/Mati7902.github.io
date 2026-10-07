@@ -15,7 +15,7 @@ import { assertSlotAvailable, cancelAppointment, canPatientModify, confirmAppoin
 import { createNotification } from "@/server/services/notifications";
 import { getSettings } from "@/server/services/settings";
 import { isWhatsAppConfigured, markAsRead, sendInteractiveButtons, sendInteractiveList, sendText, type SendResult } from "@/server/services/whatsapp/client";
-import { classifyCancelAnswer, isBareYes, isCrisisHandoff, slotKey, slotKeyToDate } from "@/server/services/whatsapp/answers";
+import { classifyCancelAnswer, isBareConfirm, isBareYes, isCrisisHandoff, slotKey, slotKeyToDate } from "@/server/services/whatsapp/answers";
 import { type ConversationContext, type ConversationState, recordInbound, recordOutbound, resolveConversation, saveState } from "@/server/services/whatsapp/conversation";
 import { renderTemplate, getTemplate } from "@/server/services/whatsapp/templates";
 import type { NormalizedInbound } from "@/server/services/whatsapp/webhook";
@@ -66,8 +66,14 @@ export async function handleInboundMessage(inbound: NormalizedInbound): Promise<
 
   if (inbound.type === "unsupported") {
     await recordInbound(admin, ctx, inbound, "UNSUPPORTED");
-    await reply(admin, ctx, { kind: "text", body: "Por ahora solo puedo leer mensajes de texto. ¿En qué te puedo ayudar con tu agenda?" });
+    // kind propio: no reemplaza a la última pregunta pendiente (ver lastOutbound).
+    await reply(admin, ctx, { kind: "text", body: "Por ahora solo puedo leer mensajes de texto. ¿En qué te puedo ayudar con tu agenda?" }, UNSUPPORTED_KIND);
     return;
+  }
+
+  // Un flujo a medias de hace horas no captura mensajes nuevos (ni listas viejas).
+  if (ctx.state.flow && ctx.state.updatedAt && Date.now() - Date.parse(ctx.state.updatedAt) > FLOW_TTL_MS) {
+    await saveState(admin, ctx, { flow: null, step: null, offered: [], appointmentId: null, pendingYes: ctx.state.pendingYes ?? null });
   }
 
   // 1) Crisis: siempre primero, por reglas (nunca depende de la IA).
@@ -88,11 +94,23 @@ export async function handleInboundMessage(inbound: NormalizedInbound): Promise<
   // 2b) "Sí" escrito a la última pregunta de sí/no ("¿Le aviso al profesional?"): equivale al botón.
   if (ctx.state.pendingYes && isBareYes(inbound.text)) {
     const last = await lastOutbound(admin, ctx);
-    if (last?.kind === "yes_no" && Date.now() - last.at <= CANCEL_PROMPT_TTL_MS) {
+    if (last?.kind === "yes_no" && Date.now() - last.at <= YES_NO_TTL_MS) {
       const payload = ctx.state.pendingYes;
       await recordInbound(admin, ctx, inbound, `YES:${payload.split(":")[0]}`, 1);
       await saveState(admin, ctx, { ...ctx.state, pendingYes: null });
       await handlePayload(admin, ctx, settings, payload);
+      return;
+    }
+  }
+
+  // 2c) "Sí"/"confirmo" escrito justo después de un pedido de confirmación (recordatorio, aviso de
+  //     cambio o "¿Confirmás tu asistencia?"): confirma ESE turno. En cualquier otro contexto, un
+  //     "sí" suelto no confirma nada (ver askConfirmAttendance).
+  if (isBareConfirm(inbound.text)) {
+    const last = await lastOutbound(admin, ctx);
+    if (last?.appointmentId && last.kind && CONFIRM_REQUEST_KINDS.has(last.kind) && Date.now() - last.at <= YES_NO_TTL_MS) {
+      await recordInbound(admin, ctx, inbound, "CONFIRM_REPLY", 1);
+      await doConfirm(admin, ctx, settings, last.appointmentId, { strict: true });
       return;
     }
   }
@@ -162,9 +180,12 @@ async function reply(admin: AdminSupabaseClient, ctx: ConversationContext, messa
 /**
  * Pregunta de sí/no con un único botón de acción (p. ej. "¿Le aviso al profesional?").
  * Un "sí" escrito como respuesta equivale a tocar el botón (ver handleInboundMessage).
+ * Con keepFlow, la reserva o reprogramación en curso sigue activa (p. ej. "no hay horarios ese día":
+ * la persona todavía puede pedir otro día sin perder qué turno estaba cambiando).
  */
-async function askYesNo(admin: AdminSupabaseClient, ctx: ConversationContext, body: string, button: { id: string; title: string }) {
-  await saveState(admin, ctx, { flow: null, step: null, offered: [], appointmentId: null, pendingYes: button.id });
+async function askYesNo(admin: AdminSupabaseClient, ctx: ConversationContext, body: string, button: { id: string; title: string }, options: { keepFlow?: boolean } = {}) {
+  const base: ConversationState = options.keepFlow ? ctx.state : { flow: null, step: null, offered: [], appointmentId: null };
+  await saveState(admin, ctx, { ...base, pendingYes: button.id });
   return reply(admin, ctx, { kind: "buttons", body, buttons: [button] }, "yes_no");
 }
 
@@ -179,6 +200,14 @@ function greet(ctx: ConversationContext, settings: Settings): string {
 }
 
 const CANCEL_PROMPT_TTL_MS = 30 * 60_000;
+/** Un "sí" escrito vale como respuesta a "¿Le aviso al profesional?" durante un día. */
+const YES_NO_TTL_MS = 24 * 3600_000;
+/** Un flujo de reserva/reprogramación sin actividad por más de 2 horas se descarta. */
+const FLOW_TTL_MS = 2 * 3600_000;
+/** Respuesta automática a audios, fotos, etc.: no cuenta como "último mensaje" para las preguntas pendientes. */
+const UNSUPPORTED_KIND = "unsupported";
+/** Mensajes que piden confirmar un turno con un botón "Confirmar" (ver appointment-notifications). */
+const CONFIRM_REQUEST_KINDS = new Set(["reminder_24h", "appointment_changed", "request_approved", "booking_registered", "confirm_prompt"]);
 
 const MAIN_MENU = [
   { id: "MENU:BOOK", title: "Agendar sesión" },
@@ -199,8 +228,10 @@ async function handleCrisis(admin: AdminSupabaseClient, ctx: ConversationContext
     professionalName: settings["site.identity"].professional_name,
   });
   const now = new Date().toISOString(); // mismo instante: la derivación vigente es "por crisis"
-  // Se descarta cualquier flujo en curso (incluida la lista de horarios ofrecidos).
-  await saveState(admin, ctx, { flow: null, step: null, offered: [], appointmentId: null }, { crisis_flagged_at: now, status: "handed_off", handed_off_at: now });
+  // Se descarta cualquier flujo en curso (incluida la lista de horarios ofrecidos). Un "sí" escrito
+  // a "Avisar al psicólogo" equivale al botón (ver handleHandedOff).
+  const pendingYes = settings.emergency.show_contact_professional ? "HUMAN:CRISIS" : null;
+  await saveState(admin, ctx, { flow: null, step: null, offered: [], appointmentId: null, pendingYes }, { crisis_flagged_at: now, status: "handed_off", handed_off_at: now });
   await reply(admin, ctx, settings.emergency.show_contact_professional
     ? { kind: "buttons", body, buttons: [{ id: "HUMAN:CRISIS", title: "Avisar al psicólogo" }] }
     : { kind: "text", body }, "crisis");
@@ -217,6 +248,18 @@ async function notifyAdminsHandoff(admin: AdminSupabaseClient, ctx: Conversation
   }
 }
 
+/** Texto del aviso al profesional según desde dónde se pidió hablar con él (argumento del botón HUMAN). */
+function humanRequestNotice(about: string | null, crisisThread: boolean): string {
+  const fromCrisis = crisisThread ? " desde una conversación con señales de crisis" : "";
+  if (about === "CANCEL") return `Pidió que coordines personalmente la cancelación de un turno${fromCrisis}.`;
+  if (about === "RESCHEDULE") return `Pidió que coordines personalmente el cambio de un turno${fromCrisis}.`;
+  if (about === "NOSLOTS") return `No encontró horarios libres y pidió que le ofrezcas una alternativa${fromCrisis}.`;
+  if (about === "NEW") return "Escribió desde un número que no corresponde a ningún paciente y pidió que se pongan en contacto.";
+  if (about === "LOGIN") return "No puede ingresar a la app y pidió ayuda por WhatsApp.";
+  if (crisisThread) return "Pidió que le avises desde el mensaje de crisis. Escribile cuanto antes.";
+  return "Pidió hablar con el profesional por WhatsApp.";
+}
+
 /** Milisegundos desde el último aviso al profesional por esta conversación (opcionalmente, de un motivo). */
 async function msSinceLastNotification(admin: AdminSupabaseClient, ctx: ConversationContext, reason?: HandoffReason): Promise<number> {
   let query = admin.from("notifications").select("created_at").eq("data->>conversation_id", ctx.conversation.id);
@@ -225,17 +268,23 @@ async function msSinceLastNotification(admin: AdminSupabaseClient, ctx: Conversa
   return data ? Date.now() - new Date(data.created_at).getTime() : Number.POSITIVE_INFINITY;
 }
 
-/** Último mensaje que envió la asistente en esta conversación. */
-async function lastOutbound(admin: AdminSupabaseClient, ctx: ConversationContext): Promise<{ kind: string | null; at: number } | null> {
+/**
+ * Último mensaje enviado a este contacto: por el contacto (no por la conversación) para incluir los
+ * avisos del sistema (recordatorios, cambios de turno), que se registran sin conversación.
+ * La respuesta automática a audios o fotos no cuenta: no reemplaza la pregunta pendiente.
+ */
+async function lastOutbound(admin: AdminSupabaseClient, ctx: ConversationContext): Promise<{ kind: string | null; at: number; appointmentId: string | null } | null> {
   const { data } = await admin
     .from("whatsapp_messages")
-    .select("kind, created_at")
-    .eq("conversation_id", ctx.conversation.id)
+    .select("kind, created_at, appointment_id")
+    .eq("contact_id", ctx.contact.id)
     .eq("direction", "outbound")
+    .neq("status", "failed") // un mensaje que no llegó no es lo último que vio la persona
+    .or(`kind.is.null,kind.neq.${UNSUPPORTED_KIND}`)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
-  return data ? { kind: data.kind, at: new Date(data.created_at).getTime() } : null;
+  return data ? { kind: data.kind, at: new Date(data.created_at).getTime(), appointmentId: data.appointment_id } : null;
 }
 
 /**
@@ -256,9 +305,11 @@ const HANDOFF_ACK_INTERVAL_MS = 60 * 60_000;
 const HUMAN_RENOTIFY_MS = 10 * 60_000;
 const TAP_ACK_MIN_INTERVAL_MS = 60_000;
 /** Respuestas a mensajes del propio sistema sobre un turno (recordatorios, cambios, reprogramación en curso). */
-const APPOINTMENT_PAYLOADS = new Set(["CONFIRM", "CANCEL", "CANCELYES", "CANCELNO", "RESCHEDULE", "DATE", "DATES", "SLOT"]);
+const APPOINTMENT_PAYLOADS = new Set(["CONFIRM", "CANCEL", "CANCELYES", "CANCELNO", "RESCHEDULE", "DATE", "DATES", "NEWDATE", "SLOT"]);
 /** En una derivación por crisis solo se aceptan acciones de un paso sobre un turno (nada de flujos con menús). */
 const CRISIS_SAFE_PAYLOADS = new Set(["CONFIRM", "CANCEL", "CANCELYES", "CANCELNO"]);
+/** Mensajes que ya le dicen a la persona que el profesional fue avisado. */
+const ACK_KINDS = new Set(["handoff_ack", "handoff", "crisis"]);
 
 /**
  * Conversación derivada: el profesional se ocupa personalmente. La asistente no ofrece menús ni
@@ -290,24 +341,33 @@ async function handleHandedOff(admin: AdminSupabaseClient, ctx: ConversationCont
     await handleCrisis(admin, ctx, settings);
     return true;
   }
-  const action = inbound.payloadId ? inbound.payloadId.split(":")[0]! : null;
+  // Un "sí" escrito a la última pregunta de sí/no ("¿Le aviso?", "Avisar al psicólogo") equivale al botón.
+  let payloadId = inbound.payloadId;
+  if (!payloadId && ctx.state.pendingYes && isBareYes(inbound.text)) {
+    const last = await lastOutbound(admin, ctx);
+    if ((last?.kind === "yes_no" || last?.kind === "crisis") && Date.now() - last.at <= YES_NO_TTL_MS) {
+      payloadId = ctx.state.pendingYes;
+      await saveState(admin, ctx, { ...ctx.state, pendingYes: null });
+    }
+  }
+  const action = payloadId ? payloadId.split(":")[0]! : null;
 
   // Derivación común: el contacto vuelve a usar la asistente (menú o botón de un turno).
-  if (!isCrisisThread && inbound.payloadId && (inbound.payloadId === "RESUME:BOT" || (action && APPOINTMENT_PAYLOADS.has(action)))) {
+  if (!isCrisisThread && payloadId && (payloadId === "RESUME:BOT" || (action && APPOINTMENT_PAYLOADS.has(action)))) {
     await recordInbound(admin, ctx, inbound, `PAYLOAD:${action}`, 1);
     await saveState(admin, ctx, ctx.state, { status: "open" });
     ctx.conversation = { ...ctx.conversation, status: "open" };
-    await handlePayload(admin, ctx, settings, inbound.payloadId);
+    await handlePayload(admin, ctx, settings, payloadId);
     return true;
   }
 
   // Derivación por crisis: confirmar o cancelar un turno sigue funcionando, sin levantar la derivación.
-  if (isCrisisThread && inbound.payloadId && action && CRISIS_SAFE_PAYLOADS.has(action)) {
+  if (isCrisisThread && payloadId && action && CRISIS_SAFE_PAYLOADS.has(action)) {
     await recordInbound(admin, ctx, inbound, `PAYLOAD:${action}`, 1);
-    await handlePayload(admin, ctx, settings, inbound.payloadId);
+    await handlePayload(admin, ctx, settings, payloadId);
     return true;
   }
-  if (isCrisisThread && !inbound.payloadId && (await hasPendingCancelPrompt(admin, ctx))) {
+  if (isCrisisThread && !payloadId && (await hasPendingCancelPrompt(admin, ctx))) {
     await recordInbound(admin, ctx, inbound, "CANCEL_ANSWER", 1);
     await continueCancel(admin, ctx, settings, inbound.text, null, { allowReschedule: false });
     return true;
@@ -317,12 +377,7 @@ async function handleHandedOff(admin: AdminSupabaseClient, ctx: ConversationCont
     await recordInbound(admin, ctx, inbound, "PAYLOAD:HUMAN", 1);
     // Varios pedidos seguidos generan un solo aviso al profesional; la persona siempre recibe respuesta.
     if ((await msSinceLastNotification(admin, ctx, "human_request")) > HUMAN_RENOTIFY_MS) {
-      await notifyAdminsHandoff(
-        admin,
-        ctx,
-        isCrisisThread ? "Pidió que le avises desde el mensaje de crisis. Escribile cuanto antes." : "Pidió hablar con el profesional por WhatsApp.",
-        "human_request",
-      );
+      await notifyAdminsHandoff(admin, ctx, humanRequestNotice(payloadId?.slice("HUMAN:".length) ?? null, isCrisisThread), "human_request");
     }
     await reply(
       admin,
@@ -341,19 +396,27 @@ async function handleHandedOff(admin: AdminSupabaseClient, ctx: ConversationCont
   if (isCrisisThread && action && APPOINTMENT_PAYLOADS.has(action)) {
     // Reprogramar implica elegir día y horario con menús: lo coordina el profesional.
     await recordInbound(admin, ctx, inbound, `PAYLOAD:${action}`, 1);
+    // Un día u horario de una lista vieja puede ser de una reserva o de un cambio: el texto no lo asume.
+    const isChange = action === "RESCHEDULE";
     await saveState(admin, ctx, { flow: null, step: null, offered: [], appointmentId: null });
     if ((await msSinceLastNotification(admin, ctx, "reschedule_request")) > HUMAN_RENOTIFY_MS) {
-      await notifyAdminsHandoff(admin, ctx, "Pidió cambiar un turno desde una conversación con señales de crisis. Coordinalo personalmente.", "reschedule_request");
+      await notifyAdminsHandoff(
+        admin,
+        ctx,
+        `Pidió ${isChange ? "cambiar un turno" : "agendar o cambiar un turno"} desde una conversación con señales de crisis. Coordinalo personalmente.`,
+        "reschedule_request",
+      );
     }
-    await reply(admin, ctx, { kind: "text", body: `Le aviso al ${professional} para que coordine el cambio con vos personalmente. ${settings.emergency.message}`.trim() }, "handoff_ack");
+    await reply(admin, ctx, { kind: "text", body: `Le aviso al ${professional} para que coordine ${isChange ? "el cambio" : "el turno"} con vos personalmente. ${settings.emergency.message}`.trim() }, "handoff_ack");
     return true;
   }
 
   await recordInbound(admin, ctx, inbound, "HANDED_OFF");
   const last = await lastOutbound(admin, ctx);
-  const sinceLastAck = last?.kind === "handoff_ack" ? Date.now() - last.at : Number.POSITIVE_INFINITY;
+  // El mensaje de derivación y el de crisis ya avisan que el profesional va a escribir: cuentan como acuse.
+  const sinceLastAck = last && ACK_KINDS.has(last.kind ?? "") ? Date.now() - last.at : Number.POSITIVE_INFINITY;
 
-  if (inbound.payloadId) {
+  if (payloadId) {
     // Un botón siempre recibe respuesta, salvo toques repetidos justo después de un acuse.
     if (sinceLastAck < TAP_ACK_MIN_INTERVAL_MS) return true;
   } else {
@@ -388,14 +451,8 @@ async function handlePayload(admin: AdminSupabaseClient, ctx: ConversationContex
   switch (action) {
     case "MENU":
       if (arg === "BOOK") return startBooking(admin, ctx, settings, {});
-      if (arg === "AVAIL") {
-        // Dentro de una reprogramación, "ver horarios" sigue siendo la reprogramación.
-        if (ctx.state.flow === "reschedule") {
-          await saveState(admin, ctx, { ...ctx.state, step: "date", dateKey: null, offered: [] });
-          return offerDates(admin, ctx, settings);
-        }
-        return startBooking(admin, ctx, settings, { onlyShow: true });
-      }
+      // "Ver horarios" del menú siempre es una consulta nueva (nunca continúa una reprogramación vieja).
+      if (arg === "AVAIL") return startBooking(admin, ctx, settings, { onlyShow: true });
       if (arg === "INFO") return replyPlans(admin, ctx, settings);
       return;
     case "CONFIRM":
@@ -428,24 +485,27 @@ async function handlePayload(admin: AdminSupabaseClient, ctx: ConversationContex
       }
       return;
     case "DATE":
-      if (!arg) return;
+      if (!arg || !isDateKey(arg)) return;
       if (ctx.state.flow === "booking" || ctx.state.flow === "reschedule") {
         await saveState(admin, ctx, { ...ctx.state, dateKey: arg, step: "slot" });
         return offerSlots(admin, ctx, settings, arg);
       }
-      // Lista vieja sin un flujo activo: se arranca una reserva para ese día (con modalidad).
-      return startBooking(admin, ctx, settings, { dateKey: arg, onlyShow: !ctx.patient });
+      // Lista vieja sin un flujo activo: no se sabe si era una reserva o un cambio de turno.
+      return startFromStaleList(admin, ctx, settings, arg);
     case "DATES":
       // "Otros días": conserva la reserva o reprogramación en curso.
       if (ctx.state.flow === "booking" || ctx.state.flow === "reschedule") {
         await saveState(admin, ctx, { ...ctx.state, step: "date", dateKey: null, offered: [] });
         return offerDates(admin, ctx, settings);
       }
-      return startBooking(admin, ctx, settings, { onlyShow: !ctx.patient });
+      return startFromStaleList(admin, ctx, settings, null);
+    case "NEWDATE":
+      // Respuesta a "¿Sesión nueva o cambiar la que tenés?": sesión nueva para ese día.
+      return startBooking(admin, ctx, settings, { dateKey: arg && isDateKey(arg) ? arg : null });
     case "SLOT":
       return chooseSlot(admin, ctx, settings, arg ?? null);
     case "HUMAN":
-      return handOff(admin, ctx, settings);
+      return handOff(admin, ctx, settings, arg ?? null);
     case "RESUME":
       await saveState(admin, ctx, { flow: null, step: null }, { status: "open" });
       return reply(admin, ctx, { kind: "buttons", body: "Listo, sigo por acá. ¿Qué necesitás?", buttons: MAIN_MENU });
@@ -475,7 +535,8 @@ async function handleIntent(admin: AdminSupabaseClient, ctx: ConversationContext
     case "CANCEL_APPOINTMENT":
       return askCancelConfirmation(admin, ctx, settings, null);
     case "CONFIRM_APPOINTMENT":
-      return doConfirm(admin, ctx, settings, null);
+      // Un "sí"/"confirmo" escrito puede responder a otra cosa: la confirmación se hace con el botón.
+      return askConfirmAttendance(admin, ctx, settings);
     case "PRICING":
     case "PLANS":
       return replyPlans(admin, ctx, settings);
@@ -522,6 +583,31 @@ async function startBooking(admin: AdminSupabaseClient, ctx: ConversationContext
   return offerDates(admin, ctx, settings);
 }
 
+function isDateKey(value: string): boolean {
+  return /^\d{4}-\d{2}-\d{2}$/.test(value);
+}
+
+/**
+ * Toque en una lista de días sin un flujo activo (vencido, derivado o terminado). La lista no dice
+ * si era una reserva o el cambio de un turno: si el paciente tiene una sesión próxima, se le pregunta
+ * en vez de reservar una segunda sesión sin avisar.
+ */
+async function startFromStaleList(admin: AdminSupabaseClient, ctx: ConversationContext, settings: Settings, dateKey: string | null) {
+  if (!ctx.patient) return startBooking(admin, ctx, settings, { dateKey, onlyShow: true });
+  const upcoming = await findTargetAppointment(admin, ctx, null);
+  if (!upcoming) return startBooking(admin, ctx, settings, { dateKey });
+  const tz = settings.scheduling.timezone;
+  const day = dateKey ? ` para el ${capitalize(formatLongDate(`${dateKey}T12:00:00`, tz))}` : "";
+  return reply(admin, ctx, {
+    kind: "buttons",
+    body: `Ya tenés una sesión el ${describe(upcoming, tz)}. ¿Querés reservar otra sesión${day} o cambiar esa?`,
+    buttons: [
+      { id: dateKey ? `NEWDATE:${dateKey}` : "MENU:BOOK", title: "Sesión nueva" },
+      { id: `RESCHEDULE:${upcoming.id}`, title: "Cambiar esa sesión" },
+    ],
+  });
+}
+
 async function askModality(admin: AdminSupabaseClient, ctx: ConversationContext, settings: Settings) {
   // Solo se ofrecen las modalidades habilitadas en la configuración.
   const buttons = [
@@ -531,7 +617,7 @@ async function askModality(admin: AdminSupabaseClient, ctx: ConversationContext,
     .filter((b) => settings.scheduling.modalities_enabled.includes(b.modality))
     .map(({ id, title }) => ({ id, title }));
   if (buttons.length === 0) {
-    return askYesNo(admin, ctx, "Por ahora no hay modalidades habilitadas para reservar. ¿Querés que le avise al profesional?", { id: "HUMAN:NOSLOTS", title: "Sí, avisale" });
+    return askYesNo(admin, ctx, "Por ahora no hay modalidades habilitadas para reservar. ¿Querés que le avise al profesional?", { id: "HUMAN:NOSLOTS", title: "Sí, avisale" }, { keepFlow: true });
   }
   return reply(admin, ctx, { kind: "buttons", body: "¿Cómo preferís la sesión?", buttons });
 }
@@ -540,7 +626,7 @@ async function offerDates(admin: AdminSupabaseClient, ctx: ConversationContext, 
   const modality = ctx.state.modality ?? "presencial";
   const { days } = await getAvailableSlots({ modality, days: 14, excludeAppointmentId: ctx.state.appointmentId ?? undefined });
   if (days.length === 0) {
-    return askYesNo(admin, ctx, "No encuentro horarios libres en las próximas dos semanas. ¿Querés que le avise al profesional para buscar una alternativa?", { id: "HUMAN:NOSLOTS", title: "Sí, avisale" });
+    return askYesNo(admin, ctx, "No encuentro horarios libres en las próximas dos semanas. ¿Querés que le avise al profesional para buscar una alternativa?", { id: "HUMAN:NOSLOTS", title: "Sí, avisale" }, { keepFlow: true });
   }
   const rows = days.slice(0, 10).map((d) => ({
     id: `DATE:${d.dateKey}`,
@@ -564,7 +650,7 @@ async function offerSlots(admin: AdminSupabaseClient, ctx: ConversationContext, 
     await saveState(admin, ctx, { ...ctx.state, step: "date", dateKey: null });
     const alt = await getAvailableSlots({ modality, fromDateKey: toDateKey(addDays(new Date(`${dateKey}T12:00:00Z`), 1), tz), days: 7 });
     const next = alt.days[0];
-    if (!next) return askYesNo(admin, ctx, `Para el ${capitalize(formatLongDate(`${dateKey}T12:00:00`, tz))} no tengo lugar y tampoco en la semana siguiente. ¿Querés que le avise al profesional?`, { id: "HUMAN:NOSLOTS", title: "Sí, avisale" });
+    if (!next) return askYesNo(admin, ctx, `Para el ${capitalize(formatLongDate(`${dateKey}T12:00:00`, tz))} no tengo lugar y tampoco en la semana siguiente. ¿Querés que le avise al profesional?`, { id: "HUMAN:NOSLOTS", title: "Sí, avisale" }, { keepFlow: true });
     return reply(admin, ctx, {
       kind: "buttons",
       body: `Para el ${capitalize(formatLongDate(`${dateKey}T12:00:00`, tz))} no tengo lugar. El siguiente día con disponibilidad es el ${capitalize(formatLongDate(`${next.dateKey}T12:00:00`, tz))}.`,
@@ -595,7 +681,12 @@ async function chooseSlot(admin: AdminSupabaseClient, ctx: ConversationContext, 
       await saveState(admin, ctx, { ...ctx.state, dateKey, step: "slot" });
       return offerSlots(admin, ctx, settings, dateKey);
     }
-    return reply(admin, ctx, { kind: "buttons", body: "Ese horario ya no figura entre las opciones vigentes. ¿Querés ver los horarios de nuevo?", buttons: MAIN_MENU.slice(0, 2) });
+    // Dentro de un flujo, "Ver días" (DATES) lo conserva: una reprogramación sigue siendo reprogramación.
+    return reply(admin, ctx, {
+      kind: "buttons",
+      body: "Ese horario ya no figura entre las opciones vigentes. ¿Querés ver los horarios de nuevo?",
+      buttons: inFlow ? [{ id: "DATES", title: "Ver días" }] : MAIN_MENU.slice(0, 2),
+    });
   }
   const modality = ctx.state.modality ?? "presencial";
   const start = new Date(slot.start);
@@ -701,7 +792,13 @@ async function continueCancel(
     case "keep": {
       await saveState(admin, ctx, { flow: null, step: null, appointmentId: null });
       if (appointment.status === "pending" || appointment.status === "rescheduled") {
-        return reply(admin, ctx, { kind: "buttons", body: "Perfecto, tu turno sigue en pie. ¿Querés confirmar tu asistencia?", buttons: [{ id: `CONFIRM:${appointment.id}`, title: "Confirmar asistencia" }] });
+        return reply(
+          admin,
+          ctx,
+          { kind: "buttons", body: "Perfecto, tu turno sigue en pie. ¿Querés confirmar tu asistencia?", buttons: [{ id: `CONFIRM:${appointment.id}`, title: "Confirmar asistencia" }] },
+          "confirm_prompt",
+          appointment.id,
+        );
       }
       return reply(admin, ctx, { kind: "text", body: "Perfecto, tu turno sigue en pie." });
     }
@@ -783,12 +880,21 @@ function describe(a: Appointment, tz: string): string {
   return `${capitalize(formatLongDate(a.start_time, tz))} a las ${formatTime(a.start_time, tz)} (${MODALITY_LABEL[a.modality].toLowerCase()})`;
 }
 
-async function doConfirm(admin: AdminSupabaseClient, ctx: ConversationContext, settings: Settings, appointmentId: string | null) {
-  const appointment = await findTargetAppointment(admin, ctx, appointmentId);
+/**
+ * Confirma un turno. Con strict (respuesta escrita a un pedido de confirmación), solo ese turno:
+ * nunca se confirma otro en su lugar.
+ */
+async function doConfirm(admin: AdminSupabaseClient, ctx: ConversationContext, settings: Settings, appointmentId: string | null, options: { strict?: boolean } = {}) {
+  const found = await findTargetAppointment(admin, ctx, appointmentId);
+  const appointment = options.strict && found?.id !== appointmentId ? null : found;
   if (!appointment) return reply(admin, ctx, { kind: "buttons", body: "No encuentro un turno próximo a tu nombre. ¿Querés agendar uno?", buttons: [{ id: "MENU:BOOK", title: "Agendar sesión" }] });
+  // La RPC corre con service_role: las reglas del paciente se aplican acá.
+  if (!ACTIVE_APPOINTMENT_STATUSES.includes(appointment.status) || Date.parse(appointment.end_time) < Date.now()) {
+    return reply(admin, ctx, { kind: "buttons", body: "Ese turno ya no está vigente. ¿Querés agendar uno nuevo?", buttons: [{ id: "MENU:BOOK", title: "Agendar sesión" }] });
+  }
   if (appointment.status === "requested") return reply(admin, ctx, { kind: "text", body: `Tu solicitud para el ${describe(appointment, settings.scheduling.timezone)} todavía está pendiente de aprobación. Te aviso en cuanto esté confirmada.` });
   try {
-    await confirmAppointment(admin, appointment.id, "whatsapp");
+    if (appointment.status !== "confirmed") await confirmAppointment(admin, appointment.id, "whatsapp");
     if (ctx.state.flow) await saveState(admin, ctx, { ...ctx.state, flow: null, step: null, appointmentId: null, offered: [] });
     const template = await getTemplate(admin, "confirmation_thanks");
     return reply(admin, ctx, { kind: "text", body: template ? renderTemplate(template.body, {}) : "Gracias. Tu turno quedó confirmado." }, "confirmation", appointment.id);
@@ -796,6 +902,30 @@ async function doConfirm(admin: AdminSupabaseClient, ctx: ConversationContext, s
     log.warn("Confirmación por WhatsApp falló", errorMeta(error));
     return reply(admin, ctx, { kind: "text", body: "No pude registrar la confirmación. Intentá de nuevo en un momento o escribile al profesional." });
   }
+}
+
+/** "Confirmo" escrito: se muestra el turno y la confirmación queda a un toque (nunca se confirma por texto). */
+async function askConfirmAttendance(admin: AdminSupabaseClient, ctx: ConversationContext, settings: Settings) {
+  const appointment = await findTargetAppointment(admin, ctx, null);
+  if (!appointment) return reply(admin, ctx, { kind: "buttons", body: "No encuentro un turno próximo a tu nombre. ¿Querés agendar uno?", buttons: [{ id: "MENU:BOOK", title: "Agendar sesión" }] });
+  const when = describe(appointment, settings.scheduling.timezone);
+  if (appointment.status === "requested") return reply(admin, ctx, { kind: "text", body: `Tu solicitud para el ${when} todavía está pendiente de aprobación. Te aviso en cuanto esté confirmada.` });
+  if (appointment.status === "confirmed") return reply(admin, ctx, { kind: "text", body: `Tu sesión del ${when} ya está confirmada.` });
+  return reply(
+    admin,
+    ctx,
+    {
+      kind: "buttons",
+      body: `Tu próxima sesión es el ${when}. ¿Confirmás tu asistencia?`,
+      buttons: [
+        { id: `CONFIRM:${appointment.id}`, title: "Confirmar asistencia" },
+        { id: `RESCHEDULE:${appointment.id}`, title: "Reprogramar" },
+        { id: `CANCEL:${appointment.id}`, title: "Cancelar" },
+      ],
+    },
+    "confirm_prompt",
+    appointment.id,
+  );
 }
 
 async function askCancelConfirmation(admin: AdminSupabaseClient, ctx: ConversationContext, settings: Settings, appointmentId: string | null) {
@@ -878,12 +1008,12 @@ async function replyLoginHelp(admin: AdminSupabaseClient, ctx: ConversationConte
   return reply(admin, ctx, { kind: "buttons", body, buttons: [{ id: "HUMAN:LOGIN", title: "Sigo sin poder" }] });
 }
 
-async function handOff(admin: AdminSupabaseClient, ctx: ConversationContext, settings: Settings) {
+async function handOff(admin: AdminSupabaseClient, ctx: ConversationContext, settings: Settings, about: string | null = null) {
   // Se descarta el flujo en curso: una lista vieja tocada después no debe reservar nada.
   await saveState(admin, ctx, { flow: null, step: null, offered: [], appointmentId: null }, { status: "handed_off", handed_off_at: new Date().toISOString() });
   // Un segundo toque inmediato de "Hablar con él" no vuelve a notificar.
   if ((await msSinceLastNotification(admin, ctx, "human_request")) > HUMAN_RENOTIFY_MS) {
-    await notifyAdminsHandoff(admin, ctx, "Pidió hablar con el profesional por WhatsApp.", "human_request");
+    await notifyAdminsHandoff(admin, ctx, humanRequestNotice(about, false), "human_request");
   }
   return reply(admin, ctx, { kind: "text", body: settings.whatsapp.handoff_message || `Perfecto. Le aviso al ${settings["site.identity"].professional_name} para que te escriba personalmente. Tené en cuenta que por este medio la respuesta puede demorar.` }, "handoff");
 }
