@@ -113,7 +113,7 @@ Resultado: `pnpm test:db` → 89 aserciones OK sobre las migraciones reales (Pos
 
 ## Verificación final
 
-* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (263 tests) · `pnpm test:bot` ✅ (33 recorridos) · `pnpm build` ✅ · `pnpm test:db` ✅ (89 aserciones)
+* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (267 tests) · `pnpm test:bot` ✅ (33 recorridos) · `pnpm build` ✅ · `pnpm test:db` ✅ (89 aserciones)
 
 ## Segunda ronda de auditoría (revisión adversarial)
 
@@ -243,6 +243,14 @@ Cuatro revisores independientes (estados y agenda, interpretación de texto, cri
 | El email incluido en Supabase solo envía a los miembros del equipo (2 por hora) | Documentado como paso obligatorio: SMTP propio |
 
 Guía para publicar sin instalar nada: [`PUBLICAR.md`](../PUBLICAR.md).
+
+## Prueba de los ejercicios en la vista navegable
+
+Al probar los ejercicios de Calmarme y de TCC, ACT y DBT con los componentes reales, la revisión encontró un error en la respiración guiada:
+
+| Hallazgo | Corrección |
+| --- | --- |
+| Con 0 en "Inhalar" y "Exhalar" (o todo el ritmo en 0), el ejercicio quedaba mostrando "INHALÁ 4 segundos" sin avanzar, y un 0 en "Inhalar" mostraba una fase de "1 segundos" | Inhalar y exhalar nunca bajan de 1 segundo: el campo vuelve a 1 al salir y el ejercicio usa 1 mientras se escribe. 4 tests de componente en `tests/unit/breathing-exercise.test.tsx` (2 fallan con el código anterior) |
 
 ## Pendientes recomendados antes de abrir al público
 

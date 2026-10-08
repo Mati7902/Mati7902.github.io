@@ -334,7 +334,7 @@ Checklist antes de abrir al público: textos legales revisados y marcados como r
 ## 14. Tests
 
 ```bash
-pnpm test        # Vitest: 263 tests (motor de slots, reglas de agenda, clasificador, crisis,
+pnpm test        # Vitest: 267 tests (motor de slots, reglas de agenda, clasificador, crisis,
                  # respuestas escritas al chatbot, enlaces de email, firma/normalización de webhook, deduplicación
                  # de recordatorios, plantillas, ventana de 24 h, redirecciones seguras,
                  # utilidades, esquemas de ejercicios, errores y componentes)

@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 
 type Phase = "inhale" | "hold" | "exhale" | "hold_after";
 const PHASE_LABEL: Record<Phase, string> = { inhale: "INHALÁ", hold: "SOSTENÉ", exhale: "EXHALÁ", hold_after: "SOSTENÉ" };
+/** Inhalar y exhalar nunca bajan de 1 segundo (aunque el campo quede en 0 mientras se escribe). */
+const MIN_SECONDS: Record<Phase, number> = { inhale: 1, hold: 0, exhale: 1, hold_after: 0 };
 
 type Props = {
   config: BreathingConfig;
@@ -35,12 +37,10 @@ export function BreathingExercise({ config, title, onComplete }: Props) {
   const completedRef = useRef(false);
 
   const phases = useMemo(() => {
-    const list: { key: Phase; seconds: number }[] = [
-      { key: "inhale", seconds: pattern.inhale },
-      { key: "hold", seconds: pattern.hold },
-      { key: "exhale", seconds: pattern.exhale },
-      { key: "hold_after", seconds: pattern.hold_after },
-    ];
+    const list: { key: Phase; seconds: number }[] = (["inhale", "hold", "exhale", "hold_after"] as const).map((key) => ({
+      key,
+      seconds: Math.max(MIN_SECONDS[key], pattern[key]),
+    }));
     return list.filter((p) => p.seconds > 0);
   }, [pattern]);
 
@@ -117,7 +117,7 @@ export function BreathingExercise({ config, title, onComplete }: Props) {
       setElapsed(0);
     }
     setPhase("inhale");
-    setPhaseLeft(pattern.inhale);
+    setPhaseLeft(phases[0]?.seconds ?? MIN_SECONDS.inhale);
     setRunning(true);
     tone(440);
   };
@@ -125,7 +125,7 @@ export function BreathingExercise({ config, title, onComplete }: Props) {
     setRunning(false);
     setElapsed(0);
     setPhase("inhale");
-    setPhaseLeft(pattern.inhale);
+    setPhaseLeft(phases[0]?.seconds ?? MIN_SECONDS.inhale);
     setDone(false);
     completedRef.current = false;
   };
@@ -134,6 +134,7 @@ export function BreathingExercise({ config, title, onComplete }: Props) {
   const scale = phase === "inhale" ? 1 : phase === "exhale" ? 0.62 : phase === "hold" ? 1 : 0.62;
   const transition = reducedMotion ? "none" : `transform ${currentPhase?.seconds ?? 4}s cubic-bezier(0.4, 0, 0.2, 1)`;
   const progress = Math.min(100, (elapsed / totalSeconds) * 100);
+  const shownLeft = Math.max(phaseLeft, 1);
   const remaining = Math.max(0, totalSeconds - elapsed);
 
   return (
@@ -152,7 +153,7 @@ export function BreathingExercise({ config, title, onComplete }: Props) {
             {running ? PHASE_LABEL[phase] : done ? "LISTO" : "PREPARATE"}
           </p>
           <p className="mt-1 text-base text-primary-foreground/90" aria-hidden={running}>
-            {running ? `${Math.max(phaseLeft, 1)} ${phaseLeft === 1 ? "segundo" : "segundos"}` : done ? "Bien hecho" : "Cuando quieras"}
+            {running ? `${shownLeft} ${shownLeft === 1 ? "segundo" : "segundos"}` : done ? "Bien hecho" : "Cuando quieras"}
           </p>
         </div>
       </div>
@@ -225,7 +226,7 @@ export function BreathingExercise({ config, title, onComplete }: Props) {
                 {label}
                 <input
                   type="number"
-                  min={key === "inhale" || key === "exhale" ? 1 : 0}
+                  min={MIN_SECONDS[key]}
                   max={20}
                   value={pattern[key]}
                   onChange={(e) => {
@@ -233,6 +234,7 @@ export function BreathingExercise({ config, title, onComplete }: Props) {
                     setPattern((p) => ({ ...p, [key]: v }));
                     reset();
                   }}
+                  onBlur={() => setPattern((p) => (p[key] < MIN_SECONDS[key] ? { ...p, [key]: MIN_SECONDS[key] } : p))}
                   className="h-11 w-full rounded-xl border border-input bg-background px-3 text-center text-base text-foreground"
                   aria-label={`${label}, segundos`}
                 />
