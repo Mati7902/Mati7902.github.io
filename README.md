@@ -52,7 +52,7 @@ Navegador / PWA                      Vercel (Next.js 16, App Router)            
 │ Service worker   │           │  └ proxy.ts (sesión Supabase, guardas)    │   │ Auth (invitaciones)    │
 └──────────────────┘           │ Route handlers                             │   │ Storage (privado)      │
                                │  ├ /api/webhooks/whatsapp ◀── Meta        │   └───────────────────────┘
-Meta WhatsApp Cloud API ◀────▶ │  ├ /api/cron/reminders   ◀── Vercel Cron │
+Meta WhatsApp Cloud API ◀────▶ │  ├ /api/cron/reminders   ◀── GH Actions  │
 Google Calendar API     ◀────▶ │  ├ /api/cron/housekeeping                 │   IA (opcional, por fetch)
                                │  └ /api/integrations/google/*            │   Anthropic / OpenAI
                                └──────────────────────────────────────────┘
@@ -121,7 +121,7 @@ META WEBHOOK → firma X-Hub-Signature-256 → Zod → normalización → idempo
 ├── tests/                       # Vitest (unit + componentes)
 ├── public/                      # iconos PWA, sw.js, og.png
 ├── legacy/                      # contenido previo del repositorio (no forma parte de la app)
-├── vercel.json                  # crons
+├── vercel.json                  # región y cron diario de mantenimiento
 └── .env.example
 ```
 
@@ -171,7 +171,7 @@ Copiá `.env.example`. Nunca subas claves reales. Las variables con prefijo `NEX
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | sí | publishable key (o `NEXT_PUBLIC_SUPABASE_ANON_KEY` legacy) |
 | `SUPABASE_SERVICE_ROLE_KEY` | sí (prod) | invitaciones, webhooks, crons, disponibilidad |
 | `APP_ENCRYPTION_KEY` | para Google | 32 bytes base64 (`openssl rand -base64 32`), cifra tokens OAuth |
-| `CRON_SECRET` | sí (prod) | autoriza los crons de Vercel |
+| `CRON_SECRET` | sí (prod) | autoriza las tareas programadas (Vercel Cron y el workflow de recordatorios) |
 | `META_WHATSAPP_TOKEN`, `META_WHATSAPP_PHONE_NUMBER_ID`, `META_WHATSAPP_BUSINESS_ACCOUNT_ID` | para WhatsApp | credenciales de la Cloud API |
 | `META_WEBHOOK_VERIFY_TOKEN`, `META_APP_SECRET` | para WhatsApp | verificación del webhook y de la firma |
 | `META_GRAPH_API_VERSION` | no | `v23.0` por defecto; verificar la vigente |
@@ -186,8 +186,9 @@ Copiá `.env.example`. Nunca subas claves reales. Las variables con prefijo `NEX
 1. Creá un proyecto en [supabase.com](https://supabase.com) (región más cercana a Paraguay: `sa-east-1`).
 2. **Authentication › Providers › Email**: dejá habilitado el email y **desactivá "Allow new users to sign up"** (el alta es por invitación). Activá *Confirm email* y *Secure email change*.
 3. **Authentication › URL Configuration**: `Site URL = NEXT_PUBLIC_APP_URL` y agregá `https://TU-DOMINIO/auth/callback` a *Redirect URLs* (también `http://localhost:3000/auth/callback` para desarrollo).
-4. **Authentication › Email Templates**: en *Invite user* y *Reset password* usá `{{ .ConfirmationURL }}` (ya apunta a `/auth/callback`). Opcional: SMTP propio para que los emails lleguen con tu dominio.
-5. (Opcional) **Authentication › MFA**: habilitá TOTP para que el administrador pueda activar 2FA desde su cuenta de Supabase. *El enrolamiento desde la UI de la app queda como siguiente iteración; la infraestructura ya lo soporta.*
+4. **Authentication › Email Templates**: reemplazá *Invite user*, *Reset password* y *Magic link* por `supabase/templates/invite.html`, `recovery.html` y `magic_link.html`. Usan enlaces con `token_hash` hacia `/auth/callback`, que funcionan aunque el email se abra en otro navegador o dispositivo (con `{{ .ConfirmationURL }}` la recuperación solo funciona en el mismo navegador; las invitaciones con sesión en el fragmento `#access_token` igual se resuelven con una página intermedia).
+5. **SMTP propio (obligatorio en producción)**: el email incluido en Supabase solo envía a los miembros del equipo del proyecto y con un límite muy bajo, así que sin SMTP propio las invitaciones a pacientes no llegan. Configuralo en **Authentication › Emails › SMTP Settings** y revisá **Rate Limits**.
+6. (Opcional) **Authentication › MFA**: habilitá TOTP para que el administrador pueda activar 2FA desde su cuenta de Supabase. *El enrolamiento desde la UI de la app queda como siguiente iteración; la infraestructura ya lo soporta.*
 
 ### 7.2 Aplicar migraciones
 
@@ -204,6 +205,8 @@ Sin CLI: ejecutá los seis archivos de `supabase/migrations/` en el SQL Editor, 
 Las migraciones crean: extensiones (`pgcrypto`, `btree_gist`), enums, 30 tablas con UUID y `created_at/updated_at`, funciones transaccionales de agenda, triggers de historial/notificaciones/guardas, políticas RLS, buckets de Storage (`materials` privado, `avatars` y `branding` públicos) y datos de referencia (roles, configuración, categorías, planes precargados, FAQs, plantillas de mensajes, intents y 15 ejercicios).
 
 ### 7.3 Primer administrador
+
+Sin instalar nada: creá el usuario en **Authentication › Users › Add user** (con *Auto Confirm User*) y en el SQL Editor ejecutá `update public.profiles set role = 'admin' where email = '…';` (ver [PUBLICAR.md](PUBLICAR.md), paso 7). Con Node:
 
 ```bash
 SUPABASE_URL=https://TU_REF.supabase.co SUPABASE_SERVICE_ROLE_KEY=... \
@@ -288,9 +291,11 @@ Pendiente de evolución: creación automática de enlaces Google Meet (requiere 
 
 ## 11. Deployment en Vercel
 
+Guía paso a paso sin instalar nada (Supabase + Vercel, planes gratuitos): **[PUBLICAR.md](PUBLICAR.md)**.
+
 1. Importá el repositorio en Vercel (framework Next.js, Node 22). Región sugerida: `gru1` (São Paulo), ya definida en `vercel.json`.
 2. Cargá todas las variables de entorno de producción (ver §6). Generá `CRON_SECRET` (`openssl rand -hex 32`).
-3. Los crons de `vercel.json` quedan activos automáticamente: `/api/cron/reminders` cada 15 min y `/api/cron/housekeeping` diario a las 04:00 UTC. Vercel envía `Authorization: Bearer $CRON_SECRET`.
+3. Tareas programadas: `vercel.json` define `/api/cron/housekeeping` diario a las 04:00 UTC (compatible con el plan Hobby, que solo admite tareas diarias). Los recordatorios (`/api/cron/reminders`) necesitan correr cada 15 minutos: los dispara el workflow `.github/workflows/recordatorios.yml` con los secretos `APP_URL` y `CRON_SECRET` del repositorio. En el plan Pro podés agregar el cron `*/15 * * * *` a `vercel.json` y desactivar el workflow. Ambos envían `Authorization: Bearer $CRON_SECRET`.
 4. Dominio propio → actualizá `NEXT_PUBLIC_APP_URL`, la *Site URL*/Redirect URLs de Supabase, la URI de Google y el webhook de Meta.
 5. Verificá `GET /api/health`.
 6. PWA: en producción se registra `public/sw.js` (navegación *network-first* con página `/offline`; nunca cachea API ni datos). En iPhone: Safari › Compartir › *Agregar a pantalla de inicio*; en Android: *Instalar app*.
@@ -329,8 +334,8 @@ Checklist antes de abrir al público: textos legales revisados y marcados como r
 ## 14. Tests
 
 ```bash
-pnpm test        # Vitest: 249 tests (motor de slots, reglas de agenda, clasificador, crisis,
-                 # respuestas escritas al chatbot, firma/normalización de webhook, deduplicación
+pnpm test        # Vitest: 263 tests (motor de slots, reglas de agenda, clasificador, crisis,
+                 # respuestas escritas al chatbot, enlaces de email, firma/normalización de webhook, deduplicación
                  # de recordatorios, plantillas, ventana de 24 h, redirecciones seguras,
                  # utilidades, esquemas de ejercicios, errores y componentes)
 pnpm test:db     # Migraciones + seed + 89 aserciones de RLS/permisos/grilla/double booking

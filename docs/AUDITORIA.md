@@ -64,7 +64,7 @@ Resultado: `pnpm test:db` → 89 aserciones OK sobre las migraciones reales (Pos
 
 | Punto | Estado | Evidencia |
 | --- | --- | --- |
-| Job cada 15 min, ventana configurable, horas de silencio | ✅ | `services/reminders.ts`, `vercel.json` |
+| Job cada 15 min, ventana configurable, horas de silencio | ✅ | `services/reminders.ts`, `.github/workflows/recordatorios.yml` |
 | Sin duplicados: marca atómica (`update … is null`) antes de enviar; liberación si falla | ✅ | `claim()/release()` + tests |
 | Resultado, `message_id` y error guardados | ✅ | `whatsapp_messages` |
 | Aviso automático al modificar un turno con botones Confirmar / Solicitar otro horario | ✅ | `adminRescheduleAppointmentAction` → `appointment_changed` |
@@ -113,7 +113,7 @@ Resultado: `pnpm test:db` → 89 aserciones OK sobre las migraciones reales (Pos
 
 ## Verificación final
 
-* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (249 tests) · `pnpm test:bot` ✅ (33 recorridos) · `pnpm build` ✅ · `pnpm test:db` ✅ (89 aserciones)
+* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (263 tests) · `pnpm test:bot` ✅ (33 recorridos) · `pnpm build` ✅ · `pnpm test:db` ✅ (89 aserciones)
 
 ## Segunda ronda de auditoría (revisión adversarial)
 
@@ -232,6 +232,17 @@ Cuatro revisores independientes (estados y agenda, interpretación de texto, cri
 | Un botón con el turno de otra persona actuaba sobre el próximo turno propio; un número compartido entre dos fichas identificaba a una | Con un id ajeno no se actúa; un número que corresponde a dos fichas no identifica a nadie |
 | Una cancelación por WhatsApp no avisaba al profesional y al paciente le llegaba "Turno cancelado" como si lo hubiera cancelado otro | El trigger reconoce la cancelación del propio paciente por WhatsApp (3 aserciones SQL nuevas) |
 | La limpieza de `test:bot` dejaba avisos; un test podía fallar según la hora; un test unitario era tautológico | Limpieza completa con verificación de errores, horarios que se corren si chocan y aserciones con contenido |
+
+## Preparación para publicar (planes gratuitos)
+
+| Problema | Corrección |
+| --- | --- |
+| Con la plantilla por defecto de Supabase, la invitación vuelve con la sesión en el fragmento (`#access_token`), que el servidor no ve: el paciente terminaba en "enlace inválido" | Plantillas propias con `token_hash` (`supabase/templates`) y, como respaldo, una página intermedia en `/auth/callback` que entrega el fragmento a `/auth/callback/session` (solo mismo origen y JSON) |
+| La recuperación de contraseña (PKCE) fallaba si el email se abría en otro navegador o en el celular | La plantilla de recuperación usa `token_hash`, que no depende del navegador |
+| El plan Hobby de Vercel solo admite tareas programadas diarias: el cron de recordatorios cada 15 min hacía fallar el despliegue | `vercel.json` queda con el mantenimiento diario y los recordatorios los dispara `.github/workflows/recordatorios.yml` |
+| El email incluido en Supabase solo envía a los miembros del equipo (2 por hora) | Documentado como paso obligatorio: SMTP propio |
+
+Guía para publicar sin instalar nada: [`PUBLICAR.md`](../PUBLICAR.md).
 
 ## Pendientes recomendados antes de abrir al público
 

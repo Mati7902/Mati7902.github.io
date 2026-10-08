@@ -40,6 +40,20 @@ enable_confirmations = true
 secure_password_change = true
 max_frequency = "1m0s"
 
+# Enlaces con token_hash hacia /auth/callback (funcionan aunque el email se abra en otro
+# navegador). En el proyecto real se copian en Authentication › Email Templates.
+[auth.email.template.invite]
+subject = "Tu invitación a la plataforma de pacientes"
+content_path = "./supabase/templates/invite.html"
+
+[auth.email.template.recovery]
+subject = "Cambiar tu contraseña"
+content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.magic_link]
+subject = "Tu enlace de acceso"
+content_path = "./supabase/templates/magic_link.html"
+
 [auth.mfa]
 max_enrolled_factors = 10
 

@@ -1,0 +1,44 @@
+# Recordatorios de turnos por WhatsApp.
+#
+# El plan gratuito (Hobby) de Vercel solo permite tareas programadas una vez por día, y los
+# recordatorios necesitan correr seguido. Este workflow llama cada 15 minutos al endpoint
+# protegido /api/cron/reminders. Los recordatorios tienen una ventana de envío (90 min por
+# defecto) y no se duplican, así que un retraso de GitHub no hace perder ni repetir avisos.
+#
+# Requiere dos secretos del repositorio (Settings › Secrets and variables › Actions):
+#   APP_URL      la dirección pública de la app (p. ej. https://psicologia.vercel.app)
+#   CRON_SECRET  el mismo valor configurado en Vercel
+# Sin esos secretos, el workflow termina sin hacer nada.
+#
+# GitHub solo ejecuta workflows programados desde la rama principal (main) y los pausa en
+# repositorios públicos tras 60 días sin actividad: si eso pasa, se reactivan en la pestaña Actions.
+name: Recordatorios de turnos
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: recordatorios
+  cancel-in-progress: false
+
+jobs:
+  recordatorios:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Llamar a /api/cron/reminders
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$APP_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "Faltan los secretos APP_URL y CRON_SECRET: no se envían recordatorios (ver PUBLICAR.md)."
+            exit 0
+          fi
+          curl --fail-with-body --silent --show-error --max-time 60 --retry 2 --retry-delay 10 \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            "${APP_URL%/}/api/cron/reminders"
