@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { FaqList } from "@/components/public/faq-list";
+import { NeuralField } from "@/components/public/neural-field";
 import { PlanCard } from "@/components/plans/plan-card";
 import { Button } from "@/components/ui/button";
 import { publicEnv } from "@/lib/env";
@@ -45,41 +46,71 @@ export default async function LandingPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[32rem] bg-[radial-gradient(ellipse_at_top_left,_var(--color-petrol-100),_transparent_60%),radial-gradient(ellipse_at_bottom_right,_var(--color-mint-100),_transparent_55%)]" />
-        <div className="relative mx-auto grid max-w-6xl gap-12 px-5 pt-16 pb-20 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:px-8 lg:pt-24">
+      {/* Hero: red neuronal animada detrás, mensaje a la izquierda y la foto a la derecha */}
+      <section className="relative isolate overflow-hidden">
+        <div aria-hidden className="absolute inset-0 -z-20 bg-[radial-gradient(ellipse_at_top_left,_var(--color-petrol-50),_transparent_55%),radial-gradient(ellipse_at_85%_60%,_var(--color-mint-50),_transparent_55%)]" />
+        <NeuralField className="absolute inset-0 -z-10 opacity-80 [mask-image:radial-gradient(ellipse_at_70%_45%,black_30%,transparent_78%)] lg:[mask-image:linear-gradient(to_right,transparent_8%,black_52%)]" />
+        <div className="mx-auto grid max-w-6xl gap-14 px-5 pt-14 pb-20 lg:grid-cols-[1.15fr_1fr] lg:items-center lg:px-8 lg:pt-24 lg:pb-28">
           <div className="space-y-7 animate-fade-up">
-            <p className="text-sm font-medium uppercase tracking-wider text-accent-strong">Psicología para adolescentes y adultos</p>
-            <h1 className="font-display text-4xl font-medium leading-[1.1] text-foreground sm:text-5xl lg:text-6xl">{landing.hero_title}</h1>
-            <p className="max-w-xl text-lg text-muted-foreground">{landing.hero_subtitle || identity.tagline}</p>
-            <div className="space-y-1">
-              <p className="font-display text-xl font-medium">{identity.professional_name}</p>
-              <p className="text-sm text-muted-foreground">
-                {identity.professional_title} — {identity.license}
-              </p>
+            <p className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/80 px-3.5 py-1.5 text-xs font-medium uppercase tracking-wider text-accent-strong backdrop-blur">
+              <span className="size-1.5 rounded-full bg-accent-strong" aria-hidden />
+              Psicología para adolescentes y adultos
+            </p>
+            <h1 className="font-display text-4xl font-medium leading-[1.08] text-foreground sm:text-5xl lg:text-[3.6rem]">{landing.hero_title}</h1>
+            <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">{landing.hero_subtitle || identity.tagline}</p>
+            <div className="flex items-center gap-4">
+              <span className="h-10 w-px bg-border" aria-hidden />
+              <div>
+                <p className="font-display text-xl font-medium">{identity.professional_name}</p>
+                <p className="text-sm text-muted-foreground">
+                  {[identity.professional_title, identity.license].filter(Boolean).join(" · ")}
+                </p>
+              </div>
             </div>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="xl">
-                <Link href="#solicitar-turno">Solicitar turno</Link>
+                <Link href="#solicitar-turno">
+                  Solicitar turno <ArrowRight aria-hidden />
+                </Link>
               </Button>
-              <Button asChild size="xl" variant="outline">
+              <Button asChild size="xl" variant="outline" className="bg-card/70 backdrop-blur">
                 <Link href="/planes">Conocer los planes</Link>
               </Button>
             </div>
+            <ul className="flex flex-wrap gap-x-6 gap-y-2 pt-1 text-sm text-muted-foreground">
+              <li className="flex items-center gap-2"><Video className="size-4 text-accent-strong" aria-hidden /> Presencial y online</li>
+              <li className="flex items-center gap-2"><CalendarCheck className="size-4 text-accent-strong" aria-hidden /> Sesiones de {scheduling.default_duration_minutes} minutos</li>
+              <li className="flex items-center gap-2"><Lock className="size-4 text-accent-strong" aria-hidden /> Confidencial</li>
+            </ul>
           </div>
-          <div className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-[2rem] border border-border/60 bg-card shadow-[var(--shadow-soft)]">
-            {identity.photo_url ? (
-              <Image src={identity.photo_url} alt={identity.professional_name} fill sizes="(max-width: 1024px) 80vw, 400px" className="object-cover" priority />
-            ) : (
-              <div className="flex h-full flex-col items-center justify-center gap-4 bg-[linear-gradient(160deg,_var(--color-petrol-50),_var(--color-mint-100))] p-8 text-center">
-                <span className="flex size-20 items-center justify-center rounded-full bg-card text-primary shadow-[var(--shadow-card)]">
-                  <Heart className="size-9" aria-hidden />
-                </span>
-                <p className="font-display text-2xl text-primary">Un espacio seguro</p>
-                <p className="text-sm text-muted-foreground">Confidencial, cercano y a tu ritmo.</p>
+
+          <div className="relative mx-auto w-full max-w-sm lg:max-w-md">
+            <div aria-hidden className="absolute -inset-6 -z-10 rounded-[2.75rem] bg-[conic-gradient(from_200deg,_var(--color-petrol-100),_var(--color-mint-100),_var(--color-petrol-50),_var(--color-petrol-100))] opacity-80 blur-2xl" />
+            <div className="relative aspect-[4/5] overflow-hidden rounded-[2.25rem] border border-border/60 bg-card shadow-[var(--shadow-float)]">
+              {identity.photo_url ? (
+                <Image src={identity.photo_url} alt={identity.professional_name} fill sizes="(max-width: 1024px) 80vw, 448px" className="object-cover" priority />
+              ) : (
+                <div className="flex h-full flex-col items-center justify-center gap-4 bg-[linear-gradient(160deg,_var(--color-petrol-50),_var(--color-mint-100))] p-8 text-center">
+                  <span className="flex size-20 items-center justify-center rounded-full bg-card text-primary shadow-[var(--shadow-card)]">
+                    <Heart className="size-9" aria-hidden />
+                  </span>
+                  <p className="font-display text-2xl text-primary">Un espacio seguro</p>
+                  <p className="text-sm text-muted-foreground">Confidencial, cercano y a tu ritmo.</p>
+                </div>
+              )}
+            </div>
+            {identity.logo_url ? (
+              <div className="absolute -top-4 -right-3 flex size-20 items-center justify-center rounded-2xl border border-border/60 bg-card/95 p-3 shadow-[var(--shadow-soft)] backdrop-blur sm:-right-6">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={identity.logo_url} alt="" className="max-h-full max-w-full object-contain" />
               </div>
-            )}
+            ) : null}
+            {scheduleSummary ? (
+              <div className="absolute -bottom-5 -left-3 max-w-[16rem] rounded-2xl border border-border/60 bg-card/95 px-4 py-3 shadow-[var(--shadow-soft)] backdrop-blur sm:-left-8">
+                <p className="text-xs font-medium uppercase tracking-wider text-accent-strong">Horarios de atención</p>
+                <p className="mt-1 text-sm text-foreground">{scheduleSummary}</p>
+              </div>
+            ) : null}
           </div>
         </div>
       </section>
@@ -177,7 +208,8 @@ export default async function LandingPage() {
       {/* Solicitar turno / contacto */}
       <section id="solicitar-turno" className="scroll-mt-20">
         <div id="contacto" className="mx-auto max-w-6xl px-5 py-20 lg:px-8">
-          <div className="grid gap-8 rounded-[2rem] bg-primary px-8 py-12 text-primary-foreground md:grid-cols-[1.3fr_1fr] md:items-center md:px-12">
+          <div className="relative isolate grid gap-8 overflow-hidden rounded-[2rem] bg-primary px-8 py-12 text-primary-foreground md:grid-cols-[1.3fr_1fr] md:items-center md:px-12">
+            <NeuralField tone="light" density={0.7} interactive={false} className="absolute inset-0 -z-10 opacity-40 [mask-image:linear-gradient(to_left,black_20%,transparent_85%)]" />
             <div className="space-y-4">
               <h2 className="font-display text-3xl font-medium sm:text-4xl">Solicitar turno</h2>
               <p className="max-w-xl text-petrol-100">

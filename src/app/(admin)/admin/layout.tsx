@@ -23,6 +23,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <AdminShell
       platformName={identity.platform_name}
+      logoUrl={identity.logo_url}
       userName={session.profile.full_name ?? identity.professional_name}
       avatarUrl={session.profile.avatar_url}
       unreadCount={unreadCount}

@@ -6,7 +6,7 @@ export default async function PublicLayout({ children }: { children: React.React
   const { "site.identity": identity } = await getPublicSettingsSafe();
   return (
     <div className="flex min-h-dvh flex-col">
-      <SiteHeader platformName={identity.platform_name} />
+      <SiteHeader platformName={identity.platform_name} logoUrl={identity.logo_url} />
       <main className="flex-1">{children}</main>
       <SiteFooter identity={identity} />
     </div>

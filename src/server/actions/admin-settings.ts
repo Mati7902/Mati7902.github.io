@@ -123,26 +123,42 @@ export async function saveNotificationTemplateAction(input: z.infer<typeof templ
   }
 }
 
-/** Sube la foto profesional al bucket público "branding" y actualiza site.identity.photo_url. */
-export async function uploadProfessionalPhotoAction(formData: FormData): Promise<ActionResult<{ url: string }>> {
-  const file = formData.get("photo");
+const BRANDING = {
+  photo: { field: "photo_url", prefix: "profesional", types: ["image/png", "image/jpeg", "image/webp"], label: "PNG, JPG o WebP" },
+  logo: { field: "logo_url", prefix: "logo", types: ["image/png", "image/webp", "image/svg+xml", "image/jpeg"], label: "SVG, PNG, WebP o JPG" },
+} as const;
+const EXTENSIONS: Record<string, string> = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/svg+xml": "svg" };
+
+/**
+ * Sube la foto profesional o el logo al bucket público "branding" y actualiza
+ * site.identity (photo_url o logo_url).
+ */
+export async function uploadBrandingImageAction(formData: FormData): Promise<ActionResult<{ url: string }>> {
+  const kind = formData.get("kind") === "logo" ? "logo" : "photo";
+  const spec = BRANDING[kind];
+  const file = formData.get("file") ?? formData.get("photo");
   if (!(file instanceof File) || file.size === 0) return fail(new AppError("VALIDATION", "Elegí una imagen."));
-  if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) return fail(new AppError("VALIDATION", "Formato no permitido (PNG, JPG o WebP)."));
+  if (!(spec.types as readonly string[]).includes(file.type)) return fail(new AppError("VALIDATION", `Formato no permitido (${spec.label}).`));
   if (file.size > 5 * 1024 * 1024) return fail(new AppError("VALIDATION", "La imagen supera los 5 MB."));
   try {
     const session = await assertAdmin();
     const supabase = await createClient();
-    const ext = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
-    const path = `profesional-${Date.now()}.${ext}`;
+    const path = `${spec.prefix}-${Date.now()}.${EXTENSIONS[file.type] ?? "png"}`;
     const { error } = await supabase.storage.from("branding").upload(path, file, { contentType: file.type, upsert: true });
     if (error) throw new AppError("EXTERNAL", `No pudimos subir la imagen: ${error.message}`);
     const { data } = supabase.storage.from("branding").getPublicUrl(path);
     const { data: current } = await supabase.from("settings").select("value").eq("key", "site.identity").maybeSingle();
     const identity = settingsSchemas["site.identity"].parse(current?.value ?? {});
-    await saveSetting(supabase, "site.identity", { ...identity, photo_url: data.publicUrl }, session.userId);
+    await saveSetting(supabase, "site.identity", { ...identity, [spec.field]: data.publicUrl }, session.userId);
     revalidateAll();
     return ok({ url: data.publicUrl });
   } catch (error) {
     return fail(error);
   }
+}
+
+/** Compatibilidad: sube la foto profesional. */
+export async function uploadProfessionalPhotoAction(formData: FormData): Promise<ActionResult<{ url: string }>> {
+  formData.set("kind", "photo");
+  return uploadBrandingImageAction(formData);
 }

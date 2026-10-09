@@ -16,6 +16,7 @@ export default async function PatientLayout({ children }: { children: React.Reac
   return (
     <PatientShell
       platformName={identity.platform_name}
+      logoUrl={identity.logo_url}
       userName={session.profile.full_name ?? `${session.patient.first_name} ${session.patient.last_name}`}
       avatarUrl={session.profile.avatar_url}
       unreadCount={unreadCount}

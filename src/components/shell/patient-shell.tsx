@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Bell } from "lucide-react";
 
+import { BrandMark } from "@/components/shell/brand-mark";
 import { NavIcon } from "@/components/shell/nav-icon";
 import { NavLink } from "@/components/shell/nav-link";
 import { SignOutButton } from "@/components/shell/sign-out-button";
@@ -11,18 +12,19 @@ import { getInitials } from "@/lib/utils";
 type Props = {
   children: React.ReactNode;
   platformName: string;
+  logoUrl?: string | null;
   userName: string;
   avatarUrl?: string | null;
   unreadCount: number;
 };
 
-export function PatientShell({ children, platformName, userName, avatarUrl, unreadCount }: Props) {
+export function PatientShell({ children, platformName, logoUrl, userName, avatarUrl, unreadCount }: Props) {
   return (
     <div className="flex min-h-dvh bg-background">
       {/* Sidebar escritorio */}
       <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-border/70 bg-sidebar px-4 py-6 md:flex">
-        <Link href="/app" className="px-3 font-display text-lg font-medium text-primary">
-          {platformName}
+        <Link href="/app" className="px-3 text-lg">
+          <BrandMark name={platformName} logoUrl={logoUrl} />
         </Link>
         <nav aria-label="Navegación principal" className="mt-8 flex flex-1 flex-col gap-1">
           {patientNav.map((item) => (
@@ -57,8 +59,8 @@ export function PatientShell({ children, platformName, userName, avatarUrl, unre
         {/* Barra superior */}
         <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-border/60 bg-background/85 px-4 pt-safe backdrop-blur-md md:px-8">
           <div className="flex h-14 items-center md:h-16">
-            <Link href="/app" className="font-display text-base font-medium text-primary md:hidden">
-              {platformName}
+            <Link href="/app" className="min-w-0 text-base md:hidden">
+              <BrandMark name={platformName} logoUrl={logoUrl} logoClassName="h-7" />
             </Link>
           </div>
           <div className="flex items-center gap-1">

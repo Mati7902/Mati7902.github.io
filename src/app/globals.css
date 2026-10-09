@@ -22,15 +22,17 @@
   --popover-foreground: #1e2a2f;
   --surface-muted: #f3f0eb;
 
-  /* Marca */
+  /* Marca: --primary y --accent se configuran en Administración › Apariencia (ver <ThemeStyle />).
+     Las escalas "petrol" (principal) y "mint" (acento) y los tonos derivados se calculan a partir
+     de esos dos colores, así toda la interfaz sigue la paleta elegida. */
   --primary: #1f4e5f;
   --primary-foreground: #ffffff;
-  --primary-soft: #eef5f7;
-  --secondary: #e3f4ee;
-  --secondary-foreground: #183f4d;
   --accent: #a8dccb;
   --accent-foreground: #12303b;
-  --accent-strong: #3e8e7a;
+  --primary-soft: color-mix(in oklab, var(--primary) 8%, white);
+  --secondary: color-mix(in oklab, var(--accent) 30%, white);
+  --secondary-foreground: color-mix(in oklab, var(--primary), black 20%);
+  --accent-strong: color-mix(in oklab, var(--accent), black 42%);
 
   /* Neutros */
   --muted: #f3f0eb;
@@ -39,7 +41,7 @@
   --border: #e6e2dc;
   --divider: #ede9e3;
   --input: #e6e2dc;
-  --ring: #4f8a9a;
+  --ring: color-mix(in oklab, var(--primary) 72%, white);
 
   /* Semánticos */
   --destructive: #c8554d;
@@ -52,21 +54,21 @@
   --info-soft: #e8f1f7;
 
   /* Gráficos (evolución emocional, analytics) */
-  --chart-1: #1f4e5f;
-  --chart-2: #3e8e7a;
-  --chart-3: #a8dccb;
+  --chart-1: var(--primary);
+  --chart-2: var(--accent-strong);
+  --chart-3: var(--accent);
   --chart-4: #d9a441;
   --chart-5: #8a979b;
 
   /* Sidebar admin */
   --sidebar: #ffffff;
   --sidebar-foreground: #1e2a2f;
-  --sidebar-primary: #1f4e5f;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #eef5f7;
-  --sidebar-accent-foreground: #1f4e5f;
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--primary-soft);
+  --sidebar-accent-foreground: var(--primary);
   --sidebar-border: #e6e2dc;
-  --sidebar-ring: #4f8a9a;
+  --sidebar-ring: var(--ring);
 }
 
 @theme inline {
@@ -114,27 +116,27 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Escala petróleo */
-  --color-petrol-50: #eef5f7;
-  --color-petrol-100: #d5e6ea;
-  --color-petrol-200: #afccd4;
-  --color-petrol-300: #82adb9;
-  --color-petrol-400: #4f8a9a;
-  --color-petrol-500: #2e6b7c;
-  --color-petrol-600: #1f4e5f;
-  --color-petrol-700: #183f4d;
-  --color-petrol-800: #12303b;
-  --color-petrol-900: #0c2129;
+  /* Escala del color principal ("petrol"), derivada de --primary */
+  --color-petrol-50: color-mix(in oklab, var(--primary) 8%, white);
+  --color-petrol-100: color-mix(in oklab, var(--primary) 18%, white);
+  --color-petrol-200: color-mix(in oklab, var(--primary) 34%, white);
+  --color-petrol-300: color-mix(in oklab, var(--primary) 52%, white);
+  --color-petrol-400: color-mix(in oklab, var(--primary) 72%, white);
+  --color-petrol-500: color-mix(in oklab, var(--primary) 88%, white);
+  --color-petrol-600: var(--primary);
+  --color-petrol-700: color-mix(in oklab, var(--primary), black 20%);
+  --color-petrol-800: color-mix(in oklab, var(--primary), black 38%);
+  --color-petrol-900: color-mix(in oklab, var(--primary), black 58%);
 
-  /* Escala menta */
-  --color-mint-50: #f1faf6;
-  --color-mint-100: #e3f4ee;
-  --color-mint-200: #c7e9dd;
-  --color-mint-300: #a8dccb;
-  --color-mint-400: #7cc4ad;
-  --color-mint-500: #55a991;
-  --color-mint-600: #3e8e7a;
-  --color-mint-700: #2f7062;
+  /* Escala del acento ("mint"), derivada de --accent */
+  --color-mint-50: color-mix(in oklab, var(--accent) 14%, white);
+  --color-mint-100: color-mix(in oklab, var(--accent) 30%, white);
+  --color-mint-200: color-mix(in oklab, var(--accent) 62%, white);
+  --color-mint-300: var(--accent);
+  --color-mint-400: color-mix(in oklab, var(--accent), black 12%);
+  --color-mint-500: color-mix(in oklab, var(--accent), black 25%);
+  --color-mint-600: color-mix(in oklab, var(--accent), black 42%);
+  --color-mint-700: color-mix(in oklab, var(--accent), black 55%);
 
   /* Escala arena (neutros cálidos) */
   --color-sand-50: #faf8f5;

@@ -20,6 +20,7 @@ export const siteIdentitySchema = z.object({
   tagline: z.string().default(siteDefaults.tagline),
   bio: z.string().default(""),
   photo_url: z.string().url().nullable().default(null),
+  logo_url: z.string().url().nullable().default(null),
   email: z.string().email().nullable().default(null),
   phone: z.string().nullable().default(null),
   whatsapp: z.string().nullable().default(null),

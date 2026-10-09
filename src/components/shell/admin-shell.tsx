@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Bell } from "lucide-react";
 
 import { AdminMobileNav } from "@/components/shell/admin-mobile-nav";
+import { BrandMark } from "@/components/shell/brand-mark";
 import { NavIcon } from "@/components/shell/nav-icon";
 import { NavLink } from "@/components/shell/nav-link";
 import { SignOutButton } from "@/components/shell/sign-out-button";
@@ -12,18 +13,19 @@ import { getInitials } from "@/lib/utils";
 type Props = {
   children: React.ReactNode;
   platformName: string;
+  logoUrl?: string | null;
   userName: string;
   avatarUrl?: string | null;
   unreadCount: number;
   pendingRequests: number;
 };
 
-export function AdminShell({ children, platformName, userName, avatarUrl, unreadCount, pendingRequests }: Props) {
+export function AdminShell({ children, platformName, logoUrl, userName, avatarUrl, unreadCount, pendingRequests }: Props) {
   return (
     <div className="flex min-h-dvh bg-background">
       <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-border/70 bg-sidebar px-4 py-6 lg:flex">
         <Link href="/admin" className="px-3">
-          <span className="block font-display text-lg font-medium text-primary">{platformName}</span>
+          <BrandMark name={platformName} logoUrl={logoUrl} className="text-lg" />
           <span className="block text-xs text-muted-foreground">Panel profesional</span>
         </Link>
         <nav aria-label="Navegación administrativa" className="mt-8 flex flex-1 flex-col gap-1">
@@ -62,8 +64,8 @@ export function AdminShell({ children, platformName, userName, avatarUrl, unread
         <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-border/60 bg-background/85 px-4 backdrop-blur-md lg:h-16 lg:px-8">
           <div className="flex items-center gap-2">
             <AdminMobileNav platformName={platformName} pendingRequests={pendingRequests} />
-            <Link href="/admin" className="font-display text-base font-medium text-primary lg:hidden">
-              {platformName}
+            <Link href="/admin" className="min-w-0 text-base lg:hidden">
+              <BrandMark name={platformName} logoUrl={logoUrl} logoClassName="h-7" />
             </Link>
           </div>
           <div className="flex items-center gap-1">
