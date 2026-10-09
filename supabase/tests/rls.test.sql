@@ -77,6 +77,8 @@ commit;
 -- 1. Un paciente solo ve sus propios datos
 -- ---------------------------------------------------------------------------
 begin;
+-- Materiales públicos publicados (los del seed y los de los cuadernillos), contados sin RLS.
+select set_config('test.public_materials', (select count(*) from public.materials where is_published and visibility = 'public')::text, true);
 select pg_temp.login('22222222-2222-4222-8222-222222222222');
 select pg_temp.assert((select count(*) from public.patients) = 1, 'paciente ve exactamente 1 ficha (la propia)');
 select pg_temp.assert((select count(*) from public.patients where email = 'ana.ejemplo@demo.local') = 0, 'paciente no ve a otros pacientes');
@@ -89,8 +91,9 @@ select pg_temp.assert((select count(*) from public.audit_logs) = 0, 'paciente no
 select pg_temp.assert((select count(*) from public.whatsapp_messages) = 0, 'paciente no ve mensajes de WhatsApp');
 select pg_temp.assert((select count(*) from public.settings where key = 'whatsapp') = 0, 'paciente no ve settings privados');
 select pg_temp.assert((select count(*) from public.settings where key = 'site.identity') = 1, 'paciente ve settings públicos');
--- Materiales: públicos + asignados (2 asignados + 3 públicos = 5)
-select pg_temp.assert((select count(*) from public.materials) = 5, 'paciente ve materiales públicos y asignados');
+-- Materiales: públicos + los 2 asignados (que no son públicos)
+select pg_temp.assert((select count(*) from public.materials) = current_setting('test.public_materials')::int + 2, 'paciente ve materiales públicos y asignados');
+select pg_temp.assert((select count(*) from public.materials where visibility = 'assigned') = 2, 'paciente ve solo los materiales asignados a él');
 select pg_temp.logout();
 rollback;
 

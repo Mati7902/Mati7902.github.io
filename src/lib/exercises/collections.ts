@@ -29,7 +29,8 @@ export const COLLECTIONS: Record<string, CollectionInfo> = {
       { title: "Entender lo que me pasa", from: 102, to: 104 },
       { title: "Probar cosas nuevas", from: 105, to: 109 },
       { title: "Cuidarme y pedir ayuda", from: 110, to: 113 },
-      { title: "Seguir", from: 114, to: 199 },
+      { title: "Seguir", from: 114, to: 149 },
+      { title: "Registros para repetir", from: 150, to: 199 },
     ],
   },
   tcc: {

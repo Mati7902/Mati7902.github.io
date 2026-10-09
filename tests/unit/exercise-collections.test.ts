@@ -26,7 +26,8 @@ describe("público de los ejercicios", () => {
     expect(groupByParts("brujula", items).map((g) => [g.title, g.items.map((i) => i.sort_order)])).toEqual([
       ["Empezar", [101]],
       ["Entender lo que me pasa", [103]],
-      ["Seguir", [114, 150]],
+      ["Seguir", [114]],
+      ["Registros para repetir", [150]],
     ]);
     expect(isForAudience("adolescentes", audiencesFor(35))).toBe(false);
     expect(isForAudience(null, audiencesFor(35))).toBe(true);

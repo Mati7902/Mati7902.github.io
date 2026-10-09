@@ -75,7 +75,11 @@ export default async function CalmPage() {
     ? await supabase.from("exercise_responses").select("completed_at").eq("patient_id", patient.id).eq("template_id", plan.id).order("completed_at", { ascending: false }).limit(1).maybeSingle()
     : { data: null };
   const savedAt = lastPlan?.completed_at ?? null;
-  const offerPlan = Boolean(plan?.is_active && isForAudience(plan.audience, audiencesFor(ageFrom(patient.birth_date))));
+  const { count: planAssigned } = plan
+    ? await supabase.from("exercise_assignments").select("id", { count: "exact", head: true }).eq("patient_id", patient.id).eq("template_id", plan.id)
+    : { count: 0 };
+  // Se ofrece si es para su edad o si el profesional se lo sugirió (aunque la ficha no tenga fecha de nacimiento).
+  const offerPlan = Boolean(plan?.is_active && (planAssigned || isForAudience(plan.audience, audiencesFor(ageFrom(patient.birth_date)))));
 
   return (
     <div className="space-y-8">

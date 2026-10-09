@@ -23,6 +23,8 @@ describe("esquema de pasos de ejercicios", () => {
   it("interpola respuestas previas en plantillas de defusión", () => {
     expect(interpolate("Estoy teniendo el pensamiento de que {{thought}}.", { thought: "soy un fracaso" })).toBe("Estoy teniendo el pensamiento de que soy un fracaso.");
     expect(interpolate("{{missing}}", {})).toBe("…");
+    expect(interpolate("Mi plan: {{plan}}.", { plan: ["Caminar", " ", "", "Llamar a Ana"] })).toBe("Mi plan: Caminar, Llamar a Ana.");
+    expect(interpolate("{{plan}} / {{skip}}", { plan: ["", ""], skip: "" })).toBe("… / …");
   });
 
   it("acepta selección múltiple, devoluciones por opción y listas con mínimo", () => {

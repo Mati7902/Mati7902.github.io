@@ -82,8 +82,12 @@ export function parseBreathingConfig(raw: unknown): BreathingConfig | null {
 export function interpolate(template: string, answers: Record<string, unknown>): string {
   return template.replace(/\{\{\s*([\w.]+)\s*\}\}/g, (_, key: string) => {
     const value = answers[key];
-    if (Array.isArray(value)) return value.join(", ");
-    return value === undefined || value === null ? "…" : String(value);
+    if (Array.isArray(value)) {
+      // Las listas pueden quedar a medias: sin renglones vacíos ("a, , ").
+      const items = value.map((v) => String(v).trim()).filter(Boolean);
+      return items.length > 0 ? items.join(", ") : "…";
+    }
+    return value === undefined || value === null || String(value).trim() === "" ? "…" : String(value);
   });
 }
 
