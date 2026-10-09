@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { resolveAppUrl } from "@/lib/app-url";
+
 /**
  * Variables de entorno validadas en el arranque del servidor.
  * Las claves privadas NUNCA llevan prefijo NEXT_PUBLIC_ y nunca se exponen al cliente.
@@ -37,6 +39,8 @@ export function getServerEnv(): ServerEnv {
   if (cached) return cached;
   const parsed = serverSchema.safeParse({
     ...process.env,
+    // Sin NEXT_PUBLIC_APP_URL, en Vercel se usa el dominio de producción (ver resolveAppUrl).
+    NEXT_PUBLIC_APP_URL: publicEnv.appUrl,
     // Compatibilidad con proyectos que todavía usan la anon key legacy.
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
@@ -51,7 +55,10 @@ export function getServerEnv(): ServerEnv {
 
 /** Variables públicas accesibles desde el navegador (inlined por Next.js en build). */
 export const publicEnv = {
-  appUrl: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+  appUrl: resolveAppUrl(
+    process.env.NEXT_PUBLIC_APP_URL,
+    process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_PROJECT_PRODUCTION_URL,
+  ),
   timezone: process.env.NEXT_PUBLIC_DEFAULT_TIMEZONE ?? "America/Asuncion",
   supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
   supabaseKey:

@@ -165,7 +165,7 @@ Copiá `.env.example`. Nunca subas claves reales. Las variables con prefijo `NEX
 
 | Variable | Obligatoria | Uso |
 | --- | --- | --- |
-| `NEXT_PUBLIC_APP_URL` | sí | URL pública (enlaces de email, OAuth, metadata) |
+| `NEXT_PUBLIC_APP_URL` | no en Vercel | URL pública (enlaces de email, OAuth, metadata). En Vercel, si falta, se usa el dominio de producción del proyecto (`VERCEL_PROJECT_PRODUCTION_URL`) |
 | `NEXT_PUBLIC_DEFAULT_TIMEZONE` | no | `America/Asuncion` por defecto |
 | `NEXT_PUBLIC_SUPABASE_URL` | sí | URL del proyecto |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | sí | publishable key (o `NEXT_PUBLIC_SUPABASE_ANON_KEY` legacy) |
@@ -296,7 +296,7 @@ Guía paso a paso sin instalar nada (Supabase + Vercel, planes gratuitos): **[PU
 1. Importá el repositorio en Vercel (framework Next.js, Node 22). Región sugerida: `gru1` (São Paulo), ya definida en `vercel.json`.
 2. Cargá todas las variables de entorno de producción (ver §6). Generá `CRON_SECRET` (`openssl rand -hex 32`).
 3. Tareas programadas: `vercel.json` define `/api/cron/housekeeping` diario a las 04:00 UTC (compatible con el plan Hobby, que solo admite tareas diarias). Los recordatorios (`/api/cron/reminders`) necesitan correr cada 15 minutos: los dispara el workflow `.github/workflows/recordatorios.yml` con los secretos `APP_URL` y `CRON_SECRET` del repositorio. En el plan Pro podés agregar el cron `*/15 * * * *` a `vercel.json` y desactivar el workflow. Ambos envían `Authorization: Bearer $CRON_SECRET`.
-4. Dominio propio → actualizá `NEXT_PUBLIC_APP_URL`, la *Site URL*/Redirect URLs de Supabase, la URI de Google y el webhook de Meta.
+4. Dominio propio → ver [PUBLICAR.md](PUBLICAR.md). Conectalo en Vercel y volvé a publicar (si definiste `NEXT_PUBLIC_APP_URL`, actualizala); después actualizá la *Site URL*/Redirect URLs de Supabase, la URI de Google y el webhook de Meta.
 5. Verificá `GET /api/health`.
 6. PWA: en producción se registra `public/sw.js` (navegación *network-first* con página `/offline`; nunca cachea API ni datos). En iPhone: Safari › Compartir › *Agregar a pantalla de inicio*; en Android: *Instalar app*.
 
