@@ -25,8 +25,8 @@ export function PatientShell({ children, platformName, logoUrl, brandName, brand
     <div className="flex min-h-dvh bg-background">
       {/* Sidebar escritorio */}
       <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-border/70 bg-sidebar px-4 py-6 md:flex">
-        <Link href="/app" className="px-3 text-lg">
-          <BrandMark name={brandName ?? platformName} subtitle={brandSubtitle} logoUrl={logoUrl} />
+        <Link href="/app" className="flex min-w-0 px-3 text-lg">
+          <BrandMark name={brandName ?? platformName} subtitle={brandSubtitle} logoUrl={logoUrl} wrap />
         </Link>
         <nav aria-label="Navegación principal" className="mt-8 flex flex-1 flex-col gap-1">
           {patientNav.map((item) => (
@@ -60,8 +60,8 @@ export function PatientShell({ children, platformName, logoUrl, brandName, brand
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Barra superior */}
         <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-border/60 bg-background/85 px-4 pt-safe backdrop-blur-md md:px-8">
-          <div className="flex h-14 items-center md:h-16">
-            <Link href="/app" className="min-w-0 text-base md:hidden">
+          <div className="flex h-14 min-w-0 items-center md:h-16">
+            <Link href="/app" className="flex min-w-0 text-base md:hidden">
               <BrandMark name={brandName ?? platformName} logoUrl={logoUrl} logoClassName="h-8" />
             </Link>
           </div>

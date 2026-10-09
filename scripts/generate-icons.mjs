@@ -14,7 +14,7 @@ const MINT = "#e1f3ec";
 
 // Emblema de la identidad (nudo celta en forma de cerebro), vectorizado del logo.
 const emblemSvg = await readFile(path.join(OUT, "marca/emblema.svg"), "utf8");
-const emblemViewBox = /viewBox="([^"]+)"/.exec(emblemSvg)?.[1] ?? "0 0 816 824";
+const emblemViewBox = /viewBox="([^"]+)"/.exec(emblemSvg)?.[1] ?? "0 0 824 824";
 const emblemPaths = emblemSvg.replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
 const emblem = (x, y, size, color = PRIMARY) =>
   `<svg x="${x}" y="${y}" width="${size}" height="${size}" viewBox="${emblemViewBox}">${emblemPaths.replaceAll("#2f6468", color)}</svg>`;
@@ -27,6 +27,20 @@ function iconSvg(size, { maskable = false } = {}) {
   <rect width="${size}" height="${size}" rx="${maskable ? 0 : size * 0.22}" fill="${BG}"/>
   <circle cx="${size / 2}" cy="${size / 2}" r="${size * 0.46}" fill="${MINT}" fill-opacity="0.55"/>
   ${emblem(pad, pad, size - pad * 2)}
+</svg>`;
+}
+
+/**
+ * Favicon (16–32 px): a ese tamaño el anillo fino y el margen se pierden, así que va el emblema
+ * ocupando todo el cuadro, con el anillo exterior más grueso y el nudo un poco reforzado.
+ * El disco claro hace que se distinga también en pestañas oscuras.
+ */
+function smallIconSvg(size) {
+  const knot = emblemPaths.replace(/<circle\b[^>]*\/>/g, "").replace(/fill="#2f6468"/g, `fill="${PRIMARY}" stroke="${PRIMARY}" stroke-width="10"`);
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="${emblemViewBox}">
+  <circle cx="412" cy="412" r="392" fill="${BG}" stroke="${PRIMARY}" stroke-width="40"/>
+  ${knot}
 </svg>`;
 }
 
@@ -64,15 +78,21 @@ await png(iconSvg(512), 192, "icons/icon-192.png");
 await png(iconSvg(512), 512, "icons/icon-512.png");
 await png(iconSvg(512, { maskable: true }), 512, "icons/icon-maskable-512.png");
 await png(iconSvg(512), 180, "icons/apple-touch-icon.png");
-await png(iconSvg(512), 32, "favicon-32.png");
+await png(smallIconSvg(512), 32, "icons/icon-32.png");
 await writeFile(path.join(OUT, "icons/icon.svg"), iconSvg(512));
 const photo = await sharp(path.join(OUT, "marca/matias-sanchez.webp")).resize(340, 340).png().toBuffer();
 await sharp(Buffer.from(ogSvg(`data:image/png;base64,${photo.toString("base64")}`))).png().toFile(path.join(OUT, "og.png"));
-// favicon.ico (formato ICO simple con un PNG de 32px embebido)
-const png32 = await sharp(Buffer.from(iconSvg(512))).resize(32, 32).png().toBuffer();
-const header = Buffer.alloc(6 + 16);
-header.writeUInt16LE(0, 0); header.writeUInt16LE(1, 2); header.writeUInt16LE(1, 4);
-header.writeUInt8(32, 6); header.writeUInt8(32, 7); header.writeUInt8(0, 8); header.writeUInt8(0, 9);
-header.writeUInt16LE(1, 10); header.writeUInt16LE(32, 12); header.writeUInt32LE(png32.length, 14); header.writeUInt32LE(22, 18);
-await writeFile(path.join(OUT, "favicon.ico"), Buffer.concat([header, png32]));
+// favicon.ico (formato ICO con PNG de 16 y 32 px embebidos)
+const sizes = [16, 32];
+const images = await Promise.all(sizes.map((s) => sharp(Buffer.from(smallIconSvg(512))).resize(s, s).png().toBuffer()));
+const header = Buffer.alloc(6 + 16 * sizes.length);
+header.writeUInt16LE(0, 0); header.writeUInt16LE(1, 2); header.writeUInt16LE(sizes.length, 4);
+let offset = header.length;
+sizes.forEach((s, i) => {
+  const at = 6 + 16 * i;
+  header.writeUInt8(s, at); header.writeUInt8(s, at + 1); header.writeUInt8(0, at + 2); header.writeUInt8(0, at + 3);
+  header.writeUInt16LE(1, at + 4); header.writeUInt16LE(32, at + 6); header.writeUInt32LE(images[i].length, at + 8); header.writeUInt32LE(offset, at + 12);
+  offset += images[i].length;
+});
+await writeFile(path.join(OUT, "favicon.ico"), Buffer.concat([header, ...images]));
 console.log("Iconos generados en public/");

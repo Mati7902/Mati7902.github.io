@@ -12,10 +12,13 @@ export function brandPhoto(identity: Pick<SiteIdentity, "photo_url">): string {
   return identity.photo_url || DEFAULT_PHOTO;
 }
 
-/** Separa "Terapia desde *donde estés*" en tramos normales y destacados (entre asteriscos). */
+/**
+ * Separa "Terapia desde *donde estés*" en tramos normales y destacados (entre asteriscos).
+ * También acepta **dobles**, por si se escribe como en WhatsApp o Markdown.
+ */
 export function splitEmphasis(text: string): { text: string; emphasis: boolean }[] {
   const parts: { text: string; emphasis: boolean }[] = [];
-  const re = /\*([^*]+)\*/g;
+  const re = /\*{1,2}([^*]+)\*{1,2}/g;
   let last = 0;
   for (let m = re.exec(text); m; m = re.exec(text)) {
     if (m.index > last) parts.push({ text: text.slice(last, m.index), emphasis: false });

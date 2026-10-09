@@ -9,6 +9,7 @@ import { PlanCard } from "@/components/plans/plan-card";
 import { Button } from "@/components/ui/button";
 import { brandPhoto, splitEmphasis } from "@/lib/brand";
 import { publicEnv } from "@/lib/env";
+import { MODALITY_COPY, modalityMode } from "@/lib/modalities";
 import { getActivePlans, getPublicAvailability, getPublishedFaqs } from "@/server/services/public-content";
 import { getPublicSettingsSafe } from "@/server/services/public-settings";
 
@@ -25,9 +26,10 @@ export default async function LandingPage() {
   ]);
 
   const featuredPlans = plans.slice(0, 2);
-  const modalities = scheduling.modalities_enabled;
-  const onlineOnly = modalities.length === 1 && modalities[0] === "virtual";
-  const modalityLabel = onlineOnly ? "Modalidad 100% online" : modalities.includes("virtual") ? "Presencial y online" : "Atención presencial";
+  const mode = modalityMode(scheduling.modalities_enabled);
+  const modality = MODALITY_COPY[mode];
+  const showPresencial = mode !== "online";
+  const showVirtual = mode !== "presencial";
   const days = Array.from(new Set(availability.map((r) => r.weekday))).sort();
   const scheduleSummary =
     days.length > 0
@@ -58,12 +60,12 @@ export default async function LandingPage() {
           <div className="order-2 space-y-7 text-center animate-fade-up lg:order-1 lg:text-left">
             <p className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/80 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-petrol-700 backdrop-blur">
               <span className="size-1.5 rounded-full bg-accent" aria-hidden />
-              {modalityLabel}
+              {modality.label}
             </p>
             <h1 className="font-display text-[2.15rem] leading-[1.15] text-foreground sm:text-5xl lg:text-[3.4rem]">
               {splitEmphasis(landing.hero_title).map((part, i) =>
                 part.emphasis ? (
-                  <em key={i} className="text-mint-500 italic">
+                  <em key={i} className="text-mint-400 italic">
                     {part.text}
                   </em>
                 ) : (
@@ -85,19 +87,21 @@ export default async function LandingPage() {
                   Solicitar turno <ArrowRight aria-hidden />
                 </Link>
               </Button>
-              <Button asChild size="xl" variant="outline" className="bg-card/70 backdrop-blur">
-                <Link href="#areas">Áreas de trabajo</Link>
-              </Button>
+              {landing.specialties.length > 0 ? (
+                <Button asChild size="xl" variant="outline" className="bg-card/70 backdrop-blur">
+                  <Link href="#areas">Áreas de trabajo</Link>
+                </Button>
+              ) : null}
             </div>
             <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 pt-1 text-sm text-muted-foreground lg:justify-start">
-              <li className="flex items-center gap-2"><Video className="size-4 text-mint-600" aria-hidden /> {onlineOnly ? "Sesiones por videollamada" : "Presencial y online"}</li>
+              <li className="flex items-center gap-2">{showVirtual ? <Video className="size-4 text-mint-600" aria-hidden /> : <MapPin className="size-4 text-mint-600" aria-hidden />} {modality.highlight}</li>
               <li className="flex items-center gap-2"><CalendarCheck className="size-4 text-mint-600" aria-hidden /> Sesiones de {scheduling.default_duration_minutes} minutos</li>
               <li className="flex items-center gap-2"><Lock className="size-4 text-mint-600" aria-hidden /> Confidencial</li>
             </ul>
           </div>
 
           <div className="relative order-1 mx-auto aspect-square w-full max-w-[20rem] sm:max-w-[24rem] lg:order-2 lg:max-w-[32rem]">
-            <NeuralField density={2.4} className="absolute -inset-[16%] [mask-image:radial-gradient(circle,transparent_26%,black_40%,black_56%,transparent_71%)]" />
+            <NeuralField density={2.4} className="absolute -top-[16%] -left-[16%] size-[132%] [mask-image:radial-gradient(circle,transparent_26%,black_40%,black_56%,transparent_71%)]" />
             <div aria-hidden className="absolute inset-[13%] rounded-full border border-mint-300/70" />
             <div aria-hidden className="absolute inset-[16.5%] rounded-full border-2 border-[#d8c9a5]/80" />
             <div className="absolute inset-[19%] overflow-hidden rounded-full bg-card shadow-[var(--shadow-float)] ring-4 ring-card">
@@ -109,12 +113,12 @@ export default async function LandingPage() {
 
       {/* Áreas de trabajo: sección menta con ondas, como el sitio actual */}
       {landing.specialties.length > 0 ? (
-        <section id="areas" className="relative isolate scroll-mt-20 overflow-hidden bg-mint-100">
+        <section id="areas" className="relative isolate scroll-mt-20 overflow-hidden bg-mint-band">
           <WaveLines lines={18} className="absolute inset-0 -z-10 size-full text-mint-400/35" />
           <div className="mx-auto max-w-6xl px-5 py-20 lg:px-8">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <h2 className="max-w-2xl font-display text-3xl font-bold leading-snug text-foreground sm:text-4xl">{landing.specialties_title}</h2>
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-petrol-700">{modalityLabel}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-petrol-700">{modality.label}</p>
             </div>
             <ul className="mt-12 grid gap-x-14 gap-y-9 sm:grid-cols-2">
               {landing.specialties.map((area) => (
@@ -166,12 +170,12 @@ export default async function LandingPage() {
         <div className="mx-auto max-w-6xl px-5 py-20 lg:px-8">
           <div className="max-w-2xl">
             <p className="text-sm font-medium uppercase tracking-wider text-accent-strong">Modalidades de atención</p>
-            <h2 className="mt-3 font-display text-3xl font-medium sm:text-4xl">{onlineOnly ? "Sesiones por videollamada" : modalities.includes("virtual") ? "Presencial o por videollamada" : "Sesiones en consultorio"}</h2>
-            <p className="mt-4 text-lg text-muted-foreground">{onlineOnly ? "Desde donde estés, con el mismo marco clínico que en consultorio." : "Elegís la modalidad que mejor se adapte a tu momento. Podés alternar entre ambas según disponibilidad."}</p>
+            <h2 className="mt-3 font-display text-3xl font-medium sm:text-4xl">{modality.heading}</h2>
+            <p className="mt-4 text-lg text-muted-foreground">{modality.intro}</p>
           </div>
-          <div className={`mt-10 grid gap-5 ${modalities.length > 1 ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
-            {modalities.includes("presencial") ? <ModalityCard icon={MapPin} title="Presencial" text={identity.location_address ? `Consultorio en ${identity.location_name ? `${identity.location_name}, ` : ""}${identity.location_address}.` : "Sesiones en consultorio. La dirección se comparte al confirmar el turno."} /> : null}
-            {modalities.includes("virtual") ? <ModalityCard icon={Video} title="Videoconsulta" text="Sesiones por videollamada segura. Recibís el enlace antes de cada encuentro, desde la app o por WhatsApp." /> : null}
+          <div className={`mt-10 grid gap-5 ${mode === "mixta" ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
+            {showPresencial ? <ModalityCard icon={MapPin} title="Presencial" text={identity.location_address ? `Consultorio en ${identity.location_name ? `${identity.location_name}, ` : ""}${identity.location_address}.` : "Sesiones en consultorio. La dirección se comparte al confirmar el turno."} /> : null}
+            {showVirtual ? <ModalityCard icon={Video} title="Videoconsulta" text="Sesiones por videollamada segura. Recibís el enlace antes de cada encuentro, desde la app o por WhatsApp." /> : null}
             <ModalityCard icon={CalendarCheck} title="Horarios" text={scheduleSummary ? `${scheduleSummary}. Sesiones de ${scheduling.default_duration_minutes} minutos.` : `Sesiones de ${scheduling.default_duration_minutes} minutos. Consultá la disponibilidad al solicitar turno.`} />
           </div>
         </div>

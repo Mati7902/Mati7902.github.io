@@ -8,7 +8,7 @@ export function SiteFooter({ identity }: { identity: SiteIdentity }) {
   return (
     <footer className="border-t border-border/60 bg-card">
       <div className="mx-auto grid max-w-6xl gap-8 px-5 py-12 md:grid-cols-3 lg:px-8">
-        <div className="space-y-2">
+        <div className="min-w-0 space-y-2">
           <p className="text-lg">
             <BrandMark name={identity.professional_name} subtitle={identity.brand_subtitle} logoUrl={brandLogo(identity)} />
           </p>

@@ -4,10 +4,10 @@ import { brandLogo } from "@/lib/brand";
 import { getPublicSettingsSafe } from "@/server/services/public-settings";
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
-  const { "site.identity": identity } = await getPublicSettingsSafe();
+  const { "site.identity": identity, landing } = await getPublicSettingsSafe();
   return (
     <div className="flex min-h-dvh flex-col">
-      <SiteHeader brandName={identity.professional_name} subtitle={identity.brand_subtitle} logoUrl={brandLogo(identity)} />
+      <SiteHeader brandName={identity.professional_name} subtitle={identity.brand_subtitle} logoUrl={brandLogo(identity)} showAreas={landing.specialties.length > 0} />
       <main className="flex-1">{children}</main>
       <SiteFooter identity={identity} />
     </div>

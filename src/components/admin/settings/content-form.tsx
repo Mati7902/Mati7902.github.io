@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useSettingsSave } from "@/hooks/use-settings-save";
+import { readableOn } from "@/lib/color";
 import type { SettingsValue } from "@/server/services/settings";
 
 type Landing = SettingsValue<"landing">;
@@ -88,6 +89,11 @@ function ColorField({ id, label, value, error, onChange }: { id: string; label: 
   );
 }
 
+/** Mientras se escribe un color incompleto, la vista previa no se rompe. */
+function previewText(color: string) {
+  return /^#[0-9a-fA-F]{6}$/.test(color) ? readableOn(color) : "inherit";
+}
+
 export function ThemeForm({ initial }: { initial: Theme }) {
   const [value, setValue] = useState(initial);
   const { save, pending, fieldErrors } = useSettingsSave("theme");
@@ -105,10 +111,10 @@ export function ThemeForm({ initial }: { initial: Theme }) {
         <ColorField id="th-bg" label="Fondo" value={value.background} error={fieldErrors.background} onChange={(v) => setValue({ ...value, background: v })} />
       </div>
       <div className="flex gap-2 rounded-2xl border border-border/70 p-4" style={{ background: value.background }}>
-        <span className="rounded-xl px-4 py-2 text-sm font-medium text-white" style={{ background: value.primary }}>Botón principal</span>
-        <span className="rounded-xl px-4 py-2 text-sm font-medium" style={{ background: value.accent, color: "#12303b" }}>Acento</span>
+        <span className="rounded-xl px-4 py-2 text-sm font-medium" style={{ background: value.primary, color: previewText(value.primary) }}>Botón principal</span>
+        <span className="rounded-xl px-4 py-2 text-sm font-medium" style={{ background: value.accent, color: previewText(value.accent) }}>Acento</span>
       </div>
-      <p className="text-xs text-muted-foreground">Mantené contraste suficiente (WCAG AA): el principal debe ser oscuro para texto blanco.</p>
+      <p className="text-xs text-muted-foreground">El texto de los botones se elige blanco u oscuro según el contraste. Para que se lea bien (WCAG AA), conviene un color principal oscuro.</p>
       <div className="flex gap-2">
         <Button type="submit" loading={pending}>Guardar colores</Button>
         <Button type="button" variant="ghost" onClick={() => setValue({ primary: "#2f6468", accent: "#27b088", background: "#fbfdfc" })}>Restaurar predeterminados</Button>

@@ -9,6 +9,7 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useSettingsSave } from "@/hooks/use-settings-save";
+import { brandLogo, brandPhoto } from "@/lib/brand";
 import { uploadBrandingImageAction } from "@/server/actions/admin-settings";
 import type { SiteIdentity } from "@/server/services/settings";
 
@@ -46,13 +47,18 @@ export function IdentityForm({ initial }: { initial: SiteIdentity }) {
     >
       <div className="flex flex-wrap items-center gap-5 rounded-2xl border border-border/70 bg-card p-5">
         <div className="relative size-24 overflow-hidden rounded-2xl bg-primary-soft">
-          {value.photo_url ? <Image src={value.photo_url} alt="" fill sizes="96px" className="object-cover" /> : null}
+          <Image src={brandPhoto(value)} alt="" fill sizes="96px" className="object-cover" />
         </div>
-        <div className="space-y-2">
-          <p className="text-sm font-medium">Fotografía profesional</p>
+        <div className="min-w-[16rem] flex-1 space-y-2">
+          <p className="text-sm font-medium">
+            Fotografía profesional{value.photo_url ? null : <span className="ml-2 text-xs font-normal text-muted-foreground">(predeterminada)</span>}
+          </p>
           <div className="flex flex-wrap items-center gap-2">
             <Input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp" className="max-w-xs" aria-label="Elegir foto" />
             <Button type="button" variant="outline" size="sm" onClick={() => upload("photo")} loading={uploading}>Subir</Button>
+            {value.photo_url ? (
+              <Button type="button" variant="ghost" size="sm" onClick={() => set("photo_url", null)}>Volver a la predeterminada</Button>
+            ) : null}
           </div>
           <p className="text-xs text-muted-foreground">PNG, JPG o WebP, hasta 5 MB. Se muestra en la página pública.</p>
         </div>
@@ -60,23 +66,21 @@ export function IdentityForm({ initial }: { initial: SiteIdentity }) {
 
       <div className="flex flex-wrap items-center gap-5 rounded-2xl border border-border/70 bg-card p-5">
         <div className="flex h-24 w-36 items-center justify-center overflow-hidden rounded-2xl bg-primary-soft p-3">
-          {value.logo_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={value.logo_url} alt="" className="max-h-full max-w-full object-contain" />
-          ) : (
-            <span className="text-xs text-muted-foreground">Sin logo</span>
-          )}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={brandLogo(value)} alt="" className="max-h-full max-w-full object-contain" />
         </div>
-        <div className="space-y-2">
-          <p className="text-sm font-medium">Logo</p>
+        <div className="min-w-[16rem] flex-1 space-y-2">
+          <p className="text-sm font-medium">
+            Logo{value.logo_url ? null : <span className="ml-2 text-xs font-normal text-muted-foreground">(predeterminado)</span>}
+          </p>
           <div className="flex flex-wrap items-center gap-2">
             <Input ref={logoRef} type="file" accept="image/svg+xml,image/png,image/webp,image/jpeg" className="max-w-xs" aria-label="Elegir logo" />
             <Button type="button" variant="outline" size="sm" onClick={() => upload("logo")} loading={uploadingLogo}>Subir</Button>
             {value.logo_url ? (
-              <Button type="button" variant="ghost" size="sm" onClick={() => set("logo_url", null)}>Quitar</Button>
+              <Button type="button" variant="ghost" size="sm" onClick={() => set("logo_url", null)}>Volver al predeterminado</Button>
             ) : null}
           </div>
-          <p className="text-xs text-muted-foreground">SVG o PNG con fondo transparente, hasta 5 MB. Aparece junto al nombre en la página, el ingreso y los paneles. Si lo quitás, guardá los cambios.</p>
+          <p className="text-xs text-muted-foreground">SVG o PNG con fondo transparente, hasta 5 MB. Aparece junto al nombre en la página, el ingreso y los paneles. Después de volver al predeterminado, guardá los cambios.</p>
         </div>
       </div>
 

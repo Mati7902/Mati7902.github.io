@@ -18,5 +18,9 @@ describe("identidad", () => {
     expect(splitEmphasis("Sin destacados")).toEqual([{ text: "Sin destacados", emphasis: false }]);
     expect(splitEmphasis("*Todo*")).toEqual([{ text: "Todo", emphasis: true }]);
     expect(splitEmphasis("Un * suelto")).toEqual([{ text: "Un * suelto", emphasis: false }]);
+    expect(splitEmphasis("Terapia **online**")).toEqual([
+      { text: "Terapia ", emphasis: false },
+      { text: "online", emphasis: true },
+    ]);
   });
 });

@@ -138,6 +138,8 @@
   --color-mint-500: color-mix(in oklab, var(--accent), black 25%);
   --color-mint-600: color-mix(in oklab, var(--accent), black 42%);
   --color-mint-700: color-mix(in oklab, var(--accent), black 55%);
+  /* Banda de las áreas de trabajo: el acento sobre un blanco cálido, como el sitio original. */
+  --color-mint-band: color-mix(in oklab, var(--accent) 27%, #f7fbe8);
 
   /* Escala "arena": neutros fríos con un toque menta, a tono con la identidad */
   --color-sand-50: #f8fbfa;

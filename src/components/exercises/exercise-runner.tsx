@@ -259,7 +259,7 @@ function TimedInfo({ title, content, seconds, onDone }: { title?: string; conten
       <div className="flex items-center gap-4">
         <div className="relative size-16" aria-hidden>
           <svg viewBox="0 0 36 36" className="size-16 -rotate-90">
-            <circle cx="18" cy="18" r="16" fill="none" stroke="var(--sand-300, #e6e2dc)" strokeWidth="3" />
+            <circle cx="18" cy="18" r="16" fill="none" stroke="var(--color-sand-300)" strokeWidth="3" />
             <circle cx="18" cy="18" r="16" fill="none" stroke="var(--primary)" strokeWidth="3" strokeDasharray={`${((seconds - left) / seconds) * 100} 100`} strokeLinecap="round" className="transition-[stroke-dasharray] duration-1000 ease-linear" />
           </svg>
           <span className="absolute inset-0 flex items-center justify-center text-sm font-medium">{left}s</span>
