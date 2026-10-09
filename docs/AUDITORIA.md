@@ -233,7 +233,7 @@ Cuatro revisores independientes (estados y agenda, interpretación de texto, cri
 | Una cancelación por WhatsApp no avisaba al profesional y al paciente le llegaba "Turno cancelado" como si lo hubiera cancelado otro | El trigger reconoce la cancelación del propio paciente por WhatsApp (3 aserciones SQL nuevas) |
 | La limpieza de `test:bot` dejaba avisos; un test podía fallar según la hora; un test unitario era tautológico | Limpieza completa con verificación de errores, horarios que se corren si chocan y aserciones con contenido |
 
-## Preparación para publicar (planes gratuitos)
+## Preparación para publicar
 
 | Problema | Corrección |
 | --- | --- |
@@ -241,8 +241,12 @@ Cuatro revisores independientes (estados y agenda, interpretación de texto, cri
 | La recuperación de contraseña (PKCE) fallaba si el email se abría en otro navegador o en el celular | La plantilla de recuperación usa `token_hash`, que no depende del navegador |
 | El plan Hobby de Vercel solo admite tareas programadas diarias: el cron de recordatorios cada 15 min hacía fallar el despliegue | `vercel.json` queda con el mantenimiento diario y los recordatorios los dispara `.github/workflows/recordatorios.yml` |
 | El email incluido en Supabase solo envía a los miembros del equipo (2 por hora) | Documentado como paso obligatorio: SMTP propio |
+| El plan Hobby de Vercel es solo para uso personal y no comercial (y su contenido puede usarse para entrenar modelos de IA) | La guía indica Vercel Pro para la práctica; los recordatorios por GitHub Actions siguen funcionando en ambos planes |
+| Al comprar un dominio había que cambiar `NEXT_PUBLIC_APP_URL` y volver a publicar; un valor con barra final o sin `https://` rompía enlaces o el arranque | Sin la variable, la dirección es el dominio de producción de Vercel (`VERCEL_PROJECT_PRODUCTION_URL`): el dominio propio en cuanto se conecta. Se normalizan barra final y esquema (6 tests) |
+| Crear la base exigía pegar seis migraciones en orden | `supabase/instalar.sql` en una sola transacción, generado por `pnpm db:instalar` y verificado por un test; probado en una base nueva con todos los tests de RLS |
+| Si el dominio quedaba a medio conectar, los emails salían con la dirección vieja sin que nadie lo notara | Aviso en el panel del profesional y `app_url` en `/api/health` |
 
-Guía para publicar sin instalar nada: [`PUBLICAR.md`](../PUBLICAR.md).
+Guía para publicar con dominio propio, sin instalar nada: [`PUBLICAR.md`](../PUBLICAR.md).
 
 ## Prueba de los ejercicios en la vista navegable
 

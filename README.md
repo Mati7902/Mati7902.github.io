@@ -291,7 +291,7 @@ Pendiente de evolución: creación automática de enlaces Google Meet (requiere 
 
 ## 11. Deployment en Vercel
 
-Guía paso a paso sin instalar nada (Supabase + Vercel, planes gratuitos): **[PUBLICAR.md](PUBLICAR.md)**.
+Guía paso a paso sin instalar nada, de la compra del dominio al primer paciente (Vercel + Supabase + Resend): **[PUBLICAR.md](PUBLICAR.md)**. Ojo: el plan gratuito de Vercel (*Hobby*) es solo para uso no comercial; la página de una práctica que cobra consultas necesita Vercel Pro.
 
 1. Importá el repositorio en Vercel (framework Next.js, Node 22). Región sugerida: `gru1` (São Paulo), ya definida en `vercel.json`.
 2. Cargá todas las variables de entorno de producción (ver §6). Generá `CRON_SECRET` (`openssl rand -hex 32`).
