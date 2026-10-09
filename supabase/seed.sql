@@ -4,8 +4,9 @@
 -- NUNCA ejecutar en producción. NUNCA usar pacientes reales.
 --
 -- Credenciales demo:
---   admin@demo.local       / DemoAdmin!2026
---   juan.perez@demo.local  / DemoPaciente!2026
+--   admin@demo.local         / DemoAdmin!2026
+--   juan.perez@demo.local    / DemoPaciente!2026   (adulto)
+--   sofia.benitez@demo.local / DemoAdolescente!2026 (15 años: ve el cuadernillo Brújula)
 -- ============================================================================
 do $$
 declare
@@ -134,3 +135,50 @@ begin
   insert into public.whatsapp_contacts (phone, display_name, patient_id) values ('+595981000000', 'Juan Pérez', v_patient_id)
   on conflict (phone) do nothing;
 end $$;
+
+-- ----------------------------------------------------------------------------
+-- Paciente adolescente ficticia (Sofía Benítez, 15 años) para ver el cuadernillo
+-- Brújula, que se ofrece según la edad. La fecha de nacimiento se calcula para que
+-- siempre tenga 15 años.
+-- ----------------------------------------------------------------------------
+do $$
+declare
+  v_admin_id uuid := '11111111-1111-4111-8111-111111111111';
+  v_sofia_id uuid := '44444444-4444-4444-8444-444444444444';
+  v_patient_id uuid;
+begin
+  insert into auth.users (
+    id, instance_id, aud, role, email, encrypted_password, email_confirmed_at,
+    raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+    confirmation_token, recovery_token, email_change, email_change_token_new,
+    email_change_token_current, phone_change, phone_change_token, reauthentication_token
+  ) values
+  (v_sofia_id, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'sofia.benitez@demo.local',
+   crypt('DemoAdolescente!2026', gen_salt('bf')), now(),
+   '{"provider":"email","providers":["email"]}'::jsonb,
+   '{"first_name":"Sofía","last_name":"Benítez"}'::jsonb, now(), now(), '', '', '', '', '', '', '', '')
+  on conflict (id) do nothing;
+
+  if to_regclass('auth.identities') is not null then
+    execute $q$
+      insert into auth.identities (id, user_id, provider_id, provider, identity_data, last_sign_in_at, created_at, updated_at)
+      select gen_random_uuid(), u.id, u.id::text, 'email',
+             jsonb_build_object('sub', u.id::text, 'email', u.email, 'email_verified', true),
+             now(), now(), now()
+      from auth.users u
+      where u.id = '44444444-4444-4444-8444-444444444444'
+        and not exists (select 1 from auth.identities i where i.user_id = u.id and i.provider = 'email')
+    $q$;
+  end if;
+
+  insert into public.profiles (id, role, email, first_name, last_name)
+  values (v_sofia_id, 'patient', 'sofia.benitez@demo.local', 'Sofía', 'Benítez')
+  on conflict (id) do nothing;
+
+  insert into public.patients (profile_id, first_name, last_name, email, phone, whatsapp_phone, birth_date, guardian_name, modality, status, admission_date, consent_accepted_at, consent_version, created_by)
+  values (v_sofia_id, 'Sofía', 'Benítez', 'sofia.benitez@demo.local', '+595981000044', '+595981000044',
+          (current_date - interval '15 years 4 months')::date, 'Laura Benítez (madre)', 'virtual', 'active', current_date - 21, now() - interval '21 days', '2026-10-draft', v_admin_id)
+  on conflict do nothing;
+  select id into v_patient_id from public.patients where profile_id = v_sofia_id;
+end $$;
+

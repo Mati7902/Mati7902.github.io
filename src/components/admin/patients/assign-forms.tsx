@@ -10,7 +10,20 @@ import { Input } from "@/components/ui/input";
 import type { ActionResult } from "@/lib/errors";
 import { assignExerciseAction, assignMaterialAction } from "@/server/actions/admin-patients";
 
-type Option = { id: string; title: string };
+type Option = { id: string; title: string; group?: string };
+
+/** Opciones del select, agrupadas con <optgroup> cuando traen grupo (cuadernillo o categoría). */
+function Options({ items }: { items: Option[] }) {
+  const groups = Array.from(new Set(items.map((i) => i.group ?? "")));
+  if (groups.length <= 1) return items.map((i) => <option key={i.id} value={i.id}>{i.title}</option>);
+  return groups.map((g) => (
+    <optgroup key={g || "otros"} label={g || "Otros"}>
+      {items.filter((i) => (i.group ?? "") === g).map((i) => (
+        <option key={i.id} value={i.id}>{i.title}</option>
+      ))}
+    </optgroup>
+  ));
+}
 
 const selectClass = "flex h-12 w-full rounded-xl border border-input bg-card px-4 text-base outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/30";
 
@@ -30,9 +43,7 @@ export function AssignMaterialForm({ patientId, materials }: { patientId: string
       <FormField id={`${id}-material`} label="Material">
         <select id={`${id}-material`} name="material_id" required className={selectClass} defaultValue="">
           <option value="" disabled>Elegí un material…</option>
-          {materials.map((m) => (
-            <option key={m.id} value={m.id}>{m.title}</option>
-          ))}
+          <Options items={materials} />
         </select>
       </FormField>
       <FormField id={`${id}-note`} label="Nota para el paciente" optional>
@@ -59,9 +70,7 @@ export function AssignExerciseForm({ patientId, templates }: { patientId: string
       <FormField id={`${id}-template`} label="Ejercicio">
         <select id={`${id}-template`} name="template_id" required className={selectClass} defaultValue="">
           <option value="" disabled>Elegí un ejercicio…</option>
-          {templates.map((t) => (
-            <option key={t.id} value={t.id}>{t.title}</option>
-          ))}
+          <Options items={templates} />
         </select>
       </FormField>
       <div className="grid gap-3 sm:grid-cols-[1fr_11rem]">

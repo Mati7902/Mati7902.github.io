@@ -40,4 +40,45 @@ describe("ExerciseRunner (wizard)", () => {
     render(<ExerciseRunner templateId="t1" title="Test" steps={steps} />);
     expect(screen.getByRole("progressbar", { name: "Paso 1 de 4" })).toBeInTheDocument();
   });
+
+  it("selección múltiple con tope y devolución en quizzes", () => {
+    const quizSteps: ExerciseStep[] = [
+      { id: "values", type: "checklist", prompt: "¿Qué te importa?", options: ["Amigos", "Familia", "Salud"], max: 2 },
+      { id: "quiz", type: "choice", prompt: "«Soy un burro»", options: ["Hecho", "Pensamiento"], feedback: { Pensamiento: "Bien: es una **etiqueta**, no un hecho." } },
+    ];
+    render(<ExerciseRunner templateId="t1" title="Test" steps={quizSteps} />);
+    const next = screen.getByRole("button", { name: /continuar/i });
+    expect(next).toBeDisabled();
+    fireEvent.click(screen.getByRole("checkbox", { name: "Amigos" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Salud" }));
+    expect(screen.getByRole("checkbox", { name: "Familia" })).toBeDisabled();
+    expect(screen.getByText("2 de 2 elegidas")).toBeInTheDocument();
+    fireEvent.click(next);
+    fireEvent.click(screen.getByRole("button", { name: "Pensamiento" }));
+    expect(screen.getByRole("status")).toHaveTextContent("Bien: es una etiqueta, no un hecho.");
+    expect(screen.getByText("etiqueta").tagName).toBe("STRONG");
+  });
+
+  it("muestra párrafos y viñetas en los textos informativos", () => {
+    render(
+      <ExerciseRunner
+        templateId="t1"
+        title="Test"
+        steps={[{ id: "intro", type: "info", title: "Trampas", content: "Primer párrafo.\n\n- Todo o nada\n- Leer la mente" }]}
+      />,
+    );
+    expect(screen.getByText("Primer párrafo.").tagName).toBe("P");
+    expect(screen.getAllByRole("listitem").map((li) => li.textContent)).toEqual(["Todo o nada", "Leer la mente"]);
+  });
+
+  it("una lista con mínimo deja seguir con menos renglones completos", () => {
+    render(<ExerciseRunner templateId="t1" title="Test" steps={[{ id: "people", type: "list", prompt: "Personas de confianza", count: 4, min: 2 }, { id: "end", type: "info", content: "Fin" }]} />);
+    const next = screen.getByRole("button", { name: /continuar/i });
+    expect(screen.getByText("Completá al menos 2.")).toBeInTheDocument();
+    const inputs = screen.getAllByRole("textbox");
+    fireEvent.change(inputs[0]!, { target: { value: "Abuela" } });
+    expect(next).toBeDisabled();
+    fireEvent.change(inputs[1]!, { target: { value: "Profe de música" } });
+    expect(next).toBeEnabled();
+  });
 });

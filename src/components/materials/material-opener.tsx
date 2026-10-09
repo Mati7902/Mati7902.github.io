@@ -46,10 +46,14 @@ export function MaterialOpener({ material, exerciseHref }: { material: PatientMa
 
   return (
     <div className="flex flex-wrap gap-3">
-      {material.type === "exercise" && exerciseHref ? (
-        <Button asChild size="lg">
-          <a href={exerciseHref}>Hacer el ejercicio</a>
-        </Button>
+      {material.type === "exercise" ? (
+        exerciseHref ? (
+          <Button asChild size="lg">
+            <a href={exerciseHref}>Hacer el ejercicio</a>
+          </Button>
+        ) : (
+          <p className="text-sm text-muted-foreground">Este ejercicio no está disponible por ahora.</p>
+        )
       ) : (
         <Button size="lg" onClick={openFile} loading={pending}>
           <ExternalLink aria-hidden /> {material.type === "link" ? "Abrir enlace" : material.type === "audio" ? "Escuchar" : material.type === "video" ? "Ver video" : "Abrir"}

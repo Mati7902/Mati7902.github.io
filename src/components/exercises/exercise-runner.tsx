@@ -11,7 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
-import { type ExerciseAnswers, type ExerciseStep, interpolate, isInputStep } from "@/lib/exercises/steps";
+import { RichText } from "@/components/exercises/rich-text";
+import { type ExerciseAnswers, type ExerciseStep, interpolate, isInputStep, isStepAnswered } from "@/lib/exercises/steps";
 import { cn } from "@/lib/utils";
 import { saveExerciseResponseAction } from "@/server/actions/exercises";
 
@@ -37,17 +38,17 @@ export function ExerciseRunner({ templateId, title, steps, assignmentId, returnT
   const step = steps[index];
   const isLast = index === steps.length - 1;
   const inputSteps = useMemo(() => steps.filter(isInputStep).length, [steps]);
-  const answeredInputs = useMemo(() => steps.filter((s) => isInputStep(s) && answers[s.id] !== undefined && answers[s.id] !== "").length, [steps, answers]);
+  const answeredInputs = useMemo(
+    () => steps.filter((s) => isInputStep(s) && (s.type === "scale" ? typeof answers[s.id] === "number" : isStepAnswered(s, answers[s.id]))).length,
+    [steps, answers],
+  );
 
   if (!step) return null;
 
   const value = answers[step.id];
   const required = isInputStep(step) && !step.optional;
-  const hasValue =
-    value !== undefined &&
-    (typeof value === "number" || (typeof value === "string" ? value.trim().length > 0 : Array.isArray(value) ? value.filter(Boolean).length === (step.type === "list" ? step.count : 1) : false));
   // Una escala sin tocar vale su punto medio (el control ya lo muestra seleccionado).
-  const canContinue = !required || hasValue || step.type === "scale";
+  const canContinue = !required || isStepAnswered(step, value);
 
   const setValue = (v: string | number | string[]) => setAnswers((a) => ({ ...a, [step.id]: v }));
 
@@ -144,7 +145,7 @@ function StepView({
       return (
         <div className="space-y-3">
           {step.title ? <h2 className="font-display text-2xl font-medium sm:text-3xl">{step.title}</h2> : null}
-          <p className="text-lg leading-relaxed text-muted-foreground">{step.content}</p>
+          <RichText text={step.content} className="text-lg leading-relaxed text-muted-foreground" />
         </div>
       );
     case "timed_info":
@@ -154,7 +155,7 @@ function StepView({
         <div className="space-y-4">
           {step.title ? <h2 className="font-display text-2xl font-medium sm:text-3xl">{step.title}</h2> : null}
           <blockquote className="rounded-2xl border-l-4 border-accent bg-mint-50 px-5 py-4 font-display text-xl text-foreground">{interpolate(step.template, answers)}</blockquote>
-          {step.content ? <p className="text-muted-foreground">{step.content}</p> : null}
+          {step.content ? <RichText text={step.content} className="text-muted-foreground" /> : null}
         </div>
       );
     case "text":
@@ -198,13 +199,63 @@ function StepView({
               </button>
             ))}
           </div>
+          {typeof value === "string" && step.feedback?.[value] ? (
+            <div role="status" className="animate-fade-up rounded-2xl border-l-4 border-accent bg-mint-50 px-4 py-3 text-foreground">
+              <RichText text={step.feedback[value]} />
+            </div>
+          ) : null}
         </div>
       );
-    case "list": {
-      const list = Array.isArray(value) ? value : Array.from({ length: step.count }, () => "");
+    case "checklist": {
+      const selected = Array.isArray(value) ? value : [];
+      const atMax = step.max !== undefined && selected.length >= step.max;
       return (
         <div className="space-y-4">
           <Prompt step={step} />
+          {step.max !== undefined ? (
+            <p className="text-sm text-muted-foreground" aria-live="polite">
+              {selected.length} de {step.max} elegidas
+            </p>
+          ) : null}
+          <div className="grid gap-2.5 sm:grid-cols-2">
+            {step.options.map((option) => {
+              const checked = selected.includes(option);
+              return (
+                <button
+                  key={option}
+                  type="button"
+                  role="checkbox"
+                  aria-checked={checked}
+                  disabled={!checked && atMax}
+                  onClick={() => onChange(checked ? selected.filter((o) => o !== option) : [...selected, option])}
+                  className={cn(
+                    "flex min-h-13 items-center gap-3 rounded-2xl border px-4 py-3 text-left text-base font-medium transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50",
+                    checked ? "border-primary bg-primary-soft text-primary" : "border-border bg-card hover:bg-surface-muted",
+                  )}
+                >
+                  <span
+                    aria-hidden
+                    className={cn("flex size-5 shrink-0 items-center justify-center rounded-md border-2", checked ? "border-primary bg-primary text-primary-foreground" : "border-input")}
+                  >
+                    {checked ? <Check className="size-3.5" /> : null}
+                  </span>
+                  {option}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+    case "list": {
+      const list = Array.isArray(value) ? value : Array.from({ length: step.count }, () => "");
+      const minimum = step.min ?? step.count;
+      return (
+        <div className="space-y-4">
+          <Prompt step={step} />
+          {minimum < step.count ? (
+            <p className="text-sm text-muted-foreground">{minimum === 1 ? "Completá al menos uno." : `Completá al menos ${minimum}.`}</p>
+          ) : null}
           <div className="grid gap-2.5">
             {Array.from({ length: step.count }, (_, i) => (
               <Input
@@ -234,7 +285,7 @@ function Prompt({ step }: { step: Extract<ExerciseStep, { prompt: string }> }) {
   return (
     <div className="space-y-1.5">
       <h2 className="font-display text-2xl font-medium sm:text-3xl">{step.prompt}</h2>
-      {step.help ? <p className="text-muted-foreground">{step.help}</p> : null}
+      {step.help ? <RichText text={step.help} className="text-muted-foreground" /> : null}
       {step.optional ? <p className="text-xs text-subtle-foreground">Opcional.</p> : null}
     </div>
   );
@@ -255,7 +306,7 @@ function TimedInfo({ title, content, seconds, onDone }: { title?: string; conten
   return (
     <div className="space-y-5">
       {title ? <h2 className="font-display text-2xl font-medium sm:text-3xl">{title}</h2> : null}
-      <p className="text-lg leading-relaxed text-muted-foreground">{content}</p>
+      <RichText text={content} className="text-lg leading-relaxed text-muted-foreground" />
       <div className="flex items-center gap-4">
         <div className="relative size-16" aria-hidden>
           <svg viewBox="0 0 36 36" className="size-16 -rotate-90">

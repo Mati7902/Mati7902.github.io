@@ -6,6 +6,7 @@ import { Pencil } from "lucide-react";
 import { AppointmentListClient } from "@/components/admin/agenda/agenda-client";
 import { NewAppointmentDialog } from "@/components/admin/agenda/new-appointment-dialog";
 import { AssignExerciseForm, AssignMaterialForm } from "@/components/admin/patients/assign-forms";
+import { ExerciseResponseList } from "@/components/exercises/exercise-response-list";
 import { PatientAccessControls } from "@/components/admin/patients/patient-access-controls";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,8 +14,11 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Separator } from "@/components/ui/separator";
 import { requireAdmin } from "@/lib/auth/session";
 import { formatCompactDate, formatShortDate, formatTime, capitalize, nowMs } from "@/lib/dates";
+import { AUDIENCE_LABEL, type Audience, COLLECTIONS } from "@/lib/exercises/collections";
+import { answerEntries, parseSteps } from "@/lib/exercises/steps";
 import { createClient } from "@/lib/supabase/server";
 import { getPatientOverview } from "@/server/services/admin-patients";
+import { listSharedResponses } from "@/server/services/exercises";
 import { getSetting } from "@/server/services/settings";
 import { APPOINTMENT_STATUS_LABEL, type AppointmentWithPatient, type Patient } from "@/types/domain";
 
@@ -27,14 +31,21 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
   await requireAdmin();
   const { id } = await params;
   const supabase = await createClient();
-  const [overview, scheduling, { data: materials }, { data: templates }, { data: prepRows }, { count: logCount }] = await Promise.all([
+  const [overview, scheduling, { data: materials }, { data: templates }, { data: prepRows }, { count: logCount }, sharedResponses] = await Promise.all([
     getPatientOverview(supabase, id),
     getSetting(supabase, "scheduling"),
-    supabase.from("materials").select("id, title").eq("is_published", true).order("title"),
-    supabase.from("exercise_templates").select("id, title").eq("is_active", true).order("sort_order"),
+    supabase.from("materials").select("id, title, material_categories(name)").eq("is_published", true).order("title"),
+    supabase.from("exercise_templates").select("id, title, collection, audience").eq("is_active", true).order("sort_order"),
     supabase.from("session_preparations").select("appointment_id, week_rating, hardest, better, topics, practiced, important, submitted_at").eq("patient_id", id),
     supabase.from("emotional_logs").select("id", { count: "exact", head: true }).eq("patient_id", id),
+    listSharedResponses(supabase, id),
   ]);
+  const materialOptions = (materials ?? []).map((m) => ({ id: m.id, title: m.title, group: (m.material_categories as { name: string } | null)?.name ?? "Sin categoría" }));
+  const templateOptions = (templates ?? []).map((t) => {
+    const collection = t.collection ? COLLECTIONS[t.collection] : undefined;
+    const audience = t.audience !== "todos" ? ` (${AUDIENCE_LABEL[t.audience as Audience]?.toLowerCase() ?? t.audience})` : "";
+    return { id: t.id, title: t.title, group: collection ? `${collection.title}${audience}` : `Ejercicios${audience}` };
+  });
   if (!overview) notFound();
   const { patient, appointments, materials: assigned, assignments, profile, adminNote } = overview;
   const now = nowMs();
@@ -121,7 +132,7 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
       <section className="grid gap-6 lg:grid-cols-2">
         <div className="surface-card space-y-4 p-6">
           <h2 className="font-display text-lg font-medium">Materiales asignados</h2>
-          <AssignMaterialForm patientId={patient.id} materials={(materials ?? []).filter((m) => !assigned.some((a) => a.material_id === m.id))} />
+          <AssignMaterialForm patientId={patient.id} materials={materialOptions.filter((m) => !assigned.some((a) => a.material_id === m.id))} />
           {assigned.length === 0 ? (
             <p className="text-sm text-muted-foreground">Todavía no asignaste materiales.</p>
           ) : (
@@ -140,7 +151,7 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
         </div>
         <div className="surface-card space-y-4 p-6">
           <h2 className="font-display text-lg font-medium">Ejercicios sugeridos</h2>
-          <AssignExerciseForm patientId={patient.id} templates={templates ?? []} />
+          <AssignExerciseForm patientId={patient.id} templates={templateOptions} />
           {assignments.length === 0 ? (
             <p className="text-sm text-muted-foreground">Todavía no sugeriste ejercicios.</p>
           ) : (
@@ -160,6 +171,33 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
             </ul>
           )}
         </div>
+      </section>
+
+      <section className="surface-card space-y-4 p-6">
+        <div className="space-y-1">
+          <h2 className="font-display text-lg font-medium">Respuestas de ejercicios</h2>
+          <p className="text-sm text-muted-foreground">
+            {patient.share_records_with_professional
+              ? "Lo que escribió en los ejercicios (las 20 más recientes). Las ves porque comparte sus registros con vos."
+              : "No comparte sus registros: sus respuestas de ejercicios son privadas. Puede activarlo desde su perfil."}
+          </p>
+        </div>
+        {patient.share_records_with_professional ? (
+          sharedResponses.length > 0 ? (
+            <ExerciseResponseList
+              responses={sharedResponses.map((r) => ({
+                id: r.id,
+                completedAt: r.completed_at,
+                title: r.exercise_templates?.title ?? "Ejercicio",
+                entries: answerEntries(parseSteps(r.exercise_templates?.steps), (r.answers ?? {}) as Record<string, unknown>),
+                emotionBefore: r.emotion_before,
+                emotionAfter: r.emotion_after,
+              }))}
+            />
+          ) : (
+            <p className="text-sm text-muted-foreground">Todavía no completó ejercicios.</p>
+          )
+        ) : null}
       </section>
     </div>
   );

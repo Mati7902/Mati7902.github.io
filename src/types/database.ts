@@ -294,13 +294,13 @@ isOneToOne: false
                   ]
                 },"exercise_templates": {
                   Row: {
-                    "approach": Database["public"]['Enums']["therapeutic_approach"],"created_at": string,"description": string | null,"estimated_minutes": number | null,"id": string,"is_active": boolean,"kind": Database["public"]['Enums']["exercise_kind"],"slug": string,"sort_order": number,"steps": NonNullable<Json>,"title": string,"updated_at": string
+                    "approach": Database["public"]['Enums']["therapeutic_approach"],"audience": string,"collection": string | null,"created_at": string,"description": string | null,"estimated_minutes": number | null,"id": string,"is_active": boolean,"kind": Database["public"]['Enums']["exercise_kind"],"slug": string,"sort_order": number,"steps": NonNullable<Json>,"title": string,"updated_at": string
                   }
                   Insert: {
-                    "approach"?: Database["public"]['Enums']["therapeutic_approach"],"created_at"?: string,"description"?: string | null,"estimated_minutes"?: number | null,"id"?: string,"is_active"?: boolean,"kind": Database["public"]['Enums']["exercise_kind"],"slug": string,"sort_order"?: number,"steps"?: NonNullable<Json>,"title": string,"updated_at"?: string
+                    "approach"?: Database["public"]['Enums']["therapeutic_approach"],"audience"?: string,"collection"?: string | null,"created_at"?: string,"description"?: string | null,"estimated_minutes"?: number | null,"id"?: string,"is_active"?: boolean,"kind": Database["public"]['Enums']["exercise_kind"],"slug": string,"sort_order"?: number,"steps"?: NonNullable<Json>,"title": string,"updated_at"?: string
                   }
                   Update: {
-                    "approach"?: Database["public"]['Enums']["therapeutic_approach"],"created_at"?: string,"description"?: string | null,"estimated_minutes"?: number | null,"id"?: string,"is_active"?: boolean,"kind"?: Database["public"]['Enums']["exercise_kind"],"slug"?: string,"sort_order"?: number,"steps"?: NonNullable<Json>,"title"?: string,"updated_at"?: string
+                    "approach"?: Database["public"]['Enums']["therapeutic_approach"],"audience"?: string,"collection"?: string | null,"created_at"?: string,"description"?: string | null,"estimated_minutes"?: number | null,"id"?: string,"is_active"?: boolean,"kind"?: Database["public"]['Enums']["exercise_kind"],"slug"?: string,"sort_order"?: number,"steps"?: NonNullable<Json>,"title"?: string,"updated_at"?: string
                   }
                   Relationships: [
                     
