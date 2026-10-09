@@ -49,7 +49,7 @@ export default async function LandingPage() {
       {/* Hero: red neuronal animada detrás, mensaje a la izquierda y la foto a la derecha */}
       <section className="relative isolate overflow-hidden">
         <div aria-hidden className="absolute inset-0 -z-20 bg-[radial-gradient(ellipse_at_top_left,_var(--color-petrol-50),_transparent_55%),radial-gradient(ellipse_at_85%_60%,_var(--color-mint-50),_transparent_55%)]" />
-        <NeuralField className="absolute inset-0 -z-10 opacity-80 [mask-image:radial-gradient(ellipse_at_70%_45%,black_30%,transparent_78%)] lg:[mask-image:linear-gradient(to_right,transparent_8%,black_52%)]" />
+        <NeuralField className="absolute inset-0 -z-10 opacity-70 [mask-image:linear-gradient(to_bottom,transparent_40%,black_85%)] lg:opacity-80 lg:[mask-image:linear-gradient(to_right,transparent_28%,black_62%)]" />
         <div className="mx-auto grid max-w-6xl gap-14 px-5 pt-14 pb-20 lg:grid-cols-[1.15fr_1fr] lg:items-center lg:px-8 lg:pt-24 lg:pb-28">
           <div className="space-y-7 animate-fade-up">
             <p className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/80 px-3.5 py-1.5 text-xs font-medium uppercase tracking-wider text-accent-strong backdrop-blur">
@@ -209,7 +209,7 @@ export default async function LandingPage() {
       <section id="solicitar-turno" className="scroll-mt-20">
         <div id="contacto" className="mx-auto max-w-6xl px-5 py-20 lg:px-8">
           <div className="relative isolate grid gap-8 overflow-hidden rounded-[2rem] bg-primary px-8 py-12 text-primary-foreground md:grid-cols-[1.3fr_1fr] md:items-center md:px-12">
-            <NeuralField tone="light" density={0.7} interactive={false} className="absolute inset-0 -z-10 opacity-40 [mask-image:linear-gradient(to_left,black_20%,transparent_85%)]" />
+            <NeuralField tone="light" density={1.3} interactive={false} className="absolute inset-0 -z-10 opacity-45 [mask-image:linear-gradient(to_left,black_25%,transparent_80%)]" />
             <div className="space-y-4">
               <h2 className="font-display text-3xl font-medium sm:text-4xl">Solicitar turno</h2>
               <p className="max-w-xl text-petrol-100">
