@@ -81,7 +81,7 @@ insert into public.settings (key, value, description, is_public) values
 
   ('gamification', jsonb_build_object('enabled', true, 'weekly_summary', true), 'Elementos neutrales de progreso.', false),
 
-  ('theme', jsonb_build_object('primary', '#1f4e5f', 'accent', '#a8dccb', 'background', '#faf8f5'), 'Colores básicos de la interfaz.', true),
+  ('theme', jsonb_build_object('primary', '#2f6468', 'accent', '#27b088', 'background', '#fbfdfc'), 'Colores básicos de la interfaz.', true),
 
   ('legal', jsonb_build_object(
     'privacy_version', '2026-10-draft',
@@ -91,8 +91,17 @@ insert into public.settings (key, value, description, is_public) values
   ), 'Versiones de textos legales (requieren revisión profesional antes de producción).', true),
 
   ('landing', jsonb_build_object(
-    'hero_title', 'Un espacio para comprender lo que te pasa y trabajar en lo que necesitás.',
-    'hero_subtitle', 'Acompañamiento psicológico para adolescentes y adultos, de manera presencial o virtual.',
+    'hero_title', 'Terapia desde *donde estés*, con el rigor de una consulta clínica.',
+    'hero_subtitle', 'Acompañamiento psicológico profesional en modalidad virtual, con el mismo marco clínico, ético y basado en evidencia que en consultorio.',
+    'specialties_title', 'Terapia basada en neurociencia aplicada',
+    'specialties', jsonb_build_array(
+      jsonb_build_object('title', 'Trastornos de ansiedad', 'text', 'Ansiedad generalizada, pánico, fobias y ansiedad social.'),
+      jsonb_build_object('title', 'Depresión', 'text', 'Depresión mayor, distimia y episodios del estado de ánimo.'),
+      jsonb_build_object('title', 'Estrés y burnout', 'text', 'Estrés crónico, agotamiento laboral e insomnio.'),
+      jsonb_build_object('title', 'Trauma y duelo', 'text', 'Estrés postraumático, duelos y procesos de cambio vital.')
+    ),
+    'approach_label', 'Enfoque diferencial',
+    'approach_text', 'Integración de psicoterapia clínica y neurociencia aplicada, con intervenciones respaldadas por evidencia actualizada.',
     'how_it_works', jsonb_build_array(
       jsonb_build_object('title', 'Solicitás un turno', 'text', 'Elegís modalidad, día y horario disponible desde la web o por WhatsApp.'),
       jsonb_build_object('title', 'Confirmamos juntos', 'text', 'Recibís la confirmación y un recordatorio antes de cada sesión.'),

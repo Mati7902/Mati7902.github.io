@@ -4,9 +4,10 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ------------------------------------------------------------------
-   Design tokens — "Psicología Matías Sánchez"
-   Paleta: azul petróleo (principal), off-white cálido (fondo),
-   verde menta suave (acento), grises cálidos (texto secundario).
+   Design tokens — "Lic. Matías Sánchez · Psicología · Neurociencia aplicada"
+   Paleta de la identidad: verde azulado del logo (principal), verde
+   esmeralda (acento), azul marino oscuro (texto), blanco con un toque
+   menta (fondo) y menta claro (secciones).
    Las variables de :root pueden ser sobreescritas desde Configuración
    (ver <ThemeStyle />) sin tocar código.
 ------------------------------------------------------------------- */
@@ -14,33 +15,33 @@
   --radius: 1rem;
 
   /* Superficies */
-  --background: #faf8f5;
-  --foreground: #1e2a2f;
+  --background: #fbfdfc;
+  --foreground: #0f2333;
   --card: #ffffff;
-  --card-foreground: #1e2a2f;
+  --card-foreground: #0f2333;
   --popover: #ffffff;
-  --popover-foreground: #1e2a2f;
-  --surface-muted: #f3f0eb;
+  --popover-foreground: #0f2333;
+  --surface-muted: #f1f6f5;
 
   /* Marca: --primary y --accent se configuran en Administración › Apariencia (ver <ThemeStyle />).
      Las escalas "petrol" (principal) y "mint" (acento) y los tonos derivados se calculan a partir
      de esos dos colores, así toda la interfaz sigue la paleta elegida. */
-  --primary: #1f4e5f;
+  --primary: #2f6468;
   --primary-foreground: #ffffff;
-  --accent: #a8dccb;
-  --accent-foreground: #12303b;
+  --accent: #27b088;
+  --accent-foreground: #12181b;
   --primary-soft: color-mix(in oklab, var(--primary) 8%, white);
   --secondary: color-mix(in oklab, var(--accent) 30%, white);
   --secondary-foreground: color-mix(in oklab, var(--primary), black 20%);
   --accent-strong: color-mix(in oklab, var(--accent), black 42%);
 
   /* Neutros */
-  --muted: #f3f0eb;
-  --muted-foreground: #5b6b70;
-  --subtle-foreground: #5f6f74; /* ≥ 4.5:1 sobre fondo y superficies (WCAG AA) */
-  --border: #e6e2dc;
-  --divider: #ede9e3;
-  --input: #e6e2dc;
+  --muted: #f1f6f5;
+  --muted-foreground: #4b5d68;
+  --subtle-foreground: #566874; /* ≥ 4.5:1 sobre fondo y superficies (WCAG AA) */
+  --border: #dfe7e6;
+  --divider: #e8eeed;
+  --input: #dfe7e6;
   --ring: color-mix(in oklab, var(--primary) 72%, white);
 
   /* Semánticos */
@@ -62,12 +63,12 @@
 
   /* Sidebar admin */
   --sidebar: #ffffff;
-  --sidebar-foreground: #1e2a2f;
+  --sidebar-foreground: #0f2333;
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
   --sidebar-accent: var(--primary-soft);
   --sidebar-accent-foreground: var(--primary);
-  --sidebar-border: #e6e2dc;
+  --sidebar-border: #dfe7e6;
   --sidebar-ring: var(--ring);
 }
 
@@ -138,16 +139,16 @@
   --color-mint-600: color-mix(in oklab, var(--accent), black 42%);
   --color-mint-700: color-mix(in oklab, var(--accent), black 55%);
 
-  /* Escala arena (neutros cálidos) */
-  --color-sand-50: #faf8f5;
-  --color-sand-100: #f3f0eb;
-  --color-sand-200: #ede9e3;
-  --color-sand-300: #e6e2dc;
-  --color-sand-400: #cfc9c0;
-  --color-sand-500: #a8a39b;
+  /* Escala "arena": neutros fríos con un toque menta, a tono con la identidad */
+  --color-sand-50: #f8fbfa;
+  --color-sand-100: #f1f6f5;
+  --color-sand-200: #e8eeed;
+  --color-sand-300: #dfe7e6;
+  --color-sand-400: #c4d0ce;
+  --color-sand-500: #9aa8a6;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: var(--font-fraunces), ui-serif, Georgia, "Times New Roman", serif;
+  --font-display: var(--font-display-face), ui-serif, Georgia, "Times New Roman", serif;
 
   --radius-sm: calc(var(--radius) - 8px);
   --radius-md: calc(var(--radius) - 4px);
@@ -155,9 +156,9 @@
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
 
-  --shadow-soft: 0 1px 2px rgb(30 42 47 / 0.04), 0 8px 24px -12px rgb(30 42 47 / 0.1);
-  --shadow-card: 0 1px 1px rgb(30 42 47 / 0.03), 0 2px 8px -2px rgb(30 42 47 / 0.06);
-  --shadow-float: 0 12px 40px -16px rgb(30 42 47 / 0.22);
+  --shadow-soft: 0 1px 2px rgb(15 35 51 / 0.04), 0 8px 24px -12px rgb(15 35 51 / 0.1);
+  --shadow-card: 0 1px 1px rgb(15 35 51 / 0.03), 0 2px 8px -2px rgb(15 35 51 / 0.06);
+  --shadow-float: 0 12px 40px -16px rgb(15 35 51 / 0.22);
 
   --animate-breathe-in: breathe-in var(--breath-duration, 4s) ease-in-out forwards;
   --animate-breathe-out: breathe-out var(--breath-duration, 6s) ease-in-out forwards;
@@ -195,8 +196,8 @@
   }
 
   h1, h2, h3, h4 {
-    @apply font-display tracking-tight text-balance;
-    font-variation-settings: "opsz" 144, "SOFT" 30;
+    @apply font-display text-balance;
+    letter-spacing: -0.01em;
   }
 
   ::selection {

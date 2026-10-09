@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { NeuralField } from "@/components/public/neural-field";
 import { BrandMark } from "@/components/shell/brand-mark";
+import { brandLogo } from "@/lib/brand";
 import { getPublicSettingsSafe } from "@/server/services/public-settings";
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -12,7 +13,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
       <NeuralField density={0.6} interactive={false} className="absolute inset-0 opacity-50 [mask-image:radial-gradient(ellipse_at_top,black_15%,transparent_70%)]" />
       <header className="relative z-10 flex items-center justify-between px-6 py-5">
         <Link href="/" className="min-w-0 text-lg">
-          <BrandMark name={identity.platform_name} logoUrl={identity.logo_url} />
+          <BrandMark name={identity.professional_name} subtitle={identity.brand_subtitle} logoUrl={brandLogo(identity)} />
         </Link>
         <span className="hidden text-xs text-muted-foreground sm:inline">
           {identity.professional_title} · {identity.license}

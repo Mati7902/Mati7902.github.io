@@ -93,6 +93,9 @@ export function IdentityForm({ initial }: { initial: SiteIdentity }) {
         <FormField id="id-license" label="Matrícula">
           <Input id="id-license" value={value.license} onChange={(e) => set("license", e.target.value)} />
         </FormField>
+        <FormField id="id-brand-sub" label="Bajada del logo" className="sm:col-span-2" hint="Aparece debajo de tu nombre junto al emblema, por ejemplo: Psicología · Neurociencia aplicada.">
+          <Input id="id-brand-sub" value={value.brand_subtitle} onChange={(e) => set("brand_subtitle", e.target.value)} />
+        </FormField>
         <FormField id="id-tagline" label="Frase principal" className="sm:col-span-2">
           <Input id="id-tagline" value={value.tagline} onChange={(e) => set("tagline", e.target.value)} />
         </FormField>

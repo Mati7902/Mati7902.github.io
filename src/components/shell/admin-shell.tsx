@@ -14,18 +14,20 @@ type Props = {
   children: React.ReactNode;
   platformName: string;
   logoUrl?: string | null;
+  brandName?: string;
+  brandSubtitle?: string | null;
   userName: string;
   avatarUrl?: string | null;
   unreadCount: number;
   pendingRequests: number;
 };
 
-export function AdminShell({ children, platformName, logoUrl, userName, avatarUrl, unreadCount, pendingRequests }: Props) {
+export function AdminShell({ children, platformName, logoUrl, brandName, brandSubtitle, userName, avatarUrl, unreadCount, pendingRequests }: Props) {
   return (
     <div className="flex min-h-dvh bg-background">
       <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-border/70 bg-sidebar px-4 py-6 lg:flex">
         <Link href="/admin" className="px-3">
-          <BrandMark name={platformName} logoUrl={logoUrl} className="text-lg" />
+          <BrandMark name={brandName ?? platformName} subtitle={brandSubtitle} logoUrl={logoUrl} />
           <span className="block text-xs text-muted-foreground">Panel profesional</span>
         </Link>
         <nav aria-label="Navegación administrativa" className="mt-8 flex flex-1 flex-col gap-1">
@@ -65,7 +67,7 @@ export function AdminShell({ children, platformName, logoUrl, userName, avatarUr
           <div className="flex items-center gap-2">
             <AdminMobileNav platformName={platformName} pendingRequests={pendingRequests} />
             <Link href="/admin" className="min-w-0 text-base lg:hidden">
-              <BrandMark name={platformName} logoUrl={logoUrl} logoClassName="h-7" />
+              <BrandMark name={brandName ?? platformName} logoUrl={logoUrl} logoClassName="h-8" />
             </Link>
           </div>
           <div className="flex items-center gap-1">

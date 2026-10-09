@@ -17,7 +17,7 @@ type Props = {
 type Node = { x: number; y: number; vx: number; vy: number; r: number; glow: number; hub: boolean };
 type Pulse = { from: number; to: number; t: number; speed: number; depth: number };
 
-/** "#1f4e5f" → [31, 78, 95]. Cualquier color CSS se normaliza con el propio canvas. */
+/** "#2f6468" → [47, 100, 104]. Cualquier color CSS se normaliza con el propio canvas. */
 function toRgb(ctx: CanvasRenderingContext2D, color: string, fallback: [number, number, number]): [number, number, number] {
   ctx.fillStyle = "#000";
   ctx.fillStyle = color;
@@ -49,8 +49,8 @@ export function NeuralField({ className, density = 1, interactive = true, tone =
     const finePointer = window.matchMedia("(pointer: fine)").matches;
     const styles = getComputedStyle(canvas);
     const primary: [number, number, number] =
-      tone === "light" ? [255, 255, 255] : toRgb(ctx, styles.getPropertyValue("--primary").trim() || "#1f4e5f", [31, 78, 95]);
-    const accent = toRgb(ctx, styles.getPropertyValue("--accent").trim() || "#a8dccb", [168, 220, 203]);
+      tone === "light" ? [255, 255, 255] : toRgb(ctx, styles.getPropertyValue("--primary").trim() || "#2f6468", [47, 100, 104]);
+    const accent = toRgb(ctx, styles.getPropertyValue("--accent").trim() || "#27b088", [39, 176, 136]);
     const rgba = (c: [number, number, number], a: number) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
 
     let width = 0;

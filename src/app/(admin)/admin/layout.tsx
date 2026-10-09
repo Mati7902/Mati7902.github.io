@@ -4,6 +4,7 @@ import { DomainNotice } from "@/components/admin/domain-notice";
 import { AdminShell } from "@/components/shell/admin-shell";
 import { domainMismatch } from "@/lib/app-url";
 import { requireAdmin } from "@/lib/auth/session";
+import { brandLogo } from "@/lib/brand";
 import { publicEnv } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import { getUnreadCount } from "@/server/services/notifications";
@@ -23,7 +24,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <AdminShell
       platformName={identity.platform_name}
-      logoUrl={identity.logo_url}
+      logoUrl={brandLogo(identity)}
+      brandName={identity.professional_name}
+      brandSubtitle={identity.brand_subtitle}
       userName={session.profile.full_name ?? identity.professional_name}
       avatarUrl={session.profile.avatar_url}
       unreadCount={unreadCount}

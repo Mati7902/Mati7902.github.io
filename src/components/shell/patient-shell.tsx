@@ -13,18 +13,20 @@ type Props = {
   children: React.ReactNode;
   platformName: string;
   logoUrl?: string | null;
+  brandName?: string;
+  brandSubtitle?: string | null;
   userName: string;
   avatarUrl?: string | null;
   unreadCount: number;
 };
 
-export function PatientShell({ children, platformName, logoUrl, userName, avatarUrl, unreadCount }: Props) {
+export function PatientShell({ children, platformName, logoUrl, brandName, brandSubtitle, userName, avatarUrl, unreadCount }: Props) {
   return (
     <div className="flex min-h-dvh bg-background">
       {/* Sidebar escritorio */}
       <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-border/70 bg-sidebar px-4 py-6 md:flex">
         <Link href="/app" className="px-3 text-lg">
-          <BrandMark name={platformName} logoUrl={logoUrl} />
+          <BrandMark name={brandName ?? platformName} subtitle={brandSubtitle} logoUrl={logoUrl} />
         </Link>
         <nav aria-label="Navegación principal" className="mt-8 flex flex-1 flex-col gap-1">
           {patientNav.map((item) => (
@@ -60,7 +62,7 @@ export function PatientShell({ children, platformName, logoUrl, userName, avatar
         <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-border/60 bg-background/85 px-4 pt-safe backdrop-blur-md md:px-8">
           <div className="flex h-14 items-center md:h-16">
             <Link href="/app" className="min-w-0 text-base md:hidden">
-              <BrandMark name={platformName} logoUrl={logoUrl} logoClassName="h-7" />
+              <BrandMark name={brandName ?? platformName} logoUrl={logoUrl} logoClassName="h-8" />
             </Link>
           </div>
           <div className="flex items-center gap-1">

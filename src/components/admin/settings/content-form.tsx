@@ -22,20 +22,47 @@ export function LandingForm({ initial }: { initial: Landing }) {
   const steps = value.how_it_works.length ? value.how_it_works : [{ title: "", text: "" }, { title: "", text: "" }, { title: "", text: "" }];
   const updateStep = (i: number, patch: Partial<{ title: string; text: string }>) =>
     setValue({ ...value, how_it_works: steps.map((s, idx) => (idx === i ? { ...s, ...patch } : s)) });
+  const areas = [...value.specialties, ...Array.from({ length: Math.max(0, 6 - value.specialties.length) }, () => ({ title: "", text: "" }))].slice(0, 6);
+  const updateArea = (i: number, patch: Partial<{ title: string; text: string }>) =>
+    setValue({ ...value, specialties: areas.map((a, idx) => (idx === i ? { ...a, ...patch } : a)) });
   return (
     <form
       className="space-y-5"
       onSubmit={(e) => {
         e.preventDefault();
-        save({ ...value, how_it_works: steps.filter((s) => s.title.trim() || s.text.trim()) });
+        save({
+          ...value,
+          how_it_works: steps.filter((s) => s.title.trim() || s.text.trim()),
+          specialties: areas.filter((a) => a.title.trim() || a.text.trim()),
+        });
       }}
     >
-      <FormField id="ld-title" label="Título principal (hero)">
+      <FormField id="ld-title" label="Título principal (hero)" hint="Las palabras entre asteriscos se destacan en cursiva y en el color de acento, por ejemplo: Terapia desde *donde estés*.">
         <Textarea id="ld-title" value={value.hero_title} onChange={(e) => setValue({ ...value, hero_title: e.target.value })} className="min-h-20" />
       </FormField>
       <FormField id="ld-sub" label="Subtítulo">
         <Input id="ld-sub" value={value.hero_subtitle} onChange={(e) => setValue({ ...value, hero_subtitle: e.target.value })} />
       </FormField>
+      <FormField id="ld-areas-title" label="Título de las áreas de trabajo">
+        <Input id="ld-areas-title" value={value.specialties_title} onChange={(e) => setValue({ ...value, specialties_title: e.target.value })} />
+      </FormField>
+      <fieldset className="space-y-3">
+        <legend className="text-sm font-medium">Áreas de trabajo (hasta 6)</legend>
+        {areas.map((a, i) => (
+          <div key={i} className="grid gap-2 rounded-2xl border border-border/70 bg-card p-3 sm:grid-cols-[1fr_2fr]">
+            <Input value={a.title} onChange={(e) => updateArea(i, { title: e.target.value })} placeholder={`Área ${i + 1}`} aria-label={`Título del área ${i + 1}`} />
+            <Input value={a.text} onChange={(e) => updateArea(i, { text: e.target.value })} placeholder="Descripción breve" aria-label={`Descripción del área ${i + 1}`} />
+          </div>
+        ))}
+      </fieldset>
+      <div className="grid gap-4 sm:grid-cols-[1fr_2fr]">
+        <FormField id="ld-approach-label" label="Etiqueta del enfoque">
+          <Input id="ld-approach-label" value={value.approach_label} onChange={(e) => setValue({ ...value, approach_label: e.target.value })} />
+        </FormField>
+        <FormField id="ld-approach" label="Enfoque diferencial">
+          <Textarea id="ld-approach" value={value.approach_text} onChange={(e) => setValue({ ...value, approach_text: e.target.value })} className="min-h-20" />
+        </FormField>
+      </div>
       <fieldset className="space-y-3">
         <legend className="text-sm font-medium">Cómo funciona (3 pasos)</legend>
         {steps.map((s, i) => (
@@ -84,7 +111,7 @@ export function ThemeForm({ initial }: { initial: Theme }) {
       <p className="text-xs text-muted-foreground">Mantené contraste suficiente (WCAG AA): el principal debe ser oscuro para texto blanco.</p>
       <div className="flex gap-2">
         <Button type="submit" loading={pending}>Guardar colores</Button>
-        <Button type="button" variant="ghost" onClick={() => setValue({ primary: "#1f4e5f", accent: "#a8dccb", background: "#faf8f5" })}>Restaurar predeterminados</Button>
+        <Button type="button" variant="ghost" onClick={() => setValue({ primary: "#2f6468", accent: "#27b088", background: "#fbfdfc" })}>Restaurar predeterminados</Button>
       </div>
     </form>
   );
