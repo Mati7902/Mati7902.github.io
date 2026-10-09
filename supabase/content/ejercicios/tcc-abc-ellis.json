@@ -1,0 +1,337 @@
+{
+  "slug": "tcc-abc-ellis",
+  "title": "El modelo ABC de Ellis",
+  "description": "Descubrí cómo tus «debo» inflan el malestar y convertilos en preferencias flexibles con el registro ABCDE.",
+  "kind": "thought_record",
+  "approach": "tcc",
+  "audience": "adultos",
+  "collection": "tcc",
+  "estimated_minutes": 30,
+  "sort_order": 206,
+  "source": "Cuadernillo de TCC, Capítulo 6 (páginas 26 a 29)",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "El modelo ABC de Ellis",
+      "content": "Albert Ellis llegó, por otro camino, a una idea muy parecida a la de Beck: **no son los hechos los que nos perturban, sino las creencias con las que los interpretamos**.\n\nSu modelo ABC ordena ese proceso de una forma simple y potente."
+    },
+    {
+      "id": "sencilla",
+      "type": "info",
+      "title": "Explicación sencilla",
+      "content": "Ellis lo resumía con una frase antigua, de Epicteto: «Las personas no se perturban por las cosas, sino por la opinión que tienen de ellas».\n\nEl modelo ABC dice: pasa algo (**A**), lo interpretás con ciertas creencias (**B**), y de ahí surge lo que sentís y hacés (**C**).\n\nLa mayoría cree que A causa C directamente («me dejaron, por eso sufro»), pero **en el medio siempre está B**."
+    },
+    {
+      "id": "clinica",
+      "type": "info",
+      "title": "Para profundizar",
+      "content": "Esta es la explicación clínica. Si preferís, pasá a la pantalla siguiente.\n\nLa Terapia Racional Emotiva Conductual (TREC/REBT) de Ellis sostiene que la perturbación emocional deriva de **creencias irracionales**: exigencias absolutas y rígidas («debo», «tengo que», «debería») desde las que se derivan tres conclusiones típicas:\n\n- el **tremendismo** (catastrofizar);\n- la **baja tolerancia a la frustración** («no lo soporto»);\n- la **condena global** de sí mismo o de otros («soy un inútil», «es una mala persona»).\n\nEl trabajo terapéutico consiste en detectar esas exigencias, debatirlas y sustituirlas por preferencias flexibles."
+    },
+    {
+      "id": "letras",
+      "type": "info",
+      "title": "Las letras del modelo",
+      "content": "- **A — Acontecimiento activador.** El hecho o situación (real o imaginado) que dispara el proceso.\n- **B — Creencias (Beliefs).** Lo que la persona piensa y cree sobre A. Aquí está el corazón del malestar.\n- **C — Consecuencias.** Las emociones, sensaciones físicas y conductas que resultan de B.\n- **D — Debate (Disputa).** Cuestionar y confrontar las creencias irracionales de B.\n- **E — Nueva filosofía (Effect).** El efecto: una creencia más racional y una emoción más adaptativa."
+    },
+    {
+      "id": "irracional_racional",
+      "type": "info",
+      "title": "Creencias irracionales vs. racionales",
+      "content": "- **Irracional (exigencia):** «Debo caerle bien a todos; si no, es horrible y no lo soporto.»\n- **Racional (preferencia):** «Me gustaría caer bien, pero no siempre va a pasar, y puedo tolerarlo.»\n\nEl giro central de Ellis: pasar de la **exigencia rígida** («tengo que») a la **preferencia flexible** («prefiero»)."
+    },
+    {
+      "id": "reconocer",
+      "type": "info",
+      "title": "¿Cómo reconocer una creencia irracional?",
+      "content": "- Contiene una **exigencia absoluta**: «debo», «tengo que», «debería», «no puede ser que».\n- Concluye en **tremendismo**: «es horrible», «es lo peor que podría pasar».\n- Expresa **baja tolerancia a la frustración**: «no lo soporto», «no puedo con esto».\n- Termina en **condena global**: «soy un inútil», «es un desastre de persona»."
+    },
+    {
+      "id": "debate",
+      "type": "info",
+      "title": "Debate: cómo disputar la creencia (D)",
+      "content": "Ellis proponía tres tipos de debate, que podés combinar:\n\n- **Empírico (¿es verdad?):** ¿Dónde está la prueba de que esto DEBE ser así?\n- **Lógico (¿tiene sentido?):** ¿Se sigue lógicamente que, porque lo prefiero, tenga que ocurrir?\n- **Pragmático (¿me sirve?):** ¿Adónde me lleva sostener esta exigencia? ¿Me ayuda o me hunde?"
+    },
+    {
+      "id": "ejemplos_1",
+      "type": "info",
+      "title": "Ejemplos por área (1 de 2)",
+      "content": "Del hecho (A) a la creencia irracional (B) y a la racional (E):\n\n- **Ansiedad.** A: debo dar una charla. B: «Tengo que hacerlo perfecto o es un desastre». E: «Quiero hacerlo bien; equivocarme es humano».\n- **Depresión.** A: un plan se cae. B: «Nada me sale, no lo soporto». E: «Es frustrante, y aun así puedo seguir».\n- **Pareja.** A: una discusión. B: «Si discutimos, es que no me ama». E: «Discutir es normal; no define el amor».\n- **Autoestima.** A: una crítica. B: «No debería equivocarme nunca». E: «Puedo equivocarme y seguir valiendo»."
+    },
+    {
+      "id": "ejemplos_2",
+      "type": "info",
+      "title": "Ejemplos por área (2 de 2)",
+      "content": "- **Trabajo.** A: un pedido difícil. B: «Debo poder con todo solo». E: «Puedo pedir ayuda; no me hace menos».\n- **Universidad.** A: una nota baja. B: «Tengo que ser el mejor siempre». E: «Prefiero ir bien; una nota no me define».\n- **Duelo.** A: sentir alivio. B: «No debería sentir esto, soy horrible». E: «Los sentimientos mezclados son normales».\n- **Perfeccionismo.** A: un detalle falla. B: «No puede tener ni un error». E: «Prefiero la excelencia, no la perfección»."
+    },
+    {
+      "id": "te_suena",
+      "type": "checklist",
+      "prompt": "¿Alguna de estas exigencias te suena?",
+      "help": "Marcá las que se parezcan a cosas que te decís. Si ninguna, tocá «Saltar».",
+      "optional": true,
+      "options": [
+        "«Tengo que hacerlo perfecto o es un desastre»",
+        "«Nada me sale, no lo soporto»",
+        "«Si discutimos, es que no me ama»",
+        "«No debería equivocarme nunca»",
+        "«Debo poder con todo solo»",
+        "«Tengo que ser el mejor siempre»",
+        "«No debería sentir esto, soy horrible»",
+        "«No puede tener ni un error»"
+      ]
+    },
+    {
+      "id": "ellis_beck",
+      "type": "info",
+      "title": "Ellis y Beck: comparación",
+      "content": "Los dos modelos son primos: ambos ubican la interpretación en el centro. Se diferencian en el énfasis y el estilo.\n\n- **Foco principal.** Beck: pensamientos automáticos, distorsiones y esquemas. Ellis: creencias irracionales y exigencias absolutas.\n- **Diana del cambio.** Beck: ajustar la interpretación a la evidencia. Ellis: cambiar exigencias por preferencias.\n- **Método típico.** Beck: descubrimiento guiado (socrático), experimentos. Ellis: debate más directo y confrontativo de creencias.\n- **Estructura.** Beck: situación → pensamiento → emoción → conducta. Ellis: A → B → C → D → E.\n- **Estilo del terapeuta.** Beck: colaborativo, empírico. Ellis: activo, didáctico, a veces provocador.\n- **Qué comparten.** La interpretación (B / pensamiento) media entre el hecho y la emoción: el malestar no viene del hecho, sino de la creencia."
+    },
+    {
+      "id": "errores",
+      "type": "info",
+      "title": "Errores frecuentes",
+      "content": "Qué se confunde y cómo evitarlo:\n\n- **Confundir A con C.** «Me sentí humillado» no es el hecho (A), es la consecuencia (C). El hecho es «me corrigieron delante de otros».\n- **Meter la creencia dentro de A.** «Me trataron injustamente» ya es interpretación (B). En A va solo lo observable.\n- **Debatir la emoción en vez de la creencia.** No se debate sentir tristeza; se debate la exigencia que la infla.\n- **Cambiar exigencia por otra exigencia.** «Debo dejar de exigirme» sigue siendo un «debo». Apuntá a la preferencia flexible.\n\nEn las próximas pantallas, probá distinguirlos."
+    },
+    {
+      "id": "quiz_1",
+      "type": "choice",
+      "prompt": "«Me corrigieron delante de otros». ¿Qué letra es?",
+      "help": "1 de 4.",
+      "options": [
+        "A — Acontecimiento",
+        "B — Creencia",
+        "C — Consecuencia"
+      ],
+      "feedback": {
+        "A — Acontecimiento": "**¡Bien! Es A:** el hecho observable, sin interpretaciones. En A va solo lo observable.",
+        "B — Creencia": "**Es A:** el hecho observable. B sería lo que la persona piensa y cree sobre ese hecho; por ejemplo, «me trataron injustamente».",
+        "C — Consecuencia": "**Es A:** el hecho observable. C es lo que resulta de B: emociones, sensaciones físicas y conductas, como sentirse humillado."
+      }
+    },
+    {
+      "id": "quiz_2",
+      "type": "choice",
+      "prompt": "«Me sentí humillado». ¿Qué letra es?",
+      "help": "2 de 4.",
+      "options": [
+        "A — Acontecimiento",
+        "B — Creencia",
+        "C — Consecuencia"
+      ],
+      "feedback": {
+        "A — Acontecimiento": "**Es C, no A.** Es un error frecuente: «me sentí humillado» no es el hecho, es la consecuencia. El hecho es «me corrigieron delante de otros».",
+        "B — Creencia": "**Es C:** una emoción, no una creencia. B es lo que la persona piensa sobre el hecho; la humillación es lo que resulta de eso.",
+        "C — Consecuencia": "**¡Bien! Es C:** la consecuencia. Las emociones, sensaciones físicas y conductas que resultan de B."
+      }
+    },
+    {
+      "id": "quiz_3",
+      "type": "choice",
+      "prompt": "«Me trataron injustamente». ¿Qué letra es?",
+      "help": "3 de 4.",
+      "options": [
+        "A — Acontecimiento",
+        "B — Creencia",
+        "C — Consecuencia"
+      ],
+      "feedback": {
+        "A — Acontecimiento": "**Es B.** Parece un hecho, pero ya es interpretación. Meter la creencia dentro de A es un error frecuente: en A va solo lo observable.",
+        "B — Creencia": "**¡Bien! Es B:** ya es interpretación. Meter la creencia dentro de A es un error frecuente; en A va solo lo observable.",
+        "C — Consecuencia": "**Es B:** una interpretación del hecho. C sería la emoción o la conducta que resulta de esa creencia."
+      }
+    },
+    {
+      "id": "quiz_4",
+      "type": "choice",
+      "prompt": "«Debo dejar de exigirme». ¿Qué es?",
+      "help": "4 de 4.",
+      "options": [
+        "Una exigencia rígida",
+        "Una preferencia flexible"
+      ],
+      "feedback": {
+        "Una exigencia rígida": "**¡Bien!** Aunque hable de exigirse menos, sigue siendo un «debo». Cambiar una exigencia por otra es un error frecuente: apuntá a la preferencia flexible («prefiero», «me gustaría»).",
+        "Una preferencia flexible": "**Es una exigencia.** Aunque hable de exigirse menos, sigue siendo un «debo». Cambiar una exigencia por otra es un error frecuente: apuntá a la preferencia flexible («prefiero», «me gustaría»)."
+      }
+    },
+    {
+      "id": "diego",
+      "type": "info",
+      "title": "Diego, 31 años",
+      "content": "Ira y pareja.\n\nDiego estalla cuando su pareja llega tarde.\n\n- **A:** la pareja llega 20 minutos tarde.\n- **B:** «no tiene ningún derecho a hacerme esperar, debería respetarme siempre, esto es intolerable».\n- **C:** ira intensa, reproche, portazo.\n\n**Debate (D):** ¿dónde está escrito que SIEMPRE debe ser puntual? ¿Es intolerable o muy molesto? ¿Le sirve reaccionar así?\n\n**Nueva filosofía (E):** «prefiero que sea puntual y me molesta que no lo sea, pero no es una catástrofe ni una falta de respeto absoluta; puedo decirlo con calma». La emoción pasa de ira a fastidio manejable."
+    },
+    {
+      "id": "guiado",
+      "type": "info",
+      "title": "Tu primer ABCDE",
+      "content": "Elegí una situación reciente que te haya alterado. Vas a completar tu registro ABCDE en este orden, una pregunta por vez:\n\n- En **A**, escribí solo el hecho observable, sin interpretaciones.\n- En **C**, anotá qué sentiste y qué hiciste.\n- En **B**, buscá la creencia: ¿qué exigencia («debo/debería/tengo que») estaba detrás?\n- En **D**, debatila con las tres preguntas: ¿es verdad?, ¿tiene lógica?, ¿me sirve?\n- En **E**, escribí la versión racional, en forma de preferencia flexible."
+    },
+    {
+      "id": "a_hecho",
+      "type": "text",
+      "prompt": "A — ¿Qué pasó? Escribí solo el hecho observable",
+      "help": "Sin interpretaciones. Diego anotó: «la pareja llega 20 minutos tarde». Ojo: «me trataron injustamente» ya es interpretación (B), y «me sentí humillado» es consecuencia (C)."
+    },
+    {
+      "id": "c_emocion",
+      "type": "checklist",
+      "prompt": "C — ¿Qué sentiste?",
+      "help": "Marcá hasta tres. Diego sintió ira intensa.",
+      "max": 3,
+      "options": [
+        "Ira",
+        "Fastidio",
+        "Ansiedad",
+        "Miedo",
+        "Angustia",
+        "Tristeza",
+        "Frustración",
+        "Humillación",
+        "Vergüenza",
+        "Culpa",
+        "Otra"
+      ]
+    },
+    {
+      "id": "c_emocion_otra",
+      "type": "text",
+      "prompt": "Si marcaste «Otra», ¿cuál fue?",
+      "help": "Una sola palabra. Si no marcaste «Otra», tocá «Saltar».",
+      "optional": true
+    },
+    {
+      "id": "c_intensidad",
+      "type": "scale",
+      "prompt": "¿Con qué intensidad lo sentiste?",
+      "help": "Si marcaste más de una emoción, puntuá la más fuerte.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Nada",
+      "max_label": "Máxima",
+      "maps_to": "emotion_before"
+    },
+    {
+      "id": "c_conducta",
+      "type": "text",
+      "prompt": "C — ¿Qué hiciste?",
+      "help": "Lo que hiciste (o dejaste de hacer) en ese momento. Diego: reproche y portazo."
+    },
+    {
+      "id": "b_creencia",
+      "type": "text",
+      "prompt": "B — ¿Qué exigencia («debo», «debería», «tengo que») estaba detrás?",
+      "help": "Escribí la creencia tal como apareció, con tus palabras. Diego: «no tiene ningún derecho a hacerme esperar, debería respetarme siempre, esto es intolerable»."
+    },
+    {
+      "id": "b_senales",
+      "type": "checklist",
+      "prompt": "¿Qué señales de creencia irracional encontrás en tu B?",
+      "help": "Es como subrayar las palabras de exigencia. Marcá todas las que aparezcan. Si no encontrás ninguna, tocá «Atrás» y preguntate qué exigencia («debo/debería/tengo que») estaba detrás.",
+      "options": [
+        "Exigencia absoluta: «debo», «tengo que», «debería», «no puede ser que»",
+        "Tremendismo: «es horrible», «es lo peor que podría pasar»",
+        "Baja tolerancia a la frustración: «no lo soporto», «no puedo con esto»",
+        "Condena global: «soy un inútil», «es un desastre de persona»",
+        "Todavía no encuentro ninguna"
+      ]
+    },
+    {
+      "id": "d_empirico",
+      "type": "text",
+      "prompt": "D — ¿Es verdad? ¿Dónde está la prueba de que esto DEBE ser así?",
+      "help": "Es el debate empírico. Recordá: no se debate la emoción, sino la exigencia que la infla. En el caso de Diego: «¿dónde está escrito que SIEMPRE debe ser puntual?»."
+    },
+    {
+      "id": "d_logico",
+      "type": "text",
+      "prompt": "¿Tiene lógica? ¿Se sigue lógicamente que, porque lo prefiero, tenga que ocurrir?",
+      "help": "Es el debate lógico. Para Diego, otra pregunta útil fue: «¿Es intolerable o muy molesto?»."
+    },
+    {
+      "id": "d_pragmatico",
+      "type": "text",
+      "prompt": "¿Me sirve? ¿Adónde me lleva sostener esta exigencia? ¿Me ayuda o me hunde?",
+      "help": "Es el debate pragmático. En el caso de Diego: «¿Le sirve reaccionar así?»."
+    },
+    {
+      "id": "e_preferencia",
+      "type": "text",
+      "prompt": "E — ¿Cómo queda tu creencia como preferencia flexible?",
+      "help": "Cambiá el «debo» por «prefiero» o «me gustaría», y el «no lo soporto» por «puedo tolerarlo». Ojo: «debo dejar de exigirme» sigue siendo un «debo». Diego: «prefiero que sea puntual y me molesta que no lo sea, pero no es una catástrofe ni una falta de respeto absoluta; puedo decirlo con calma»."
+    },
+    {
+      "id": "e_emocion",
+      "type": "text",
+      "prompt": "¿Qué sentís ahora, con esta nueva filosofía?",
+      "help": "E también es una emoción más adaptativa. En Diego, la emoción pasó de ira a fastidio manejable.",
+      "optional": true
+    },
+    {
+      "id": "e_intensidad",
+      "type": "scale",
+      "prompt": "¿Con qué intensidad sentís ahora lo que anotaste en C?",
+      "help": "Puntuá la misma emoción que antes.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Nada",
+      "max_label": "Máxima",
+      "maps_to": "emotion_after"
+    },
+    {
+      "id": "preferencia_semana",
+      "type": "text",
+      "prompt": "¿Qué preferencia flexible te gustaría adoptar esta semana?",
+      "help": "Elegí una para repetirla en voz alta cuando aparezca la situación. Puede ser la que acabás de escribir u otra."
+    },
+    {
+      "id": "resumen",
+      "type": "reflect",
+      "title": "Tu registro ABCDE",
+      "template": "A: «{{a_hecho}}». B: «{{b_creencia}}». C: {{c_emocion}}; «{{c_conducta}}». E: «{{e_preferencia}}». Mi preferencia para esta semana: «{{preferencia_semana}}».",
+      "content": "El malestar nace en B, no en A: la creencia media entre el hecho y la emoción.\n\nTu registro, con el debate (D), queda guardado en «Mis respuestas»."
+    },
+    {
+      "id": "reflexion",
+      "type": "info",
+      "title": "Preguntas de reflexión",
+      "content": "- ¿Qué exigencias absolutas repetís más seguido?\n- ¿Con qué te decís «no lo soporto» cuando en realidad lo estás soportando?\n- ¿Qué cambiaría si tus «debo» se volvieran «prefiero»?\n- ¿En qué áreas te condenás globalmente por un error puntual?\n\nY una más, en la pantalla siguiente."
+    },
+    {
+      "id": "estilo",
+      "type": "choice",
+      "prompt": "¿Preferís el estilo más directo de Ellis o el más exploratorio de Beck?",
+      "optional": true,
+      "options": [
+        "El más directo de Ellis",
+        "El más exploratorio de Beck",
+        "Los dos me sirven",
+        "Todavía no lo sé"
+      ]
+    },
+    {
+      "id": "reflexion_respuesta",
+      "type": "text",
+      "prompt": "Si querés, respondé alguna de estas preguntas",
+      "help": "Por ejemplo, por qué preferís uno u otro estilo. Podés llevar tu respuesta a la próxima sesión.",
+      "optional": true
+    },
+    {
+      "id": "para_llevar",
+      "type": "info",
+      "title": "Para llevar",
+      "content": "- ABC: Acontecimiento → Creencia → Consecuencia. Se amplía con D (debate) y E (nueva filosofía).\n- El malestar nace en B, no en A: la creencia media entre el hecho y la emoción.\n- Las creencias irracionales son exigencias rígidas: «debo», «tengo que», «no lo soporto».\n- Se debaten con tres preguntas: ¿es verdad?, ¿tiene lógica?, ¿me sirve?\n- Beck y Ellis coinciden en lo esencial; se diferencian en el énfasis y el estilo."
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "- Completá **tres registros ABCDE** durante la semana: repetí este ejercicio cada vez (unos 10 minutos; las pantallas de lectura las podés pasar rápido). Para anotar en el momento, también tenés el «Registro ABC», al final de la colección.\n- En cada B, marcá las palabras de exigencia («debo», «tengo que», «debería»), como hiciste hoy.\n- Reescribí cada exigencia como una preferencia flexible.\n- Repetí en voz alta la preferencia que elegiste cuando aparezca la situación.\n\nEl próximo capítulo es **«Tríada cognitiva y activación conductual»**."
+    }
+  ],
+  "material": {
+    "title": "El modelo ABC de Ellis",
+    "description": "Acontecimiento, creencia y consecuencia: cómo pasar de la exigencia rígida a la preferencia flexible. Con ejemplos, un caso y un registro ABCDE.",
+    "category": "psicoeducacion"
+  }
+}

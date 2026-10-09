@@ -1,0 +1,192 @@
+{
+  "slug": "brujula-lo-que-aprendi",
+  "title": "Lo que aprendí y mi plan para seguir",
+  "description": "Para mirar cuánto recorriste, elegir tus herramientas y armar tu plan para seguir.",
+  "kind": "custom",
+  "approach": "general",
+  "audience": "adolescentes",
+  "collection": "brujula",
+  "estimated_minutes": 15,
+  "sort_order": 114,
+  "source": "Brújula, página 15",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Lo que aprendí y mi plan para seguir",
+      "content": "**Mirá cuánto recorriste.**\n\nPrimero vas a comparar cómo estás ahora con cómo estabas al empezar. Después vas a pensar qué aprendiste, elegir tus herramientas y armar tu plan para seguir."
+    },
+    {
+      "id": "antes_ahora",
+      "type": "info",
+      "title": "Antes y ahora",
+      "content": "Son las mismas siete preguntas de «Mi punto de partida», de 0 a 10.\n\nLo que contestaste ahí está guardado en ese ejercicio, en «Mis respuestas». Miralo antes o después para comparar.\n\n**Si algo no cambió o empeoró, no es un fracaso: es información para seguir.**"
+    },
+    {
+      "id": "ahora_animo",
+      "type": "scale",
+      "prompt": "¿Cómo estoy ahora de ánimo?",
+      "help": "Elegí un número: 0 es muy mal y 10 es muy bien.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Muy mal",
+      "max_label": "Muy bien",
+      "optional": true
+    },
+    {
+      "id": "ahora_nervios",
+      "type": "scale",
+      "prompt": "¿Cómo estoy ahora con los nervios o la ansiedad?",
+      "help": "Acá el 0 es «me desbordan» y el 10 es «los manejo bien».",
+      "min": 0,
+      "max": 10,
+      "min_label": "Me desbordan",
+      "max_label": "Los manejo bien",
+      "optional": true
+    },
+    {
+      "id": "ahora_relaciones",
+      "type": "scale",
+      "prompt": "¿Cómo estoy ahora en mis relaciones?",
+      "help": "Amigos, compañeros. 0 es muy mal y 10 es muy bien.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Muy mal",
+      "max_label": "Muy bien",
+      "optional": true
+    },
+    {
+      "id": "ahora_familia",
+      "type": "scale",
+      "prompt": "¿Cómo estoy ahora con mi familia?",
+      "help": "0 es muy mal y 10 es muy bien.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Muy mal",
+      "max_label": "Muy bien",
+      "optional": true
+    },
+    {
+      "id": "ahora_colegio",
+      "type": "scale",
+      "prompt": "¿Cómo estoy ahora en el colegio?",
+      "help": "0 es muy mal y 10 es muy bien.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Muy mal",
+      "max_label": "Muy bien",
+      "optional": true
+    },
+    {
+      "id": "ahora_confianza",
+      "type": "scale",
+      "prompt": "¿Cómo estoy ahora con la confianza en mí?",
+      "help": "0 es muy mal y 10 es muy bien.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Muy mal",
+      "max_label": "Muy bien",
+      "optional": true
+    },
+    {
+      "id": "ahora_emociones",
+      "type": "scale",
+      "prompt": "¿Cómo estoy ahora con el manejo de mis emociones?",
+      "help": "0 es muy mal y 10 es muy bien.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Muy mal",
+      "max_label": "Muy bien",
+      "optional": true
+    },
+    {
+      "id": "entendi",
+      "type": "text",
+      "prompt": "¿Qué entendí sobre mí?",
+      "help": "Ahora, cinco preguntas para mirar lo que aprendiste. Escribí como te salga."
+    },
+    {
+      "id": "funciona_mejor",
+      "type": "text",
+      "prompt": "¿Qué herramienta me funciona mejor?",
+      "help": "Puede ser de cualquier ejercicio de Brújula o de **Calmarme**."
+    },
+    {
+      "id": "siguen_dificiles",
+      "type": "text",
+      "prompt": "¿Qué situaciones siguen siendo difíciles?"
+    },
+    {
+      "id": "pedir_ayuda",
+      "type": "text",
+      "prompt": "¿Cuándo sé que necesito pedir ayuda?",
+      "help": "Podés mirar tus señales en «Mi plan para momentos muy difíciles»."
+    },
+    {
+      "id": "seguir_practicando",
+      "type": "text",
+      "prompt": "¿Qué quiero seguir practicando?"
+    },
+    {
+      "id": "herramientas",
+      "type": "list",
+      "prompt": "Mis 5 herramientas",
+      "help": "Una por renglón, con el nombre del ejercicio donde está. Por ejemplo: STOP, de «Cuando la emoción sube a 100».",
+      "count": 5,
+      "min": 1
+    },
+    {
+      "id": "sentir_mal_intro",
+      "type": "info",
+      "title": "Si me empiezo a sentir mal otra vez",
+      "content": "Vas a armar una frase en tres partes:\n\n- **Si noto…**\n- **voy a…**\n- **y voy a hablar con…**"
+    },
+    {
+      "id": "si_noto",
+      "type": "text",
+      "prompt": "Si noto…",
+      "help": "Una señal de que estás empezando a estar mal: en tu cuerpo, en lo que pensás o en lo que hacés.",
+      "placeholder": "Si noto…"
+    },
+    {
+      "id": "voy_a",
+      "type": "text",
+      "prompt": "voy a…",
+      "help": "Algo que vas a hacer: por ejemplo, una de tus herramientas.",
+      "placeholder": "voy a…"
+    },
+    {
+      "id": "hablar_con",
+      "type": "text",
+      "prompt": "y voy a hablar con…",
+      "help": "Una persona de confianza.",
+      "placeholder": "y voy a hablar con…"
+    },
+    {
+      "id": "frase",
+      "type": "reflect",
+      "title": "Si me empiezo a sentir mal otra vez",
+      "template": "Si noto {{si_noto}}, voy a {{voy_a}} y voy a hablar con {{hablar_con}}."
+    },
+    {
+      "id": "proximo_paso",
+      "type": "text",
+      "prompt": "Mi próximo paso",
+      "help": "Algo concreto, que se pueda ver desde afuera.",
+      "placeholder": "Mi próximo paso es…"
+    },
+    {
+      "id": "resumen",
+      "type": "reflect",
+      "title": "Mirá cuánto recorriste",
+      "template": "Lo que entendí sobre mí: «{{entendi}}» — Lo que quiero seguir practicando: «{{seguir_practicando}}» — Mis herramientas: {{herramientas}} — Mi próximo paso: «{{proximo_paso}}»",
+      "content": "Todo queda guardado en este ejercicio, en «Mis respuestas». Para comparar, mirá también tus respuestas de «Mi punto de partida»."
+    },
+    {
+      "id": "recorda",
+      "type": "info",
+      "title": "Recordá",
+      "content": "**Pedir ayuda también es una habilidad.**\n\nSi un día lo necesitás, tu plan para momentos muy difíciles está en **Calmarme**."
+    }
+  ]
+}

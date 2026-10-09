@@ -1,0 +1,105 @@
+{
+  "slug": "brujula-no-todo-lo-que-pienso",
+  "title": "No todo lo que pienso es una orden",
+  "description": "Mirar tus pensamientos desde afuera: una frase que da distancia, «Hojas en el río» y nombrar la historia.",
+  "kind": "defusion",
+  "approach": "act",
+  "audience": "adolescentes",
+  "collection": "brujula",
+  "estimated_minutes": 10,
+  "sort_order": 106,
+  "source": "Brújula, página 7",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Una radio que no se apaga",
+      "content": "**Tu mente habla todo el tiempo. No tenés que obedecer todo lo que dice.**\n\nLos pensamientos son como una radio que no se apaga. No los podés callar a la fuerza, pero podés escucharlos sin que te manejen.\n\nEn «Poner a prueba lo que pienso» discutías con el pensamiento; acá probás otra cosa: mirarlo desde afuera. Las dos herramientas sirven."
+    },
+    {
+      "id": "not_equal",
+      "type": "info",
+      "title": "Un pensamiento no es…",
+      "content": "- **Pensamiento ≠ hecho.** Que lo pienses no lo vuelve verdad.\n- **Pensamiento ≠ orden.** Podés pensar «no vayas» e ir igual.\n- **Pensamiento ≠ quién sos.** Pensar «soy un fracaso» no te convierte en uno."
+    },
+    {
+      "id": "phrase",
+      "type": "info",
+      "title": "La frase que da distancia",
+      "content": "Probá agregarle una frase adelante al pensamiento:\n\n- «Soy un fracaso.» → **«Estoy teniendo el pensamiento de que soy un fracaso.»**\n- «Todos se ríen de mí.» → **«Mi mente me está diciendo que todos se ríen de mí.»**\n\n**Ojo:** esto sirve para lo que pensás sobre vos, no para negar lo que pasó. Si se rieron de vos, eso pasó: contalo. Para eso están «Cuando otros me hacen sentir menos» y «Mi red de apoyo»."
+    },
+    {
+      "id": "thought",
+      "type": "text",
+      "prompt": "Probalo: escribí un pensamiento que te enganche",
+      "help": "Escribilo tal cual aparece en tu cabeza. Por ejemplo: «soy un fracaso». En la pantalla siguiente le vas a agregar la frase adelante.",
+      "placeholder": "Mi pensamiento…"
+    },
+    {
+      "id": "hook_before",
+      "type": "scale",
+      "prompt": "¿Cuánto te engancha ese pensamiento? (de 0 a 10)",
+      "min": 0,
+      "max": 10,
+      "min_label": "Nada",
+      "max_label": "Totalmente"
+    },
+    {
+      "id": "with_phrase",
+      "type": "reflect",
+      "title": "Ahora con la frase",
+      "template": "«Estoy teniendo el pensamiento de que {{thought}}»",
+      "content": "Leela despacio, una o dos veces. También podés probar con «Mi mente me está diciendo que…»."
+    },
+    {
+      "id": "hook_after",
+      "type": "scale",
+      "prompt": "¿Y ahora, con la frase, cuánto te engancha? (de 0 a 10)",
+      "min": 0,
+      "max": 10,
+      "min_label": "Nada",
+      "max_label": "Totalmente"
+    },
+    {
+      "id": "river",
+      "type": "timed_info",
+      "title": "Hojas en el río",
+      "content": "**3 minutos.** Si preferís, imaginá nubes que cruzan el cielo.\n\n1. Imaginá un río tranquilo con hojas que pasan flotando.\n2. Cada vez que aparezca un pensamiento, ponelo en una hoja y dejá que el agua se lo lleve.\n3. Si te enganchás con uno, está bien: date cuenta y volvé al río.\n\nNo es para que los pensamientos desaparezcan ni para relajarte: es para practicar mirarlos desde afuera.\n\nCuando estés listo/a, tocá «Iniciar». Al terminar, la app pasa sola a la pantalla siguiente.",
+      "seconds": 180
+    },
+    {
+      "id": "leaves",
+      "type": "list",
+      "prompt": "¿Qué pensamientos aparecieron en las hojas?",
+      "help": "Escribí uno por renglón, como si los pusieras en cada hoja.",
+      "count": 5,
+      "optional": true
+    },
+    {
+      "id": "story_name",
+      "type": "text",
+      "prompt": "¿Hay un pensamiento que vuelve siempre? Ponele nombre",
+      "help": "Completá la frase «Ahí viene la historia de…» con un nombre corto.",
+      "placeholder": "El nombre de la historia…",
+      "optional": true
+    },
+    {
+      "id": "summary",
+      "type": "reflect",
+      "title": "Para mirar desde afuera",
+      "template": "«Estoy teniendo el pensamiento de que {{thought}}». Y cuando vuelva el pensamiento de siempre: «Ahí viene la historia de {{story_name}}».",
+      "content": "La próxima vez que aparezcan, probá decírtelo así. Podés volver a este ejercicio cuando quieras para probarlo con otros pensamientos.\n\nCuando toques «Terminar», tus respuestas quedan guardadas en este ejercicio, en «Mis respuestas»."
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "La tarea de esta semana está en el próximo ejercicio: **«Lo que realmente me importa»**.\n\nTu mente va a seguir hablando. No tenés que obedecer todo lo que dice."
+    }
+  ],
+  "material": {
+    "title": "No todo lo que pienso es una orden",
+    "description": "Defusión para adolescentes: pensamiento no es hecho, orden ni quién sos; la frase que da distancia y «Hojas en el río».",
+    "category": "adolescentes"
+  }
+}

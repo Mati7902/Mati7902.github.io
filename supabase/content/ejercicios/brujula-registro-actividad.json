@@ -1,0 +1,79 @@
+{
+  "slug": "brujula-registro-actividad",
+  "title": "Registro de actividad",
+  "description": "Anotá una actividad de tu plan: tu ánimo antes y después, y cuánto logro sentiste.",
+  "kind": "custom",
+  "approach": "tcc",
+  "audience": "adolescentes",
+  "collection": "brujula",
+  "estimated_minutes": 3,
+  "sort_order": 150,
+  "source": "Brújula, página 6 (Mi plan de 7 días)",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Mi plan de 7 días",
+      "content": "Usá este registro cada vez que hagas una actividad de tu plan de «Cuando me quiero aislar». Son menos de 3 minutos.\n\nCon el ánimo bajo, muchas veces primero viene la acción y después, de a poco, las ganas. Anotarlo te ayuda a ver qué te hace bien."
+    },
+    {
+      "id": "activity",
+      "type": "text",
+      "prompt": "¿Qué actividad hiciste?",
+      "help": "Por ejemplo: «Caminé 15 minutos», «Le escribí a Martina», «Ordené mi escritorio».",
+      "placeholder": "Lo que hice"
+    },
+    {
+      "id": "type",
+      "type": "checklist",
+      "prompt": "¿Qué tipo de actividad fue?",
+      "help": "Puede ser más de uno.",
+      "options": [
+        "P: placer, algo que disfrutás",
+        "L: logro, algo que cuesta un poco y te deja conforme",
+        "C: conexión, algo con otra persona"
+      ]
+    },
+    {
+      "id": "mood_before",
+      "type": "scale",
+      "prompt": "¿Cómo estaba tu ánimo antes?",
+      "min": 0,
+      "max": 10,
+      "min_label": "Muy bajo",
+      "max_label": "Muy bien"
+    },
+    {
+      "id": "mood_after",
+      "type": "scale",
+      "prompt": "¿Y después?",
+      "min": 0,
+      "max": 10,
+      "min_label": "Muy bajo",
+      "max_label": "Muy bien"
+    },
+    {
+      "id": "achievement",
+      "type": "scale",
+      "prompt": "¿Cuánto logro sentiste?",
+      "min": 0,
+      "max": 10,
+      "min_label": "Nada",
+      "max_label": "Mucho"
+    },
+    {
+      "id": "discovered",
+      "type": "text",
+      "prompt": "¿Qué descubriste?",
+      "help": "¿Cambió algo en tu ánimo? ¿Te costó empezar? Si no cambió nada, también es información.",
+      "optional": true
+    },
+    {
+      "id": "summary",
+      "type": "reflect",
+      "title": "Guardado en tu plan",
+      "template": "Hice: {{activity}}.",
+      "content": "Lo podés volver a ver en «Mis respuestas», con el ánimo de antes y de después. Traelo a la sesión: nos ayuda a ver qué te sirve."
+    }
+  ]
+}

@@ -1,0 +1,287 @@
+{
+  "slug": "tcc-creencias",
+  "title": "Creencias intermedias y nucleares",
+  "description": "Bajá de un pensamiento automático a la creencia de fondo con la flecha descendente y empezá a revisarla.",
+  "kind": "custom",
+  "approach": "tcc",
+  "audience": "adultos",
+  "collection": "tcc",
+  "estimated_minutes": 30,
+  "sort_order": 204,
+  "source": "Cuadernillo de TCC, capítulo 4 (páginas 17 a 21)",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Hojas, tronco y raíz",
+      "content": "Debajo de los pensamientos automáticos hay estructuras más profundas: reglas de vida y creencias sobre uno mismo que funcionan como el sistema operativo de la mente. Casi nunca las decimos en voz alta, pero deciden mucho.\n\nPensá en un árbol. Los **pensamientos automáticos** son las hojas: se ven, cambian con el clima, hay miles. Las **creencias intermedias** son el tronco y las ramas: las reglas con las que te movés por la vida. Las **creencias nucleares** son la raíz: ideas absolutas sobre quién sos, aprendidas muy temprano.\n\nSi solo cortás hojas, vuelven a crecer. Para un cambio duradero hay que llegar al tronco y a la raíz."
+    },
+    {
+      "id": "profundizar",
+      "type": "info",
+      "title": "Para profundizar (opcional)",
+      "content": "Beck describió tres niveles cognitivos:\n\n- **Creencias nucleares (esquemas):** ideas globales, rígidas y sobregeneralizadas sobre el self, los otros y el mundo, habitualmente formadas en experiencias tempranas.\n- **Creencias intermedias:** actitudes, reglas y supuestos condicionales que la persona desarrolla para sobrellevar esas creencias nucleares.\n- **Pensamientos automáticos:** la manifestación situacional de todo ese sistema."
+    },
+    {
+      "id": "tres_formas",
+      "type": "info",
+      "title": "Las tres formas de la creencia intermedia",
+      "content": "- **Actitud:** una valoración. «Es terrible cometer errores.»\n- **Regla:** un imperativo. «Nunca debo mostrar debilidad.»\n- **Supuesto condicional:** un «si… entonces…». «Si pido ayuda, entonces soy débil.» / «Si soy perfecto, entonces me van a querer.»"
+    },
+    {
+      "id": "dominios",
+      "type": "info",
+      "title": "Los tres dominios de las creencias nucleares",
+      "content": "Las creencias nucleares negativas sobre uno mismo suelen agruparse en tres grandes dominios (Judith Beck):\n\n- **Desamparo:** «soy impotente / incapaz». Por ejemplo: «no puedo con nada», «soy débil», «no tengo control», «estoy atrapado».\n- **Desamor:** «no soy querible». Por ejemplo: «no merezco cariño», «voy a terminar solo», «hay algo malo en mí».\n- **Desvalorización:** «no valgo / soy defectuoso». Por ejemplo: «soy un fracaso», «no sirvo», «soy mala persona»."
+    },
+    {
+      "id": "desarrollo",
+      "type": "info",
+      "title": "¿Cómo se desarrollan y cómo mantienen el malestar?",
+      "content": "Las creencias nucleares se forman a partir de experiencias repetidas, especialmente tempranas, y del significado que se les dio.\n\nUna vez instaladas, se auto-perpetúan. La persona:\n\n- presta más atención a la información que las confirma;\n- reinterpreta o descarta la que las contradice;\n- y desarrolla estrategias (reglas y conductas) para no sentir su dolor."
+    },
+    {
+      "id": "circulo",
+      "type": "info",
+      "title": "El círculo que las mantiene",
+      "content": "**Creencia nuclear** (por ejemplo, «no valgo»)\n→ **regla o supuesto** («si logro todo, valdré»)\n→ **estrategia** (exigencia, control, evitación)\n→ **pensamientos automáticos** ante cada situación\n→ **emoción y conducta** que, al final, confirman la creencia.\n\nLa creencia se protege a sí misma: cuando la regla se cumple, hay alivio; cuando se rompe, se dispara la creencia nuclear en toda su fuerza."
+    },
+    {
+      "id": "reconocer",
+      "type": "info",
+      "title": "¿Cómo reconocerlas?",
+      "content": "- Reglas que aparecen como «debería», «tengo que», «nunca», «siempre».\n- Supuestos «si… entonces…» que ordenan tu conducta sin que lo notes.\n- Reacciones desproporcionadas: cuando la emoción es mucho más grande que la situación, suele haber una creencia nuclear tocada.\n- Temas que se repiten en distintas áreas (pareja, trabajo, estudio): esa constante suele ser la raíz."
+    },
+    {
+      "id": "flecha",
+      "type": "info",
+      "title": "La técnica de la flecha descendente",
+      "content": "Para pasar de un pensamiento automático a la creencia nuclear se usa la **flecha descendente**: tomás un pensamiento y preguntás, una y otra vez, «si eso fuera cierto, ¿qué significaría?», hasta llegar a la idea de fondo.\n\n**Ejemplo**\nPensamiento: «Me equivoqué en la reunión.»\n↓ ¿Y si eso fuera cierto, qué significaría? «Que van a notar que no sé.»\n↓ ¿Y eso qué significaría? «Que no estoy a la altura del puesto.»\n↓ ¿Y eso qué diría de vos? «Que no sirvo.» ← creencia nuclear (desvalorización)"
+    },
+    {
+      "id": "areas",
+      "type": "info",
+      "title": "Ejemplos por área",
+      "content": "De la regla o supuesto (creencia intermedia) a la creencia nuclear probable:\n\n- **Autoestima:** «Si otro me critica, es que tiene razón» → desvalorización: «soy defectuoso».\n- **Trabajo:** «Si pido ayuda, soy un inútil» → desamparo: «soy incapaz».\n- **Universidad:** «Si no soy el mejor, no valgo nada» → desvalorización: «no soy suficiente».\n- **Duelo:** «Debería haber podido evitarlo» → desamparo / culpa: «fallé».\n- **Perfeccionismo:** «Si algo tiene un error, todo mi trabajo no sirve» → desvalorización: «no soy suficiente».\n\nAhora probá vos con otros tres."
+    },
+    {
+      "id": "quiz_ansiedad",
+      "type": "choice",
+      "prompt": "«Si mantengo todo bajo control, no pasará nada malo»: ¿a qué dominio apunta?",
+      "help": "Ejemplo del área ansiedad (1 de 3). Pensá qué creencia nuclear podría estar debajo de esa regla.",
+      "options": [
+        "Desamparo",
+        "Desamor",
+        "Desvalorización"
+      ],
+      "feedback": {
+        "Desamparo": "**Exacto.** La creencia nuclear probable es «no puedo con la incertidumbre». La idea central del desamparo es «soy impotente / incapaz».",
+        "Desamor": "**No en este caso.** La regla no habla de ser querido: habla de control. La creencia probable es «no puedo con la incertidumbre», del dominio **desamparo** («soy impotente / incapaz»).",
+        "Desvalorización": "**No en este caso.** La regla no habla de valer o de ser defectuoso: habla de control. La creencia probable es «no puedo con la incertidumbre», del dominio **desamparo** («soy impotente / incapaz»)."
+      }
+    },
+    {
+      "id": "quiz_pareja",
+      "type": "choice",
+      "prompt": "«Si me muestro como soy, me van a dejar»: ¿a qué dominio apunta?",
+      "help": "Ejemplo del área pareja (2 de 3).",
+      "options": [
+        "Desamparo",
+        "Desamor",
+        "Desvalorización"
+      ],
+      "feedback": {
+        "Desamor": "**Exacto.** La creencia nuclear probable es «no soy querible», la idea central del desamor.",
+        "Desamparo": "**No en este caso.** El temor no es a no poder, sino a que lo dejen. La creencia probable es «no soy querible», del dominio **desamor**.",
+        "Desvalorización": "**No en este caso.** El temor central no es no valer, sino que lo dejen. La creencia probable es «no soy querible», del dominio **desamor**."
+      }
+    },
+    {
+      "id": "quiz_depresion",
+      "type": "choice",
+      "prompt": "«Si no soy productivo, no valgo»: ¿a qué dominio apunta?",
+      "help": "Ejemplo del área depresión (3 de 3).",
+      "options": [
+        "Desamparo",
+        "Desamor",
+        "Desvalorización"
+      ],
+      "feedback": {
+        "Desvalorización": "**Exacto.** La creencia nuclear probable es «no sirvo». La idea central de la desvalorización es «no valgo / soy defectuoso».",
+        "Desamparo": "**No en este caso.** No dice «no puedo», dice «no valgo». La creencia probable es «no sirvo», del dominio **desvalorización**.",
+        "Desamor": "**No en este caso.** No habla de ser querido, sino de valer. La creencia probable es «no sirvo», del dominio **desvalorización**."
+      }
+    },
+    {
+      "id": "tecnicas",
+      "type": "info",
+      "title": "Técnicas para empezar a modificarlas",
+      "content": "- **Registro de datos positivos:** anotar cada día evidencia, por pequeña que sea, que contradiga la creencia nuclear negativa.\n- **Continuo cognitivo:** en vez de «valgo / no valgo», ubicar la situación en una escala de 0 a 100 para romper el todo o nada.\n- **Reescribir la regla:** convertir «tengo que ser perfecto» en «prefiero hacerlo bien, y el error es parte de aprender».\n- **Actuar contra la regla (experimentos):** pedir ayuda a propósito y observar qué pasa realmente.\n- **Creencia nuclear alternativa:** formular una versión más ajustada («soy suficiente, con virtudes y límites») y buscar evidencia que la sostenga."
+    },
+    {
+      "id": "carla",
+      "type": "info",
+      "title": "Caso clínico: Carla, 38 años",
+      "content": "**Depresión y sobreexigencia.** Carla llega agotada. Trabaja de más, no delega y se siente vacía. Con la flecha descendente aparece: «si dejo de rendir, van a ver quién soy realmente» → creencia nuclear de desvalorización: «no valgo por mí, solo por lo que produzco».\n\n**Trabajo en sesión:** se identifica el supuesto («si produzco, valgo»), se reescribe la regla y se diseña un experimento: delegar una tarea y registrar qué pasa con su valor a los ojos de los demás. La creencia empieza a resquebrajarse cuando la evidencia real no coincide con la predicción."
+    },
+    {
+      "id": "guiado_intro",
+      "type": "info",
+      "title": "Ejercicio guiado: de la hoja a la raíz",
+      "content": "Ahora vas a recorrer el camino con un pensamiento tuyo. Tus respuestas van a formar tu hoja de trabajo «reglas, supuestos y creencia nuclear».\n\n1. Elegí un pensamiento automático que te traiga mucha emoción.\n2. Aplicá la flecha descendente al menos tres veces.\n3. Cuando llegues a una frase corta sobre vos («soy…», «no…»), detenete: probablemente sea una creencia nuclear.\n4. Ubicala en uno de los tres dominios.\n5. Escribí la regla o supuesto que usás para no sentir esa creencia.\n6. Formulá una creencia alternativa más ajustada y realista.\n\nAndá a tu ritmo. Si te moviliza mucho, podés frenar, ir a **Calmarme** y retomarlo en sesión."
+    },
+    {
+      "id": "pensamiento",
+      "type": "text",
+      "prompt": "¿Qué pensamiento automático te trae mucha emoción?",
+      "help": "Escribilo tal como aparece. En el ejemplo: «Me equivoqué en la reunión.»"
+    },
+    {
+      "id": "flecha_1",
+      "type": "text",
+      "prompt": "Si eso fuera cierto, ¿qué significaría?",
+      "help": "En el ejemplo: «Que van a notar que no sé.»"
+    },
+    {
+      "id": "flecha_2",
+      "type": "text",
+      "prompt": "Y si eso fuera cierto, ¿qué significaría?",
+      "help": "En el ejemplo: «Que no estoy a la altura del puesto.»"
+    },
+    {
+      "id": "flecha_3",
+      "type": "text",
+      "prompt": "¿Y eso qué diría de vos?",
+      "help": "En el ejemplo: «Que no sirvo.» Si llegaste a una frase corta sobre vos («soy…», «no…»), probablemente sea la creencia nuclear."
+    },
+    {
+      "id": "flecha_4",
+      "type": "text",
+      "prompt": "Si todavía no llegaste a una frase corta sobre vos: ¿y eso qué significaría?",
+      "help": "Seguí preguntando hasta llegar a la idea de fondo. Si ya llegaste, tocá «Saltar».",
+      "optional": true
+    },
+    {
+      "id": "creencia",
+      "type": "text",
+      "prompt": "¿A qué creencia nuclear llegaste?",
+      "help": "Una frase corta sobre vos: «soy…», «no…». En el ejemplo: «No sirvo.»"
+    },
+    {
+      "id": "dominio",
+      "type": "choice",
+      "prompt": "¿En qué dominio la ubicás?",
+      "options": [
+        "Desamparo: «soy impotente / incapaz»",
+        "Desamor: «no soy querible»",
+        "Desvalorización: «no valgo / soy defectuoso»",
+        "No lo tengo claro"
+      ],
+      "feedback": {
+        "Desamparo: «soy impotente / incapaz»": "Otras creencias de este dominio: «no puedo con nada», «soy débil», «no tengo control», «estoy atrapado».",
+        "Desamor: «no soy querible»": "Otras creencias de este dominio: «no merezco cariño», «voy a terminar solo», «hay algo malo en mí».",
+        "Desvalorización: «no valgo / soy defectuoso»": "Otras creencias de este dominio: «soy un fracaso», «no sirvo», «soy mala persona». Es el dominio del ejemplo de la reunión y del caso de Carla.",
+        "No lo tengo claro": "Está bien. Volvé a mirar los ejemplos de cada dominio y, si seguís con dudas, revisalo en sesión con tu psicólogo."
+      }
+    },
+    {
+      "id": "regla",
+      "type": "text",
+      "prompt": "¿Qué regla o supuesto usás para no sentir esa creencia?",
+      "help": "Puede ser una actitud («es terrible…»), una regla («nunca debo…», «tengo que…») o un «si… entonces…». Carla: «si produzco, valgo»."
+    },
+    {
+      "id": "alternativa",
+      "type": "text",
+      "prompt": "¿Qué creencia alternativa, más ajustada y realista, podés formular?",
+      "help": "Por ejemplo: «soy suficiente, con virtudes y límites»."
+    },
+    {
+      "id": "hoja",
+      "type": "reflect",
+      "title": "Tu hoja: reglas, supuestos y creencia nuclear",
+      "template": "Pensamiento de partida: «{{pensamiento}}». Flecha descendente: «{{flecha_1}}» → «{{flecha_2}}» → «{{flecha_3}}». Creencia nuclear: «{{creencia}}» ({{dominio}}). Regla o supuesto que la protege: «{{regla}}». Creencia alternativa: «{{alternativa}}».",
+      "content": "Tus respuestas quedan guardadas: las podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también las puede ver."
+    },
+    {
+      "id": "registro",
+      "type": "reflect",
+      "title": "Registro de creencia nuclear alternativa",
+      "template": "Creencia antigua: «{{creencia}}». Creencia nueva, más ajustada: «{{alternativa}}».",
+      "content": "La creencia nueva se sostiene con evidencia. En la próxima pantalla anotá pruebas que la apoyen, por pequeñas que sean."
+    },
+    {
+      "id": "registro_evidencia",
+      "type": "list",
+      "prompt": "¿Qué evidencia apoya tu creencia nueva?",
+      "help": "Hechos de hoy o de tu historia, por mínimos que sean. El registro original tiene un renglón por día: completá los que puedas hoy y seguí durante la semana en «Registro de creencias nucleares».",
+      "count": 5,
+      "min": 1
+    },
+    {
+      "id": "refl_herencia",
+      "type": "text",
+      "prompt": "¿Qué reglas de vida heredaste sin haberlas elegido?",
+      "help": "Preguntas de reflexión: respondé las que quieras, podés saltear cualquiera.",
+      "optional": true
+    },
+    {
+      "id": "refl_dominio",
+      "type": "choice",
+      "prompt": "¿Cuál de los tres dominios resuena más con vos?",
+      "options": [
+        "Desamparo",
+        "Desamor",
+        "Desvalorización"
+      ],
+      "optional": true
+    },
+    {
+      "id": "refl_tema",
+      "type": "text",
+      "prompt": "¿Qué tema se repite en tus conflictos, sin importar el área?",
+      "optional": true
+    },
+    {
+      "id": "refl_evitar",
+      "type": "text",
+      "prompt": "¿Qué hacés para no sentir tu creencia nuclear más dolorosa?",
+      "optional": true
+    },
+    {
+      "id": "refl_regla",
+      "type": "text",
+      "prompt": "¿Cómo sería tu vida si esa regla dejara de mandar?",
+      "optional": true
+    },
+    {
+      "id": "refl_creerte",
+      "type": "text",
+      "prompt": "¿Qué creencia alternativa te gustaría poder creerte de verdad?",
+      "optional": true
+    },
+    {
+      "id": "refl_historia",
+      "type": "text",
+      "prompt": "¿Qué evidencia de tu historia contradice tu creencia negativa?",
+      "optional": true
+    },
+    {
+      "id": "para_llevar",
+      "type": "info",
+      "title": "Para llevar",
+      "content": "- Hay tres niveles: pensamientos automáticos (hojas), creencias intermedias (tronco) y nucleares (raíz).\n- Las creencias intermedias son actitudes, reglas y supuestos condicionales.\n- Las creencias nucleares negativas se agrupan en desamparo, desamor y desvalorización.\n- Se llega a ellas con la flecha descendente: «si fuera cierto, ¿qué significaría?».\n- Se modifican con evidencia, continuo cognitivo, reescritura de reglas y experimentos."
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "Tareas para casa, a lo largo de la semana:\n\n- Aplicá la flecha descendente a **dos pensamientos** distintos: podés volver a hacer este ejercicio con cada uno.\n- Identificá una regla «si… entonces…» que ordena tu conducta y escribila.\n- Registrá cada día una prueba, mínima, a favor de tu creencia alternativa (podés usar «Registro de creencias nucleares»).\n- Diseñá un pequeño experimento para actuar en contra de una de tus reglas y anotá el resultado.\n\nEl próximo capítulo es **«Cuestionamiento socrático y reestructuración»**."
+    }
+  ],
+  "material": {
+    "title": "Creencias intermedias y nucleares",
+    "description": "Reglas, supuestos y creencias nucleares: los tres dominios, la flecha descendente, el caso de Carla y hojas para trabajarlas.",
+    "category": "psicoeducacion"
+  }
+}

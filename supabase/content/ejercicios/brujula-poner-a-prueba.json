@@ -1,0 +1,167 @@
+{
+  "slug": "brujula-poner-a-prueba",
+  "title": "Poner a prueba lo que pienso",
+  "description": "Revisá un pensamiento como un detective: datos a favor, en contra y una forma más justa de verlo.",
+  "kind": "thought_record",
+  "approach": "tcc",
+  "audience": "adolescentes",
+  "collection": "brujula",
+  "estimated_minutes": 12,
+  "sort_order": 104,
+  "source": "Brújula, página 5",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Pensar más completo",
+      "content": "**No se trata de pensar lindo, sino de pensar más completo.**\n\nUn pensamiento no es verdad solo porque se siente fuerte. Ponelo a prueba como haría un detective: juntá datos a favor y en contra, y buscá una forma de verlo más realista.\n\nNo hace falta que sea positiva: alcanza con que sea más justa."
+    },
+    {
+      "id": "detective",
+      "type": "info",
+      "title": "Preguntas de detective",
+      "content": "Estas preguntas te van a ayudar en cada paso:\n\n- ¿Qué pruebas tengo de que es así?\n- ¿Hay algo que no encaja?\n- ¿Hay otra explicación posible?\n- ¿Qué es lo peor, lo mejor y lo más probable?\n- ¿Qué le diría a alguien que quiero?\n- ¿Pensar así me ayuda con lo que quiero?"
+    },
+    {
+      "id": "lucas_1",
+      "type": "info",
+      "title": "Así lo hizo Lucas (15 años)",
+      "content": "- **Situación:** desaprobó Matemática. Fue el día después de una pelea fuerte en casa.\n- **Pensamiento:** «Soy un burro, no sirvo para estudiar.»\n- **¿Cuánto lo creo?** 85 %.\n- **Emoción:** tristeza, 8 de 10.\n- **Lo que apoya el pensamiento:** «Desaprobé este examen.»\n- **Lo que no encaja:** «Aprobé Lengua y Sociales. Esa noche casi no dormí. Nunca pedí ayuda en Matemática.»"
+    },
+    {
+      "id": "lucas_2",
+      "type": "info",
+      "title": "Lucas sigue",
+      "content": "- **Otra forma de verlo:** «Me fue mal en un día muy difícil, y Matemática me cuesta.»\n- **¿Qué le diría a alguien que quiero?** «Un examen no dice cuánto valés.»\n- **Pensamiento nuevo:** «Me fue mal en este examen y todavía no pedí ayuda. Puedo pedirla.»\n- **¿Cuánto creo ahora el pensamiento del principio?** 40 %.\n- **¿Cómo me siento ahora?** Tristeza, 5 de 10."
+    },
+    {
+      "id": "mi_turno",
+      "type": "info",
+      "title": "Mi turno",
+      "content": "Ahora te toca a vos. Elegí un pensamiento que te haya pesado y seguí los mismos pasos que Lucas, una pregunta por vez.\n\n**Ojo:** esta hoja es para pensamientos, no para discutir si te trataron mal. Si alguien te lastimó o te hizo sentir menos, eso no se «corrige»: se cuenta. Para eso están «Cuando otros me hacen sentir menos» y «Mi red de apoyo»."
+    },
+    {
+      "id": "situation",
+      "type": "text",
+      "prompt": "Situación: ¿qué pasó?",
+      "help": "Contalo con pocas palabras: qué pasó, cuándo, con quién.\n\nAsí lo hizo Lucas: desaprobó Matemática. Fue el día después de una pelea fuerte en casa."
+    },
+    {
+      "id": "thought",
+      "type": "text",
+      "prompt": "Pensamiento: ¿qué pensaste?",
+      "help": "La frase que apareció en tu cabeza, tal cual.\n\nAsí lo hizo Lucas: «Soy un burro, no sirvo para estudiar.»"
+    },
+    {
+      "id": "belief_before",
+      "type": "scale",
+      "prompt": "¿Cuánto lo creés? (de 0 a 100 %)",
+      "help": "Lucas: 85 %.",
+      "min": 0,
+      "max": 100,
+      "min_label": "Nada",
+      "max_label": "Totalmente"
+    },
+    {
+      "id": "emotion",
+      "type": "checklist",
+      "prompt": "Emoción: ¿qué sentiste?",
+      "help": "Elegí hasta tres. Lucas sintió tristeza.",
+      "options": [
+        "Bronca",
+        "Tristeza",
+        "Miedo",
+        "Vergüenza",
+        "Culpa",
+        "Nervios",
+        "Soledad",
+        "Frustración",
+        "Celos",
+        "Alegría",
+        "Calma",
+        "Orgullo"
+      ],
+      "max": 3
+    },
+    {
+      "id": "emotion_intensity",
+      "type": "scale",
+      "prompt": "¿Qué tan fuerte fue la emoción? (de 0 a 10)",
+      "help": "Si marcaste más de una, puntuá la más fuerte. Lucas: tristeza, 8.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Nada",
+      "max_label": "Muchísimo",
+      "maps_to": "emotion_before"
+    },
+    {
+      "id": "evidence_for",
+      "type": "text",
+      "prompt": "¿Qué apoya el pensamiento?",
+      "help": "Datos, como un detective: ¿qué pruebas tenés de que es así?\n\nAsí lo hizo Lucas: «Desaprobé este examen.»"
+    },
+    {
+      "id": "evidence_against",
+      "type": "text",
+      "prompt": "¿Qué no encaja con el pensamiento?",
+      "help": "Preguntate: ¿hay algo que no encaja?\n\nAsí lo hizo Lucas: «Aprobé Lengua y Sociales. Esa noche casi no dormí. Nunca pedí ayuda en Matemática.»"
+    },
+    {
+      "id": "other_view",
+      "type": "text",
+      "prompt": "¿Hay otra forma de verlo?",
+      "help": "Preguntate: ¿hay otra explicación posible? ¿Qué es lo peor, lo mejor y lo más probable?\n\nAsí lo hizo Lucas: «Me fue mal en un día muy difícil, y Matemática me cuesta.»"
+    },
+    {
+      "id": "friend",
+      "type": "text",
+      "prompt": "¿Qué le dirías a alguien que querés si pensara lo mismo?",
+      "help": "Así lo hizo Lucas: «Un examen no dice cuánto valés.»"
+    },
+    {
+      "id": "new_thought",
+      "type": "text",
+      "prompt": "¿Cuál es tu pensamiento nuevo?",
+      "help": "No hace falta que sea positivo: alcanza con que sea más justo. Preguntate también: ¿pensar así me ayuda con lo que quiero?\n\nAsí lo hizo Lucas: «Me fue mal en este examen y todavía no pedí ayuda. Puedo pedirla.»"
+    },
+    {
+      "id": "belief_after",
+      "type": "scale",
+      "prompt": "¿Cuánto creés ahora el pensamiento del principio? (de 0 a 100 %)",
+      "help": "Lucas: 40 %.",
+      "min": 0,
+      "max": 100,
+      "min_label": "Nada",
+      "max_label": "Totalmente"
+    },
+    {
+      "id": "emotion_after",
+      "type": "scale",
+      "prompt": "¿Cómo te sentís ahora? (de 0 a 10)",
+      "help": "Puntuá la misma emoción de antes. Lucas: tristeza, 5.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Nada",
+      "max_label": "Muchísimo",
+      "maps_to": "emotion_after"
+    },
+    {
+      "id": "summary",
+      "type": "reflect",
+      "title": "Tu hoja de detective",
+      "template": "Pensamiento del principio: «{{thought}}». Lo que no encaja: «{{evidence_against}}». Otra forma de verlo: «{{other_view}}». Pensamiento nuevo: «{{new_thought}}».",
+      "content": "Cuando toques «Terminar», tus respuestas quedan guardadas: las podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo/a también las puede ver."
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "**10 a 15 minutos.** Hacé «Mi turno» otra vez con un pensamiento que te haya pesado esta semana: volvé a este ejercicio y ponelo a prueba con las preguntas de detective.\n\nAcordate: no se trata de pensar lindo, sino de pensar más completo."
+    }
+  ],
+  "material": {
+    "title": "Poner a prueba lo que pienso",
+    "description": "Hoja de detective para adolescentes: revisar un pensamiento con datos a favor y en contra, con el ejemplo de Lucas.",
+    "category": "adolescentes"
+  }
+}

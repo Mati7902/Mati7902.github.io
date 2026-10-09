@@ -1,0 +1,337 @@
+{
+  "slug": "tcc-reestructuracion",
+  "title": "Cuestionamiento socrático y reestructuración",
+  "description": "Poné a prueba un pensamiento con preguntas socráticas y construí uno alternativo con el registro de 7 columnas.",
+  "kind": "thought_record",
+  "approach": "tcc",
+  "audience": "adultos",
+  "collection": "tcc",
+  "estimated_minutes": 30,
+  "sort_order": 205,
+  "source": "Cuadernillo de TCC, capítulo 5 (páginas 22 a 25)",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "El motor del cambio",
+      "content": "Ya sabés detectar pensamientos, distorsiones y creencias. Ahora viene el motor del cambio: aprender a ponerlos a prueba con preguntas y a construir formas de pensar más ajustadas y útiles.\n\nCuestionar no es discutir con vos mismo ni obligarte a pensar bonito. Es hacerte buenas preguntas, como un **detective curioso** que quiere ver toda la evidencia antes de dar un veredicto. En vez de creerle al primer pensamiento, lo tratás como una hipótesis: «¿es esto realmente cierto?, ¿qué pruebas tengo a favor y en contra?, ¿hay otra forma de verlo?»."
+    },
+    {
+      "id": "profundizar",
+      "type": "info",
+      "title": "Para profundizar (opcional)",
+      "content": "El **cuestionamiento socrático** es un método de descubrimiento guiado: mediante preguntas abiertas, el terapeuta ayuda a la persona a examinar sus propios pensamientos y llegar a conclusiones más ajustadas por sí misma, en lugar de imponerle una interpretación.\n\nLa **reestructuración cognitiva** es el proceso más amplio de identificar, evaluar y modificar cogniciones desadaptativas; el diálogo socrático es una de sus herramientas centrales, junto con los experimentos conductuales y la búsqueda de evidencia."
+    },
+    {
+      "id": "actitud",
+      "type": "info",
+      "title": "La actitud correcta",
+      "content": "El objetivo no es «ganar» ni convencer, sino abrir la mirada. Una buena pregunta socrática genera una duda genuina, no una respuesta forzada.\n\n**La regla de oro:** preguntar con curiosidad real, no para llevar a la persona a donde ya decidimos."
+    },
+    {
+      "id": "preguntas",
+      "type": "info",
+      "title": "Las preguntas fundamentales",
+      "content": "Podés agrupar el cuestionamiento en cuatro familias de preguntas:\n\n- **Examinar la evidencia:** ¿Qué pruebas tengo a favor de este pensamiento? ¿Qué pruebas tengo en contra? ¿Estoy tomando una suposición como un hecho?\n- **Buscar alternativas:** ¿Hay otra forma de ver esto? ¿Qué diría alguien que me quiere bien? ¿Qué le diría yo a un amigo en esta situación?\n- **Descatastrofizar:** ¿Qué es lo peor que podría pasar? ¿Y lo mejor? ¿Qué es lo más probable? Si pasara lo peor, ¿cómo lo afrontaría?\n- **Evaluar la utilidad:** ¿Me sirve pensar así? ¿Qué efecto tiene en mí creer esto? ¿Qué ganaría pensándolo de otro modo?"
+    },
+    {
+      "id": "quiz_familia_1",
+      "type": "choice",
+      "prompt": "«Si pasara lo peor, ¿cómo lo afrontaría?»: ¿de qué familia es?",
+      "help": "Repaso rápido (1 de 2).",
+      "options": [
+        "Examinar la evidencia",
+        "Buscar alternativas",
+        "Descatastrofizar",
+        "Evaluar la utilidad"
+      ],
+      "feedback": {
+        "Descatastrofizar": "**Exacto.** Es de la familia descatastrofizar, junto con «¿Qué es lo peor que podría pasar? ¿Y lo mejor? ¿Qué es lo más probable?».",
+        "Examinar la evidencia": "**No.** Esa familia pregunta por pruebas a favor y en contra. Esta mira lo peor y cómo lo afrontarías: es de **descatastrofizar**.",
+        "Buscar alternativas": "**No.** Esa familia busca otra forma de ver la situación. Esta mira lo peor y cómo lo afrontarías: es de **descatastrofizar**.",
+        "Evaluar la utilidad": "**No.** Esa familia pregunta si te sirve pensar así. Esta mira lo peor y cómo lo afrontarías: es de **descatastrofizar**."
+      }
+    },
+    {
+      "id": "quiz_familia_2",
+      "type": "choice",
+      "prompt": "«¿Qué le diría yo a un amigo en esta situación?»: ¿de qué familia es?",
+      "help": "Repaso rápido (2 de 2).",
+      "options": [
+        "Examinar la evidencia",
+        "Buscar alternativas",
+        "Descatastrofizar",
+        "Evaluar la utilidad"
+      ],
+      "feedback": {
+        "Buscar alternativas": "**Exacto.** Es de la familia buscar alternativas, junto con «¿Hay otra forma de ver esto?» y «¿Qué diría alguien que me quiere bien?».",
+        "Examinar la evidencia": "**No.** Esa familia pregunta por pruebas a favor y en contra. Esta busca otra forma de ver la situación: es de **buscar alternativas**.",
+        "Descatastrofizar": "**No.** Esa familia mira lo peor, lo mejor y lo más probable. Esta busca otra forma de ver la situación: es de **buscar alternativas**.",
+        "Evaluar la utilidad": "**No.** Esa familia pregunta si te sirve pensar así. Esta busca otra forma de ver la situación: es de **buscar alternativas**."
+      }
+    },
+    {
+      "id": "quiz_retorica",
+      "type": "choice",
+      "prompt": "¿Cuál de estas dos es una pregunta socrática?",
+      "options": [
+        "«¿No te parece que exagerás?»",
+        "«¿Qué pruebas tengo en contra de este pensamiento?»"
+      ],
+      "feedback": {
+        "«¿No te parece que exagerás?»": "**No es socrática.** Es una pregunta retórica disfrazada: ya trae la respuesta metida. Una buena pregunta socrática genera una duda genuina, no una respuesta forzada.",
+        "«¿Qué pruebas tengo en contra de este pensamiento?»": "**Exacto.** Es una pregunta abierta, de la familia examinar la evidencia: no trae la respuesta puesta, invita a mirar los datos con curiosidad."
+      }
+    },
+    {
+      "id": "errores",
+      "type": "info",
+      "title": "Errores frecuentes",
+      "content": "Qué se confunde y cómo evitarlo:\n\n- **Convertir el socrático en interrogatorio.** Si la persona (o vos mismo) se siente acorralada, se cierra. Preguntá desde la curiosidad.\n- **Preguntas retóricas disfrazadas.** «¿No te parece que exagerás?» no es socrático: ya trae la respuesta metida.\n- **Buscar el pensamiento «positivo».** La meta es un pensamiento creíble y ajustado, no uno alegre que no te creés.\n- **Saltar la evidencia en contra propia.** Es fácil listar pruebas a favor del pensamiento negativo y olvidar las de en contra: forzate a buscar ambas.\n- **Quedarse solo en las palabras.** A veces el mejor cuestionamiento es un experimento: probar en la realidad, no solo debatir en la cabeza."
+    },
+    {
+      "id": "pasos",
+      "type": "info",
+      "title": "Reestructuración cognitiva paso a paso",
+      "content": "1. Identificá la situación y la emoción (con intensidad 0–100).\n2. Escribí el pensamiento automático caliente y su credibilidad (0–100).\n3. Nombrá la distorsión, si la hay.\n4. Buscá evidencia **a favor** del pensamiento (hechos, no interpretaciones).\n5. Buscá evidencia **en contra** (lo que solés pasar por alto).\n6. Construí un pensamiento alternativo que integre toda la evidencia, no que niegue lo negativo.\n7. Volvé a puntuar: credibilidad del pensamiento original e intensidad de la emoción. ¿Bajaron?"
+    },
+    {
+      "id": "alternativo_info",
+      "type": "info",
+      "title": "Cómo construir un buen pensamiento alternativo",
+      "content": "- Que sea creíble para vos (si no te lo creés, no funciona).\n- Que integre lo cierto del pensamiento original sin quedarse solo en eso.\n- Que sea equilibrado, no un eslogan optimista.\n- Que puedas usarlo la próxima vez que aparezca la situación."
+    },
+    {
+      "id": "quiz_alternativo",
+      "type": "choice",
+      "prompt": "Para «voy a fracasar seguro», ¿cuál es un pensamiento alternativo ajustado?",
+      "options": [
+        "«Me va a salir perfecto»",
+        "«No sé cómo va a salir, me preparé razonablemente y, pase lo que pase, puedo manejarlo»"
+      ],
+      "feedback": {
+        "«Me va a salir perfecto»": "**No.** Es el opuesto forzado: un eslogan optimista que difícilmente te creas. Un alternativo ajustado sería: «no sé cómo va a salir, me preparé razonablemente y, pase lo que pase, puedo manejarlo».",
+        "«No sé cómo va a salir, me preparé razonablemente y, pase lo que pase, puedo manejarlo»": "**Exacto.** Es creíble, equilibrado y lo podés usar la próxima vez. No es «voy a fracasar seguro» ni su opuesto forzado, «me va a salir perfecto»."
+      }
+    },
+    {
+      "id": "areas_1",
+      "type": "info",
+      "title": "Ejemplos por área (1 de 2)",
+      "content": "Del pensamiento automático al alternativo ajustado:\n\n- **Ansiedad:** «Me va a dar un ataque y no lo soporto» → «La ansiedad es intensa pero pasa; ya la atravesé antes».\n- **Depresión:** «No sirvo para nada» → «Hoy me cuesta, pero hay cosas que sí hago y sí me importan».\n- **Pareja:** «No le importo» → «No me escribió; puede haber muchas razones que no tienen que ver conmigo».\n- **Autoestima:** «Todos lo hacen mejor que yo» → «Cada uno tiene su ritmo; yo también tengo avances»."
+    },
+    {
+      "id": "areas_2",
+      "type": "info",
+      "title": "Ejemplos por área (2 de 2)",
+      "content": "- **Trabajo:** «Un error y arruiné todo» → «Cometí un error puntual; el resto del trabajo sigue en pie».\n- **Universidad:** «Si repruebo, soy un fracaso» → «Reprobar una materia es un traspié, no una definición de quién soy».\n- **Duelo:** «No tengo derecho a estar bien» → «Puedo extrañar y a la vez seguir viviendo; ambas cosas conviven».\n- **Perfeccionismo:** «Si no es perfecto, no vale» → «Bien hecho es suficiente; lo perfecto no existe y me agota»."
+    },
+    {
+      "id": "ana",
+      "type": "info",
+      "title": "Caso clínico: Ana, 26 años",
+      "content": "**Ansiedad social.** Ana evita reuniones por miedo a «quedar en ridículo». Pensamiento caliente: «todos van a ver que estoy nerviosa y me van a juzgar» (lectura de mente + catastrofización), credibilidad 90.\n\n- **Evidencia a favor:** «a veces me tiembla la voz».\n- **Evidencia en contra:** «nunca nadie me lo comentó, me han invitado de nuevo, yo no juzgo a otros por estar nerviosos».\n- **Alternativo:** «puedo estar algo nerviosa y aun así participar; la mayoría está pendiente de lo suyo, no de mí».\n\nLa credibilidad del original baja a 40; la ansiedad, de 80 a 50. Se cierra con un experimento: ir a una reunión y registrar cuántos comentarios recibe realmente."
+    },
+    {
+      "id": "guiado_intro",
+      "type": "info",
+      "title": "Ejercicio guiado: tu primera reestructuración",
+      "content": "Tomá un pensamiento caliente de tus registros y recorré el formulario completo, columna por columna, **sin saltarte la evidencia en contra**.\n\nEs el registro de pensamientos de 7 columnas: situación, emoción, pensamiento automático, distorsión, evidencia a favor, evidencia en contra y pensamiento alternativo con nueva puntuación. En cada pregunta vas a ver cómo lo hizo Ana.\n\nSi empezaste un registro en «Los pensamientos automáticos», retomalo acá: lo encontrás en ese ejercicio, en «Mis respuestas»."
+    },
+    {
+      "id": "situacion",
+      "type": "text",
+      "prompt": "1. Situación: ¿qué pasó?",
+      "help": "Dónde, cuándo, con quién. Ana: una reunión, de esas que suele evitar por miedo a «quedar en ridículo»."
+    },
+    {
+      "id": "emocion",
+      "type": "checklist",
+      "prompt": "2. Emoción: ¿qué sentiste?",
+      "help": "Cada emoción se nombra con una sola palabra. Marcá hasta tres. Ana sintió ansiedad.",
+      "options": [
+        "Angustia",
+        "Ansiedad",
+        "Miedo",
+        "Nerviosismo",
+        "Pánico",
+        "Bronca",
+        "Tristeza",
+        "Vergüenza",
+        "Culpa",
+        "Frustración",
+        "Inseguridad",
+        "Otra"
+      ],
+      "max": 3
+    },
+    {
+      "id": "emocion_otra",
+      "type": "text",
+      "prompt": "Si marcaste «Otra», ¿cuál fue?",
+      "help": "Una sola palabra. Si no marcaste «Otra», tocá «Saltar».",
+      "optional": true
+    },
+    {
+      "id": "emocion_intensidad",
+      "type": "scale",
+      "prompt": "¿Con qué intensidad la sentiste? (de 0 a 100)",
+      "help": "Si marcaste más de una, puntuá la más fuerte. Ana: ansiedad, 80.",
+      "min": 0,
+      "max": 100,
+      "min_label": "Nada",
+      "max_label": "Máxima"
+    },
+    {
+      "id": "pensamiento",
+      "type": "text",
+      "prompt": "3. Pensamiento automático: ¿qué pensaste?",
+      "help": "El pensamiento caliente, tal como apareció. Ana: «todos van a ver que estoy nerviosa y me van a juzgar»."
+    },
+    {
+      "id": "credibilidad",
+      "type": "scale",
+      "prompt": "¿Cuánto creés ese pensamiento? (de 0 a 100)",
+      "help": "Ana: 90.",
+      "min": 0,
+      "max": 100,
+      "min_label": "Nada",
+      "max_label": "Totalmente"
+    },
+    {
+      "id": "distorsion",
+      "type": "checklist",
+      "prompt": "4. Distorsión: ¿cuál o cuáles encajan?",
+      "help": "Si la hay; puede haber más de una. Ana: lectura de mente + catastrofización.",
+      "options": [
+        "Todo o nada",
+        "Sobregeneralización",
+        "Filtro mental",
+        "Descalificar lo positivo",
+        "Lectura de mente",
+        "Adivinación del futuro",
+        "Catastrofización",
+        "Razonamiento emocional",
+        "Debería / tener que",
+        "Etiquetación",
+        "Personalización",
+        "Culpabilización",
+        "No encuentro ninguna"
+      ]
+    },
+    {
+      "id": "evidencia_favor",
+      "type": "text",
+      "prompt": "5. Evidencia a favor: ¿qué hechos apoyan el pensamiento?",
+      "help": "Hechos, no interpretaciones. Ana: «a veces me tiembla la voz»."
+    },
+    {
+      "id": "evidencia_contra",
+      "type": "text",
+      "prompt": "6. Evidencia en contra: ¿qué hechos no encajan con el pensamiento?",
+      "help": "Lo que solés pasar por alto: forzate a buscarla. Te pueden ayudar estas preguntas: ¿estoy tomando una suposición como un hecho? ¿Qué le diría yo a un amigo en esta situación?\n\nAna: «nunca nadie me lo comentó, me han invitado de nuevo, yo no juzgo a otros por estar nerviosos»."
+    },
+    {
+      "id": "alternativo",
+      "type": "text",
+      "prompt": "7. Pensamiento alternativo: ¿qué forma más ajustada hay de verlo?",
+      "help": "Que integre toda la evidencia, no que niegue lo negativo: creíble, equilibrado y que puedas usar la próxima vez.\n\nAna: «puedo estar algo nerviosa y aun así participar; la mayoría está pendiente de lo suyo, no de mí»."
+    },
+    {
+      "id": "credibilidad_alternativo",
+      "type": "scale",
+      "prompt": "¿Cuánto creés el pensamiento alternativo? (de 0 a 100)",
+      "help": "Si no te lo creés, no funciona: si da muy bajo, volvé atrás y ajustalo.",
+      "min": 0,
+      "max": 100,
+      "min_label": "Nada",
+      "max_label": "Totalmente"
+    },
+    {
+      "id": "credibilidad_despues",
+      "type": "scale",
+      "prompt": "¿Cuánto creés ahora el pensamiento automático del principio? (de 0 a 100)",
+      "help": "Ana: bajó de 90 a 40.",
+      "min": 0,
+      "max": 100,
+      "min_label": "Nada",
+      "max_label": "Totalmente"
+    },
+    {
+      "id": "emocion_despues",
+      "type": "scale",
+      "prompt": "¿Con qué intensidad sentís ahora la emoción? (de 0 a 100)",
+      "help": "Puntuá la misma emoción de antes. Ana: la ansiedad bajó de 80 a 50.",
+      "min": 0,
+      "max": 100,
+      "min_label": "Nada",
+      "max_label": "Máxima"
+    },
+    {
+      "id": "resumen",
+      "type": "reflect",
+      "title": "Tu reestructuración",
+      "template": "Situación: «{{situacion}}». Pensamiento automático: «{{pensamiento}}». Distorsión: {{distorsion}}. Evidencia en contra: «{{evidencia_contra}}». Pensamiento alternativo: «{{alternativo}}».",
+      "content": "Compará tus puntuaciones de antes y de ahora: ¿bajaron la credibilidad del pensamiento y la intensidad de la emoción?\n\nTus respuestas quedan guardadas: las podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también las puede ver."
+    },
+    {
+      "id": "refl_preguntas",
+      "type": "text",
+      "prompt": "¿Qué preguntas socráticas te resultan más útiles?",
+      "help": "Preguntas de reflexión: respondé las que quieras, podés saltear cualquiera.",
+      "optional": true
+    },
+    {
+      "id": "refl_cuesta",
+      "type": "choice",
+      "prompt": "¿Te cuesta más buscar la evidencia en contra o construir el alternativo?",
+      "options": [
+        "Buscar la evidencia en contra",
+        "Construir el alternativo",
+        "Las dos por igual"
+      ],
+      "optional": true
+    },
+    {
+      "id": "refl_cuerpo",
+      "type": "text",
+      "prompt": "¿Qué pasa en tu cuerpo cuando un pensamiento pierde credibilidad?",
+      "optional": true
+    },
+    {
+      "id": "refl_experimento",
+      "type": "text",
+      "prompt": "¿En qué situaciones el mejor cuestionamiento sería un experimento y no un debate?",
+      "optional": true
+    },
+    {
+      "id": "refl_hablarte",
+      "type": "text",
+      "prompt": "¿Cómo te hablarías si te trataras como a alguien que querés?",
+      "optional": true
+    },
+    {
+      "id": "refl_a_mano",
+      "type": "text",
+      "prompt": "¿Qué pensamiento alternativo te gustaría tener a mano para tu situación más difícil?",
+      "optional": true
+    },
+    {
+      "id": "para_llevar",
+      "type": "info",
+      "title": "Para llevar",
+      "content": "- El cuestionamiento socrático es descubrimiento guiado, no discusión ni interrogatorio.\n- Cuatro familias de preguntas: evidencia, alternativas, descatastrofizar y utilidad.\n- La reestructuración va de la situación al pensamiento alternativo, pasando por la evidencia.\n- Un buen alternativo es creíble, equilibrado y utilizable, no un eslogan optimista.\n- A veces el mejor cuestionamiento es un experimento en la realidad."
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "Tareas para casa, a lo largo de la semana:\n\n- Completá el formulario de 7 columnas con al menos **tres pensamientos**: volvé a hacer este ejercicio con cada uno.\n- En cada uno, obligate a escribir tanta evidencia en contra como a favor.\n- Diseñá un experimento conductual para poner a prueba una predicción negativa.\n- Anotá si, al usar el pensamiento alternativo, la emoción baja de intensidad.\n- Repasá «50 preguntas socráticas» y elegí tus cinco favoritas.\n\nEl próximo capítulo es **«El modelo ABC de Ellis»**."
+    }
+  ],
+  "material": {
+    "title": "Cuestionamiento socrático y reestructuración",
+    "description": "Las cuatro familias de preguntas socráticas, cómo construir un pensamiento alternativo, el caso de Ana y el RPD de 7 columnas.",
+    "category": "psicoeducacion"
+  }
+}

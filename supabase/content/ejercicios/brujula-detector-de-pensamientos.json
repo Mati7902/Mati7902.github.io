@@ -1,0 +1,222 @@
+{
+  "slug": "brujula-detector-de-pensamientos",
+  "title": "Mi detector de pensamientos",
+  "description": "Separá hechos de pensamientos y reconocé ocho trampas frecuentes de la mente.",
+  "kind": "custom",
+  "approach": "tcc",
+  "audience": "adolescentes",
+  "collection": "brujula",
+  "estimated_minutes": 9,
+  "sort_order": 103,
+  "source": "Brújula, página 4",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Tu mente cuenta historias",
+      "content": "Algunas son ciertas y otras, no tanto.\n\nLos pensamientos automáticos aparecen solos, rápido, y suenan a verdad. Para cazarlos, preguntate: **«¿Qué se me pasó por la cabeza justo antes?»**"
+    },
+    {
+      "id": "camara",
+      "type": "info",
+      "title": "La prueba de la cámara",
+      "content": "Si una cámara lo podría grabar, es un **hecho**. Si no, es un **pensamiento**: una forma de interpretar lo que pasó.\n\n- Hecho: «Mi amiga no me saludó».\n- Pensamiento: «Está enojada conmigo».\n\n**Ojo:** que algo sea un pensamiento no quiere decir que sea falso. Y si alguien te trata mal, eso es un hecho, no un invento de tu mente."
+    },
+    {
+      "id": "quiz_1",
+      "type": "choice",
+      "prompt": "¿Hecho o pensamiento? «Desaprobé Matemática»",
+      "help": "Usá la prueba de la cámara. Frase 1 de 6.",
+      "options": [
+        "Hecho",
+        "Pensamiento"
+      ],
+      "feedback": {
+        "Hecho": "**¡Bien! Es un hecho.** Una cámara lo podría grabar: la nota está en la prueba.",
+        "Pensamiento": "**Es un hecho.** Una cámara lo podría grabar: la nota está en la prueba. Lo que pienses después sobre esa nota ya sería un pensamiento."
+      }
+    },
+    {
+      "id": "quiz_2",
+      "type": "choice",
+      "prompt": "¿Hecho o pensamiento? «Soy un burro»",
+      "help": "Frase 2 de 6.",
+      "options": [
+        "Hecho",
+        "Pensamiento"
+      ],
+      "feedback": {
+        "Hecho": "**Es un pensamiento.** Ninguna cámara puede grabar que alguien «es un burro». Lo que se puede grabar es, por ejemplo, una nota; «soy un burro» es una forma de interpretarla.",
+        "Pensamiento": "**¡Bien! Es un pensamiento.** Ninguna cámara puede grabar que alguien «es un burro»: es una forma de interpretar lo que pasó."
+      }
+    },
+    {
+      "id": "quiz_3",
+      "type": "choice",
+      "prompt": "¿Hecho o pensamiento? «Subieron una foto mía sin permiso»",
+      "help": "Frase 3 de 6.",
+      "options": [
+        "Hecho",
+        "Pensamiento"
+      ],
+      "feedback": {
+        "Hecho": "**¡Bien! Es un hecho.** Una cámara lo podría grabar: la foto está subida.\n\nSi alguien te trata mal, eso es un hecho, no un invento de tu mente, y no es tu culpa. De esto hablamos en «Cuando otros me hacen sentir menos».",
+        "Pensamiento": "**Es un hecho.** Una cámara lo podría grabar: la foto está subida.\n\nSi alguien te trata mal, eso es un hecho, no un invento de tu mente, y no es tu culpa. De esto hablamos en «Cuando otros me hacen sentir menos»."
+      }
+    },
+    {
+      "id": "quiz_4",
+      "type": "choice",
+      "prompt": "¿Hecho o pensamiento? «Nadie me va a querer nunca»",
+      "help": "Frase 4 de 6.",
+      "options": [
+        "Hecho",
+        "Pensamiento"
+      ],
+      "feedback": {
+        "Hecho": "**Es un pensamiento.** Ninguna cámara puede grabar el futuro. Suena a verdad, pero es una historia que cuenta tu mente.",
+        "Pensamiento": "**¡Bien! Es un pensamiento.** Ninguna cámara puede grabar el futuro. Aunque suene a verdad, es una historia que cuenta tu mente."
+      }
+    },
+    {
+      "id": "quiz_5",
+      "type": "choice",
+      "prompt": "¿Hecho o pensamiento? «La profe me pidió que me quede después de clase»",
+      "help": "Frase 5 de 6.",
+      "options": [
+        "Hecho",
+        "Pensamiento"
+      ],
+      "feedback": {
+        "Hecho": "**¡Bien! Es un hecho.** Una cámara lo podría grabar: la profe lo dijo. Lo que imagines sobre para qué te lo pidió ya sería un pensamiento.",
+        "Pensamiento": "**Es un hecho.** Una cámara lo podría grabar: la profe lo dijo. Lo que imagines sobre para qué te lo pidió ya sería un pensamiento (mirá la frase que sigue)."
+      }
+    },
+    {
+      "id": "quiz_6",
+      "type": "choice",
+      "prompt": "¿Hecho o pensamiento? «Me van a retar»",
+      "help": "Frase 6 de 6.",
+      "options": [
+        "Hecho",
+        "Pensamiento"
+      ],
+      "feedback": {
+        "Hecho": "**Es un pensamiento.** Es lo que tu mente imagina que va a pasar después de que la profe te pidió que te quedes. Ninguna cámara lo puede grabar todavía: puede pasar o no.",
+        "Pensamiento": "**¡Bien! Es un pensamiento.** Es lo que tu mente imagina que va a pasar después de que la profe te pidió que te quedes. Ninguna cámara lo puede grabar todavía: puede pasar o no."
+      }
+    },
+    {
+      "id": "trampas_1",
+      "type": "info",
+      "title": "Ocho trampas frecuentes de la mente (1 de 3)",
+      "content": "Fijate si alguna te suena.\n\n**1. Todo o nada.** Si no es perfecto, es un desastre.\n«No me saqué 5: soy un desastre».\n\n**2. Leer la mente.** Creés saber lo que piensa el otro.\n«Papá llegó callado. Seguro está enojado conmigo».\n\n**3. Película de terror.** Imaginás lo peor como si ya hubiera pasado.\n«Si me va mal en la prueba, se me arruina el año»."
+    },
+    {
+      "id": "trampas_2",
+      "type": "info",
+      "title": "Ocho trampas frecuentes de la mente (2 de 3)",
+      "content": "**4. Ponerse etiquetas.** Un error se vuelve lo que sos.\n«Soy un fracasado».\n\n**5. Siempre o nunca.** Una vez se vuelve todas las veces.\n«Nunca me sale nada bien».\n\n**6. Lente oscuro.** Solo ves lo malo.\n«Me dijeron cinco cosas buenas y una mala. Solo pienso en la mala»."
+    },
+    {
+      "id": "trampas_3",
+      "type": "info",
+      "title": "Ocho trampas frecuentes de la mente (3 de 3)",
+      "content": "**7. Bola de cristal.** Das por seguro el futuro.\n«En el colegio nuevo no voy a tener amigos».\n\n**8. Lo siento, entonces es así.** Confundís lo que sentís con lo que pasó.\n«Me dio vergüenza, así que hice el ridículo»."
+    },
+    {
+      "id": "caigo_mas",
+      "type": "checklist",
+      "prompt": "¿En cuáles caigo más?",
+      "help": "Marcá las tuyas.",
+      "options": [
+        "Todo o nada",
+        "Leer la mente",
+        "Película de terror",
+        "Ponerse etiquetas",
+        "Siempre o nunca",
+        "Lente oscuro",
+        "Bola de cristal",
+        "Lo siento, entonces es así"
+      ]
+    },
+    {
+      "id": "la_que_mas",
+      "type": "choice",
+      "prompt": "¿Cuál es la que más me pasa?",
+      "options": [
+        "Todo o nada",
+        "Leer la mente",
+        "Película de terror",
+        "Ponerse etiquetas",
+        "Siempre o nunca",
+        "Lente oscuro",
+        "Bola de cristal",
+        "Lo siento, entonces es así"
+      ]
+    },
+    {
+      "id": "historia_intro",
+      "type": "info",
+      "title": "¿Qué historia me contó mi mente?",
+      "content": "Ahora elegí un momento tuyo. Puede ser uno que anotaste esta semana (con «Registrar cómo me siento» o en «Entender lo que me pasa») o algo que te pasó hace poco.\n\nVas a separar lo que pasó de la historia que te contó tu mente."
+    },
+    {
+      "id": "camara_vio",
+      "type": "text",
+      "prompt": "Lo que pasó: ¿qué vería una cámara?",
+      "help": "Solo lo que se podría grabar. Por ejemplo: «Mi amiga no me saludó»."
+    },
+    {
+      "id": "historia",
+      "type": "text",
+      "prompt": "¿Qué historia me contó mi mente?",
+      "help": "Por ejemplo: «Está enojada conmigo»."
+    },
+    {
+      "id": "trampa",
+      "type": "choice",
+      "prompt": "¿En qué trampa caí?",
+      "help": "Si caíste en más de una, elegí la que más se nota.",
+      "options": [
+        "Todo o nada (si no es perfecto, es un desastre)",
+        "Leer la mente (creés saber lo que piensa el otro)",
+        "Película de terror (imaginás lo peor como si ya hubiera pasado)",
+        "Ponerse etiquetas (un error se vuelve lo que sos)",
+        "Siempre o nunca (una vez se vuelve todas las veces)",
+        "Lente oscuro (solo ves lo malo)",
+        "Bola de cristal (das por seguro el futuro)",
+        "Lo siento, entonces es así (confundís lo que sentís con lo que pasó)",
+        "No estoy seguro/a"
+      ]
+    },
+    {
+      "id": "cuanto_creo",
+      "type": "scale",
+      "prompt": "¿Cuánto me creo esa historia?",
+      "help": "De 0 a 100 %.",
+      "min": 0,
+      "max": 100,
+      "min_label": "Nada",
+      "max_label": "Totalmente"
+    },
+    {
+      "id": "resumen",
+      "type": "reflect",
+      "title": "Lo que pasó y la historia",
+      "template": "Una cámara vería: «{{camara_vio}}». Mi mente me contó: «{{historia}}». Trampa: {{trampa}}. En general caigo en: {{caigo_mas}}. La que más me pasa: {{la_que_mas}}.",
+      "content": "Que algo sea un pensamiento no quiere decir que sea falso. Lo que sigue es ponerlo a prueba."
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "La tarea de esta semana está en el próximo ejercicio, **«Poner a prueba lo que pienso»** (10 a 15 minutos): vas a tomar un pensamiento que te haya pesado y ponerlo a prueba como un detective. Puede ser la historia que anotaste hoy.\n\nSi querés, antes repetí este ejercicio con otros momentos de tu registro."
+    }
+  ],
+  "material": {
+    "title": "Mi detector de pensamientos",
+    "description": "Hechos y pensamientos, la prueba de la cámara y las ocho trampas frecuentes de la mente. Para adolescentes (Brújula, página 4).",
+    "category": "adolescentes"
+  }
+}

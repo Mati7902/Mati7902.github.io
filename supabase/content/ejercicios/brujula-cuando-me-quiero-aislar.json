@@ -1,0 +1,110 @@
+{
+  "slug": "brujula-cuando-me-quiero-aislar",
+  "title": "Cuando me quiero aislar",
+  "description": "Salir del aislamiento con pasos chicos: ideas que no cuestan plata, tu escalera y un plan de 7 días.",
+  "kind": "custom",
+  "approach": "tcc",
+  "audience": "adolescentes",
+  "collection": "brujula",
+  "estimated_minutes": 10,
+  "sort_order": 105,
+  "source": "Brújula, página 6",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Encerrarse da alivio",
+      "content": "**No esperes a tener ganas: da un paso chico y fijate qué pasa.**\n\nCuando estamos mal, encerrarnos da alivio. A veces es una forma de protegerse, y está bien.\n\nEl problema es cuando se vuelve lo único: hacemos cada vez menos y las ganas no vuelven solas."
+    },
+    {
+      "id": "circle",
+      "type": "info",
+      "title": "El círculo",
+      "content": "Funciona como un círculo:\n\n1. **Evito, me aíslo.**\n2. **Alivio corto.**\n3. **Más aislamiento.**\n4. **Menos cosas buenas.**\n…y vuelve a empezar.\n\nPor eso, con el ánimo bajo, muchas veces primero viene la acción y después, de a poco, las ganas."
+    },
+    {
+      "id": "lucas",
+      "type": "info",
+      "title": "Lucas, 15 años",
+      "content": "Después de las discusiones en casa, se encierra en la pieza. Dejó el fútbol.\n\nUn rato se siente mejor, pero los fines de semana se le hacen eternos."
+    },
+    {
+      "id": "ideas",
+      "type": "checklist",
+      "prompt": "Ideas que no cuestan plata: ¿cuáles te gustaría probar?",
+      "help": "Cada idea tiene su letra:\n\n- **P: placer**, algo que disfrutás.\n- **L: logro**, algo que cuesta un poco y te deja conforme.\n- **C: conexión**, algo con otra persona.\n\nMarcá todas las que quieras.",
+      "options": [
+        "Caminar o andar en bici (P)",
+        "Escuchar música (P)",
+        "Dibujar o escribir (P)",
+        "Jugar al fútbol o al vóley (P, C)",
+        "Tomar tereré con alguien (C)",
+        "Ayudar en una tarea de la casa (L)",
+        "Ordenar mi espacio (L)",
+        "Estudiar 15 minutos (L)",
+        "Salir al patio un rato (P)",
+        "Jugar con una mascota (P)",
+        "Escribirle a alguien (C)",
+        "Retomar un hobby (P, L)"
+      ]
+    },
+    {
+      "id": "escalera",
+      "type": "info",
+      "title": "Mi escalera",
+      "content": "Una escalera va del paso más fácil al más difícil, hacia una meta tuya. Cada escalón es un paso chico.\n\nLa escalera de Lucas:\n\n- **1. Muy fácil:** mirar un entrenamiento desde afuera.\n- **2. Fácil:** escribirle al técnico.\n- **3. Medio:** ir a un entrenamiento.\n- **4. Difícil:** ir dos veces por semana."
+    },
+    {
+      "id": "goal",
+      "type": "text",
+      "prompt": "Mi escalera: ¿cuál es tu meta?",
+      "help": "Algo tuyo a lo que te gustaría llegar, de a poco."
+    },
+    {
+      "id": "ladder",
+      "type": "list",
+      "prompt": "Escribí 4 escalones, del más fácil al más difícil",
+      "help": "Uno por renglón, en orden: 1. Muy fácil · 2. Fácil · 3. Medio · 4. Difícil.\n\nLucas empezó por «mirar un entrenamiento desde afuera».",
+      "count": 4
+    },
+    {
+      "id": "plan_intro",
+      "type": "info",
+      "title": "Mi plan de 7 días",
+      "content": "Ahora armá tu plan para esta semana: una actividad por día. Pueden ser ideas de la lista o escalones de tu escalera.\n\nDurante la semana vas a anotar tu ánimo antes y después de cada actividad, y cuánto logro sentiste, de 0 a 10."
+    },
+    {
+      "id": "plan",
+      "type": "list",
+      "prompt": "¿Qué actividad vas a hacer cada día?",
+      "help": "Un renglón por día: el día, la actividad y su letra (P, L o C). Por ejemplo: «Lunes: escuchar música (P)».",
+      "count": 7,
+      "min": 3
+    },
+    {
+      "id": "summary",
+      "type": "reflect",
+      "title": "Tu plan",
+      "template": "Mi meta: «{{goal}}». Mi escalera, del paso más fácil al más difícil: {{ladder}}.",
+      "content": "Cuando toques «Terminar», tu plan de 7 días queda guardado junto con tu escalera: lo podés volver a ver en este ejercicio, en «Mis respuestas»."
+    },
+    {
+      "id": "discovered",
+      "type": "text",
+      "prompt": "Lo que descubrí: ¿qué notaste en tu ánimo?",
+      "help": "Si ya hiciste alguna actividad del plan, anotá qué pasó con tu ánimo antes y después. Si todavía no, tocá «Saltar»: la completás cuando vuelvas a este ejercicio al final de la semana.",
+      "optional": true
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "**5 minutos por día.** Hacé al menos 3 actividades del plan. Después de cada una, anotá en «Registro de actividad» qué hiciste, tu ánimo antes y después (de 0 a 10) y cuánto logro sentiste.\n\nAl final de la semana, hacé este ejercicio de nuevo: armá el plan de la semana siguiente y anotá lo que descubriste.\n\nNo esperes a tener ganas: da un paso chico y fijate qué pasa."
+    }
+  ],
+  "material": {
+    "title": "Cuando me quiero aislar",
+    "description": "El círculo del aislamiento, ideas que no cuestan plata (placer, logro y conexión), una escalera de pasos y un plan de 7 días.",
+    "category": "adolescentes"
+  }
+}

@@ -1,0 +1,276 @@
+{
+  "slug": "tcc-modelo-cognitivo",
+  "title": "El modelo cognitivo",
+  "description": "Entendé cómo la interpretación de lo que pasa moldea lo que sentís y hacés, y hacé tu primer desglose.",
+  "kind": "custom",
+  "approach": "tcc",
+  "audience": "adultos",
+  "collection": "tcc",
+  "estimated_minutes": 20,
+  "sort_order": 201,
+  "source": "Cuadernillo de TCC, Capítulo 1 (páginas 5 a 8)",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "El modelo cognitivo de Beck",
+      "content": "No nos alteran las cosas que pasan, sino **la lectura que hacemos de ellas**.\n\nEse es el corazón del modelo que Aaron T. Beck construyó a partir de su trabajo con personas con depresión."
+    },
+    {
+      "id": "ruido",
+      "type": "info",
+      "title": "Un ruido de noche",
+      "content": "Imaginá que estás en casa de noche y escuchás un ruido fuerte.\n\nSi pensás «entró alguien», vas a sentir miedo, el corazón se acelera y quizás buscás algo para defenderte. Si pensás «fue el gato que tiró algo», te quedás tranquilo y seguís con lo tuyo.\n\nEl ruido fue el mismo; lo que cambió fue el pensamiento. Y ese pensamiento cambió la emoción, el cuerpo y la conducta.\n\nEl modelo cognitivo dice justamente eso: entre lo que ocurre y lo que sentimos siempre se cuela una interpretación. Muchas veces es tan rápida y automática que ni la notamos, pero está ahí, dirigiendo la escena."
+    },
+    {
+      "id": "esquema",
+      "type": "info",
+      "title": "El esquema básico",
+      "content": "**Situación → Pensamiento → Emoción + Respuesta física → Conducta**\n\nEl pensamiento es la bisagra. Trabajar sobre él es trabajar sobre todo lo demás.\n\nEn el ejemplo del ruido:\n\n- **Situación:** un ruido fuerte, de noche, en casa.\n- **Pensamiento:** «entró alguien».\n- **Emoción:** miedo.\n- **Respuesta física:** el corazón se acelera.\n- **Conducta:** buscás algo para defenderte."
+    },
+    {
+      "id": "clinica_1",
+      "type": "info",
+      "title": "Para profundizar (1 de 2)",
+      "content": "*Explicación clínica. Si preferís, pasá a la pantalla siguiente.*\n\nEl modelo cognitivo propone que el procesamiento de la información media la respuesta emocional y conductual. Ante un estímulo (interno o externo), la persona activa **esquemas** —estructuras cognitivas de significado— que orientan la atención, la interpretación y la memoria, y que se expresan en pensamientos automáticos situacionales. Estos pensamientos generan respuestas emocionales, fisiológicas y conductuales que, a su vez, retroalimentan el sistema."
+    },
+    {
+      "id": "clinica_2",
+      "type": "info",
+      "title": "Para profundizar (2 de 2)",
+      "content": "En su formulación más reciente (Beck y Haigh, 2014), el modelo subraya el carácter continuo entre respuestas normales y disfuncionales: no hay pensamientos «anormales», sino sesgos de interpretación que, cuando se vuelven rígidos, excesivos o desajustados respecto de la evidencia, sostienen el malestar. El objetivo no es «pensar en positivo», sino recuperar flexibilidad y ajuste.\n\nNiveles de cognición, de menor a mayor profundidad:\n\n- **Pensamientos automáticos:** superficiales, situacionales.\n- **Creencias intermedias:** reglas, supuestos y actitudes.\n- **Creencias nucleares:** esquemas absolutos sobre uno mismo, los demás y el mundo.\n\nLos capítulos siguientes recorren cada nivel."
+    },
+    {
+      "id": "cotidiano",
+      "type": "checklist",
+      "prompt": "¿Cuáles de estas señales reconocés en tu vida cotidiana?",
+      "help": "Así se reconoce el modelo en acción. Cuando notás un cambio emocional brusco y no sabés bien por qué, casi siempre hubo un pensamiento en el medio. Marcá las que te pasan.",
+      "optional": true,
+      "options": [
+        "Noto un cambio emocional brusco (angustia, bronca, tristeza) y no sé bien por qué",
+        "Frente a un mismo hecho, otra persona y yo reaccionamos de manera muy distinta",
+        "Mi cuerpo reacciona (tensión, taquicardia, nudo en el estómago) antes de que pueda nombrar lo que pensé",
+        "Tomo una decisión (evitar, callar, irme) para aliviar una emoción que apareció «de la nada»"
+      ]
+    },
+    {
+      "id": "ejemplos_1",
+      "type": "info",
+      "title": "Ejemplos por área (1 de 2)",
+      "content": "Situación → pensamiento → emoción y conducta.\n\n- **Ansiedad.** Suena el teléfono con número desconocido → «Seguro es una mala noticia» → angustia; no atiende.\n- **Depresión.** Un amigo tarda en responder un mensaje → «Se cansó de mí» → tristeza; se aísla.\n- **Pareja.** La pareja llega callada del trabajo → «Está enojada conmigo» → inseguridad; reclama.\n- **Autoestima.** Se equivoca al hablar en una reunión → «Quedé como un tonto» → vergüenza; se calla el resto.\n- **Trabajo.** El jefe pide «hablar un momento» → «Me van a echar» → miedo; no duerme."
+    },
+    {
+      "id": "ejemplos_2",
+      "type": "info",
+      "title": "Ejemplos por área (2 de 2)",
+      "content": "- **Universidad.** Ve una consigna difícil en el examen → «No voy a poder, soy un desastre» → bloqueo; deja el examen.\n- **Duelo.** Se ríe con amigos tras una pérdida → «No tengo derecho a estar bien» → culpa; se retira.\n- **Perfeccionismo.** Entrega un informe con un error menor → «Está todo arruinado» → frustración; rehace todo.\n- **Ansiedad social.** Alguien no le devuelve el saludo → «Le caigo mal» → malestar; evita cruzarlo.\n- **Autoestima.** Recibe un elogio → «Lo dice por compromiso» → incomodidad; lo minimiza."
+    },
+    {
+      "id": "errores",
+      "type": "info",
+      "title": "Errores frecuentes",
+      "content": "Qué se confunde y cómo evitarlo:\n\n- **Creer que el modelo dice «la culpa es tuya por pensar mal».** No. Dice que la interpretación influye, no que la persona elige sufrir. Los pensamientos automáticos no se eligen; se aprenden.\n- **Confundirlo con «pensamiento positivo».** El objetivo es pensar de forma más ajustada y flexible, no más optimista a la fuerza.\n- **Saltear la emoción.** Identificar y nombrar la emoción es parte del trabajo, no un paso menor.\n- **Buscar «el» pensamiento correcto.** Suele haber varios pensamientos encadenados; conviene mapearlos todos."
+    },
+    {
+      "id": "diferencias",
+      "type": "info",
+      "title": "Diferencias con conceptos similares",
+      "content": "- **Situación:** el hecho observable. Es neutral; no contiene interpretación.\n- **Pensamiento:** la lectura que hacemos del hecho. Es lo que cambia entre personas.\n- **Emoción:** la respuesta afectiva (una palabra). Se siente; no se discute como verdadera o falsa.\n- **Conducta:** lo que hacemos. Es observable; suele buscar aliviar la emoción.\n\nEn las próximas pantallas, probá distinguirlos con uno de los ejemplos."
+    },
+    {
+      "id": "quiz_1",
+      "type": "choice",
+      "prompt": "«Un amigo tarda en responder un mensaje». ¿Qué es?",
+      "help": "Ejemplo del área depresión. 1 de 4.",
+      "options": [
+        "Situación",
+        "Pensamiento",
+        "Emoción",
+        "Conducta"
+      ],
+      "feedback": {
+        "Situación": "**¡Bien! Es la situación:** el hecho observable. Es neutral; no contiene interpretación.",
+        "Pensamiento": "**Es la situación:** el hecho observable. Es neutral; no contiene interpretación. El pensamiento sería la lectura que hacemos de ese hecho, como «se cansó de mí».",
+        "Emoción": "**Es la situación:** el hecho observable. Una emoción se nombra con una palabra (tristeza, miedo) y se siente; esto es algo que pasó afuera.",
+        "Conducta": "**Es la situación:** el hecho observable, lo que pasó. La conducta es lo que hace la persona después, para aliviar lo que siente."
+      }
+    },
+    {
+      "id": "quiz_2",
+      "type": "choice",
+      "prompt": "«Se cansó de mí». ¿Qué es?",
+      "help": "Mismo ejemplo. 2 de 4.",
+      "options": [
+        "Situación",
+        "Pensamiento",
+        "Emoción",
+        "Conducta"
+      ],
+      "feedback": {
+        "Situación": "**Es un pensamiento:** la lectura que hacemos del hecho. Lo observable es que el amigo tarda en responder; «se cansó de mí» es una interpretación, y es lo que cambia entre personas.",
+        "Pensamiento": "**¡Bien! Es el pensamiento:** la lectura que hacemos del hecho. Es lo que cambia entre personas: frente al mismo mensaje sin respuesta, otra persona podría leerlo de otra manera.",
+        "Emoción": "**Es un pensamiento:** se puede escribir como una frase. La emoción que trae se nombra con una palabra: tristeza.",
+        "Conducta": "**Es un pensamiento:** la lectura que hacemos del hecho. La conducta es lo que la persona hace, y eso se puede observar."
+      }
+    },
+    {
+      "id": "quiz_3",
+      "type": "choice",
+      "prompt": "«Tristeza». ¿Qué es?",
+      "help": "Mismo ejemplo. 3 de 4.",
+      "options": [
+        "Situación",
+        "Pensamiento",
+        "Emoción",
+        "Conducta"
+      ],
+      "feedback": {
+        "Situación": "**Es la emoción:** la respuesta afectiva, que se nombra con una palabra. La situación es el hecho de afuera: el amigo que tarda en responder.",
+        "Pensamiento": "**Es la emoción:** se nombra con una sola palabra. El pensamiento es una frase, como «se cansó de mí».",
+        "Emoción": "**¡Bien! Es la emoción:** la respuesta afectiva, en una palabra. Se siente; no se discute como verdadera o falsa.",
+        "Conducta": "**Es la emoción:** se siente por dentro. La conducta es lo que hacemos, y suele buscar aliviar esa emoción."
+      }
+    },
+    {
+      "id": "quiz_4",
+      "type": "choice",
+      "prompt": "«Se aísla». ¿Qué es?",
+      "help": "Mismo ejemplo. 4 de 4.",
+      "options": [
+        "Situación",
+        "Pensamiento",
+        "Emoción",
+        "Conducta"
+      ],
+      "feedback": {
+        "Situación": "**Es la conducta:** lo que hace la persona después de pensar «se cansó de mí» y sentirse triste. La situación fue el mensaje sin respuesta.",
+        "Pensamiento": "**Es la conducta:** algo que la persona hace y que se puede observar. El pensamiento fue «se cansó de mí».",
+        "Emoción": "**Es la conducta:** lo que la persona hace. La emoción fue la tristeza; aislarse suele buscar aliviarla.",
+        "Conducta": "**¡Bien! Es la conducta:** lo que hacemos. Es observable y suele buscar aliviar la emoción."
+      }
+    },
+    {
+      "id": "marcos_1",
+      "type": "info",
+      "title": "Marcos, 34 años (1 de 2)",
+      "content": "*Consulta por ansiedad.*\n\nMarcos llega a sesión angustiado tras una reunión de trabajo. Cuenta: «El gerente miró su celular mientras yo hablaba; supe que lo estaba haciendo mal». Desde entonces evita hablar en reuniones.\n\n**Desglose con el modelo:**\n\n- **Situación:** el gerente mira el celular.\n- **Pensamiento automático:** «lo estoy haciendo mal, no sirvo para esto».\n- **Emoción:** ansiedad y vergüenza.\n- **Respuesta física:** sudoración, voz temblorosa.\n- **Conducta:** acorta su intervención y evita futuras reuniones."
+    },
+    {
+      "id": "marcos_2",
+      "type": "info",
+      "title": "Marcos, 34 años (2 de 2)",
+      "content": "**Intervención inicial:** el terapeuta no discute si el gerente estaba o no aburrido. Ayuda a Marcos a ver el paso intermedio —el pensamiento— y a considerar lecturas alternativas: «tal vez respondía un mensaje urgente».\n\nEl objetivo de esta primera fase es que Marcos **observe su propio proceso**, no que se convenza de nada."
+    },
+    {
+      "id": "desglose_intro",
+      "type": "info",
+      "title": "Tu primer desglose",
+      "content": "Elegí un momento reciente en que sentiste una emoción intensa. Vas a desglosarlo paso a paso, como Marcos: situación, emoción, cuerpo, pensamiento y conducta.\n\nEs la hoja de trabajo «mapa situación–pensamiento–emoción» del cuadernillo, una pregunta por vez."
+    },
+    {
+      "id": "situacion",
+      "type": "text",
+      "prompt": "Describí la situación en una frase, como si fuera una foto",
+      "help": "Qué, quién, cuándo, dónde. Sin interpretaciones. Así lo anotó Marcos: «El gerente mira el celular»."
+    },
+    {
+      "id": "emocion",
+      "type": "checklist",
+      "prompt": "¿Qué emoción sentiste?",
+      "help": "Cada emoción se nombra con una sola palabra. Marcá hasta tres. Marcos marcaría ansiedad y vergüenza.",
+      "max": 3,
+      "options": [
+        "Angustia",
+        "Ansiedad",
+        "Miedo",
+        "Bronca",
+        "Tristeza",
+        "Vergüenza",
+        "Culpa",
+        "Frustración",
+        "Inseguridad",
+        "Incomodidad",
+        "Otra"
+      ]
+    },
+    {
+      "id": "emocion_otra",
+      "type": "text",
+      "prompt": "Si marcaste «Otra», ¿cuál fue?",
+      "help": "Una sola palabra. Si no marcaste «Otra», tocá «Saltar».",
+      "optional": true
+    },
+    {
+      "id": "intensidad",
+      "type": "scale",
+      "prompt": "¿Con qué intensidad la sentiste?",
+      "help": "De 0 a 100. Si marcaste más de una, puntuá la más fuerte.",
+      "min": 0,
+      "max": 100,
+      "min_label": "Nada",
+      "max_label": "Máxima"
+    },
+    {
+      "id": "cuerpo",
+      "type": "text",
+      "prompt": "¿Qué pasó en tu cuerpo?",
+      "help": "Por ejemplo: taquicardia, tensión, nudo en el estómago. Marcos notó sudoración y voz temblorosa."
+    },
+    {
+      "id": "pensamiento",
+      "type": "text",
+      "prompt": "¿Qué te pasó por la cabeza justo antes de sentir eso?",
+      "help": "Anotá el pensamiento tal cual apareció, con sus palabras. Marcos: «Lo estoy haciendo mal, no sirvo para esto»."
+    },
+    {
+      "id": "conducta",
+      "type": "text",
+      "prompt": "¿Qué hiciste (o dejaste de hacer) para aliviar la emoción?",
+      "help": "Marcos acortó su intervención y empezó a evitar las reuniones."
+    },
+    {
+      "id": "otra_lectura",
+      "type": "text",
+      "prompt": "¿Qué otra interpretación sería posible, aunque no la creas del todo?",
+      "help": "Como la de Marcos: «tal vez respondía un mensaje urgente». No se trata de convencerte de nada, sino de ver el paso intermedio. Esto es parte de la tarea de la semana: podés hacerlo ahora o más adelante.",
+      "optional": true
+    },
+    {
+      "id": "resumen",
+      "type": "reflect",
+      "title": "Tu desglose",
+      "template": "Situación: «{{situacion}}» → Pensamiento: «{{pensamiento}}» → Emoción: {{emocion}} + Cuerpo: «{{cuerpo}}» → Conducta: «{{conducta}}». Otra lectura posible: «{{otra_lectura}}».",
+      "content": "**Situación → Pensamiento → Emoción + Respuesta física → Conducta.** Fijate que el pensamiento quedó en el medio: es la bisagra.\n\nEste desglose queda guardado en «Mis respuestas»."
+    },
+    {
+      "id": "reflexion",
+      "type": "info",
+      "title": "Preguntas de reflexión",
+      "content": "- ¿En qué situaciones tu cuerpo reacciona antes de que puedas nombrar lo que pensás?\n- ¿Recordás una vez en que interpretaste algo de un modo y después resultó ser distinto?\n- ¿Qué emociones te cuesta más nombrar?\n- ¿Notás que ciertas situaciones disparan siempre el mismo tipo de pensamiento?\n- ¿Qué conductas usás habitualmente para aliviar emociones incómodas?\n- ¿Cómo sería tu día si pudieras detectar el pensamiento antes de que decida por vos?"
+    },
+    {
+      "id": "reflexion_respuesta",
+      "type": "text",
+      "prompt": "Si querés, respondé alguna de estas preguntas",
+      "help": "Elegí la que más te resuene. Podés llevar tu respuesta a la próxima sesión.",
+      "optional": true
+    },
+    {
+      "id": "para_llevar",
+      "type": "info",
+      "title": "Para llevar",
+      "content": "- No reaccionamos a los hechos, sino a nuestra interpretación de ellos.\n- El esquema básico es: situación → pensamiento → emoción + respuesta física → conducta.\n- El pensamiento es la bisagra: trabajarlo modifica la emoción y la conducta.\n- El objetivo no es pensar en positivo, sino pensar de forma más ajustada y flexible.\n- Hay tres niveles de cognición: pensamientos automáticos, creencias intermedias y creencias nucleares."
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "- Repetí este desglose con **tres situaciones distintas** durante la semana, lo antes posible después de que ocurran (unos 5 a 10 minutos cada vez).\n- Elegí una de esas situaciones y anotá una segunda interpretación posible, aunque no la creas del todo.\n- Observá si, al identificar el pensamiento, la emoción cambia aunque sea un poco.\n- Compartí un ejemplo con alguien de confianza y preguntale cómo lo habría interpretado esa persona.\n\nEl próximo capítulo es **«Los pensamientos automáticos»**."
+    }
+  ],
+  "material": {
+    "title": "El modelo cognitivo de Beck",
+    "description": "Situación, pensamiento, emoción, respuesta física y conducta: por qué el pensamiento es la bisagra. Con ejemplos, un caso y un desglose guiado.",
+    "category": "psicoeducacion"
+  }
+}

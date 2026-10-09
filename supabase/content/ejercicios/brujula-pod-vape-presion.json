@@ -1,0 +1,233 @@
+{
+  "slug": "brujula-pod-vape-presion",
+  "title": "POD, vape y presión de grupo",
+  "description": "Entendé cómo funcionan las ganas, surfeá la ola con un plan de 10 minutos y practicá cómo decir que no.",
+  "kind": "custom",
+  "approach": "general",
+  "audience": "adolescentes",
+  "collection": "brujula",
+  "estimated_minutes": 18,
+  "sort_order": 112,
+  "source": "Brújula, página 13",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "POD, vape y presión de grupo",
+      "content": "**Tener ganas no es ser débil: es la forma en que aprende el cerebro.**\n\nSi no usás POD, este ejercicio igual te sirve: practicá cómo decir que no, o usalo con otra costumbre que te cueste frenar, como el celular."
+    },
+    {
+      "id": "nicotina",
+      "type": "info",
+      "title": "Cómo aprende el cerebro",
+      "content": "Los POD suelen tener nicotina. La nicotina da un alivio rápido porque activa el sistema de recompensa del cerebro, y el cerebro aprende: «cuando me siento así, uso el POD».\n\nCon el tiempo, las ganas pueden aparecer más seguido y puede hacer falta más para sentir lo mismo. **Eso es la dependencia.**"
+    },
+    {
+      "id": "cadena",
+      "type": "info",
+      "title": "La cadena",
+      "content": "**Disparador**\n↓\n**Pensamiento o emoción**\n↓\n**Ganas de vapear**\n↓\n**Uso el POD**\n↓\n**Alivio breve**\n\n…y la próxima vez es más probable que se repita."
+    },
+    {
+      "id": "vale_quiz",
+      "type": "choice",
+      "prompt": "En la cadena de Vale, ¿qué es «me relaja, me lo merezco»?",
+      "help": "**Vale, 17:** vapea en la previa con sus amigas y antes de los exámenes. Piensa: «me relaja, me lo merezco». Ganas: 8 de 10.",
+      "options": [
+        "Un disparador",
+        "Un pensamiento",
+        "Las ganas"
+      ],
+      "feedback": {
+        "Un disparador": "**Es un pensamiento.** Los disparadores de Vale son las situaciones: la previa con sus amigas y antes de los exámenes. Después aparece lo que piensa, «me relaja, me lo merezco», y las ganas llegan a 8 de 10.",
+        "Un pensamiento": "**¡Bien! Es un pensamiento.** Los disparadores de Vale son la previa con sus amigas y antes de los exámenes. Después aparece lo que piensa, «me relaja, me lo merezco», y las ganas llegan a 8 de 10.",
+        "Las ganas": "**Es un pensamiento.** Las ganas son lo que Vale mide de 0 a 10: 8. «Me relaja, me lo merezco» es lo que piensa antes, después del disparador (la previa con sus amigas o los exámenes)."
+      }
+    },
+    {
+      "id": "ola",
+      "type": "info",
+      "title": "Surfear la ola",
+      "content": "Las ganas son como una ola: suben, llegan a un pico y bajan, aunque no hagas nada.\n\n**Aparecen → Suben → Llegan a un pico → Bajan → Pasan**\n\nNo hace falta que desaparezcan: alcanza con no seguirlas. Mientras tanto, observalas: ¿dónde las sentís? ¿Cuánto miden, de 0 a 10?"
+    },
+    {
+      "id": "plan_10",
+      "type": "checklist",
+      "prompt": "Mi plan de 10 minutos: ¿qué vas a hacer cuando aparezcan las ganas?",
+      "help": "Marcá todo lo que pienses usar mientras pasa la ola.\n\nPara respirar lento podés usar «Respiración guiada», en **Calmarme**.",
+      "options": [
+        "Espero 10 minutos (miro la hora)",
+        "Me cambio de lugar",
+        "Respiro lento",
+        "Hago otra cosa con las manos o con el cuerpo",
+        "Le escribo o hablo con alguien"
+      ],
+      "min": 1
+    },
+    {
+      "id": "ganas_antes",
+      "type": "scale",
+      "prompt": "Ganas antes: ¿cuánto miden, de 0 a 10?",
+      "help": "Completalo si tenés ganas ahora y vas a probar el plan. Si no, tocá «Saltar»: lo podés completar cuando vuelvas a este ejercicio.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Nada",
+      "max_label": "Muchísimas",
+      "optional": true
+    },
+    {
+      "id": "espera",
+      "type": "timed_info",
+      "title": "Espero 10 minutos",
+      "content": "Si tenés ganas ahora, iniciá el temporizador y, mientras tanto, hacé lo que marcaste en tu plan.\n\nObservá la ola: sube, llega a un pico y baja.\n\nSi ahora no tenés ganas, tocá «Continuar».",
+      "seconds": 600
+    },
+    {
+      "id": "ganas_despues",
+      "type": "scale",
+      "prompt": "A los 10 minutos: ¿cuánto miden las ganas?",
+      "help": "Comparalo con lo que marcaste antes. Si no probaste el plan todavía, tocá «Saltar».",
+      "min": 0,
+      "max": 10,
+      "min_label": "Nada",
+      "max_label": "Muchísimas",
+      "optional": true
+    },
+    {
+      "id": "disparadores_intro",
+      "type": "info",
+      "title": "Mis disparadores",
+      "content": "Ahora pensá en **una** vez que tuviste ganas y anotala paso a paso, como en la cadena.\n\nSi no usás POD, pensá en una vez que te ofrecieron, o en esa otra costumbre que te cuesta frenar."
+    },
+    {
+      "id": "disp_situacion",
+      "type": "text",
+      "prompt": "¿Cuál fue la situación?",
+      "help": "Dónde estabas y qué estaba pasando. Para Vale: la previa, o antes de un examen."
+    },
+    {
+      "id": "disp_con_quien",
+      "type": "text",
+      "prompt": "¿Con quién estabas?",
+      "help": "Vale, en la previa: con sus amigas."
+    },
+    {
+      "id": "disp_sentia",
+      "type": "checklist",
+      "prompt": "¿Qué sentías?",
+      "help": "Elegí hasta 3 palabras.",
+      "options": [
+        "Bronca",
+        "Tristeza",
+        "Miedo",
+        "Vergüenza",
+        "Culpa",
+        "Nervios",
+        "Soledad",
+        "Frustración",
+        "Celos",
+        "Alegría",
+        "Calma",
+        "Orgullo"
+      ],
+      "min": 1,
+      "max": 3
+    },
+    {
+      "id": "disp_pense",
+      "type": "text",
+      "prompt": "¿Qué pensaste?",
+      "help": "Vale pensó: «me relaja, me lo merezco»."
+    },
+    {
+      "id": "disp_ganas",
+      "type": "scale",
+      "prompt": "¿Cuántas ganas tenías, de 0 a 10?",
+      "help": "Vale: 8 de 10.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Nada",
+      "max_label": "Muchísimas"
+    },
+    {
+      "id": "disp_hice",
+      "type": "text",
+      "prompt": "¿Qué hiciste?",
+      "help": "Sin juzgarte: solo anotá qué pasó."
+    },
+    {
+      "id": "decir_no",
+      "type": "checklist",
+      "prompt": "Decir que no sin quedar afuera: ¿qué frases te sirven?",
+      "help": "Marcá las que te salgan más naturales.",
+      "options": [
+        "«No, gracias, estoy bien así.»",
+        "«Hoy paso, mañana tengo partido.»",
+        "«No me pinta, pero me quedo un rato.»",
+        "Cambiar de tema o proponer otra cosa: «¿Salimos a caminar?»"
+      ],
+      "min": 1
+    },
+    {
+      "id": "mi_frase",
+      "type": "text",
+      "prompt": "Mi frase: ¿qué vas a decir la próxima vez?",
+      "help": "Puede ser una de estas con tus palabras, o una tuya."
+    },
+    {
+      "id": "me_da",
+      "type": "text",
+      "prompt": "¿Qué te da el POD?",
+      "help": "Si no usás POD, pensalo con esa costumbre que te cuesta frenar, o salteá esta pregunta.",
+      "optional": true
+    },
+    {
+      "id": "me_cuesta",
+      "type": "text",
+      "prompt": "¿Y qué te cuesta?",
+      "optional": true
+    },
+    {
+      "id": "desliz_intro",
+      "type": "info",
+      "title": "Si vuelvo a hacerlo",
+      "content": "**Un desliz no borra todo lo que avanzaste.** Usalo para aprender.\n\nSi tuviste un desliz, respondé estas tres preguntas. Si no, podés saltearlas y volver cuando lo necesites."
+    },
+    {
+      "id": "desliz_antes",
+      "type": "text",
+      "prompt": "¿Qué pasó antes?",
+      "optional": true
+    },
+    {
+      "id": "desliz_aprendi",
+      "type": "text",
+      "prompt": "¿Qué aprendiste?",
+      "optional": true
+    },
+    {
+      "id": "desliz_proxima",
+      "type": "text",
+      "prompt": "¿Qué vas a probar la próxima vez?",
+      "optional": true
+    },
+    {
+      "id": "resumen",
+      "type": "reflect",
+      "title": "Lo que armaste",
+      "template": "Mi plan de 10 minutos: {{plan_10}}. Un disparador: «{{disp_situacion}}», y pensé: «{{disp_pense}}». Mi frase para decir que no: «{{mi_frase}}».",
+      "content": "**Tener ganas no es ser débil: es la forma en que aprende el cerebro.**\n\nTodo queda guardado: lo podés volver a ver en este ejercicio, en «Mis respuestas»."
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "**Unos 10 minutos.** Anotá tus ganas 3 veces y probá el plan de 10 minutos una vez. Si no usás POD, practicá tu frase.\n\nPara anotar las ganas podés volver a este ejercicio, a «Mis disparadores»: cada vez queda guardado en «Mis respuestas». Traé lo que anotes a la sesión."
+    }
+  ],
+  "material": {
+    "title": "POD, vape y presión de grupo",
+    "description": "Cómo aprende el cerebro con la nicotina, la cadena de las ganas, surfear la ola, un plan de 10 minutos y cómo decir que no.",
+    "category": "adolescentes"
+  }
+}

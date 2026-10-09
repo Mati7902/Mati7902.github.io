@@ -1,0 +1,121 @@
+{
+  "slug": "brujula-plan-momentos-dificiles",
+  "title": "Mi plan para momentos muy difíciles",
+  "description": "Un plan para ganar tiempo y conectar con ayuda en los momentos más difíciles. Lo armás con tu psicólogo/a.",
+  "kind": "custom",
+  "approach": "general",
+  "audience": "adolescentes",
+  "collection": "brujula",
+  "estimated_minutes": 15,
+  "sort_order": 113,
+  "source": "Brújula, página 14",
+  "steps": [
+    {
+      "id": "para_que",
+      "type": "info",
+      "title": "Mi plan para momentos muy difíciles",
+      "content": "**Un plan para ganar tiempo y conectar con ayuda.**\n\nEste plan lo armás con tu psicólogo/a y, si se puede, con un adulto de confianza. No reemplaza una evaluación profesional.\n\nTiene seis partes, una por pantalla. Si alguna te cuesta, la pueden completar juntos en la sesión."
+    },
+    {
+      "id": "pedi_ayuda_ya",
+      "type": "info",
+      "title": "Pedí ayuda ya si…",
+      "content": "**Pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano, si:**\n\n- pensás en quitarte la vida y tenés intención o un plan;\n- te hiciste daño o tomaste algo para hacerte daño;\n- estás intoxicado/a o tenés una lesión importante;\n- sentís que no podés mantenerte a salvo.\n\n**Para hablar con alguien ahora**, también hay una línea de crisis en salud mental, gratis y las 24 horas.\n\nEn la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos."
+    },
+    {
+      "id": "senales",
+      "type": "list",
+      "prompt": "Señales de que estoy empezando a estar mal",
+      "help": "**Parte 1 de 6.** Una señal por renglón: algo que notás en tu cuerpo, en lo que pensás o en lo que hacés.\n\nPodés usar tus señales de «Cuando la emoción sube a 100».",
+      "count": 4,
+      "min": 1
+    },
+    {
+      "id": "cosas_solo",
+      "type": "list",
+      "prompt": "Cosas que puedo hacer solo/a para ganar tiempo",
+      "help": "**Parte 2 de 6.** Una por renglón. Por ejemplo, algo de tu caja de herramientas de «Cuando la emoción sube a 100» o de **Calmarme**.",
+      "count": 4,
+      "min": 1
+    },
+    {
+      "id": "lugares_personas",
+      "type": "list",
+      "prompt": "Lugares y personas que me ayudan a distraerme o calmarme",
+      "help": "**Parte 3 de 6.** Uno por renglón.",
+      "count": 4,
+      "min": 1
+    },
+    {
+      "id": "adultos",
+      "type": "list",
+      "prompt": "Adultos a quienes les puedo pedir ayuda",
+      "help": "**Parte 4 de 6.** En cada renglón, el **nombre** y el **teléfono** de un adulto.\n\nPodés usar los adultos de tu mapa de «Mi red de apoyo».",
+      "count": 4,
+      "min": 1
+    },
+    {
+      "id": "psicologo",
+      "type": "text",
+      "prompt": "Profesionales y servicios: mi psicólogo/a",
+      "help": "**Parte 5 de 6.** Su nombre y su teléfono.\n\nLos teléfonos de emergencias y de la línea de crisis en salud mental ya están en **Calmarme**, en el recuadro «Si necesitás ayuda urgente».",
+      "placeholder": "Nombre y teléfono…",
+      "optional": true
+    },
+    {
+      "id": "guardia",
+      "type": "text",
+      "prompt": "Profesionales y servicios: guardia del hospital más cercano",
+      "help": "Cuál es y su teléfono.",
+      "placeholder": "Hospital y teléfono…",
+      "optional": true
+    },
+    {
+      "id": "otro_servicio",
+      "type": "text",
+      "prompt": "Profesionales y servicios: otro servicio",
+      "help": "Si hay otro servicio que te pueda ayudar, su nombre y su teléfono.",
+      "placeholder": "Servicio y teléfono…",
+      "optional": true
+    },
+    {
+      "id": "entorno",
+      "type": "text",
+      "prompt": "Cómo hacer mi entorno más seguro: lo acordé con…",
+      "help": "**Parte 6 de 6.** Con un adulto de confianza, acordar que guarde lo que podría usarse para hacerte daño. Escribí con quién lo acordaste.\n\nSi todavía no lo acordaste con nadie, hablalo con tu psicólogo/a.",
+      "placeholder": "Lo acordé con…",
+      "optional": true
+    },
+    {
+      "id": "importa",
+      "type": "text",
+      "prompt": "Algo que me importa y me ayuda a seguir",
+      "help": "Podés mirar tu brújula de «Lo que realmente me importa».",
+      "optional": true
+    },
+    {
+      "id": "si_peligro",
+      "type": "info",
+      "title": "Algo importante",
+      "content": "Si tu psicólogo/a cree que estás en peligro, va a buscar ayuda con un adulto responsable. Siempre que se pueda, lo va a hablar antes con vos."
+    },
+    {
+      "id": "mi_plan",
+      "type": "reflect",
+      "title": "Mi plan",
+      "template": "Mis señales de que estoy empezando a estar mal: {{senales}} — Lo que puedo hacer solo/a para ganar tiempo: {{cosas_solo}} — Lugares y personas que me ayudan a distraerme o calmarme: {{lugares_personas}} — Adultos a quienes les puedo pedir ayuda: {{adultos}}",
+      "content": "Tu plan completo queda guardado en este ejercicio, en «Mis respuestas». Tu psicólogo/a solo lo puede ver si activaste **«Compartir mis registros con mi psicólogo»** en tu perfil."
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "**Unos 10 minutos.** Copiá este plan en un papel que tengas siempre a mano. Sumale los teléfonos del recuadro «Si necesitás ayuda urgente», en **Calmarme**.\n\nTambién queda guardado en la app y lo podés abrir rápido desde **Calmarme**, en «Mi plan para momentos muy difíciles». Si cambia algo, como una persona o un teléfono, lo podés actualizar desde ahí.\n\n**Si estás en peligro ahora**, pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano."
+    }
+  ],
+  "material": {
+    "title": "Mi plan para momentos muy difíciles",
+    "description": "Plan para adolescentes: señales de alerta, qué hacer para ganar tiempo, a quién pedir ayuda y cómo hacer el entorno más seguro.",
+    "category": "adolescentes"
+  }
+}

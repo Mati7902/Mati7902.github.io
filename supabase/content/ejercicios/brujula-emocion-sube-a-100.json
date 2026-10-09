@@ -1,0 +1,125 @@
+{
+  "slug": "brujula-emocion-sube-a-100",
+  "title": "Cuando la emoción sube a 100",
+  "description": "Tu termómetro emocional, STOP y tu caja de herramientas para cuando la emoción sube mucho.",
+  "kind": "dbt_skill",
+  "approach": "dbt",
+  "audience": "adolescentes",
+  "collection": "brujula",
+  "estimated_minutes": 10,
+  "sort_order": 108,
+  "source": "Brújula, página 9",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Cuando la emoción sube a 100",
+      "content": "**La emoción no es el enemigo: es información. Lo que importa es qué hacés cuando sube.**\n\nEn este ejercicio vas a conocer tu termómetro y una habilidad para frenar (STOP), y vas a armar tu caja de herramientas para los momentos en que la emoción sube mucho."
+    },
+    {
+      "id": "thermometer",
+      "type": "info",
+      "title": "Mi termómetro",
+      "content": "Tu emoción puede ir de 0 a 10, como un termómetro. Según en qué número estés, te conviene hacer algo distinto:\n\n- **9–10: Seguridad y ayuda.** Buscá a una persona segura. Si pensás en hacerte daño, andá a «Mi plan para momentos muy difíciles» (lo encontrás en **Calmarme**).\n- **7–8: Primero, bajar la intensidad.** Usá STOP y algo de tu caja de herramientas.\n- **4–6: Necesito regular.** Ponele nombre a lo que sentís, respirá, hacé una pausa.\n- **0–3: Puedo pensar.** Es buen momento para usar «Poner a prueba lo que pienso», «No todo lo que pienso es una orden» o «Decir lo que necesito sin explotar ni callarme»."
+    },
+    {
+      "id": "now_band",
+      "type": "choice",
+      "prompt": "¿En qué número está tu termómetro ahora?",
+      "options": [
+        "9–10",
+        "7–8",
+        "4–6",
+        "0–3"
+      ],
+      "feedback": {
+        "9–10": "**Seguridad y ayuda.** Buscá ya a una persona segura. Si pensás en hacerte daño, abrí «Mi plan para momentos muy difíciles»: lo encontrás en **Calmarme**.\n\nSi estás en peligro ahora, pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano. En la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos.\n\nEste ejercicio puede esperar.",
+        "7–8": "**Primero, bajar la intensidad.** Usá STOP y algo de tu caja de herramientas: los vas a ver en las próximas pantallas. En **Calmarme** tenés la «Respiración guiada» y el «Grounding 5-4-3-2-1». Podés volver a este ejercicio después.",
+        "4–6": "**Necesitás regular.** Ponele nombre a lo que sentís, respirá, hacé una pausa. Después seguí con el ejercicio.",
+        "0–3": "**Podés pensar.** Es un buen momento para seguir con este ejercicio y armar tu caja de herramientas."
+      }
+    },
+    {
+      "id": "regulate",
+      "type": "info",
+      "title": "Regular no es reprimir",
+      "content": "**Reprimir** es hacer como que no pasa y tragarse todo. Suele explotar después.\n\n**Regular** es notar la emoción, ponerle nombre, bajarle la intensidad y decidir qué hacer."
+    },
+    {
+      "id": "stop",
+      "type": "info",
+      "title": "STOP",
+      "content": "Para cuando estás en 7 u 8, una letra por vez:\n\n- **S: Frená.** No hagas ni digas nada todavía.\n- **T: Tomá distancia.** Un paso atrás. Salí un momento si podés.\n- **O: Observá.** ¿Qué siento? ¿Qué pienso? ¿Qué está pasando?\n- **P: Procedé con conciencia.** ¿Qué me conviene hacer ahora?"
+    },
+    {
+      "id": "tobi",
+      "type": "info",
+      "title": "Tobi, 14 años",
+      "content": "Vio que subieron una foto suya para burlarse. **Bronca: 9.** Quería ir a pegarle al que la subió.\n\nFrenó, salió del aula, respiró y se lo contó a la orientadora. **La bronca bajó a 6** y pudo pensar qué hacer.\n\nSi te pasa algo parecido, mirá también «Cuando otros me hacen sentir menos»."
+    },
+    {
+      "id": "toolbox",
+      "type": "checklist",
+      "prompt": "Mi caja de herramientas para cuando estoy en 8",
+      "help": "Marcá las que te sirven. En la próxima pantalla agregás las tuyas.\n\n- **Respiración lenta:** inhalá contando 4 y exhalá contando 6, durante 1 o 2 minutos. Sirve para bajar un cambio y poder pensar.\n- **5-4-3-2-1:** nombrá 5 cosas que ves, 4 que podés tocar, 3 que escuchás, 2 que olés y 1 que saboreás.\n\nLas dos están en **Calmarme**, paso a paso: «Respiración guiada» y «Grounding 5-4-3-2-1».",
+      "options": [
+        "Respiración lenta",
+        "5-4-3-2-1",
+        "Tomar agua despacio",
+        "Cambiar de lugar (salir de la pieza, ir al patio)",
+        "Hablar o escribirle a una persona segura",
+        "Moverte un rato (caminar, subir escaleras)"
+      ]
+    },
+    {
+      "id": "my_tools",
+      "type": "text",
+      "prompt": "Lo que a mí me sirve: ¿qué agregarías a tu caja?",
+      "help": "Algo tuyo que te ayude a bajar cuando estás en 8, o la herramienta de la lista que más te sirve.",
+      "placeholder": "Lo que a mí me sirve…"
+    },
+    {
+      "id": "signals",
+      "type": "text",
+      "prompt": "Mis señales de que estoy subiendo",
+      "help": "¿Qué notás en tu **cuerpo**, en tus **pensamientos** y en **lo que hacés** cuando la emoción empieza a subir?",
+      "placeholder": "En el cuerpo… En lo que pienso… En lo que hago…"
+    },
+    {
+      "id": "last_what",
+      "type": "text",
+      "prompt": "La última vez que llegué a 8: ¿qué pasó?",
+      "help": "Contalo en pocas palabras. Si no te acordás de una vez en 8, pensá en la última vez que la emoción subió mucho."
+    },
+    {
+      "id": "last_did",
+      "type": "text",
+      "prompt": "¿Qué hiciste en ese momento?",
+      "help": "Tal cual pasó. Es para entender, no para juzgarte."
+    },
+    {
+      "id": "last_try",
+      "type": "text",
+      "prompt": "¿Qué probarías la próxima vez?",
+      "help": "Puede ser STOP o algo de tu caja de herramientas."
+    },
+    {
+      "id": "summary",
+      "type": "reflect",
+      "title": "Mi caja de herramientas",
+      "template": "Mis señales de que estoy subiendo: {{signals}}. Mi caja para cuando estoy en 8: {{toolbox}}. Lo que a mí me sirve: {{my_tools}}. La próxima vez voy a probar: {{last_try}}.",
+      "content": "Cuando notes esas señales, frená con STOP y abrí tu caja. Si llegás a 9 o 10, primero la seguridad: buscá a una persona segura y abrí tu plan para momentos muy difíciles.\n\nCuando termines, todo queda guardado en «Mis respuestas» de este ejercicio."
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "**Unos 5 minutos.** Usá STOP o una herramienta de tu caja una vez.\n\n- **Antes:** ¿en qué número de tu termómetro estás, de 0 a 10?\n- **Después:** ¿y ahora?\n\nPodés anotarlo en «Registrar cómo me siento».\n\nLa emoción no es el enemigo: es información."
+    }
+  ],
+  "material": {
+    "title": "Cuando la emoción sube a 100",
+    "description": "Regulación emocional para adolescentes: el termómetro de 0 a 10, regular no es reprimir, STOP y una caja de herramientas.",
+    "category": "adolescentes"
+  }
+}

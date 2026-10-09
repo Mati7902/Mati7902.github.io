@@ -1,0 +1,165 @@
+{
+  "slug": "brujula-decir-lo-que-necesito",
+  "title": "Decir lo que necesito sin explotar ni callarme",
+  "description": "Decir lo que necesitás de forma clara y respetuosa: la fórmula, cómo poner un límite y tu propia frase.",
+  "kind": "dbt_skill",
+  "approach": "dbt",
+  "audience": "adolescentes",
+  "collection": "brujula",
+  "estimated_minutes": 10,
+  "sort_order": 109,
+  "source": "Brújula, página 10",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Sin explotar ni callarme",
+      "content": "**Ser asertivo no es ser agresivo: es decir lo que necesitás de forma clara y respetuosa.**\n\nCuando algo te molesta con otra persona, hay tres caminos:\n\n- **Callarme:** «No pasa nada», y por dentro sí pasa.\n- **Decirlo claro:** lo que pasa, lo que siento y lo que necesito.\n- **Explotar:** gritos, portazos, insultos."
+    },
+    {
+      "id": "formula",
+      "type": "info",
+      "title": "La fórmula",
+      "content": "Para decirlo claro, usá estas cuatro partes:\n\n- **Cuando…** lo que pasa, sin insultos.\n- **me siento…** la emoción.\n- **necesito…** lo que me hace falta.\n- **te pido… o me ayudaría que…** algo concreto."
+    },
+    {
+      "id": "lucas",
+      "type": "info",
+      "title": "Así lo dijo Lucas (15 años)",
+      "content": "«Cuando discutimos y todos empiezan a gritar, me siento muy tenso. Necesito poder terminar de explicar lo que pasó. Me ayudaría que podamos hablar de a uno.»\n\nParte por parte:\n\n- **Cuando** discutimos y todos empiezan a gritar,\n- **me siento** muy tenso.\n- **Necesito** poder terminar de explicar lo que pasó.\n- **Me ayudaría que** podamos hablar de a uno."
+    },
+    {
+      "id": "tips",
+      "type": "info",
+      "title": "Para que funcione mejor",
+      "content": "- **Elegí el momento:** no en plena pelea.\n- **Sostené el tema sin subir el tono.** Si te cambian de tema, volvé con calma.\n- **Estate dispuesto/a a negociar:** buscá algo que sirva a los dos.\n- **Vos podés cuidar cómo lo decís.** Cómo reacciona el otro no depende de vos."
+    },
+    {
+      "id": "limit_info",
+      "type": "info",
+      "title": "Poner un límite",
+      "content": "Poner un límite es decir hasta dónde sí y hasta dónde no.\n\n- **Con amigos:** «No quiero vapear. Si van a hacerlo, me voy un rato y después vuelvo».\n- **En casa:** «No quiero que me griten. Si pasa, me voy a mi pieza y hablamos cuando estemos más tranquilos»."
+    },
+    {
+      "id": "safety",
+      "type": "info",
+      "title": "Comunicar no siempre es la primera opción",
+      "content": "Si en esa situación hay miedo, amenazas o violencia, **primero está tu seguridad**: buscá a un adulto seguro de «Mi red de apoyo» o pedí ayuda con «Mi plan para momentos muy difíciles» (lo abrís rápido desde **Calmarme**).\n\nSi estás en peligro ahora, pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano. En la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos."
+    },
+    {
+      "id": "avoided",
+      "type": "text",
+      "prompt": "Tu turno: ¿qué conversación estás evitando?",
+      "help": "Con quién y sobre qué, en pocas palabras.",
+      "placeholder": "Una conversación que estoy evitando…"
+    },
+    {
+      "id": "usual",
+      "type": "choice",
+      "prompt": "En esa situación, ¿qué solés hacer?",
+      "options": [
+        "Me callo",
+        "Exploto",
+        "Otra cosa"
+      ],
+      "feedback": {
+        "Me callo": "Callarte es decir «no pasa nada» cuando por dentro sí pasa. La fórmula te ayuda a decirlo claro.",
+        "Exploto": "Explotar es gritos, portazos, insultos. La fórmula te ayuda a decirlo claro, sin explotar.",
+        "Otra cosa": "Si querés, contá en la próxima pantalla qué hacés."
+      }
+    },
+    {
+      "id": "usual_other",
+      "type": "text",
+      "prompt": "Si elegiste «Otra cosa», ¿qué hacés?",
+      "placeholder": "Lo que suelo hacer…",
+      "optional": true
+    },
+    {
+      "id": "f_when",
+      "type": "text",
+      "prompt": "Armá tu frase: «Cuando…», ¿qué pasa?",
+      "help": "Cómo podrías decirlo, parte por parte. Primero, lo que pasa, sin insultos. Seguí la frase sin volver a escribir «cuando».\n\nLucas: «Cuando **discutimos y todos empiezan a gritar**…»",
+      "placeholder": "Lo que pasa, sin insultos…"
+    },
+    {
+      "id": "f_feel",
+      "type": "text",
+      "prompt": "«Me siento…»: ¿qué emoción?",
+      "help": "Seguí la frase sin volver a escribir «me siento».\n\nLucas: «…me siento **muy tenso**.»",
+      "placeholder": "La emoción…"
+    },
+    {
+      "id": "f_need",
+      "type": "text",
+      "prompt": "«Necesito…»: ¿qué te hace falta?",
+      "help": "Seguí la frase sin volver a escribir «necesito».\n\nLucas: «Necesito **poder terminar de explicar lo que pasó**.»",
+      "placeholder": "Lo que me hace falta…"
+    },
+    {
+      "id": "f_ask_start",
+      "type": "choice",
+      "prompt": "Para pedirlo, ¿qué te sale más natural?",
+      "help": "Las dos sirven. Lucas eligió «Me ayudaría que…».",
+      "options": [
+        "Te pido que",
+        "Me ayudaría que"
+      ]
+    },
+    {
+      "id": "f_ask",
+      "type": "text",
+      "prompt": "¿Qué cosa concreta pedís?",
+      "help": "Seguí la frase sin volver a escribir el comienzo.\n\nLucas: «Me ayudaría que **podamos hablar de a uno**.»",
+      "placeholder": "Algo concreto…"
+    },
+    {
+      "id": "phrase",
+      "type": "reflect",
+      "title": "Tu frase",
+      "template": "«Cuando {{f_when}}, me siento {{f_feel}}. Necesito {{f_need}}. {{f_ask_start}} {{f_ask}}.»",
+      "content": "Así podrías decirlo. Si algo no te suena a vos, volvé atrás y cambialo. Y acordate: elegí el momento, no en plena pelea."
+    },
+    {
+      "id": "my_limit",
+      "type": "text",
+      "prompt": "¿Qué límite necesitás?",
+      "help": "Hasta dónde sí y hasta dónde no. Por ejemplo, en casa: «No quiero que me griten. Si pasa, me voy a mi pieza y hablamos cuando estemos más tranquilos».",
+      "placeholder": "No quiero que… Si pasa, voy a…",
+      "optional": true
+    },
+    {
+      "id": "is_safe",
+      "type": "choice",
+      "prompt": "¿Es seguro tener esta conversación?",
+      "options": [
+        "Sí",
+        "No sé",
+        "No: primero lo hablo con mi psicólogo/a"
+      ],
+      "feedback": {
+        "Sí": "Bien. Elegí un buen momento, no en plena pelea. Vos podés cuidar cómo lo decís; cómo reacciona el otro no depende de vos.",
+        "No sé": "Está bien no estar seguro/a. Si hay miedo, amenazas o violencia, primero está tu seguridad: antes de hablar, contáselo a tu psicólogo/a o a un adulto seguro de «Mi red de apoyo».",
+        "No: primero lo hablo con mi psicólogo/a": "Bien pensado: comunicar no siempre es la primera opción, y primero está tu seguridad. Cuando termines, tu frase queda guardada en «Mis respuestas» para hablarla en la próxima sesión. Si te sentís en peligro, buscá a un adulto seguro de «Mi red de apoyo» o abrí «Mi plan para momentos muy difíciles» desde **Calmarme**."
+      }
+    },
+    {
+      "id": "how_it_went",
+      "type": "text",
+      "prompt": "¿Cómo te fue?",
+      "help": "Si ya probaste la fórmula con algo chico, contá cómo te fue. Si todavía no, tocá «Saltar»: es la tarea para esta semana.",
+      "optional": true
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "**Unos 5 minutos.** Probá la fórmula una vez con algo chico, no con la conversación más difícil.\n\nDespués anotá cómo te fue: podés hacerlo en «Registrar cómo me siento» o la próxima vez que hagas este ejercicio.\n\nSer asertivo no es ser agresivo: es decir lo que necesitás de forma clara y respetuosa."
+    }
+  ],
+  "material": {
+    "title": "Decir lo que necesito sin explotar ni callarme",
+    "description": "Asertividad para adolescentes: callarme, decirlo claro o explotar; la fórmula «Cuando… me siento… necesito… te pido…» y poner límites.",
+    "category": "adolescentes"
+  }
+}

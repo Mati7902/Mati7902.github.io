@@ -1,0 +1,154 @@
+{
+  "slug": "brujula-cuando-me-hacen-sentir-menos",
+  "title": "Cuando otros me hacen sentir menos",
+  "description": "Distinguí conflicto, broma y bullying, ubicá lo que te pasa en el semáforo y armá tu plan anti-bullying.",
+  "kind": "custom",
+  "approach": "general",
+  "audience": "adolescentes",
+  "collection": "brujula",
+  "estimated_minutes": 15,
+  "sort_order": 110,
+  "source": "Brújula, página 11",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Cuando otros me hacen sentir menos",
+      "content": "**El bullying no es culpa de quien lo sufre.**\n\nPrimero vas a ver la diferencia entre un conflicto, una broma y el bullying. Después, dónde está lo que te pasa y qué podés hacer.\n\nSi estás en peligro ahora, pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano. En la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos."
+    },
+    {
+      "id": "tipos",
+      "type": "info",
+      "title": "Conflicto, broma o bullying",
+      "content": "- **Conflicto.** Un desacuerdo entre personas que están a la par. Pasa a veces y se puede hablar.\n- **Broma.** Se ríen todos, también vos. Si pedís que pare, para.\n- **Bullying.** Se repite, es a propósito y el otro tiene más poder: es más fuerte, más popular o son varios.\n- **Cyberbullying.** Lo mismo, por celular o redes: mensajes, fotos, memes, grupos. Llega a cualquier hora y lo ve mucha gente."
+    },
+    {
+      "id": "semaforo",
+      "type": "choice",
+      "prompt": "El semáforo: ¿dónde está lo que te pasa?",
+      "help": "- **Verde.** Un conflicto o una broma que no lastima. Se puede hablar o resolver.\n- **Amarillo.** Algo te molesta, se repite o no para cuando lo pedís.\n- **Rojo.** Amenazas, golpes, te dejan afuera a propósito una y otra vez, publican cosas tuyas, o te presionan para mandar fotos o hacer algo que no querés.\n\nSi ahora no te pasa nada de esto, podés saltear esta pregunta.",
+      "options": [
+        "Verde",
+        "Amarillo",
+        "Rojo"
+      ],
+      "feedback": {
+        "Verde": "**Verde: se puede hablar o resolver.** Un conflicto o una broma que no lastima pasa a veces. Si empieza a repetirse o no para cuando lo pedís, ya es amarillo.",
+        "Amarillo": "**Amarillo: contáselo a alguien y anotá qué pasa.** En unos pasos vas a armar tu plan anti-bullying: a quién le vas a contar y qué.",
+        "Rojo": "**Rojo: contáselo ya a un adulto seguro. No lo enfrentes solo/a.** Lo que te pasa no es culpa tuya.\n\nSi estás en peligro, abrí «Mi plan para momentos muy difíciles» desde **Calmarme** y pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano. En la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos."
+      },
+      "optional": true
+    },
+    {
+      "id": "redes",
+      "type": "info",
+      "title": "En redes",
+      "content": "Si pasa por celular o redes:\n\n- Guardá capturas con la fecha.\n- No contestes en caliente.\n- Bloqueá y reportá.\n- Contáselo a un adulto.\n\n**No borres las pruebas.**"
+    },
+    {
+      "id": "tobi",
+      "type": "info",
+      "title": "Lo que pasó y lo que pensé sobre mí",
+      "content": "**El hecho no se discute: se trabaja lo que te quedó pensando de vos.**\n\nAsí lo hizo Tobi, 14 años:\n\n- **Lo que pasó:** Se burlaron de mi cuerpo. Pasó, y estuvo mal.\n- **Lo que pensé sobre mí después:** «Entonces soy horrible.»\n- **Lo que me diría alguien que me quiere:** «Que se burlen habla de cómo tratan ellos, no de lo que valés.»\n- **Lo que elijo creer sobre mí:** «Me dolió. No me define.»\n\nAhora te toca a vos, con algo que te haya pasado."
+    },
+    {
+      "id": "que_paso",
+      "type": "text",
+      "prompt": "¿Qué pasó?",
+      "help": "Contá el hecho. No hace falta discutirlo: si te trataron mal, estuvo mal.\n\nTobi escribió: «Se burlaron de mi cuerpo. Pasó, y estuvo mal.»"
+    },
+    {
+      "id": "pense",
+      "type": "text",
+      "prompt": "¿Qué pensaste sobre vos después?",
+      "help": "Tobi pensó: «Entonces soy horrible.»"
+    },
+    {
+      "id": "alguien_quiere",
+      "type": "text",
+      "prompt": "¿Qué te diría alguien que te quiere?",
+      "help": "A Tobi le dirían: «Que se burlen habla de cómo tratan ellos, no de lo que valés.»"
+    },
+    {
+      "id": "elijo_creer",
+      "type": "text",
+      "prompt": "¿Qué elegís creer sobre vos?",
+      "help": "Tobi eligió: «Me dolió. No me define.»"
+    },
+    {
+      "id": "resumen_pense",
+      "type": "reflect",
+      "title": "Lo que pasó y lo que pensé sobre mí",
+      "template": "Pasó esto: «{{que_paso}}». Después pensé: «{{pense}}». Alguien que me quiere me diría: «{{alguien_quiere}}». Elijo creer: «{{elijo_creer}}».",
+      "content": "**El bullying no es culpa de quien lo sufre.**"
+    },
+    {
+      "id": "plan_intro",
+      "type": "info",
+      "title": "Mi plan anti-bullying",
+      "content": "Ahora armá tu plan: a quién le vas a contar, qué le vas a contar y cómo cuidarte mientras tanto.\n\nSon seis preguntas cortas."
+    },
+    {
+      "id": "adulto_colegio",
+      "type": "text",
+      "prompt": "¿A qué adulto del colegio le vas a contar?",
+      "help": "Puede ser un profe, el orientador o la orientadora, o alguien del colegio en quien confíes."
+    },
+    {
+      "id": "adulto_fuera",
+      "type": "text",
+      "prompt": "¿Y a qué adulto fuera del colegio?",
+      "help": "Alguien de tu familia, tu psicólogo/a, tu entrenador/a, alguien del club o del barrio."
+    },
+    {
+      "id": "que_contar",
+      "type": "text",
+      "prompt": "¿Qué le vas a contar?",
+      "help": "Si te sirve, usá lo que anotaste en «¿Qué pasó?»."
+    },
+    {
+      "id": "pruebas",
+      "type": "text",
+      "prompt": "¿Dónde guardás las pruebas?",
+      "help": "Capturas con la fecha, mensajes, fotos. No las borres.\n\nSi no hay pruebas que guardar, podés saltear esta pregunta.",
+      "optional": true
+    },
+    {
+      "id": "acompanado",
+      "type": "text",
+      "prompt": "¿Dónde y cuándo estás más acompañado/a?",
+      "help": "Pensá en lugares y momentos del día."
+    },
+    {
+      "id": "companeros",
+      "type": "text",
+      "prompt": "¿Qué compañeros/as te hacen bien?",
+      "help": "Si ahora no se te ocurre nadie, podés saltear esta pregunta.",
+      "optional": true
+    },
+    {
+      "id": "resumen_plan",
+      "type": "reflect",
+      "title": "Mi plan anti-bullying",
+      "template": "En el colegio le voy a contar a {{adulto_colegio}}, y fuera del colegio, a {{adulto_fuera}}. Les voy a contar: «{{que_contar}}». Las pruebas están en: {{pruebas}}. Estoy más acompañado/a: {{acompanado}}. Compañeros/as que me hacen bien: {{companeros}}.",
+      "content": "Tu plan queda guardado: lo podés volver a ver en este ejercicio, en «Mis respuestas»."
+    },
+    {
+      "id": "otra_persona",
+      "type": "info",
+      "title": "¿Le pasa a otra persona?",
+      "content": "Si ves que a alguien le pasa:\n\n- No te sumes.\n- Acompañala.\n- Avisá a un adulto."
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "La tarea de esta semana está en «Mi red de apoyo» (unos 10 minutos): vas a armar tu mapa de personas seguras y hablar con uno de los adultos de tu mapa. Si te está pasando algo de lo que viste acá, ese es el tema.\n\n**El bullying no es culpa de quien lo sufre.**"
+    }
+  ],
+  "material": {
+    "title": "Cuando otros me hacen sentir menos",
+    "description": "Conflicto, broma, bullying y cyberbullying; el semáforo, qué hacer en redes, lo que pensé sobre mí y un plan anti-bullying.",
+    "category": "adolescentes"
+  }
+}

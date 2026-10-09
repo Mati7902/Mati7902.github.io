@@ -1,0 +1,346 @@
+{
+  "slug": "tcc-distorsiones",
+  "title": "Las distorsiones cognitivas",
+  "description": "Conocé las 12 distorsiones más frecuentes, aprendé a reconocerlas y descubrí cuál es tu «lente» habitual.",
+  "kind": "custom",
+  "approach": "tcc",
+  "audience": "adultos",
+  "collection": "tcc",
+  "estimated_minutes": 30,
+  "sort_order": 203,
+  "source": "Cuadernillo de TCC, capítulo 3 (páginas 13 a 16)",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Lentes rayados",
+      "content": "Las distorsiones cognitivas son errores sistemáticos en la forma de procesar la información: atajos mentales que deforman la realidad y sostienen el malestar. No son signo de poca inteligencia; los tenemos todos. La clave es aprender a reconocerlos.\n\nLa mente, para ahorrar esfuerzo, usa atajos. La mayoría son útiles, pero algunos nos hacen ver la realidad torcida, como **lentes rayados**. Una persona puede recibir nueve comentarios positivos y uno negativo, y quedarse toda la noche pensando solo en el negativo. Eso es una distorsión: no está mintiendo, está filtrando."
+    },
+    {
+      "id": "profundizar",
+      "type": "info",
+      "title": "Para profundizar (opcional)",
+      "content": "Las distorsiones cognitivas son sesgos sistemáticos en el procesamiento de la información descritos por Beck y ampliados por Burns. Operan sobre los pensamientos automáticos y les dan forma.\n\nIdentificar el tipo de distorsión facilita el cuestionamiento, porque cada una tiene un «punto débil» característico. No se trata de etiquetar para descalificar el pensamiento, sino de entender el mecanismo para poder revisarlo."
+    },
+    {
+      "id": "tabla_1",
+      "type": "info",
+      "title": "Las principales distorsiones (1 de 4)",
+      "content": "Estas son las más frecuentes, con su definición, un ejemplo y una vía para cuestionarla.\n\n**Todo o nada.** Ver en extremos, sin matices. «Si no es perfecto, es un desastre.»\nCuestionala: ¿hay puntos intermedios? ¿Qué habría entre 0 y 100?\n\n**Sobregeneralización.** De un hecho aislado a una regla universal. «Siempre me sale mal todo.»\nCuestionala: ¿«siempre»? ¿Podés nombrar excepciones concretas?\n\n**Filtro mental.** Fijarse solo en lo negativo. Un reproche borra diez elogios.\nCuestionala: ¿qué datos positivos estoy dejando afuera?"
+    },
+    {
+      "id": "tabla_2",
+      "type": "info",
+      "title": "Las principales distorsiones (2 de 4)",
+      "content": "**Descalificar lo positivo.** Restar valor a lo bueno. «Me salió bien, pero fue suerte.»\nCuestionala: si un amigo lograra esto, ¿le dirías que fue solo suerte?\n\n**Lectura de mente.** Suponer lo que otros piensan. «Sé que le parezco aburrido.»\nCuestionala: ¿qué evidencia tengo? ¿Lo comprobé o lo asumí?\n\n**Adivinación del futuro.** Predecir lo peor como un hecho. «Voy a fracasar seguro.»\nCuestionala: ¿cuántas veces esta predicción se cumplió tal cual?"
+    },
+    {
+      "id": "tabla_3",
+      "type": "info",
+      "title": "Las principales distorsiones (3 de 4)",
+      "content": "**Catastrofización.** Imaginar el peor escenario y darlo por cierto. «Si me tiembla la voz, es el fin.»\nCuestionala: ¿qué es lo más probable, no lo peor? ¿Y si pasara, cómo lo afrontaría?\n\n**Razonamiento emocional.** «Lo siento, entonces es verdad.» «Me siento inútil, luego lo soy.»\nCuestionala: ¿un sentimiento es una prueba? ¿Los hechos coinciden?\n\n**Debería / tener que.** Reglas rígidas sobre cómo deben ser las cosas. «No debería equivocarme nunca.»\nCuestionala: ¿esa regla es realista? ¿La aplicarías a otro?"
+    },
+    {
+      "id": "tabla_4",
+      "type": "info",
+      "title": "Las principales distorsiones (4 de 4)",
+      "content": "**Etiquetación.** Ponerse (o poner) una etiqueta global. «Soy un fracaso.»\nCuestionala: ¿un error define a toda la persona? Describí la conducta, no la etiqueta.\n\n**Personalización.** Asumir responsabilidad de lo que no controlás. «Está de mal humor por mi culpa.»\nCuestionala: ¿qué otros factores pudieron influir?\n\n**Culpabilización.** Cargar toda la culpa en uno mismo o en otro.\nCuestionala: ¿qué parte es mía, qué parte del contexto y qué parte de otros?"
+    },
+    {
+      "id": "reconocer",
+      "type": "info",
+      "title": "¿Cómo reconocerlas?",
+      "content": "Prestá atención a estas pistas:\n\n- Aparecen palabras absolutas: «siempre», «nunca», «todo», «nadie», «todos».\n- Hay etiquetas globales sobre vos o los demás: «soy un…», «es un…».\n- Se predice el futuro con certeza o se lee la mente ajena sin datos.\n- Un sentimiento se usa como prueba de un hecho.\n- Aparecen «debería», «tengo que», «no puedo fallar»."
+    },
+    {
+      "id": "areas",
+      "type": "info",
+      "title": "Ejemplos por área",
+      "content": "Así se ven en distintas áreas de la vida. Fijate que un mismo pensamiento puede tener más de una.\n\n- **Ansiedad:** «Si tengo un ataque en el colectivo, va a ser catastrófico» → catastrofización.\n- **Autoestima:** «Soy un desastre» → etiquetación.\n- **Duelo:** «Debería haberlo salvado» → debería / culpabilización.\n- **Autoestima:** «Todos se dieron cuenta de mi error» → filtro mental + lectura de mente.\n- **Trabajo:** «El equipo falló por mi culpa» → personalización.\n\nAhora probá vos con otros cinco ejemplos."
+    },
+    {
+      "id": "quiz_depresion",
+      "type": "choice",
+      "prompt": "¿Qué distorsión hay en «Nunca voy a estar mejor»?",
+      "help": "Ejemplo del área depresión (1 de 5).",
+      "options": [
+        "Sobregeneralización",
+        "Adivinación del futuro",
+        "Razonamiento emocional",
+        "Etiquetación"
+      ],
+      "feedback": {
+        "Adivinación del futuro": "**Exacto.** Predice lo peor como si fuera un hecho. Para cuestionarla: ¿cuántas veces esta predicción se cumplió tal cual?",
+        "Sobregeneralización": "**Casi.** El «nunca» es una buena pista de que hay una distorsión, pero el pensamiento no saca una regla de un hecho aislado: predice el futuro como si fuera un hecho. Es **adivinación del futuro**.",
+        "Razonamiento emocional": "**No es la principal.** No usa un sentimiento como prueba («lo siento, entonces es verdad»): predice el futuro como si fuera un hecho. Es **adivinación del futuro**.",
+        "Etiquetación": "**No.** No pone una etiqueta global («soy un…»): predice el futuro como si fuera un hecho. Es **adivinación del futuro**."
+      }
+    },
+    {
+      "id": "quiz_pareja",
+      "type": "choice",
+      "prompt": "¿Qué distorsión hay en «Si no me escribe, es que ya no le importo»?",
+      "help": "Ejemplo del área pareja (2 de 5).",
+      "options": [
+        "Catastrofización",
+        "Personalización",
+        "Lectura de mente",
+        "Debería / tener que"
+      ],
+      "feedback": {
+        "Lectura de mente": "**Exacto.** Supone lo que el otro piensa o siente, sin datos. Para cuestionarla: ¿qué evidencia tengo? ¿Lo comprobé o lo asumí?",
+        "Catastrofización": "**No es la principal.** No imagina el peor escenario: da por hecho lo que la otra persona siente sin haberlo comprobado. Es **lectura de mente**.",
+        "Personalización": "**Se parece, pero no.** No se hace cargo de algo que no controla: supone lo que el otro siente. Es **lectura de mente**.",
+        "Debería / tener que": "**No.** No hay una regla rígida («debería», «tengo que»): supone lo que el otro siente. Es **lectura de mente**."
+      }
+    },
+    {
+      "id": "quiz_trabajo",
+      "type": "choice",
+      "prompt": "¿Qué distorsión hay en «Un error y arruiné todo el proyecto»?",
+      "help": "Ejemplo del área trabajo (3 de 5).",
+      "options": [
+        "Todo o nada",
+        "Filtro mental",
+        "Etiquetación",
+        "Adivinación del futuro"
+      ],
+      "feedback": {
+        "Todo o nada": "**Exacto.** Ve en extremos, sin matices: un error alcanza para que «todo» esté arruinado. Para cuestionarla: ¿hay puntos intermedios? ¿Qué habría entre 0 y 100?",
+        "Filtro mental": "**Cerca.** El filtro se fija solo en lo negativo, pero acá lo central es el extremo: o sale perfecto o está todo arruinado. Es **todo o nada**.",
+        "Etiquetación": "**No.** No le pone una etiqueta a la persona («soy un…»): ve el resultado en extremos. Es **todo o nada**.",
+        "Adivinación del futuro": "**No.** No predice lo que va a pasar: juzga lo que pasó sin matices. Es **todo o nada**."
+      }
+    },
+    {
+      "id": "quiz_universidad",
+      "type": "choice",
+      "prompt": "¿Qué distorsión hay en «Me fue bien de casualidad»?",
+      "help": "Ejemplo del área universidad (4 de 5).",
+      "options": [
+        "Filtro mental",
+        "Lectura de mente",
+        "Razonamiento emocional",
+        "Descalificar lo positivo"
+      ],
+      "feedback": {
+        "Descalificar lo positivo": "**Exacto.** Le resta valor a lo bueno. Para cuestionarla: si un amigo lograra esto, ¿le dirías que fue solo suerte?",
+        "Filtro mental": "**Cerca.** El filtro deja afuera lo positivo; acá lo positivo se ve, pero se le resta valor («de casualidad»). Es **descalificar lo positivo**.",
+        "Lectura de mente": "**No.** No supone lo que piensan otros: le resta valor a un logro propio. Es **descalificar lo positivo**.",
+        "Razonamiento emocional": "**No.** No usa un sentimiento como prueba: le resta valor a lo bueno. Es **descalificar lo positivo**."
+      }
+    },
+    {
+      "id": "quiz_perfeccionismo",
+      "type": "choice",
+      "prompt": "¿Qué distorsión hay en «Me siento incompetente, entonces lo soy»?",
+      "help": "Ejemplo del área perfeccionismo (5 de 5).",
+      "options": [
+        "Etiquetación",
+        "Todo o nada",
+        "Razonamiento emocional",
+        "Lectura de mente"
+      ],
+      "feedback": {
+        "Razonamiento emocional": "**Exacto.** «Lo siento, entonces es verdad»: usa un sentimiento como prueba de un hecho. Para cuestionarla: ¿un sentimiento es una prueba? ¿Los hechos coinciden?",
+        "Etiquetación": "**Cerca.** «Incompetente» suena a etiqueta, pero la clave está en el «me siento…, entonces lo soy»: un sentimiento usado como prueba. Es **razonamiento emocional**.",
+        "Todo o nada": "**No.** No ve en extremos: toma un sentimiento como prueba de un hecho. Es **razonamiento emocional**.",
+        "Lectura de mente": "**No.** No supone lo que piensan otros: toma su propio sentimiento como prueba. Es **razonamiento emocional**."
+      }
+    },
+    {
+      "id": "errores",
+      "type": "info",
+      "title": "Errores frecuentes",
+      "content": "Qué se confunde y cómo evitarlo:\n\n- **Usar la etiqueta de la distorsión como insulto.** «Otra vez catastrofizando» no ayuda; el fin es entender, no juzgarse.\n- **Creer que nombrar la distorsión ya la resuelve.** Nombrarla es el primer paso; después hay que cuestionarla (lo vas a ver en «Cuestionamiento socrático y reestructuración»).\n- **Forzar una sola categoría.** Un pensamiento puede tener dos o tres distorsiones a la vez.\n- **Confundir una distorsión con una emoción legítima.** Estar triste tras una pérdida no es una distorsión; pensar «no merezco estar bien nunca más» sí puede serlo."
+    },
+    {
+      "id": "diferencias",
+      "type": "info",
+      "title": "Diferencias con conceptos similares",
+      "content": "Una distorsión no es lo mismo que:\n\n- **Un pensamiento automático:** es el pensamiento en sí; la distorsión es el **tipo** de error que contiene.\n- **Una creencia nuclear:** es más profunda y estable; las distorsiones operan en la superficie.\n- **Una opinión razonable:** una opinión admite matices y evidencia; la distorsión es rígida y absoluta."
+    },
+    {
+      "id": "rodrigo",
+      "type": "info",
+      "title": "Caso clínico: Rodrigo, 29 años",
+      "content": "**Perfeccionismo laboral.** Rodrigo entrega un informe muy valorado, pero con una cifra mal tipeada. Piensa:\n\n- «Está todo arruinado» (todo o nada).\n- «Van a pensar que soy un incompetente» (lectura de mente).\n- «Soy un desastre» (etiquetación).\n\nPasa la noche rehaciéndolo entero.\n\n**Trabajo en sesión:** se nombran las tres distorsiones. Rodrigo descubre que el mismo error, cometido por un compañero, le parecería «un detalle sin importancia». Ese **doble estándar** es la puerta de entrada al cuestionamiento."
+    },
+    {
+      "id": "guiado_intro",
+      "type": "info",
+      "title": "Ejercicio guiado: tu distorsión frecuente",
+      "content": "Ahora vas a buscar tu «lente» más frecuente:\n\n1. Volvé a tus registros de «Los pensamientos automáticos» y elegí tres pensamientos calientes.\n2. Para cada uno, buscá qué distorsión(es) encaja(n) mejor.\n3. Anotá qué palabra o pista te lo indicó («siempre», una etiqueta, una predicción).\n4. Identificá cuál distorsión aparece más seguido: esa es tu «lente» más frecuente.\n5. Escribí, para esa distorsión, la pregunta que mejor la desafía.\n\nTus registros están guardados en cada ejercicio, en «Mis respuestas». Si todavía no tenés, usá pensamientos de estos días."
+    },
+    {
+      "id": "calientes",
+      "type": "list",
+      "prompt": "Anotá tres pensamientos calientes de tus registros",
+      "help": "Los que más emoción te trajeron, tal como aparecieron. Por ejemplo, Rodrigo: «Está todo arruinado».",
+      "count": 3
+    },
+    {
+      "id": "calientes_distorsion",
+      "type": "list",
+      "prompt": "Para cada pensamiento: ¿qué distorsión encaja y qué pista te lo indicó?",
+      "help": "Uno por renglón, en el mismo orden. Puede haber más de una distorsión. Por ejemplo: todo o nada, la pista fue «todo».\n\nLas doce: todo o nada, sobregeneralización, filtro mental, descalificar lo positivo, lectura de mente, adivinación del futuro, catastrofización, razonamiento emocional, debería / tener que, etiquetación, personalización y culpabilización.",
+      "count": 3
+    },
+    {
+      "id": "lente",
+      "type": "choice",
+      "prompt": "¿Cuál aparece más seguido? Esa es tu «lente» más frecuente",
+      "help": "Mirá tus tres respuestas anteriores.",
+      "options": [
+        "Todo o nada",
+        "Sobregeneralización",
+        "Filtro mental",
+        "Descalificar lo positivo",
+        "Lectura de mente",
+        "Adivinación del futuro",
+        "Catastrofización",
+        "Razonamiento emocional",
+        "Debería / tener que",
+        "Etiquetación",
+        "Personalización",
+        "Culpabilización"
+      ],
+      "feedback": {
+        "Todo o nada": "Pregunta de la tabla para desafiarla: ¿Hay puntos intermedios? ¿Qué habría entre 0 y 100?",
+        "Sobregeneralización": "Pregunta de la tabla para desafiarla: ¿«Siempre»? ¿Podés nombrar excepciones concretas?",
+        "Filtro mental": "Pregunta de la tabla para desafiarla: ¿Qué datos positivos estoy dejando afuera?",
+        "Descalificar lo positivo": "Pregunta de la tabla para desafiarla: Si un amigo lograra esto, ¿le dirías que fue solo suerte?",
+        "Lectura de mente": "Pregunta de la tabla para desafiarla: ¿Qué evidencia tengo? ¿Lo comprobé o lo asumí?",
+        "Adivinación del futuro": "Pregunta de la tabla para desafiarla: ¿Cuántas veces esta predicción se cumplió tal cual?",
+        "Catastrofización": "Pregunta de la tabla para desafiarla: ¿Qué es lo más probable, no lo peor? ¿Y si pasara, cómo lo afrontaría?",
+        "Razonamiento emocional": "Pregunta de la tabla para desafiarla: ¿Un sentimiento es una prueba? ¿Los hechos coinciden?",
+        "Debería / tener que": "Pregunta de la tabla para desafiarla: ¿Esa regla es realista? ¿La aplicarías a otro?",
+        "Etiquetación": "Pregunta de la tabla para desafiarla: ¿Un error define a toda la persona? Describí la conducta, no la etiqueta.",
+        "Personalización": "Pregunta de la tabla para desafiarla: ¿Qué otros factores pudieron influir?",
+        "Culpabilización": "Pregunta de la tabla para desafiarla: ¿Qué parte es mía, qué parte del contexto y qué parte de otros?"
+      }
+    },
+    {
+      "id": "lente_pregunta",
+      "type": "text",
+      "prompt": "Escribí la pregunta que mejor desafía esa distorsión",
+      "help": "Podés usar la pregunta de la tabla tal cual o escribirla con tus palabras."
+    },
+    {
+      "id": "hoja_intro",
+      "type": "info",
+      "title": "Hoja de trabajo: identificando distorsiones",
+      "content": "Ahora completá una fila de la hoja con una situación concreta: reciente o de tus registros.\n\nSon cinco preguntas: la situación, el pensamiento automático, la distorsión o distorsiones, la pista que la revela y la pregunta que la desafía. En cada una vas a ver cómo lo haría Rodrigo."
+    },
+    {
+      "id": "hoja_situacion",
+      "type": "text",
+      "prompt": "Situación: ¿qué pasó?",
+      "help": "Breve y concreta: dónde, cuándo, con quién. Rodrigo: entregó un informe muy valorado, pero con una cifra mal tipeada."
+    },
+    {
+      "id": "hoja_pensamiento",
+      "type": "text",
+      "prompt": "Pensamiento automático: ¿qué pensaste?",
+      "help": "La frase tal como apareció. Rodrigo: «Está todo arruinado»."
+    },
+    {
+      "id": "hoja_distorsiones",
+      "type": "checklist",
+      "prompt": "Distorsión(es): ¿cuáles encajan?",
+      "help": "Marcá todas las que veas: un pensamiento puede tener dos o tres a la vez. Rodrigo: todo o nada.",
+      "options": [
+        "Todo o nada",
+        "Sobregeneralización",
+        "Filtro mental",
+        "Descalificar lo positivo",
+        "Lectura de mente",
+        "Adivinación del futuro",
+        "Catastrofización",
+        "Razonamiento emocional",
+        "Debería / tener que",
+        "Etiquetación",
+        "Personalización",
+        "Culpabilización"
+      ]
+    },
+    {
+      "id": "hoja_pista",
+      "type": "text",
+      "prompt": "¿Qué pista lo revela?",
+      "help": "Una palabra absoluta, una etiqueta, una predicción, un «debería», un sentimiento usado como prueba… Rodrigo: «todo»."
+    },
+    {
+      "id": "hoja_pregunta",
+      "type": "text",
+      "prompt": "¿Qué pregunta la desafía?",
+      "help": "Para el «está todo arruinado» de Rodrigo: «¿Hay puntos intermedios? ¿Qué habría entre 0 y 100?»."
+    },
+    {
+      "id": "refl_areas",
+      "type": "text",
+      "prompt": "¿En qué áreas de tu vida aparece más tu lente?",
+      "help": "Preguntas de reflexión: respondé las que quieras, podés saltear cualquiera.\n\nPor ejemplo: trabajo, pareja, estudio.",
+      "optional": true
+    },
+    {
+      "id": "refl_estandar",
+      "type": "text",
+      "prompt": "¿Te tratás con el mismo estándar con el que tratás a los demás?",
+      "help": "Acordate del doble estándar de Rodrigo.",
+      "optional": true
+    },
+    {
+      "id": "refl_palabras",
+      "type": "checklist",
+      "prompt": "¿Qué palabras absolutas usás más seguido?",
+      "options": [
+        "Siempre",
+        "Nunca",
+        "Todo",
+        "Nadie",
+        "Todos",
+        "Debería",
+        "Tengo que",
+        "No puedo fallar"
+      ],
+      "optional": true
+    },
+    {
+      "id": "refl_sin_distorsion",
+      "type": "text",
+      "prompt": "¿Cómo cambiaría una situación si sacaras la distorsión de la ecuación?",
+      "optional": true
+    },
+    {
+      "id": "refl_herencia",
+      "type": "text",
+      "prompt": "¿Qué distorsión heredaste de tu entorno o de tu historia?",
+      "optional": true
+    },
+    {
+      "id": "resumen",
+      "type": "reflect",
+      "title": "Tu lente y tu hoja",
+      "template": "Tu lente más frecuente: {{lente}}. La pregunta que la desafía: «{{lente_pregunta}}». En tu hoja, el pensamiento «{{hoja_pensamiento}}» mostró: {{hoja_distorsiones}}. Para desafiarlo: «{{hoja_pregunta}}».",
+      "content": "Tus respuestas quedan guardadas: las podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también las puede ver."
+    },
+    {
+      "id": "para_llevar",
+      "type": "info",
+      "title": "Para llevar",
+      "content": "- Las distorsiones son errores sistemáticos que deforman cómo procesamos la información.\n- Las tenemos todos; reconocerlas es más útil que juzgarlas.\n- Cada distorsión tiene un punto débil y una pregunta que la desafía.\n- Un pensamiento puede contener varias distorsiones a la vez.\n- Nombrarla es el primer paso; cuestionarla viene después."
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "Tareas para casa, a lo largo de la semana:\n\n- Detectá y clasificá **cinco pensamientos** con distorsión. Por cada uno, volvé a completar la hoja de este ejercicio o usá «Registro de distorsiones».\n- Elegí tu distorsión más frecuente y llevá una «cuenta» de cuántas veces aparece por día.\n- Por cada una, escribí una frase alternativa más ajustada (sin exagerar hacia el otro extremo).\n- Aplicá el «doble estándar»: preguntate qué le dirías a un amigo que pensara eso.\n\nEl próximo capítulo es **«Creencias intermedias y nucleares»**. Cuestionar las distorsiones lo vas a trabajar en «Cuestionamiento socrático y reestructuración»."
+    }
+  ],
+  "material": {
+    "title": "Las distorsiones cognitivas",
+    "description": "Las 12 distorsiones cognitivas con ejemplos y preguntas para cuestionarlas, un quiz y la hoja para identificarlas.",
+    "category": "psicoeducacion"
+  }
+}

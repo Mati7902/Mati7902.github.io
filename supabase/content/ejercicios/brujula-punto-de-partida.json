@@ -1,0 +1,181 @@
+{
+  "slug": "brujula-punto-de-partida",
+  "title": "Mi punto de partida",
+  "description": "Para saber desde dónde arrancás y elegir lo que hoy pesa más. No es un test ni un diagnóstico.",
+  "kind": "custom",
+  "approach": "general",
+  "audience": "adolescentes",
+  "collection": "brujula",
+  "estimated_minutes": 8,
+  "sort_order": 101,
+  "source": "Brújula, páginas 1 y 2",
+  "steps": [
+    {
+      "id": "bienvenida",
+      "type": "info",
+      "title": "Este cuadernillo es tuyo",
+      "content": "Lo vamos a usar entre sesión y sesión, de a poco. No hay respuestas correctas ni incorrectas, no se ponen notas y podés escribir como te salga. Cada tarea lleva entre 5 y 15 minutos. Si un ejercicio no tiene que ver con lo que te pasa, lo salteamos. Traé a cada sesión lo que anotes: nos ayuda a ver qué te sirve.\n\n**Cómo vamos a trabajar:** Entender → Observar → Practicar → Probar → Repetir."
+    },
+    {
+      "id": "momento_dificil",
+      "type": "info",
+      "title": "Si estás pasando un momento muy difícil",
+      "content": "Andá directo a «Mi plan para momentos muy difíciles». Lo encontrás en **Calmarme**.\n\nSi estás en peligro ahora, pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano. En **Calmarme** está el recuadro «Si necesitás ayuda urgente» con los teléfonos."
+    },
+    {
+      "id": "privacidad",
+      "type": "info",
+      "title": "Lo que escribís es tuyo",
+      "content": "Vos elegís qué compartir y qué no. No hace falta contar nada que no quieras.\n\nTus respuestas quedan guardadas en cada ejercicio, en «Mis respuestas». Tu psicólogo/a solo las puede leer si activás **«Compartir mis registros con mi psicólogo»** en tu perfil. Si te sugirió un ejercicio, ve si lo hiciste, pero no lo que escribiste.\n\n**Hay un límite:** si aparece algo que pone en riesgo tu seguridad o la de otra persona, tu psicólogo o psicóloga va a buscar ayuda con un adulto responsable o con un servicio de protección. Siempre que se pueda, lo va a hablar antes con vos.\n\nSi te preocupa que alguien lea lo que escribís (por ejemplo, si compartís el celular), acordá con tu psicólogo/a cómo cuidarlo."
+    },
+    {
+      "id": "como_me_dicen",
+      "type": "text",
+      "prompt": "¿Cómo me gusta que me digan?",
+      "help": "Tu nombre, un apodo o como prefieras que te llamen.",
+      "placeholder": "Por ejemplo: Cami, Tobi…",
+      "optional": true
+    },
+    {
+      "id": "punto_intro",
+      "type": "info",
+      "title": "Mi punto de partida",
+      "content": "**No hace falta trabajar todo. Elegí lo que hoy pesa más.**\n\nEsto sirve para saber desde dónde arrancás. No es un test ni un diagnóstico. Podés dejar en blanco lo que no quieras contestar.\n\nEste cuadernillo acompaña tu tratamiento psicológico y no reemplaza una evaluación profesional."
+    },
+    {
+      "id": "me_pasa",
+      "type": "checklist",
+      "prompt": "¿Qué me pasa o me preocupa?",
+      "help": "Marcá las que quieras.",
+      "optional": true,
+      "options": [
+        "Discusiones o tensión en casa",
+        "Me siento solo/a o fuera del grupo",
+        "Burlas, bullying o cyberbullying",
+        "Nervios o ansiedad",
+        "Tristeza o desgano",
+        "El colegio",
+        "POD, vape o cigarrillo",
+        "Enojo que explota",
+        "Me cuesta decir lo que necesito",
+        "Me cuesta pedir ayuda",
+        "Cómo me veo a mí mismo/a",
+        "Otra"
+      ]
+    },
+    {
+      "id": "me_pasa_otra",
+      "type": "text",
+      "prompt": "Si marcaste «Otra»: ¿qué otra cosa te pasa o te preocupa?",
+      "help": "Si no marcaste «Otra», salteá esta pregunta.",
+      "optional": true
+    },
+    {
+      "id": "diferente",
+      "type": "text",
+      "prompt": "¿Qué me gustaría que fuera diferente dentro de 2 o 3 meses?",
+      "help": "**Una idea:** un buen objetivo se puede ver desde afuera. En vez de «estar bien», Lucas escribió: «volver a entrenar una vez por semana».",
+      "placeholder": "Algo que se pueda ver desde afuera…",
+      "optional": true
+    },
+    {
+      "id": "tres_cosas",
+      "type": "list",
+      "prompt": "Las 3 cosas que quiero trabajar",
+      "help": "No hace falta trabajar todo: elegí lo que hoy pesa más.",
+      "count": 3,
+      "min": 1,
+      "optional": true
+    },
+    {
+      "id": "hoy_animo",
+      "type": "scale",
+      "prompt": "¿Cómo estoy hoy de ánimo?",
+      "help": "Ahora, siete preguntas rápidas sobre cómo estás hoy. Elegí un número: 0 es muy mal y 10 es muy bien.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Muy mal",
+      "max_label": "Muy bien",
+      "optional": true
+    },
+    {
+      "id": "hoy_nervios",
+      "type": "scale",
+      "prompt": "¿Cómo estoy hoy con los nervios o la ansiedad?",
+      "help": "Acá el 0 es «me desbordan» y el 10 es «los manejo bien».",
+      "min": 0,
+      "max": 10,
+      "min_label": "Me desbordan",
+      "max_label": "Los manejo bien",
+      "optional": true
+    },
+    {
+      "id": "hoy_relaciones",
+      "type": "scale",
+      "prompt": "¿Cómo estoy hoy en mis relaciones?",
+      "help": "Amigos, compañeros. 0 es muy mal y 10 es muy bien.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Muy mal",
+      "max_label": "Muy bien",
+      "optional": true
+    },
+    {
+      "id": "hoy_familia",
+      "type": "scale",
+      "prompt": "¿Cómo estoy hoy con mi familia?",
+      "help": "0 es muy mal y 10 es muy bien.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Muy mal",
+      "max_label": "Muy bien",
+      "optional": true
+    },
+    {
+      "id": "hoy_colegio",
+      "type": "scale",
+      "prompt": "¿Cómo estoy hoy en el colegio?",
+      "help": "0 es muy mal y 10 es muy bien.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Muy mal",
+      "max_label": "Muy bien",
+      "optional": true
+    },
+    {
+      "id": "hoy_confianza",
+      "type": "scale",
+      "prompt": "¿Cómo estoy hoy con la confianza en mí?",
+      "help": "0 es muy mal y 10 es muy bien.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Muy mal",
+      "max_label": "Muy bien",
+      "optional": true
+    },
+    {
+      "id": "hoy_emociones",
+      "type": "scale",
+      "prompt": "¿Cómo estoy hoy con el manejo de mis emociones?",
+      "help": "0 es muy mal y 10 es muy bien.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Muy mal",
+      "max_label": "Muy bien",
+      "optional": true
+    },
+    {
+      "id": "resumen",
+      "type": "reflect",
+      "title": "Desde acá arranco",
+      "template": "Lo que hoy me pasa o me preocupa: {{me_pasa}}. Lo que me gustaría que fuera diferente dentro de 2 o 3 meses: «{{diferente}}». Lo que quiero trabajar: {{tres_cosas}}",
+      "content": "Lo podés volver a ver cuando quieras en este ejercicio, en «Mis respuestas»."
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "**Unos 5 minutos.** Observá una situación que te movió algo por dentro y anotá:\n\n- ¿Qué pasó?\n- ¿Qué sentiste?\n- ¿Cuánto? (de 0 a 10)\n\nSi querés, lo podés anotar en **«Registrar cómo me siento»**. Después seguimos con «Entender lo que me pasa»."
+    }
+  ]
+}

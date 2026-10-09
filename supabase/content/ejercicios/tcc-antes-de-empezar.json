@@ -1,0 +1,108 @@
+{
+  "slug": "tcc-antes-de-empezar",
+  "title": "Antes de empezar",
+  "description": "Qué vas a aprender, por qué funciona la TCC, qué dice la evidencia y cómo usar este cuadernillo.",
+  "kind": "custom",
+  "approach": "tcc",
+  "audience": "adultos",
+  "collection": "tcc",
+  "estimated_minutes": 8,
+  "sort_order": 200,
+  "source": "Cuadernillo de TCC, Introducción (páginas 2 a 4)",
+  "steps": [
+    {
+      "id": "bienvenida",
+      "type": "info",
+      "title": "Antes de empezar",
+      "content": "Este cuadernillo es una guía práctica para entender cómo pensamos, cómo eso influye en lo que sentimos y hacemos, y cómo podemos aprender a intervenir sobre ese proceso.\n\nEstá escrito en dos niveles al mismo tiempo: uno cercano, para cualquier persona que quiera empezar a trabajar sobre su bienestar, y otro más técnico, para estudiantes y colegas en formación. En la app, la parte técnica aparece en pantallas tituladas **«Para profundizar»**."
+    },
+    {
+      "id": "que_vas_a_aprender",
+      "type": "info",
+      "title": "¿Qué vas a aprender?",
+      "content": "A lo largo de estos capítulos vas a recorrer, paso a paso, las herramientas centrales de la Terapia Cognitivo-Conductual (TCC).\n\nCada capítulo combina:\n\n- una explicación simple;\n- una explicación clínica;\n- señales para reconocer el fenómeno en la vida diaria;\n- ejemplos;\n- un caso desarrollado;\n- un ejercicio guiado;\n- hojas de trabajo para completar."
+    },
+    {
+      "id": "temas",
+      "type": "info",
+      "title": "Los siete temas",
+      "content": "- **El modelo cognitivo:** cómo la interpretación de una situación —y no la situación en sí— moldea la emoción y la conducta.\n- **Los pensamientos automáticos:** esas ideas rápidas que aparecen sin que las llamemos y tiñen nuestro estado de ánimo.\n- **Las distorsiones cognitivas:** los errores sistemáticos con los que la mente deforma la información.\n- **Las creencias intermedias y nucleares:** las reglas profundas desde las que interpretamos el mundo.\n- **El cuestionamiento socrático y la reestructuración cognitiva:** cómo poner a prueba un pensamiento y construir alternativas más útiles y ajustadas.\n- **El modelo ABC de Ellis:** una forma complementaria de mirar el mismo proceso.\n- **La tríada cognitiva y la activación conductual:** cómo entender la depresión y cómo salir del círculo de la inactividad."
+    },
+    {
+      "id": "por_que",
+      "type": "info",
+      "title": "¿Por qué funcionan estas herramientas?",
+      "content": "La idea central de la TCC es sencilla de enunciar y poderosa en la práctica: entre lo que nos pasa y lo que sentimos hay siempre un paso intermedio, **la interpretación**.\n\nNo reaccionamos a los hechos en bruto, sino al significado que les damos. Como ese significado puede aprenderse, examinarse y modificarse, también puede cambiar la forma en que nos sentimos y actuamos."
+    },
+    {
+      "id": "como_usar",
+      "type": "info",
+      "title": "Cómo usar este cuadernillo",
+      "content": "Cada capítulo es un ejercicio de esta colección y termina con preguntas para completar, tareas para casa y preguntas de reflexión. El material rinde cuando lo completás, no solo cuando lo leés.\n\nAvanzá a tu ritmo: podés dedicar una semana a cada capítulo.\n\nAl final de la colección están los **registros** (los anexos del cuadernillo): podés repetirlos las veces que quieras.\n\nSi sos terapeuta en formación, podés usar las hojas y los casos como recursos para sesión y como plantillas para tus pacientes."
+    },
+    {
+      "id": "tus_respuestas",
+      "type": "info",
+      "title": "Tus respuestas",
+      "content": "Lo que escribas en cada ejercicio queda guardado. Lo podés volver a ver cuando quieras, entrando al ejercicio, en **«Mis respuestas»**.\n\nTu psicólogo solo puede ver tus respuestas si activás **«Compartir mis registros con mi psicólogo»** en tu perfil."
+    },
+    {
+      "id": "evidencia",
+      "type": "info",
+      "title": "La evidencia detrás de la TCC",
+      "content": "La TCC es uno de los enfoques psicoterapéuticos más estudiados. Nació del trabajo de Aaron T. Beck en la depresión durante los años sesenta y setenta, y del modelo racional-emotivo de Albert Ellis, desarrollado en paralelo desde mediados de los cincuenta. Desde entonces se ha investigado y refinado para un amplio rango de problemas.\n\nRevisiones y metaanálisis han mostrado que produce beneficios clínicamente relevantes en depresión y en los trastornos de ansiedad, con tamaños de efecto que suelen ubicarse en el rango moderado a grande. Guías como las del *National Institute for Health and Care Excellence* (NICE) del Reino Unido la recomiendan como tratamiento de primera línea para varios cuadros, y la *American Psychological Association* (APA) la incluye entre los tratamientos con apoyo empírico."
+    },
+    {
+      "id": "aclaracion",
+      "type": "info",
+      "title": "Una aclaración honesta sobre la evidencia",
+      "content": "La TCC es eficaz para muchas personas, pero **no es mágica ni universal**. Su efecto varía según el problema, la calidad del vínculo terapéutico y el compromiso con la práctica.\n\nEste cuadernillo es un recurso psicoeducativo y de autoayuda guiada; no reemplaza una evaluación ni un tratamiento profesional. Si atravesás un malestar intenso o persistente, buscá acompañamiento.\n\nEn caso de crisis, pedí ayuda ya a emergencias o en la guardia del hospital más cercano. En la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos."
+    },
+    {
+      "id": "faq_1",
+      "type": "info",
+      "title": "Preguntas frecuentes (1 de 2)",
+      "content": "**¿Esto reemplaza a la terapia?**\n\nNo. Es un recurso de psicoeducación y autoayuda guiada. Puede acompañar un proceso terapéutico o ayudarte a empezar a observar tu funcionamiento, pero no sustituye una evaluación ni un tratamiento profesional.\n\n**¿Tengo que hacer todos los ejercicios?**\n\nCuantos más hagas, más vas a notar el cambio. Si tenés poco tiempo, priorizá el «Registro de pensamientos (RPD)», el «Registro ABC» y la hoja de reestructuración de «Cuestionamiento socrático y reestructuración»: son el corazón del método."
+    },
+    {
+      "id": "faq_2",
+      "type": "info",
+      "title": "Preguntas frecuentes (2 de 2)",
+      "content": "**¿Y si un pensamiento no cambia por más que lo cuestiono?**\n\nEs normal. Algunos pensamientos se sostienen en creencias profundas (lo vas a ver en «Creencias intermedias y nucleares») o necesitan un experimento en la vida real, no solo un debate mental. La constancia y, si hace falta, el acompañamiento profesional marcan la diferencia.\n\n**¿Esto es «pensar en positivo»?**\n\nNo. Buscamos pensamientos ajustados y creíbles, no optimistas a la fuerza. La meta es ver la realidad completa —lo bueno y lo malo— en lugar de solo la mitad negativa."
+    },
+    {
+      "id": "mapa",
+      "type": "info",
+      "title": "Un mapa del recorrido",
+      "content": "- **1. El modelo cognitivo:** entender la relación situación–pensamiento–emoción–conducta–fisiología.\n- **2. Los pensamientos automáticos:** detectar y registrar las ideas rápidas que disparan el malestar.\n- **3. Las distorsiones cognitivas:** reconocer los errores típicos del pensamiento.\n- **4. Creencias intermedias y nucleares:** llegar a las reglas y creencias de fondo.\n- **5. Cuestionamiento socrático y reestructuración:** poner a prueba pensamientos y construir alternativas.\n- **6. El modelo ABC de Ellis:** una mirada complementaria del mismo proceso.\n- **7. Tríada cognitiva y activación conductual:** comprender la depresión y volver a la acción.\n\nDespués vienen los registros para repetir y, para consultar, «50 preguntas socráticas» y el «Glosario de TCC»."
+    },
+    {
+      "id": "empezar",
+      "type": "choice",
+      "prompt": "¿Por qué capítulo te gustaría empezar?",
+      "help": "No hay respuesta correcta. Los capítulos están pensados para recorrerse paso a paso, en orden, pero lo podés hablar con tu psicólogo.",
+      "optional": true,
+      "options": [
+        "1. El modelo cognitivo",
+        "2. Los pensamientos automáticos",
+        "3. Las distorsiones cognitivas",
+        "4. Creencias intermedias y nucleares",
+        "5. Cuestionamiento socrático y reestructuración",
+        "6. El modelo ABC de Ellis",
+        "7. Tríada cognitiva y activación conductual",
+        "Todavía no lo sé"
+      ]
+    },
+    {
+      "id": "siguiente",
+      "type": "info",
+      "title": "Tu próximo paso",
+      "content": "Cuando quieras, seguí con el capítulo 1, **«El modelo cognitivo»**. Es la base de todo lo que viene después.\n\nAvanzá a tu ritmo y llevá tus dudas a la próxima sesión."
+    }
+  ],
+  "material": {
+    "title": "Antes de empezar: cómo usar el cuadernillo de TCC",
+    "description": "Qué vas a aprender, por qué funciona la TCC, la evidencia, preguntas frecuentes y el mapa de los siete capítulos.",
+    "category": "psicoeducacion"
+  }
+}

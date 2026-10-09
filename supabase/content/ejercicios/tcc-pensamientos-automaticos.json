@@ -1,0 +1,312 @@
+{
+  "slug": "tcc-pensamientos-automaticos",
+  "title": "Los pensamientos automáticos",
+  "description": "Aprendé a atrapar las ideas rápidas que disparan el malestar y registralas en las primeras columnas del RPD.",
+  "kind": "thought_record",
+  "approach": "tcc",
+  "audience": "adultos",
+  "collection": "tcc",
+  "estimated_minutes": 20,
+  "sort_order": 202,
+  "source": "Cuadernillo de TCC, Capítulo 2 (páginas 9 a 12)",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Los pensamientos automáticos",
+      "content": "Son las ideas rápidas, breves y espontáneas que atraviesan la mente todo el tiempo. No las llamamos; aparecen solas.\n\nAprender a atraparlas es **el primer gran trabajo de la TCC**."
+    },
+    {
+      "id": "radio",
+      "type": "info",
+      "title": "Una radio de fondo",
+      "content": "Tu mente comenta la realidad sin parar, como una radio de fondo que casi nunca escuchás del todo. Esos comentarios son los pensamientos automáticos.\n\nSuelen ser cortos («no puedo», «me va a salir mal», «no le importo»), pasan muy rápido y los damos por ciertos sin revisarlos.\n\nComo una gota que no notás, pero que repetida termina mojando todo el día."
+    },
+    {
+      "id": "clinica",
+      "type": "info",
+      "title": "Para profundizar",
+      "content": "*Explicación clínica. Si preferís, pasá a la pantalla siguiente.*\n\nLos pensamientos automáticos son cogniciones situacionales de nivel superficial que surgen de forma involuntaria ante estímulos concretos. Beck los describió como el nivel más accesible del sistema cognitivo y, por eso, el punto de entrada habitual en terapia. Reflejan el contenido de creencias más profundas, pero se trabajan primero porque son fáciles de detectar y de registrar.\n\nPueden presentarse como una frase, como imágenes mentales o como una mezcla. Su **credibilidad subjetiva** —cuánto los creemos— es una variable clave: no importa solo qué pensamos, sino cuánto lo compramos. Reducir esa credibilidad, más que eliminar el pensamiento, es un objetivo central."
+    },
+    {
+      "id": "caracteristicas",
+      "type": "info",
+      "title": "Características",
+      "content": "- **Automáticos:** aparecen sin esfuerzo ni intención.\n- **Breves:** suelen ser frases telegráficas o imágenes fugaces.\n- **Plausibles:** se sienten verdaderos, aunque no siempre lo sean.\n- **Involuntarios:** no los elegimos; cuesta apagarlos a voluntad.\n- **Específicos de la situación:** cambian según el contexto que los dispara.\n- **Cargados de emoción:** suelen anteceder o acompañar un cambio afectivo."
+    },
+    {
+      "id": "pregunta_oro",
+      "type": "info",
+      "title": "La pregunta de oro",
+      "content": "Para identificarlos, la pregunta clave, que vas a usar en todo el cuadernillo, es:\n\n**«¿Qué me pasó por la cabeza justo antes (o durante) el momento en que empecé a sentirme así?»**\n\nCuando cuesta encontrarlo, ayuda:\n\n- recrear la escena con detalle;\n- prestar atención a las imágenes que aparecen;\n- completar frases como «temo que…», «lo que esto significa de mí es…»."
+    },
+    {
+      "id": "diferencias",
+      "type": "info",
+      "title": "Diferencias con emociones, preocupaciones y rumiaciones",
+      "content": "- **Pensamiento automático:** una idea puntual sobre una situación. Se puede escribir como frase; se refiere a un momento concreto.\n- **Emoción:** un estado afectivo. Se nombra con UNA palabra (miedo, tristeza). No es una frase.\n- **Preocupación:** una cadena de pensamientos «¿y si…?» sobre el futuro. Es anticipatoria y encadenada; busca prevenir una amenaza.\n- **Rumiación:** un repaso repetitivo del pasado o de un problema. Es circular, mira hacia atrás, sobre causas y significados («¿por qué a mí?»)."
+    },
+    {
+      "id": "regla",
+      "type": "info",
+      "title": "Regla práctica",
+      "content": "- Si lo podés escribir como una oración que empieza con «que…», suele ser un **pensamiento**.\n- Si es una sola palabra, es una **emoción**.\n- Si mira al futuro y se encadena, es **preocupación**.\n- Si mira al pasado y gira en círculo, es **rumiación**.\n\nProbá la regla con cuatro ejemplos."
+    },
+    {
+      "id": "quiz_1",
+      "type": "choice",
+      "prompt": "«Me va a salir mal»",
+      "help": "¿Qué es? Aplicá la regla práctica. 1 de 4.",
+      "options": [
+        "Pensamiento automático",
+        "Emoción",
+        "Preocupación",
+        "Rumiación"
+      ],
+      "feedback": {
+        "Pensamiento automático": "**¡Bien! Es un pensamiento automático:** se puede escribir como frase y se refiere a un momento concreto. Aunque habla del futuro, es una idea puntual: no se encadena en «¿y si…?».",
+        "Emoción": "**Es un pensamiento automático:** es una frase, no una sola palabra. La emoción que lo acompaña sí se nombraría con una palabra, por ejemplo, miedo.",
+        "Preocupación": "**Es un pensamiento automático.** Habla del futuro, pero es una idea puntual sobre un momento concreto. La preocupación es una cadena de «¿y si…?» que busca prevenir una amenaza.",
+        "Rumiación": "**Es un pensamiento automático:** una idea puntual sobre una situación. La rumiación mira hacia atrás y gira en círculo sobre causas y significados («¿por qué a mí?»)."
+      }
+    },
+    {
+      "id": "quiz_2",
+      "type": "choice",
+      "prompt": "«Angustia»",
+      "help": "¿Qué es? 2 de 4.",
+      "options": [
+        "Pensamiento automático",
+        "Emoción",
+        "Preocupación",
+        "Rumiación"
+      ],
+      "feedback": {
+        "Pensamiento automático": "**Es una emoción:** es una sola palabra. Un pensamiento se puede escribir como frase; para encontrarlo, usá la pregunta de oro.",
+        "Emoción": "**¡Bien! Es una emoción:** un estado afectivo que se nombra con una sola palabra.",
+        "Preocupación": "**Es una emoción:** una sola palabra. La preocupación es una cadena de pensamientos «¿y si…?» sobre el futuro.",
+        "Rumiación": "**Es una emoción:** una sola palabra. La rumiación es un repaso repetitivo del pasado que gira en círculo."
+      }
+    },
+    {
+      "id": "quiz_3",
+      "type": "choice",
+      "prompt": "«¿Y si me equivoco en la presentación? ¿Y si se dan cuenta? ¿Y si pierdo el trabajo?»",
+      "help": "¿Qué es? 3 de 4.",
+      "options": [
+        "Pensamiento automático",
+        "Emoción",
+        "Preocupación",
+        "Rumiación"
+      ],
+      "feedback": {
+        "Pensamiento automático": "**Es una preocupación:** no es una idea puntual, sino una cadena de «¿y si…?» que mira al futuro.",
+        "Emoción": "**Es una preocupación:** son varias frases, no una palabra. Mira al futuro y se encadena en «¿y si…?».",
+        "Preocupación": "**¡Bien! Es una preocupación:** mira al futuro, se encadena y busca prevenir una amenaza. Ojo: no es lo mismo que planificar. Planificar resuelve; preocuparse gira sin resolver.",
+        "Rumiación": "**Es una preocupación:** mira hacia adelante, al futuro. La rumiación mira hacia atrás, al pasado."
+      }
+    },
+    {
+      "id": "quiz_4",
+      "type": "choice",
+      "prompt": "«Desde que me dejó, me pregunto una y otra vez qué hice mal, por qué a mí»",
+      "help": "¿Qué es? 4 de 4.",
+      "options": [
+        "Pensamiento automático",
+        "Emoción",
+        "Preocupación",
+        "Rumiación"
+      ],
+      "feedback": {
+        "Pensamiento automático": "**Es una rumiación:** no es una idea puntual sobre un momento concreto, sino un repaso repetitivo del pasado que vuelve una y otra vez.",
+        "Emoción": "**Es una rumiación:** es un repaso del pasado, no una palabra que nombre un estado afectivo.",
+        "Preocupación": "**Es una rumiación:** mira hacia atrás, al pasado, no al futuro. Gira en círculo sobre causas y significados («¿por qué a mí?»).",
+        "Rumiación": "**¡Bien! Es una rumiación:** mira al pasado y gira en círculo, sobre causas y significados («¿por qué a mí?»)."
+      }
+    },
+    {
+      "id": "ejemplos",
+      "type": "checklist",
+      "prompt": "¿Alguno de estos pensamientos te suena?",
+      "help": "Son pensamientos automáticos típicos de distintas áreas. Marcá los que aparecen en tu cabeza, si hay alguno.",
+      "optional": true,
+      "options": [
+        "Ansiedad: «Algo malo va a pasar», «no lo voy a soportar»",
+        "Depresión: «Nada tiene sentido», «soy una carga»",
+        "Pareja: «Si me quisiera, se daría cuenta solo»",
+        "Autoestima: «No valgo lo suficiente», «cualquiera lo haría mejor»",
+        "Trabajo: «Si pido ayuda, van a ver que no sé»",
+        "Universidad: «Si repruebo, se termina todo»",
+        "Duelo: «Debería haber hecho más», «lo abandoné»",
+        "Perfeccionismo: «Si no es perfecto, es un fracaso»",
+        "Ansiedad: «Todos se dan cuenta de que estoy nervioso»",
+        "Depresión: «Siempre fue así y siempre va a ser así»"
+      ]
+    },
+    {
+      "id": "errores",
+      "type": "info",
+      "title": "Errores frecuentes",
+      "content": "Qué se confunde y cómo evitarlo:\n\n- **Anotar la emoción como si fuera el pensamiento.** «Me sentí mal» no es un pensamiento; buscá la frase que estaba debajo.\n- **Escribir el pensamiento «traducido» o suavizado.** Registralo tal como apareció, con sus palabras crudas.\n- **Quedarse con el primero.** Preguntá «¿y qué más?» para encontrar el pensamiento más caliente, el que más emoción trae.\n- **Confundir preocupación con planificación.** Planificar resuelve; preocuparse gira sin resolver."
+    },
+    {
+      "id": "lucia",
+      "type": "info",
+      "title": "Lucía, 21 años",
+      "content": "*Estudiante universitaria.*\n\nLucía consulta por «bloqueos» antes de rendir. Al recrear la escena del último examen, aparece una secuencia: ve la primera pregunta difícil (situación) y piensa:\n\n«no me acuerdo de nada» → «voy a reprobar» → «si repruebo, soy un fracaso» → «mis viejos se van a decepcionar».\n\nLa emoción escala de nerviosismo a pánico y entrega la hoja en blanco."
+    },
+    {
+      "id": "lucia_caliente",
+      "type": "choice",
+      "prompt": "¿Cuál es el pensamiento más caliente de la cadena de Lucía?",
+      "help": "El pensamiento caliente es el que más emoción trae.",
+      "options": [
+        "«No me acuerdo de nada»",
+        "«Voy a reprobar»",
+        "«Si repruebo, soy un fracaso»",
+        "«Mis viejos se van a decepcionar»"
+      ],
+      "feedback": {
+        "«No me acuerdo de nada»": "Es el primero de la cadena, y por eso conviene seguir preguntando «¿y qué más?». En el caso, el más caliente es **«soy un fracaso»**: no es sobre el examen, sino sobre ella misma. Lo que se trabaja es identificar la cadena completa y detectar ese pensamiento, que conecta con una creencia nuclear que se aborda más adelante.",
+        "«Voy a reprobar»": "Pesa, pero sigue hablando del examen. En el caso, el más caliente es **«soy un fracaso»**: no es sobre el examen, sino sobre ella misma. Lo que se trabaja es identificar la cadena completa y detectar ese pensamiento, que conecta con una creencia nuclear que se aborda más adelante.",
+        "«Si repruebo, soy un fracaso»": "**¡Exacto!** «Soy un fracaso» no es sobre el examen, sino sobre ella misma. Lo que se trabaja es identificar la cadena completa y detectar ese pensamiento, que conecta con una creencia nuclear que se aborda más adelante, en «Creencias intermedias y nucleares».",
+        "«Mis viejos se van a decepcionar»": "Es parte de la cadena y puede pesar mucho. En el caso, el más caliente es **«soy un fracaso»**: no es sobre el examen, sino sobre ella misma. Lo que se trabaja es identificar la cadena completa y detectar ese pensamiento, que conecta con una creencia nuclear que se aborda más adelante."
+      }
+    },
+    {
+      "id": "cazar",
+      "type": "info",
+      "title": "Cazar el pensamiento",
+      "content": "El ejercicio guiado de este capítulo:\n\n- **1.** Durante tres días, cada vez que notes un cambio de ánimo, hacé una pausa de diez segundos.\n- **2.** Hacete la pregunta de oro y anotá la primera frase que aparezca, cruda.\n- **3.** Preguntate «¿y qué más?» hasta que no aparezcan pensamientos nuevos.\n- **4.** Marcá el pensamiento que más emoción te trae: ese es el «pensamiento caliente».\n- **5.** Poné la credibilidad de 0 a 100 (cuánto lo creés en ese momento)."
+    },
+    {
+      "id": "rpd_intro",
+      "type": "info",
+      "title": "Tu Registro de Pensamientos (RPD)",
+      "content": "El Registro de Pensamientos Disfuncionales (RPD) es la herramienta más usada de la TCC.\n\nEn este capítulo trabajás las primeras cuatro columnas: **fecha y situación, emoción (0–100), pensamientos automáticos y credibilidad (0–100)**. En «Cuestionamiento socrático y reestructuración» vas a completar las últimas: evidencia y respuesta alternativa.\n\nProbalo ahora con un momento reciente en que notaste un cambio de ánimo."
+    },
+    {
+      "id": "situacion",
+      "type": "text",
+      "prompt": "¿Cuándo fue y qué pasó?",
+      "help": "Fecha y situación, como una foto: qué, quién, cuándo, dónde. Sin interpretaciones. Lucía: «En el último examen, veo la primera pregunta, que es difícil»."
+    },
+    {
+      "id": "emocion",
+      "type": "checklist",
+      "prompt": "¿Qué emoción sentiste?",
+      "help": "Cada emoción se nombra con una sola palabra, no con una frase. Marcá hasta tres. La de Lucía escaló de nerviosismo a pánico.",
+      "max": 3,
+      "options": [
+        "Angustia",
+        "Ansiedad",
+        "Miedo",
+        "Nerviosismo",
+        "Pánico",
+        "Bronca",
+        "Tristeza",
+        "Vergüenza",
+        "Culpa",
+        "Frustración",
+        "Inseguridad",
+        "Otra"
+      ]
+    },
+    {
+      "id": "emocion_otra",
+      "type": "text",
+      "prompt": "Si marcaste «Otra», ¿cuál fue?",
+      "help": "Una sola palabra. Si no marcaste «Otra», tocá «Saltar».",
+      "optional": true
+    },
+    {
+      "id": "intensidad",
+      "type": "scale",
+      "prompt": "¿Con qué intensidad la sentiste?",
+      "help": "De 0 a 100. Si marcaste más de una, puntuá la más fuerte.",
+      "min": 0,
+      "max": 100,
+      "min_label": "Nada",
+      "max_label": "Máxima"
+    },
+    {
+      "id": "pensamientos",
+      "type": "list",
+      "prompt": "¿Qué te pasó por la cabeza justo antes de empezar a sentirte así?",
+      "help": "Anotá la primera frase, cruda, tal como apareció. Después preguntate **«¿y qué más?»** y anotá cada pensamiento nuevo en otro renglón, hasta que no aparezcan más.\n\nSi cuesta: recreá la escena con detalle, prestá atención a las imágenes o completá «temo que…», «lo que esto significa de mí es…».\n\nLucía: «no me acuerdo de nada» → «voy a reprobar» → «si repruebo, soy un fracaso» → «mis viejos se van a decepcionar».",
+      "count": 5,
+      "min": 1
+    },
+    {
+      "id": "caliente",
+      "type": "text",
+      "prompt": "¿Cuál es tu pensamiento caliente?",
+      "help": "El que más emoción te trae (en el papel se marca con un asterisco). Copialo de tu lista. El de Lucía: «si repruebo, soy un fracaso»."
+    },
+    {
+      "id": "credibilidad",
+      "type": "scale",
+      "prompt": "¿Cuánto creés ese pensamiento?",
+      "help": "Credibilidad de 0 a 100: cuánto lo creés en ese momento. No importa solo qué pensás, sino cuánto lo creés.",
+      "min": 0,
+      "max": 100,
+      "min_label": "Nada",
+      "max_label": "Totalmente"
+    },
+    {
+      "id": "clasificar",
+      "type": "choice",
+      "prompt": "Aplicá la regla práctica: lo que anotaste como pensamiento caliente, ¿qué es?",
+      "help": "Clasificar cada anotación también es parte de la tarea de la semana.",
+      "options": [
+        "Un pensamiento: una frase sobre un momento concreto",
+        "Una emoción: una sola palabra",
+        "Una preocupación: una cadena de «¿y si…?» sobre el futuro",
+        "Una rumiación: vueltas en círculo sobre el pasado"
+      ],
+      "feedback": {
+        "Un pensamiento: una frase sobre un momento concreto": "**Bien.** Eso es lo que va en esta columna del RPD. Fijate que esté tal como apareció, con sus palabras crudas, sin traducirlo ni suavizarlo.",
+        "Una emoción: una sola palabra": "**Ojo:** anotar la emoción como si fuera el pensamiento es un error frecuente. «Me sentí mal» no es un pensamiento: buscá la frase que estaba debajo, con la pregunta de oro. Podés tocar «Atrás» y ajustarlo.",
+        "Una preocupación: una cadena de «¿y si…?» sobre el futuro": "Si mira al futuro y se encadena, es preocupación. Como en el caso de Lucía, anotá cada eslabón de la cadena en un renglón y elegí como caliente el que más emoción te trae. Podés tocar «Atrás» y ajustarlo. Recordá: planificar resuelve; preocuparse gira sin resolver.",
+        "Una rumiación: vueltas en círculo sobre el pasado": "Si mira al pasado y gira en círculo («¿por qué a mí?»), es rumiación. Buscá la frase puntual que apareció en el momento en que empezaste a sentirte así y anotala como pensamiento caliente. Podés tocar «Atrás» y ajustarlo."
+      }
+    },
+    {
+      "id": "resumen",
+      "type": "reflect",
+      "title": "Tu registro",
+      "template": "Situación: «{{situacion}}». Emoción: {{emocion}}. Pensamientos: {{pensamientos}}. Pensamiento caliente: «{{caliente}}».",
+      "content": "Estas son las primeras cuatro columnas del RPD. En «Cuestionamiento socrático y reestructuración» vas a completar las últimas: evidencia y respuesta alternativa.\n\nTu registro queda guardado en «Mis respuestas»."
+    },
+    {
+      "id": "reflexion",
+      "type": "info",
+      "title": "Preguntas de reflexión",
+      "content": "- ¿Qué pensamiento automático se repite más en tu semana?\n- ¿Notás diferencia entre pensar un problema y darle vueltas sin salida?\n- ¿Cuál de tus pensamientos automáticos te resulta más creíble, aunque sospeches que no es del todo cierto?\n- ¿En qué momento del día aparecen más? ¿Hay un patrón?\n- ¿Qué pasaría si trataras esos pensamientos como hipótesis en vez de como hechos?\n- ¿Cómo te hablás a vos mismo cuando algo sale mal?"
+    },
+    {
+      "id": "reflexion_respuesta",
+      "type": "text",
+      "prompt": "Si querés, respondé alguna de estas preguntas",
+      "help": "Elegí la que más te resuene. Podés llevar tu respuesta a la próxima sesión.",
+      "optional": true
+    },
+    {
+      "id": "para_llevar",
+      "type": "info",
+      "title": "Para llevar",
+      "content": "- Los pensamientos automáticos son ideas breves, involuntarias y plausibles.\n- La pregunta de oro: «¿qué me pasó por la cabeza justo antes de sentirme así?».\n- Emoción = una palabra; pensamiento = una frase; preocupación = futuro; rumiación = pasado en círculo.\n- No importa solo qué pensás, sino cuánto lo creés (credibilidad).\n- El RPD es la herramienta base para registrarlos."
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "- Durante tres días, cada vez que notes un cambio de ánimo, hacé la pausa de diez segundos y cazá el pensamiento.\n- Completá al menos **cinco registros** durante la semana: repetí este ejercicio cada vez (unos 5 minutos). También podés usar el «Registro de pensamientos (RPD)», al final de la colección.\n- En dos de ellos, identificá y marcá el pensamiento caliente.\n- Clasificá cada anotación: ¿es pensamiento, emoción, preocupación o rumiación?\n- Elegí una preocupación recurrente y anotá si es algo que podés resolver hoy o no.\n\nEl próximo capítulo es **«Las distorsiones cognitivas»**."
+    }
+  ],
+  "material": {
+    "title": "Los pensamientos automáticos",
+    "description": "Qué son, la pregunta de oro, cómo distinguirlos de emociones, preocupaciones y rumiaciones, y cómo registrarlos en el RPD.",
+    "category": "psicoeducacion"
+  }
+}

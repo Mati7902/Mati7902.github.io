@@ -1,0 +1,125 @@
+{
+  "slug": "brujula-entender-lo-que-me-pasa",
+  "title": "Entender lo que me pasa",
+  "description": "Descubrí tu cadena: situación, pensamiento, emoción, cuerpo, conducta y consecuencia.",
+  "kind": "thought_record",
+  "approach": "tcc",
+  "audience": "adolescentes",
+  "collection": "brujula",
+  "estimated_minutes": 8,
+  "sort_order": 102,
+  "source": "Brújula, página 3",
+  "steps": [
+    {
+      "id": "cadena",
+      "type": "info",
+      "title": "Lo que te pasa no viene solo: es una cadena",
+      "content": "No reaccionamos solo a lo que pasa, sino también a lo que pensamos sobre lo que pasa. Ese pensamiento mueve una emoción, la emoción se siente en el cuerpo y nos empuja a hacer algo. Y lo que hacemos tiene consecuencias.\n\n**Situación → Pensamiento → Emoción → Cuerpo → Conducta → Consecuencia**\n\nSi conocés tu cadena, podés cortarla en algún eslabón."
+    },
+    {
+      "id": "ejemplo_cami",
+      "type": "info",
+      "title": "Así le pasó a Cami (13 años)",
+      "content": "- **Situación** (lo que vería una cámara): le escribió a una amiga y hace 3 horas que no le contesta.\n- **Pensamiento** (lo que se le cruzó por la cabeza): «Está enojada conmigo».\n- **Emoción** (qué sintió y cuánto, de 0 a 10): tristeza y nervios, 7.\n- **Cuerpo** (dónde lo sintió): nudo en el estómago.\n- **Conducta** (qué hizo): revisa el celular a cada rato. Al otro día no le habla.\n- **Consecuencia** (qué pasó después): se alejan un poco más y Cami se siente peor."
+    },
+    {
+      "id": "situacion",
+      "type": "text",
+      "prompt": "Situación: ¿qué pasó?",
+      "help": "Ahora probalo con algo que te pasó esta semana. Escribí lo que vería una cámara.\n\nAsí le pasó a Cami: le escribió a una amiga y hace 3 horas que no le contesta.",
+      "placeholder": "Qué pasó, dónde, con quién…"
+    },
+    {
+      "id": "pensamiento",
+      "type": "text",
+      "prompt": "Pensamiento: ¿qué se te cruzó por la cabeza?",
+      "help": "Escribilo tal cual apareció.\n\nCami pensó: «Está enojada conmigo»."
+    },
+    {
+      "id": "emocion",
+      "type": "checklist",
+      "prompt": "Emoción: ¿qué sentiste?",
+      "help": "Elegí hasta 3 palabras.\n\nCami sintió tristeza y nervios.",
+      "options": [
+        "Bronca",
+        "Tristeza",
+        "Miedo",
+        "Vergüenza",
+        "Culpa",
+        "Nervios",
+        "Soledad",
+        "Frustración",
+        "Celos",
+        "Alegría",
+        "Calma",
+        "Orgullo"
+      ],
+      "max": 3
+    },
+    {
+      "id": "intensidad",
+      "type": "scale",
+      "prompt": "¿Cuánto lo sentiste?",
+      "help": "De 0 a 10. Si marcaste más de una, puntuá la más fuerte. Cami: 7.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Nada",
+      "max_label": "Muchísimo",
+      "maps_to": "emotion_before"
+    },
+    {
+      "id": "cuerpo",
+      "type": "checklist",
+      "prompt": "Cuerpo: ¿dónde lo sentiste?",
+      "help": "Marcá las señales que notaste.\n\nCami lo sintió como un nudo en el estómago.",
+      "options": [
+        "Corazón rápido",
+        "Nudo en la garganta",
+        "Panza revuelta",
+        "Calor en la cara",
+        "Hombros tensos",
+        "Ganas de llorar",
+        "Cansancio",
+        "Otra señal"
+      ]
+    },
+    {
+      "id": "cuerpo_otra",
+      "type": "text",
+      "prompt": "¿Querés contar dónde y cómo lo sentiste?",
+      "help": "Sobre todo si marcaste «Otra señal».",
+      "placeholder": "Por ejemplo: nudo en el estómago.",
+      "optional": true
+    },
+    {
+      "id": "conducta",
+      "type": "text",
+      "prompt": "Conducta: ¿qué hiciste?",
+      "help": "Cami revisa el celular a cada rato. Al otro día no le habla."
+    },
+    {
+      "id": "consecuencia",
+      "type": "text",
+      "prompt": "Consecuencia: ¿qué pasó después?",
+      "help": "En el caso de Cami: se alejan un poco más y ella se siente peor."
+    },
+    {
+      "id": "mi_cadena",
+      "type": "reflect",
+      "title": "Tu cadena",
+      "template": "Situación: {{situacion}} → Pensamiento: «{{pensamiento}}» → Emoción: {{emocion}} → Cuerpo: {{cuerpo}} → Conducta: {{conducta}} → Consecuencia: {{consecuencia}}",
+      "content": "Mirala entera, eslabón por eslabón. Si conocés tu cadena, podés cortarla en algún eslabón."
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "**Unos 10 minutos.** Anotá 3 momentos en un registro rápido. De cada uno:\n\n- Situación\n- Pensamiento\n- Emoción (de 0 a 10)\n- Qué hice\n\nPara anotarlos rápido podés usar **«Registrar cómo me siento»**, que pregunta justo eso. También podés volver a hacer este ejercicio con cada momento. Esos momentos los vas a usar en «Mi detector de pensamientos»."
+    }
+  ],
+  "material": {
+    "title": "Entender lo que me pasa",
+    "description": "La cadena situación, pensamiento, emoción, cuerpo, conducta y consecuencia, con el ejemplo de Cami. Para adolescentes (Brújula, página 3).",
+    "category": "adolescentes"
+  }
+}

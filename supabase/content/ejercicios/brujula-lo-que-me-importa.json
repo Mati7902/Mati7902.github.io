@@ -1,0 +1,142 @@
+{
+  "slug": "brujula-lo-que-me-importa",
+  "title": "Lo que realmente me importa",
+  "description": "Diferenciar un valor de una meta, elegir tus 3 valores y una acción chiquita para cada uno esta semana.",
+  "kind": "values",
+  "approach": "act",
+  "audience": "adolescentes",
+  "collection": "brujula",
+  "estimated_minutes": 8,
+  "sort_order": 107,
+  "source": "Brújula, página 8",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Lo que realmente me importa",
+      "content": "**Tus valores son como una brújula: no te dicen adónde llegar, te dicen hacia dónde ir.**\n\nUn valor es una dirección: algo que te importa y que podés vivir todos los días. Una meta es un punto concreto que se puede tachar.\n\nTus valores son tuyos, no los que otros esperan de vos. Y podés actuar según un valor aunque tengas miedo o pocas ganas."
+    },
+    {
+      "id": "quiz_value",
+      "type": "choice",
+      "prompt": "Vale dice: «Ser buena amiga». ¿Es un valor o una meta?",
+      "options": [
+        "Un valor",
+        "Una meta"
+      ],
+      "feedback": {
+        "Un valor": "¡Sí! Es una dirección: no se termina nunca. Vale puede seguir siendo buena amiga todos los días.",
+        "Una meta": "Mirá de nuevo: «ser buena amiga» no se hace una vez y se tacha. Es una dirección que no se termina nunca, así que es un valor."
+      }
+    },
+    {
+      "id": "quiz_goal",
+      "type": "choice",
+      "prompt": "«Escribirle hoy a alguien que me importa». ¿Es un valor o una meta?",
+      "options": [
+        "Un valor",
+        "Una meta"
+      ],
+      "feedback": {
+        "Una meta": "¡Exacto! Es un punto concreto: se hace y se tacha. Y va en la dirección del valor de Vale: ser buena amiga.",
+        "Un valor": "Casi: es algo concreto que se hace hoy y se tacha, así que es una meta. El valor es la dirección (ser buena amiga) y la meta es un paso hacia ese lado."
+      }
+    },
+    {
+      "id": "values_check",
+      "type": "checklist",
+      "prompt": "¿Qué te importa a vos?",
+      "help": "Marcá los que más te importan.",
+      "options": [
+        "Amigos",
+        "Familia",
+        "Estudio",
+        "Salud",
+        "Respeto",
+        "Confianza",
+        "Futuro",
+        "Diversión",
+        "Responsabilidad",
+        "Ayudar",
+        "Independencia",
+        "Otro"
+      ]
+    },
+    {
+      "id": "other_value",
+      "type": "text",
+      "prompt": "Si marcaste «Otro», ¿cuál es?",
+      "placeholder": "Otro valor que me importa…",
+      "optional": true
+    },
+    {
+      "id": "top_values",
+      "type": "list",
+      "prompt": "Mi brújula: elegí tus 3 valores más importantes",
+      "help": "Pueden ser de los que marcaste recién. Uno por renglón.",
+      "count": 3,
+      "min": 3
+    },
+    {
+      "id": "actions",
+      "type": "list",
+      "prompt": "Una acción chiquita para cada valor, esta semana",
+      "help": "Una por renglón, en el mismo orden que tus valores. Que sea concreta y se pueda tachar, como «Escribirle hoy a alguien que me importa».",
+      "count": 3,
+      "min": 3
+    },
+    {
+      "id": "brake",
+      "type": "info",
+      "title": "Si aparece un pensamiento que te frena",
+      "content": "Cuando vayas a hacer la acción, puede aparecer un pensamiento que te frene. Acordate: podés actuar según un valor aunque tengas miedo o pocas ganas.\n\nUsá la frase de «No todo lo que pienso es una orden»:\n\n**«Estoy teniendo el pensamiento de que…»**\n\nY hacé la acción igual."
+    },
+    {
+      "id": "brake_thought",
+      "type": "text",
+      "prompt": "¿Qué pensamiento creés que podría frenarte?",
+      "help": "Escribilo tal cual aparecería en tu cabeza. En la próxima pantalla lo vas a ver con la frase adelante.",
+      "placeholder": "El pensamiento que me frena…",
+      "optional": true
+    },
+    {
+      "id": "compass",
+      "type": "reflect",
+      "title": "Mi brújula",
+      "template": "Mis valores: {{top_values}}. Mis acciones chiquitas para esta semana: {{actions}}. Si aparece un pensamiento que me frena, me digo: «Estoy teniendo el pensamiento de que {{brake_thought}}». Y hago la acción igual.",
+      "content": "No te dice adónde llegar: te dice hacia dónde ir. Cuando termines, tu brújula queda guardada en «Mis respuestas» de este ejercicio, para que la mires durante la semana."
+    },
+    {
+      "id": "did_it",
+      "type": "choice",
+      "prompt": "¿Ya hiciste alguna de las tres acciones?",
+      "help": "Si recién armaste tu brújula, es normal que todavía no.",
+      "options": [
+        "Sí",
+        "Todavía no"
+      ],
+      "feedback": {
+        "Sí": "¡Bien! En la próxima pantalla contá qué pensamiento apareció y qué hiciste con él.",
+        "Todavía no": "Está bien: son para esta semana. En la próxima pantalla tocá «Saltar»."
+      }
+    },
+    {
+      "id": "what_happened",
+      "type": "text",
+      "prompt": "¿Qué pensamiento apareció y qué hiciste con él?",
+      "help": "Si todavía no hiciste ninguna acción, tocá «Saltar».",
+      "optional": true
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "**Unos 10 minutos.** Hacé al menos una de las tres acciones.\n\nSi aparece un pensamiento que te frena, usá la frase de «No todo lo que pienso es una orden» («Estoy teniendo el pensamiento de que…») y hacé la acción igual.\n\nDespués podés anotar qué pensamiento apareció y qué hiciste con él en «Registrar cómo me siento», o contarlo la próxima vez que hagas este ejercicio."
+    }
+  ],
+  "material": {
+    "title": "Lo que realmente me importa",
+    "description": "Valores para adolescentes: la diferencia entre un valor y una meta, elegir tus 3 valores y una acción chiquita para cada uno.",
+    "category": "adolescentes"
+  }
+}
