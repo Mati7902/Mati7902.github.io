@@ -26,7 +26,7 @@ export function PatientShell({ children, platformName, logoUrl, brandName, brand
       {/* Sidebar escritorio */}
       <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-border/70 bg-sidebar px-4 py-6 md:flex">
         <Link href="/app" className="flex min-w-0 px-3 text-lg">
-          <BrandMark name={brandName ?? platformName} subtitle={brandSubtitle} logoUrl={logoUrl} wrap />
+          <BrandMark name={brandName ?? platformName} subtitle={brandSubtitle} logoUrl={logoUrl} logoClassName="h-12" stacked />
         </Link>
         <nav aria-label="Navegación principal" className="mt-8 flex flex-1 flex-col gap-1">
           {patientNav.map((item) => (
