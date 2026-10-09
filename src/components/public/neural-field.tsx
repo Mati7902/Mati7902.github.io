@@ -298,5 +298,15 @@ export function NeuralField({ className, density = 1, interactive = true, tone =
     };
   }, [density, interactive, tone]);
 
-  return <canvas ref={ref} aria-hidden className={cn("pointer-events-none block size-full", className)} />;
+  return (
+    <canvas
+      ref={ref}
+      aria-hidden
+      data-neural-field=""
+      data-density={density}
+      data-tone={tone}
+      data-interactive={interactive ? "true" : "false"}
+      className={cn("pointer-events-none block size-full", className)}
+    />
+  );
 }
