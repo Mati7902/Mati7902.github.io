@@ -146,6 +146,7 @@ declare
   v_admin_id uuid := '11111111-1111-4111-8111-111111111111';
   v_sofia_id uuid := '44444444-4444-4444-8444-444444444444';
   v_patient_id uuid;
+  v_t_detector uuid; v_t_partida uuid; v_t_plan uuid;
 begin
   insert into auth.users (
     id, instance_id, aud, role, email, encrypted_password, email_confirmed_at,
@@ -180,5 +181,24 @@ begin
           (current_date - interval '15 years 4 months')::date, 'Laura Benítez (madre)', 'virtual', 'active', current_date - 21, now() - interval '21 days', '2026-10-draft', v_admin_id)
   on conflict do nothing;
   select id into v_patient_id from public.patients where profile_id = v_sofia_id;
+
+  -- Brújula: un ejercicio sugerido y dos respuestas ficticias (punto de partida y plan),
+  -- para ver «Mis respuestas» y la tarjeta del plan en Calmarme.
+  select id into v_t_detector from public.exercise_templates where slug = 'brujula-detector-de-pensamientos';
+  select id into v_t_partida from public.exercise_templates where slug = 'brujula-punto-de-partida';
+  select id into v_t_plan from public.exercise_templates where slug = 'brujula-plan-momentos-dificiles';
+
+  if v_t_detector is not null then
+    insert into public.exercise_assignments (patient_id, template_id, assigned_by, note, assigned_at)
+    values (v_patient_id, v_t_detector, v_admin_id, 'Probalo con algo que te haya pasado en el colegio esta semana.', now() - interval '3 days');
+  end if;
+  if v_t_partida is not null then
+    insert into public.exercise_responses (patient_id, template_id, answers, completed_at) values
+      (v_patient_id, v_t_partida, '{"como_me_dicen":"Sofi","me_pasa":["Nervios o ansiedad","El colegio"],"diferente":"Poder dar una lección oral sin que me tiemble la voz","tres_cosas":["Los nervios antes de las pruebas","Pedir ayuda cuando no entiendo"],"hoy_animo":6,"hoy_nervios":3,"hoy_relaciones":7,"hoy_familia":7,"hoy_colegio":4,"hoy_confianza":5,"hoy_emociones":5}'::jsonb, now() - interval '20 days');
+  end if;
+  if v_t_plan is not null then
+    insert into public.exercise_responses (patient_id, template_id, answers, completed_at) values
+      (v_patient_id, v_t_plan, '{"senales":["Me encierro en la pieza y no contesto mensajes","No puedo dormir"],"cosas_solo":["Escuchar mi lista de música tranquila","Salir al patio y respirar lento","Dibujar"],"lugares_personas":["La casa de mi abuela","Mi prima Ana"],"adultos":["Mamá (Laura)","Tía Rocío","Profe Martín, el orientador"],"psicologo":"Lic. Matías Sánchez, por la app o WhatsApp","entorno":"Lo acordé con mamá","importa":"Mi perro Toby y el vóley"}'::jsonb, now() - interval '7 days');
+  end if;
 end $$;
 

@@ -33,7 +33,7 @@ Plataforma web para la práctica psicológica del **Lic. Matías Sánchez** (Psi
 | Área | Qué incluye |
 | --- | --- |
 | **Landing pública** | Hero, sobre mí, modalidades, cómo funciona, planes (pricing cards sobrias), FAQs, solicitud de turno, acceso de pacientes, SEO (metadata, OpenGraph, JSON-LD `Psychologist`), páginas legales (borrador marcado para revisión profesional). |
-| **Portal del paciente** | Inicio con próxima sesión y accesos rápidos; **Calmarme** (respiración diafragmática con animación y sonido, respiración cuadrada, grounding 5-4-3-2-1, pausa consciente); **registro emocional** con gráfico de evolución; **ejercicios** TCC (registro de pensamientos), ACT (valores, acción comprometida, defusión) y DBT (STOP, acción opuesta, TIPP, impulsos, mindfulness, DEAR MAN, PLEASE) en formato wizard; **materiales** (públicos y asignados, "recomendado para vos", visto/completado); **agenda** (solicitar, reprogramar, cancelar, confirmar asistencia, videollamada); **preparar mi sesión** 24 h antes; notificaciones; perfil y privacidad. |
+| **Portal del paciente** | Inicio con próxima sesión y accesos rápidos; **Calmarme** (respiración diafragmática con animación y sonido, respiración cuadrada, grounding 5-4-3-2-1, pausa consciente); **registro emocional** con gráfico de evolución; **ejercicios** TCC (registro de pensamientos), ACT (valores, acción comprometida, defusión) y DBT (STOP, acción opuesta, TIPP, impulsos, mindfulness, DEAR MAN, PLEASE) en formato wizard; **cuadernillos** como recorrido con avance según la edad (Brújula hasta los 18 años, Cuadernillo de TCC para adultos); **mis respuestas** de cada ejercicio; acceso rápido al plan para momentos muy difíciles en Calmarme; **materiales** (públicos y asignados, "recomendado para vos", visto/completado); **agenda** (solicitar, reprogramar, cancelar, confirmar asistencia, videollamada); **preparar mi sesión** 24 h antes; notificaciones; perfil y privacidad. |
 | **Panel profesional** | Hoy (pacientes del día, confirmados, pendientes, cancelaciones, solicitudes por aprobar), agenda día/semana/mes con gestión completa del turno, pacientes (ficha administrativa, invitación segura, activar/desactivar, asignar materiales y ejercicios), materiales (subida a Storage privado), ejercicios, planes, WhatsApp (conversaciones, plantillas, configuración), actividad (auditoría, analytics administrativos), configuración (identidad, agenda, disponibilidad, bloqueos, Google Calendar, recordatorios, emergencia, FAQs, textos, colores, preferencias, legal). |
 | **Automatizaciones** | Recordatorio 24 h antes (configurable) con botones Confirmar / Reprogramar / Cancelar, recordatorio adicional (p. ej. 2 h), aviso automático al modificar un turno, confirmación al reservar, mantenimiento diario. |
 | **Secretaria virtual** | Webhook oficial de Meta con verificación de firma e idempotencia, chatbot híbrido (reglas + IA opcional) con intents estructurados, flujos de agenda seguros, detección de crisis con protocolo configurable, derivación al profesional. Nunca actúa como psicólogo. |
@@ -200,9 +200,9 @@ npx supabase link --project-ref TU_REF
 npx supabase db push                 # aplica supabase/migrations/* en orden
 ```
 
-Sin CLI: ejecutá los seis archivos de `supabase/migrations/` en el SQL Editor, en orden.
+Sin CLI: pegá `supabase/instalar.sql` en el SQL Editor (reúne todas las migraciones en una transacción; se regenera con `pnpm db:instalar`), o ejecutá los archivos de `supabase/migrations/` en orden.
 
-Las migraciones crean: extensiones (`pgcrypto`, `btree_gist`), enums, 30 tablas con UUID y `created_at/updated_at`, funciones transaccionales de agenda, triggers de historial/notificaciones/guardas, políticas RLS, buckets de Storage (`materials` privado, `avatars` y `branding` públicos) y datos de referencia (roles, configuración, categorías, planes precargados, FAQs, plantillas de mensajes, intents y 15 ejercicios).
+Las migraciones crean: extensiones (`pgcrypto`, `btree_gist`), enums, 30 tablas con UUID y `created_at/updated_at`, funciones transaccionales de agenda, triggers de historial/notificaciones/guardas, políticas RLS, buckets de Storage (`materials` privado, `avatars` y `branding` públicos) y datos de referencia (roles, configuración, categorías, planes precargados, FAQs, plantillas de mensajes, intents y 15 ejercicios) y los **cuadernillos del profesional**: 32 ejercicios más (Brújula para adolescentes y el Cuadernillo de TCC para adultos), con sus recursos en la biblioteca de Materiales.
 
 ### 7.3 Primer administrador
 
@@ -218,7 +218,13 @@ El rol se guarda en `app_metadata` (no editable por el usuario). Recibís un ema
 
 ### 7.4 Seed de demostración (solo local / staging)
 
-`supabase/seed.sql` crea `admin@demo.local / DemoAdmin!2026` y el paciente ficticio **Juan Pérez** (`juan.perez@demo.local / DemoPaciente!2026`) con 3 turnos, 5 materiales, 4 ejercicios asignados y registros emocionales ficticios. **No ejecutar en producción.** Con Supabase CLI local se aplica automáticamente en `supabase start` / `supabase db reset`.
+`supabase/seed.sql` crea `admin@demo.local / DemoAdmin!2026` y el paciente ficticio **Juan Pérez** (`juan.perez@demo.local / DemoPaciente!2026`) con 3 turnos, 5 materiales, 4 ejercicios asignados y registros emocionales ficticios. También crea a la paciente adolescente ficticia **Sofía Benítez** (`sofia.benitez@demo.local / DemoAdolescente!2026`, siempre de 15 años) para ver el cuadernillo Brújula, con un ejercicio sugerido y un plan para momentos muy difíciles de ejemplo. **No ejecutar en producción.** Con Supabase CLI local se aplica automáticamente en `supabase start` / `supabase db reset`.
+
+### 7.4.1 Contenido de los cuadernillos
+
+Los ejercicios de los cuadernillos viven en `supabase/content/ejercicios/*.json` (un archivo por ejercicio: pasos, público, colección y, si corresponde, su recurso en Materiales). Después de editarlos corré `pnpm db:contenido`: regenera la migración `20261009000003_cuadernillos.sql` y `supabase/instalar.sql`. `tests/unit/content.test.ts` valida cada archivo (formato de los pasos, referencias de los resúmenes, devoluciones de los quizzes, sin teléfonos, largo de las pantallas). La migración solo agrega lo que falta: no pisa ejercicios ni materiales editados desde el panel. Para cambiar un ejercicio ya instalado en producción, creá una migración nueva.
+
+Los teléfonos de emergencia nunca van en el contenido: los ejercicios remiten al recuadro «Si necesitás ayuda urgente» de Calmarme, que muestra los recursos activos de **Configuración › Emergencia**.
 
 ### 7.5 Tipos TypeScript
 
