@@ -1,0 +1,61 @@
+{
+  "slug": "tcc-glosario",
+  "title": "Glosario de TCC",
+  "description": "Definiciones breves de los conceptos centrales del cuadernillo y lecturas recomendadas.",
+  "kind": "custom",
+  "approach": "tcc",
+  "audience": "adultos",
+  "collection": "tcc",
+  "estimated_minutes": 4,
+  "sort_order": 222,
+  "source": "Cuadernillo de TCC, Glosario y Bibliografía (páginas 43 y 44)",
+  "steps": [
+    {
+      "id": "pensamientos",
+      "type": "info",
+      "title": "Pensamientos (1 de 4)",
+      "content": "Definiciones breves de los conceptos centrales usados en el cuadernillo, para consulta rápida. Están agrupadas por tema.\n\n- **Modelo cognitivo:** el marco de Beck, según el cual la interpretación media entre la situación y la respuesta emocional y conductual.\n- **Pensamiento automático:** idea breve, involuntaria y plausible que surge ante una situación.\n- **Pensamiento caliente:** el pensamiento automático que trae más carga emocional en una situación.\n- **Credibilidad:** cuánto se cree un pensamiento, de 0 a 100. Reducirla es un objetivo terapéutico.\n- **Distorsión cognitiva:** error sistemático en el procesamiento de la información que deforma la realidad.\n- **Rumiación:** repaso repetitivo y circular del pasado o de un problema."
+    },
+    {
+      "id": "creencias",
+      "type": "info",
+      "title": "Creencias (2 de 4)",
+      "content": "- **Creencia nuclear (esquema):** idea global, rígida y absoluta sobre uno mismo, los demás o el mundo.\n- **Creencia intermedia:** actitudes, reglas y supuestos condicionales que derivan de las creencias nucleares.\n- **Flecha descendente:** técnica que pregunta «si fuera cierto, ¿qué significaría?» hasta llegar a la creencia nuclear.\n- **Modelo ABC:** el esquema de Ellis, Acontecimiento → Creencia → Consecuencia (+ Debate y nueva filosofía).\n- **Creencia irracional (Ellis):** exigencia rígida y absoluta («debo», «tengo que») que genera malestar."
+    },
+    {
+      "id": "reestructurar",
+      "type": "info",
+      "title": "Cuestionar y reestructurar (3 de 4)",
+      "content": "- **Cuestionamiento socrático:** método de preguntas abiertas para examinar los propios pensamientos y llegar a conclusiones más ajustadas.\n- **Reestructuración cognitiva:** proceso de identificar, evaluar y modificar cogniciones desadaptativas.\n- **Descatastrofización:** evaluar de forma realista la probabilidad y el afrontamiento del peor escenario.\n- **Pensamiento alternativo:** interpretación más ajustada, equilibrada y creíble construida tras la reestructuración."
+    },
+    {
+      "id": "activacion",
+      "type": "info",
+      "title": "Depresión y activación (4 de 4)",
+      "content": "- **Tríada cognitiva:** visión negativa de uno mismo, del mundo y del futuro, característica de la depresión.\n- **Activación conductual:** reintroducir de forma gradual y planificada actividades de placer y dominio para romper el círculo depresivo.\n- **Actividad de placer:** actividad que aporta disfrute, conexión o bienestar.\n- **Actividad de dominio:** tarea que aporta sensación de logro, competencia o utilidad."
+    },
+    {
+      "id": "bibliografia_1",
+      "type": "info",
+      "title": "Lecturas recomendadas (1 de 3)",
+      "content": "Las siguientes obras respaldan y amplían el contenido de este cuadernillo. **Este material es psicoeducativo** y no reemplaza la lectura de las fuentes originales ni la formación clínica supervisada.\n\n- Beck, A. T. (1976). Cognitive Therapy and the Emotional Disorders. International Universities Press.\n- Beck, A. T., Rush, A. J., Shaw, B. F., y Emery, G. (1979). Cognitive Therapy of Depression. Guilford Press.\n- Beck, J. S. (2011). Cognitive Behavior Therapy: Basics and Beyond (2.ª ed.). Guilford Press. (Ed. en español: Terapia cognitivo-conductual: fundamentos y más allá.)\n- Beck, A. T., y Haigh, E. A. P. (2014). Advances in cognitive theory and therapy: The generic cognitive model. Annual Review of Clinical Psychology, 10, 1–24."
+    },
+    {
+      "id": "bibliografia_2",
+      "type": "info",
+      "title": "Lecturas recomendadas (2 de 3)",
+      "content": "- Ellis, A. (1962). Reason and Emotion in Psychotherapy. Lyle Stuart.\n- Ellis, A., y Dryden, W. (1997). The Practice of Rational Emotive Behavior Therapy (2.ª ed.). Springer.\n- Greenberger, D., y Padesky, C. A. (2016). Mind Over Mood (2.ª ed.). Guilford Press. (Ed. en español: El control de tu estado de ánimo.)\n- Padesky, C. A., y Greenberger, D. (1995). Clinician's Guide to Mind Over Mood. Guilford Press.\n- Leahy, R. L. (2017). Cognitive Therapy Techniques: A Practitioner's Guide (2.ª ed.). Guilford Press.\n- Clark, D. M., y Beck, A. T. (2010). Cognitive Therapy of Anxiety Disorders. Guilford Press.\n- Burns, D. D. (1980). Feeling Good: The New Mood Therapy. William Morrow."
+    },
+    {
+      "id": "bibliografia_3",
+      "type": "info",
+      "title": "Lecturas recomendadas (3 de 3)",
+      "content": "- Martell, C. R., Dimidjian, S., y Herman-Dunn, R. (2010). Behavioral Activation for Depression: A Clinician's Guide. Guilford Press.\n- Hofmann, S. G., Asnaani, A., Vonk, I. J. J., Sawyer, A. T., y Fang, A. (2012). The efficacy of cognitive behavioral therapy: A review of meta-analyses. Cognitive Therapy and Research, 36(5), 427–440.\n- National Institute for Health and Care Excellence (NICE). Guías de práctica clínica para depresión y trastornos de ansiedad. www.nice.org.uk\n- American Psychological Association (APA), Division 12. Research-supported psychological treatments.\n\nEl cuadernillo es material psicoeducativo de uso clínico y formativo, elaborado como guía de trabajo para pacientes y terapeutas en formación. Leerlo no reemplaza una evaluación con un profesional."
+    }
+  ],
+  "material": {
+    "title": "Glosario de TCC",
+    "description": "Los 19 conceptos centrales de la terapia cognitivo-conductual con definiciones breves, y las lecturas recomendadas del cuadernillo.",
+    "category": "psicoeducacion"
+  }
+}

@@ -6,7 +6,7 @@
   "approach": "tcc",
   "audience": "adultos",
   "collection": "tcc",
-  "estimated_minutes": 30,
+  "estimated_minutes": 25,
   "sort_order": 206,
   "source": "Cuadernillo de TCC, capítulo 6 (páginas 26 a 29)",
   "steps": [
@@ -67,7 +67,7 @@
     {
       "id": "te_suena",
       "type": "checklist",
-      "prompt": "¿Alguna de estas exigencias te suena?",
+      "prompt": "¿Alguna de estas creencias te suena?",
       "help": "Marcá las que se parezcan a cosas que te decís. Si ninguna, tocá «Saltar».",
       "optional": true,
       "options": [
@@ -104,7 +104,7 @@
         "C — Consecuencia"
       ],
       "feedback": {
-        "A — Acontecimiento": "**¡Bien! Es A:** el hecho observable, sin interpretaciones. En A va solo lo observable.",
+        "A — Acontecimiento": "**¡Bien! Es A:** el hecho observable, sin interpretaciones. En A va solo lo observable; la interpretación ya sería B.",
         "B — Creencia": "**Es A:** el hecho observable. B sería lo que la persona piensa y cree sobre ese hecho; por ejemplo, «me trataron injustamente».",
         "C — Consecuencia": "**Es A:** el hecho observable. C es lo que resulta de B: emociones, sensaciones físicas y conductas, como sentirse humillado."
       }
@@ -158,14 +158,14 @@
     {
       "id": "diego",
       "type": "info",
-      "title": "Diego, 31 años",
-      "content": "Ira y pareja.\n\nDiego estalla cuando su pareja llega tarde.\n\n- **A:** la pareja llega 20 minutos tarde.\n- **B:** «no tiene ningún derecho a hacerme esperar, debería respetarme siempre, esto es intolerable».\n- **C:** ira intensa, reproche, portazo.\n\n**Debate (D):** ¿dónde está escrito que SIEMPRE debe ser puntual? ¿Es intolerable o muy molesto? ¿Le sirve reaccionar así?\n\n**Nueva filosofía (E):** «prefiero que sea puntual y me molesta que no lo sea, pero no es una catástrofe ni una falta de respeto absoluta; puedo decirlo con calma». La emoción pasa de ira a fastidio manejable."
+      "title": "Caso clínico: Diego, 31 años",
+      "content": "**Ira y pareja.** Diego estalla cuando su pareja llega tarde.\n\n- **A:** la pareja llega 20 minutos tarde.\n- **B:** «no tiene ningún derecho a hacerme esperar, debería respetarme siempre, esto es intolerable».\n- **C:** ira intensa, reproche, portazo.\n\n**Debate (D):** ¿dónde está escrito que SIEMPRE debe ser puntual? ¿Es intolerable o muy molesto? ¿Le sirve reaccionar así?\n\n**Nueva filosofía (E):** «prefiero que sea puntual y me molesta que no lo sea, pero no es una catástrofe ni una falta de respeto absoluta; puedo decirlo con calma». La emoción pasa de ira a fastidio manejable."
     },
     {
       "id": "guiado",
       "type": "info",
       "title": "Tu primer ABCDE",
-      "content": "Elegí una situación reciente que te haya alterado. Vas a completar tu registro ABCDE en este orden, una pregunta por vez:\n\n- En **A**, escribí solo el hecho observable, sin interpretaciones.\n- En **C**, anotá qué sentiste y qué hiciste.\n- En **B**, buscá la creencia: ¿qué exigencia («debo/debería/tengo que») estaba detrás?\n- En **D**, debatila con las tres preguntas: ¿es verdad?, ¿tiene lógica?, ¿me sirve?\n- En **E**, escribí la versión racional, en forma de preferencia flexible."
+      "content": "Elegí una situación reciente que te haya alterado. Vas a completar tu registro ABCDE en este orden, una pregunta por vez:\n\n1. En **A**, escribí solo el hecho observable, sin interpretaciones.\n2. En **C**, anotá qué sentiste y qué hiciste.\n3. En **B**, buscá la creencia: ¿qué exigencia («debo/debería/tengo que») estaba detrás?\n4. En **D**, debatila con las tres preguntas: ¿es verdad?, ¿tiene lógica?, ¿me sirve?\n5. En **E**, escribí la versión racional, en forma de preferencia flexible."
     },
     {
       "id": "a_hecho",
@@ -289,7 +289,7 @@
       "type": "reflect",
       "title": "Tu registro ABCDE",
       "template": "A: «{{a_hecho}}». B: «{{b_creencia}}». C: {{c_emocion}}; «{{c_conducta}}». E: «{{e_preferencia}}». Mi preferencia para esta semana: «{{preferencia_semana}}».",
-      "content": "El malestar nace en B, no en A: la creencia media entre el hecho y la emoción.\n\nTu registro, con el debate (D), queda guardado en «Mis respuestas»."
+      "content": "El malestar nace en B, no en A: la creencia media entre el hecho y la emoción.\n\nCuando toques «Terminar», en la última pantalla, tu registro (con el debate) queda guardado: lo podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también lo puede ver."
     },
     {
       "id": "reflexion",

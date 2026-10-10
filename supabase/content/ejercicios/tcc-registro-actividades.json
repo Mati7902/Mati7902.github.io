@@ -1,0 +1,71 @@
+{
+  "slug": "tcc-registro-actividades",
+  "title": "Registro de actividades",
+  "description": "Anotá una actividad y puntuá placer, dominio y ánimo: con varios registros vas a ver cómo se relacionan.",
+  "kind": "custom",
+  "approach": "tcc",
+  "audience": "adultos",
+  "collection": "tcc",
+  "estimated_minutes": 3,
+  "sort_order": 213,
+  "source": "Cuadernillo de TCC, Anexo 3 (página 36)",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Registro de actividades",
+      "content": "Es la hoja del Anexo 3 del cuadernillo y viene del capítulo «Tríada cognitiva y activación conductual». Sirve para ver la **relación entre actividad y ánimo**.\n\nEn el cuadernillo se anota hora por hora lo que hacés; acá registrás **una actividad por vez**: repetilo cada vez que termines una. Vas a puntuar de 0 a 10:\n\n- **Placer (P):** disfrute, conexión, bienestar.\n- **Dominio (D):** logro, competencia, sensación de utilidad.\n- **Ánimo:** cómo estabas en ese momento.\n\nUsalo tantas veces como necesites: la práctica repetida es lo que instala el cambio."
+    },
+    {
+      "id": "franja",
+      "type": "text",
+      "prompt": "Franja horaria: ¿cuándo fue?",
+      "help": "La hora (por ejemplo, de 10 a 11) o el momento del día (mañana, tarde, noche). La fecha se guarda sola con el registro.",
+      "placeholder": "Por ejemplo: de 10 a 11"
+    },
+    {
+      "id": "actividad",
+      "type": "text",
+      "prompt": "Actividad realizada: ¿qué hiciste?",
+      "help": "Breve y concreta. Por ejemplo: salir a caminar 10 minutos, ordenar un cajón, ver a un amigo.",
+      "placeholder": "Lo que hice…"
+    },
+    {
+      "id": "placer",
+      "type": "scale",
+      "prompt": "Placer: ¿cuánto disfrute te dio? (de 0 a 10)",
+      "help": "Disfrute, conexión, bienestar. Puede ser bajo: las primeras veces, Sofía puntuó placer 2.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Nada",
+      "max_label": "Mucho"
+    },
+    {
+      "id": "dominio",
+      "type": "scale",
+      "prompt": "Dominio: ¿cuánto logro sentiste? (de 0 a 10)",
+      "help": "Logro, competencia, sensación de utilidad. Sofía, las primeras veces: dominio 5.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Nada",
+      "max_label": "Mucho"
+    },
+    {
+      "id": "animo",
+      "type": "scale",
+      "prompt": "Ánimo: ¿cómo estuvo tu ánimo? (de 0 a 10)",
+      "help": "En ese momento del día.",
+      "min": 0,
+      "max": 10,
+      "min_label": "Muy bajo",
+      "max_label": "Muy bueno"
+    },
+    {
+      "id": "resumen",
+      "type": "reflect",
+      "title": "Tu registro",
+      "template": "{{franja}}: {{actividad}}.",
+      "content": "Con varios registros vas a poder ver la relación entre actividad y ánimo, como Sofía, que comprobó que los días con al menos una actividad su ánimo era un poco mejor.\n\nCuando toques «Terminar», tu registro queda guardado con el placer, el dominio y el ánimo: lo podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también lo puede ver."
+    }
+  ]
+}

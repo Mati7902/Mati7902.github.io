@@ -1,0 +1,87 @@
+{
+  "slug": "tcc-preguntas-socraticas",
+  "title": "50 preguntas socráticas",
+  "description": "Cincuenta preguntas para poner a prueba tus pensamientos, agrupadas según lo que necesites trabajar.",
+  "kind": "custom",
+  "approach": "tcc",
+  "audience": "adultos",
+  "collection": "tcc",
+  "estimated_minutes": 6,
+  "sort_order": 221,
+  "source": "Cuadernillo de TCC, Anexo 8 (páginas 41 y 42)",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "50 preguntas socráticas",
+      "content": "Es el Anexo 8 del cuadernillo y acompaña al capítulo «Cuestionamiento socrático y reestructuración». Las preguntas están agrupadas por objetivo terapéutico, en nueve grupos.\n\nElegí según lo que necesites en cada momento. No hace falta usarlas todas: **dos o tres buenas preguntas alcanzan**.\n\nTe sirven para los registros, por ejemplo «Registro de pensamientos (RPD)», «Registro de evidencias» o «Registro de distorsiones». Hacelas con curiosidad real, no para llegar a una respuesta que ya decidiste."
+    },
+    {
+      "id": "evidencia",
+      "type": "info",
+      "title": "Examinar la evidencia (1 de 9)",
+      "content": "- ¿Qué pruebas concretas tengo de que esto es cierto?\n- ¿Qué pruebas tengo de que NO lo es?\n- ¿Estoy tomando una suposición como si fuera un hecho?\n- Si esto fuera a juicio, ¿alcanzaría la evidencia para condenarlo?\n- ¿Qué datos estoy dejando afuera?\n- ¿Confundo una opinión con un hecho?"
+    },
+    {
+      "id": "alternativas",
+      "type": "info",
+      "title": "Buscar perspectivas alternativas (2 de 9)",
+      "content": "- ¿Hay otra forma de ver esta situación?\n- ¿Qué diría alguien que me quiere bien?\n- ¿Qué le diría yo a un amigo que pensara esto?\n- Dentro de cinco años, ¿le daré la misma importancia?\n- ¿Cómo vería esto una persona que admiro por su calma?\n- ¿Qué otras explicaciones posibles hay?"
+    },
+    {
+      "id": "descatastrofizar",
+      "type": "info",
+      "title": "Descatastrofizar (3 de 9)",
+      "content": "- ¿Qué es lo peor que podría pasar realmente?\n- ¿Qué es lo mejor que podría pasar?\n- ¿Qué es lo más probable que pase?\n- Si pasara lo peor, ¿cómo lo afrontaría?\n- ¿Sobreviviría a esto? ¿Lo he superado antes?\n- ¿Estoy confundiendo «posible» con «probable»?"
+    },
+    {
+      "id": "utilidad",
+      "type": "info",
+      "title": "Evaluar la utilidad del pensamiento (4 de 9)",
+      "content": "- ¿Me sirve de algo pensar así?\n- ¿Qué efecto tiene en mí creer esto?\n- ¿Qué ganaría si lo pensara distinto?\n- ¿Este pensamiento me acerca o me aleja de lo que quiero?\n- ¿Pensar esto resuelve algo o solo me hunde?"
+    },
+    {
+      "id": "distorsiones",
+      "type": "info",
+      "title": "Cuestionar distorsiones y absolutos (5 de 9)",
+      "content": "- ¿Estoy pensando en todo o nada, sin puntos medios?\n- ¿Uso palabras como «siempre», «nunca», «todos», «nadie»?\n- ¿Estoy leyendo la mente de otra persona sin datos?\n- ¿Estoy prediciendo el futuro como si fuera seguro?\n- ¿Me estoy poniendo una etiqueta global por un hecho puntual?\n- ¿Estoy usando lo que siento como prueba de lo que pasa?"
+    },
+    {
+      "id": "exigencias",
+      "type": "info",
+      "title": "Trabajar exigencias y reglas (Ellis) (6 de 9)",
+      "content": "- ¿Dónde está escrito que esto DEBE ser así?\n- ¿Es realmente intolerable o muy molesto?\n- ¿Puedo cambiar este «debo» por un «prefiero»?\n- ¿Le exigiría lo mismo a otra persona?\n- ¿Esta regla me protege o me limita?"
+    },
+    {
+      "id": "creencias",
+      "type": "info",
+      "title": "Trabajar creencias nucleares (7 de 9)",
+      "content": "- Si esto fuera cierto, ¿qué significaría de mí?\n- ¿Esta idea sobre mí es un hecho o una vieja historia aprendida?\n- ¿Qué evidencia de mi vida contradice esta creencia?\n- ¿Un error define quién soy por completo?\n- ¿Cómo aprendí a creer esto sobre mí?\n- ¿Qué creencia más justa podría sostener en su lugar?"
+    },
+    {
+      "id": "autocompasion",
+      "type": "info",
+      "title": "Autocompasión y trato hacia uno mismo (8 de 9)",
+      "content": "- ¿Me estoy hablando como le hablaría a alguien que quiero?\n- ¿Estoy siendo justo conmigo o solo severo?\n- ¿Qué necesito realmente en este momento?\n- ¿Puedo darme el permiso de ser humano y equivocarme?\n- ¿Qué me diría una versión más compasiva de mí?"
+    },
+    {
+      "id": "accion",
+      "type": "info",
+      "title": "Orientar a la acción (9 de 9)",
+      "content": "- ¿Qué paso pequeño puedo dar ahora, aunque no tenga ganas?\n- ¿Qué haría si no tuviera este pensamiento?\n- ¿Cómo puedo poner a prueba esta creencia en la vida real?\n- ¿Qué experimento me sacaría de la duda?\n- Si el problema tuviera solución, ¿cuál sería el primer movimiento?"
+    },
+    {
+      "id": "me_sirvio",
+      "type": "list",
+      "prompt": "¿Qué preguntas te sirvieron hoy?",
+      "help": "Copiá una por renglón o escribilas con tus palabras. Si estás haciendo la tarea de «Cuestionamiento socrático y reestructuración», anotá tus cinco favoritas.\n\nEs opcional: si no querés anotar nada, tocá «Terminar». Si anotás algo, queda guardado al tocar «Terminar», en «Mis respuestas» de este ejercicio.",
+      "count": 5,
+      "optional": true
+    }
+  ],
+  "material": {
+    "title": "50 preguntas socráticas",
+    "description": "Cincuenta preguntas para examinar tus pensamientos, agrupadas en nueve objetivos: evidencia, alternativas, exigencias, creencias y más.",
+    "category": "psicoeducacion"
+  }
+}

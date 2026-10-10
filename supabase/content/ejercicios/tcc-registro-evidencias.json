@@ -6,7 +6,7 @@
   "approach": "tcc",
   "audience": "adultos",
   "collection": "tcc",
-  "estimated_minutes": 5,
+  "estimated_minutes": 6,
   "sort_order": 214,
   "source": "Cuadernillo de TCC, Anexo 4 (página 37)",
   "steps": [
@@ -20,7 +20,7 @@
       "id": "pensamiento",
       "type": "text",
       "prompt": "¿Qué pensamiento querés examinar?",
-      "help": "Escribilo tal como aparece. Así lo hizo Ana: «todos van a ver que estoy nerviosa y me van a juzgar»."
+      "help": "Escribilo tal como aparece. Así lo hizo Ana (26 años), el caso de «Cuestionamiento socrático y reestructuración», que evita reuniones por miedo a «quedar en ridículo»: «todos van a ver que estoy nerviosa y me van a juzgar»."
     },
     {
       "id": "credibilidad_inicial",
@@ -69,7 +69,7 @@
       "type": "reflect",
       "title": "Tu registro de evidencias",
       "template": "Pensamiento examinado: «{{pensamiento}}». A favor: {{evidencia_favor}}. En contra: {{evidencia_contra}}. Conclusión equilibrada: «{{conclusion}}».",
-      "content": "Compará la credibilidad del principio con la de ahora: ¿bajó?\n\nTu registro queda guardado: lo podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también lo puede ver."
+      "content": "Compará la credibilidad del principio con la de ahora (con «Atrás» la volvés a ver): ¿bajó?\n\nA veces el mejor cuestionamiento es un experimento: probar en la realidad, no solo debatir en la cabeza. Ana cerró con uno: ir a una reunión y registrar cuántos comentarios recibe realmente.\n\nCuando toques «Terminar», tu registro queda guardado: lo podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también lo puede ver."
     }
   ]
 }

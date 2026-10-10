@@ -1,0 +1,236 @@
+{
+  "slug": "tcc-activacion-conductual",
+  "title": "Tríada cognitiva y activación conductual",
+  "description": "Entendé la tríada y la espiral de la depresión, y armá tu lista de actividades de placer y de dominio.",
+  "kind": "custom",
+  "approach": "tcc",
+  "audience": "adultos",
+  "collection": "tcc",
+  "estimated_minutes": 15,
+  "sort_order": 207,
+  "source": "Cuadernillo de TCC, capítulo 7 (páginas 30 a 33)",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Salir del pozo",
+      "content": "La depresión tiene una forma reconocible de pensar y un círculo que se retroalimenta. Este capítulo explica ambos y presenta la herramienta conductual más eficaz para salir del pozo: la **activación conductual**.\n\nEn caso de crisis, pedí ayuda ya a emergencias o en la guardia del hospital más cercano. En la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos."
+    },
+    {
+      "id": "triada",
+      "type": "info",
+      "title": "La tríada cognitiva de Beck",
+      "content": "Beck observó que, en la depresión, el pensamiento negativo se organiza en tres frentes. Es la llamada **tríada cognitiva**:\n\n- **Visión negativa de UNO MISMO.** Contenido típico: «soy defectuoso, inútil, no valgo». Ejemplos: «no sirvo para nada», «soy una carga».\n- **Visión negativa del MUNDO.** Contenido típico: «todo es hostil, exigente, sin sentido». Ejemplos: «nada tiene gracia», «nadie me valora».\n- **Visión negativa del FUTURO.** Contenido típico: «nada va a mejorar». Ejemplos: «esto no tiene salida», «siempre será igual»."
+    },
+    {
+      "id": "espiral",
+      "type": "info",
+      "title": "El círculo de la depresión",
+      "content": "La depresión funciona como una espiral descendente. Entenderla ayuda a saber dónde intervenir.\n\n**La espiral:** ánimo bajo → menos energía y ganas → me aíslo y dejo de hacer cosas → menos experiencias gratificantes y de logro → más pensamientos negativos («no sirvo, nada me gusta») → ánimo aún más bajo.\n\nLa trampa es esperar a «tener ganas» para hacer. En la depresión, **las ganas no vienen antes de la acción: vienen después**. Por eso se interviene sobre la conducta, no solo sobre el ánimo."
+    },
+    {
+      "id": "profundizar",
+      "type": "info",
+      "title": "Para profundizar (opcional)",
+      "content": "Es la explicación clínica de por qué funciona la activación. Si preferís, pasá a la pantalla siguiente.\n\nLa activación conductual parte de un principio contraintuitivo: en lugar de esperar a sentirse mejor para actuar, la persona **actúa para empezar a sentirse mejor**. Reintroduce de forma planificada y gradual actividades que aportan placer y sensación de dominio, rompiendo el ciclo de evitación y retraimiento que mantiene el estado depresivo.\n\nLa evidencia acumulada la respalda como intervención eficaz para la depresión, comparable en varios estudios a paquetes de TCC más amplios, con la ventaja de ser relativamente simple de aplicar."
+    },
+    {
+      "id": "tipos",
+      "type": "info",
+      "title": "Los dos tipos de actividad",
+      "content": "- **Placer (P):** aporta disfrute, conexión, bienestar. Por ejemplo: escuchar música, ver a un amigo, caminar, un baño, cocinar algo rico.\n- **Dominio (D):** aporta logro, competencia, sensación de utilidad. Por ejemplo: ordenar un cajón, pagar una cuenta, estudiar 20 min, hacer un trámite.\n\n**Idea clave:** una buena semana equilibra placer y dominio. Solo placer puede sentirse vacío; solo dominio, agotador. Cada actividad se puntúa después de hacerla en placer (0–10) y dominio (0–10)."
+    },
+    {
+      "id": "programacion",
+      "type": "info",
+      "title": "Programación gradual",
+      "content": "No se trata de llenar la agenda de golpe. Se empieza pequeño y se sube de a poco:\n\n1. Hacé una lista de actividades que antes te gustaban o te daban sensación de logro.\n2. Ordenalas de la más fácil a la más difícil según cuánta energía requieren hoy.\n3. Empezá por las más fáciles: mejor una caminata de 10 minutos que un plan imposible.\n4. Programá día y hora concretos (no «cuando pueda», sino «martes 18:00»).\n5. Hacela aunque no tengas ganas: la motivación llega después de empezar.\n6. Registrá placer y dominio al terminar, y subí gradualmente la dificultad."
+    },
+    {
+      "id": "reglas_oro",
+      "type": "info",
+      "title": "Reglas de oro de la activación",
+      "content": "- **De afuera hacia adentro:** primero la acción, después el ánimo.\n- **Concreto y pequeño:** mejor un paso mínimo cumplido que un plan enorme abandonado.\n- **Programado, no espontáneo:** agendá la actividad como si fuera una cita.\n- **Registrar es parte del tratamiento:** lo que se mide, se puede ajustar."
+    },
+    {
+      "id": "areas",
+      "type": "info",
+      "title": "Ejemplos por área",
+      "content": "Actividades de activación en distintas áreas, y su tipo:\n\n- **Depresión:** salir a caminar 10 minutos a la mañana → placer + dominio.\n- **Duelo:** retomar un café semanal con una amiga → placer.\n- **Autoestima:** terminar una tarea pequeña postergada → dominio.\n- **Ansiedad:** hacer una actividad relajante agendada (música, baño) → placer.\n- **Trabajo:** dividir un pendiente grande en un paso de 15 minutos → dominio.\n\nAhora probá vos con otros tres."
+    },
+    {
+      "id": "quiz_universidad",
+      "type": "choice",
+      "prompt": "«Estudiar en bloques cortos con una recompensa después»: ¿qué tipo es?",
+      "help": "Ejemplo del área universidad (1 de 3). La respuesta es la del cuadernillo; en la práctica, cada actividad se puntúa en placer y en dominio después de hacerla.",
+      "options": [
+        "Placer",
+        "Dominio",
+        "Placer y dominio"
+      ],
+      "feedback": {
+        "Placer y dominio": "**Exacto.** Estudiar aporta dominio (logro, sensación de utilidad) y la recompensa de después aporta placer: es **dominio + placer**.",
+        "Placer": "**Le falta una parte.** La recompensa aporta placer, pero estudiar aporta logro: es **dominio + placer**.",
+        "Dominio": "**Le falta una parte.** Estudiar aporta logro, pero la recompensa de después suma placer: es **dominio + placer**."
+      }
+    },
+    {
+      "id": "quiz_pareja",
+      "type": "choice",
+      "prompt": "«Planificar una actividad compartida simple»: ¿qué tipo es?",
+      "help": "Ejemplo del área pareja (2 de 3).",
+      "options": [
+        "Placer",
+        "Dominio",
+        "Placer y dominio"
+      ],
+      "feedback": {
+        "Placer": "**Exacto.** Aporta disfrute y conexión: es una actividad de **placer**.",
+        "Dominio": "**En el cuadernillo figura como placer:** lo central es el disfrute y la conexión con la otra persona, más que el logro.",
+        "Placer y dominio": "**En el cuadernillo figura como placer:** lo central es el disfrute y la conexión. Si a vos además te deja sensación de logro, se va a ver cuando la puntúes en las dos escalas."
+      }
+    },
+    {
+      "id": "quiz_perfeccionismo",
+      "type": "choice",
+      "prompt": "«Hacer algo “suficientemente bien” a propósito»: ¿qué tipo es?",
+      "help": "Ejemplo del área perfeccionismo (3 de 3).",
+      "options": [
+        "Placer",
+        "Dominio",
+        "Placer y dominio"
+      ],
+      "feedback": {
+        "Dominio": "**Exacto.** Es una actividad de **dominio**: aporta logro y sensación de competencia.",
+        "Placer": "**En el cuadernillo figura como dominio:** aporta logro y competencia, más que disfrute.",
+        "Placer y dominio": "**En el cuadernillo figura como dominio:** lo central es el logro y la competencia. Si además lo disfrutás, se va a ver cuando lo puntúes en las dos escalas."
+      }
+    },
+    {
+      "id": "sofia",
+      "type": "info",
+      "title": "Caso clínico: Sofía, 42 años",
+      "content": "**Episodio depresivo.** Sofía casi no sale de casa. Dice: «no tengo ganas de nada» y espera recuperarlas para volver a moverse. Se le explica el círculo y se acuerda un primer paso mínimo: regar las plantas y caminar hasta la esquina, martes y jueves a las 10:00.\n\n**Resultado:** las primeras veces lo hace «sin ganas y sin gusto» (placer 2, dominio 5). A la segunda semana el dominio sube y aparece algo de placer. Al registrar, Sofía comprueba que los días con al menos una actividad su ánimo es un poco mejor. La evidencia la anima a subir la dosis."
+    },
+    {
+      "id": "vertice",
+      "type": "choice",
+      "prompt": "¿Cuál de los tres vértices de la tríada pesa más en vos?",
+      "help": "Uno mismo, el mundo o el futuro. Pensá en lo que te decís cuando el ánimo está bajo.",
+      "options": [
+        "Uno mismo",
+        "El mundo",
+        "El futuro",
+        "No lo tengo claro"
+      ],
+      "feedback": {
+        "Uno mismo": "Es la **visión negativa de uno mismo**: «soy defectuoso, inútil, no valgo». Suena como «no sirvo para nada» o «soy una carga».\n\nEn este capítulo se interviene sobre la conducta: en las próximas pantallas armás tu lista de activación.",
+        "El mundo": "Es la **visión negativa del mundo**: «todo es hostil, exigente, sin sentido». Suena como «nada tiene gracia» o «nadie me valora».\n\nEn este capítulo se interviene sobre la conducta: en las próximas pantallas armás tu lista de activación.",
+        "El futuro": "Es la **visión negativa del futuro**: «nada va a mejorar». Suena como «esto no tiene salida» o «siempre será igual».\n\nEn este capítulo se interviene sobre la conducta: en las próximas pantallas armás tu lista de activación.",
+        "No lo tengo claro": "Está bien. Esta semana, cuando baje el ánimo, fijate si tus pensamientos hablan de vos, del mundo o del futuro, y si querés, revisalo en sesión con tu psicólogo.\n\nMientras tanto, en las próximas pantallas armás tu lista de activación."
+      }
+    },
+    {
+      "id": "guiado_intro",
+      "type": "info",
+      "title": "Ejercicio guiado: tu lista de activación",
+      "content": "Ahora armás tu propia lista, siguiendo la programación gradual:\n\n- Actividades de **placer** que quieras recuperar.\n- Actividades de **dominio** (logro) pendientes.\n- Tu **primer paso mínimo**, con día y hora concretos.\n\nNo se trata de llenar la agenda de golpe: si hoy te cuesta, con una actividad en cada lista alcanza."
+    },
+    {
+      "id": "placer",
+      "type": "list",
+      "prompt": "Actividades de placer que quiero recuperar",
+      "help": "Cosas que antes te gustaban y te daban disfrute, conexión o bienestar. Por ejemplo: escuchar música, ver a un amigo, caminar, un baño, cocinar algo rico.\n\nUna por renglón. Si podés, de la más fácil a la más difícil según cuánta energía requieren hoy.",
+      "count": 5,
+      "min": 1
+    },
+    {
+      "id": "dominio",
+      "type": "list",
+      "prompt": "Actividades de dominio (logro) pendientes",
+      "help": "Tareas que te darían sensación de logro, competencia o utilidad. Por ejemplo: ordenar un cajón, pagar una cuenta, estudiar 20 min, hacer un trámite.\n\nUna por renglón. Si podés, de la más fácil a la más difícil según cuánta energía requieren hoy.",
+      "count": 5,
+      "min": 1
+    },
+    {
+      "id": "primer_paso",
+      "type": "text",
+      "prompt": "Mi primer paso mínimo: ¿qué vas a hacer?",
+      "help": "Elegí algo de lo más fácil de tus listas: mejor una caminata de 10 minutos que un plan imposible. Sofía acordó regar las plantas y caminar hasta la esquina."
+    },
+    {
+      "id": "primer_paso_cuando",
+      "type": "text",
+      "prompt": "¿Qué día y a qué hora lo vas a hacer?",
+      "help": "Concretos: no «cuando pueda», sino «martes 18:00». Agendalo como si fuera una cita. Sofía: martes y jueves a las 10:00.",
+      "placeholder": "Por ejemplo: martes 18:00"
+    },
+    {
+      "id": "resumen",
+      "type": "reflect",
+      "title": "Tu lista de activación",
+      "template": "Placer que quiero recuperar: {{placer}}. Dominio (logro) pendiente: {{dominio}}. Mi primer paso mínimo: «{{primer_paso}}». Cuándo: {{primer_paso_cuando}}.",
+      "content": "Hacelo aunque no tengas ganas: la motivación llega después de empezar. Al terminar, puntuá placer y dominio en «Registro de actividades».\n\nCuando toques «Terminar», en la última pantalla, tu lista queda guardada: la podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también la puede ver."
+    },
+    {
+      "id": "refl_dejaste",
+      "type": "text",
+      "prompt": "¿Qué actividades dejaste de hacer desde que estás con el ánimo bajo?",
+      "help": "Preguntas de reflexión: respondé las que quieras, podés saltear cualquiera.",
+      "optional": true
+    },
+    {
+      "id": "refl_ganas",
+      "type": "choice",
+      "prompt": "¿Notás que esperás «tener ganas» antes de actuar?",
+      "options": [
+        "Sí, seguido",
+        "A veces",
+        "Casi nunca"
+      ],
+      "feedback": {
+        "Sí, seguido": "Es la trampa de la espiral: en la depresión, las ganas no vienen antes de la acción, vienen después. Por eso el primer paso se agenda y se hace aunque no haya ganas.",
+        "A veces": "Es la trampa de la espiral: en la depresión, las ganas no vienen antes de la acción, vienen después. Por eso el primer paso se agenda y se hace aunque no haya ganas.",
+        "Casi nunca": "Bien: es una de las claves del capítulo. Igual, agendá tus actividades con día y hora, no «cuando pueda»."
+      },
+      "optional": true
+    },
+    {
+      "id": "refl_dia",
+      "type": "text",
+      "prompt": "¿Qué diferencia hay en tu ánimo entre un día activo y uno pasivo?",
+      "help": "Si todavía no lo sabés, el «Registro de actividades» te puede ayudar a verlo, como le pasó a Sofía.",
+      "optional": true
+    },
+    {
+      "id": "refl_manana",
+      "type": "text",
+      "prompt": "¿Qué actividad pequeña podrías agendar mañana mismo?",
+      "help": "Puede ser tu primer paso mínimo u otra de tus listas.",
+      "optional": true
+    },
+    {
+      "id": "refl_postergado",
+      "type": "text",
+      "prompt": "¿Qué te sacás de encima cuando cumplís algo que venías postergando?",
+      "optional": true
+    },
+    {
+      "id": "para_llevar",
+      "type": "info",
+      "title": "Para llevar",
+      "content": "- La tríada cognitiva: visión negativa de uno mismo, del mundo y del futuro.\n- La depresión es una espiral: menos actividad → menos gratificación → más pensamientos negativos.\n- En la depresión, las ganas vienen **después** de la acción, no antes.\n- La activación conductual reintroduce actividades de placer y de dominio de forma gradual.\n- Programar, hacer aunque no haya ganas y registrar son las claves."
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "Tareas para casa, a lo largo de la semana:\n\n- Completá el **«Planificador semanal de activación»** con al menos una actividad por día (unos 8 minutos).\n- Asegurá el equilibrio: que haya tanto placer como dominio en la semana.\n- Empezá por lo más fácil y agendá día y hora, no «cuando pueda».\n- Puntuá P y D después de cada actividad y observá la relación con tu ánimo: usá el **«Registro de actividades»** cada vez que termines una (unos 3 minutos).\n- Al final de la semana, subí un escalón la dificultad de una actividad."
+    }
+  ],
+  "material": {
+    "title": "Tríada cognitiva y activación conductual",
+    "description": "La tríada cognitiva, la espiral de la depresión y cómo salir con actividades de placer y de dominio. Con el caso de Sofía y tu lista de activación.",
+    "category": "depresion"
+  }
+}

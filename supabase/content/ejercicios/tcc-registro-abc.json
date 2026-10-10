@@ -6,7 +6,7 @@
   "approach": "tcc",
   "audience": "adultos",
   "collection": "tcc",
-  "estimated_minutes": 5,
+  "estimated_minutes": 6,
   "sort_order": 212,
   "source": "Cuadernillo de TCC, Anexo 2 (página 35)",
   "steps": [
@@ -20,20 +20,20 @@
       "id": "a_acontecimiento",
       "type": "text",
       "prompt": "A — Acontecimiento: ¿qué pasó?",
-      "help": "Solo el hecho observable, sin interpretaciones. Ojo: «me trataron injustamente» ya es interpretación (B), y «me sentí humillado» es consecuencia (C).",
+      "help": "Solo el hecho observable, sin interpretaciones. Así lo hizo Diego (31 años), el caso de «El modelo ABC de Ellis»: «la pareja llega 20 minutos tarde».\n\nOjo: «me trataron injustamente» ya es interpretación (B), y «me sentí humillado» es consecuencia (C).",
       "placeholder": "Lo que vería cualquiera que estuviera ahí…"
     },
     {
       "id": "b_creencia",
       "type": "text",
       "prompt": "B — Creencia: ¿qué pensaste o creíste sobre lo que pasó?",
-      "help": "Escribila con tus palabras, tal como apareció. Buscá la exigencia que estaba detrás: «debo», «tengo que», «debería», «no puede ser que», «no lo soporto»."
+      "help": "Escribila con tus palabras, tal como apareció. Buscá la exigencia que estaba detrás: «debo», «tengo que», «debería», «no puede ser que», «no lo soporto».\n\nDiego: «no tiene ningún derecho a hacerme esperar, debería respetarme siempre, esto es intolerable»."
     },
     {
       "id": "c_emocion",
       "type": "checklist",
       "prompt": "C — Consecuencia: ¿qué sentiste?",
-      "help": "Marcá hasta tres.",
+      "help": "Marcá hasta tres. Diego sintió ira intensa.",
       "options": [
         "Ira",
         "Fastidio",
@@ -60,20 +60,20 @@
       "id": "c_conducta",
       "type": "text",
       "prompt": "C — Consecuencia: ¿qué hiciste?",
-      "help": "Lo que hiciste (o dejaste de hacer) en ese momento."
+      "help": "Lo que hiciste (o dejaste de hacer) en ese momento. Diego: reproche y portazo."
     },
     {
       "id": "d_debate",
       "type": "text",
       "prompt": "D — Debate: ¿es verdad?, ¿tiene lógica?, ¿me sirve?",
-      "help": "Debatí la creencia de B con las tres preguntas de Ellis:\n\n- **¿Es verdad?** ¿Dónde está la prueba de que esto DEBE ser así?\n- **¿Tiene lógica?** ¿Se sigue lógicamente que, porque lo prefiero, tenga que ocurrir?\n- **¿Me sirve?** ¿Adónde me lleva sostener esta exigencia? ¿Me ayuda o me hunde?\n\nNo se debate la emoción, sino la exigencia que la infla. Si no querés hacerlo ahora, tocá «Saltar».",
+      "help": "Debatí la creencia de B con las tres preguntas de Ellis:\n\n- **¿Es verdad?** ¿Dónde está la prueba de que esto DEBE ser así?\n- **¿Tiene lógica?** ¿Se sigue lógicamente que, porque lo prefiero, tenga que ocurrir?\n- **¿Me sirve?** ¿Adónde me lleva sostener esta exigencia? ¿Me ayuda o me hunde?\n\nNo se debate la emoción, sino la exigencia que la infla. En el caso de Diego: ¿dónde está escrito que SIEMPRE debe ser puntual? ¿Es intolerable o muy molesto? ¿Le sirve reaccionar así?\n\nSi no querés hacerlo ahora, tocá «Saltar».",
       "optional": true
     },
     {
       "id": "e_nueva_filosofia",
       "type": "text",
       "prompt": "E — Nueva filosofía: ¿cómo queda tu creencia como preferencia flexible?",
-      "help": "Cambiá el «debo» por «prefiero» o «me gustaría», y el «no lo soporto» por «puedo tolerarlo». Ojo: «debo dejar de exigirme» sigue siendo un «debo».\n\nSi no hiciste el debate, tocá «Saltar».",
+      "help": "Cambiá el «debo» por «prefiero» o «me gustaría», y el «no lo soporto» por «puedo tolerarlo». Ojo: «debo dejar de exigirme» sigue siendo un «debo».\n\nDiego: «prefiero que sea puntual y me molesta que no lo sea, pero no es una catástrofe ni una falta de respeto absoluta; puedo decirlo con calma». Su emoción pasó de ira a fastidio manejable.\n\nSi no hiciste el debate, tocá «Saltar».",
       "optional": true
     },
     {
@@ -81,7 +81,7 @@
       "type": "reflect",
       "title": "Tu registro ABC",
       "template": "A: «{{a_acontecimiento}}». B: «{{b_creencia}}». C: {{c_emocion}}; «{{c_conducta}}». E, si la trabajaste: «{{e_nueva_filosofia}}».",
-      "content": "El malestar nace en B, no en A: la creencia media entre el hecho y la emoción. Para trabajar el debate paso a paso, volvé a «El modelo ABC de Ellis».\n\nTu registro queda guardado: lo podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también lo puede ver."
+      "content": "El malestar nace en B, no en A: la creencia media entre el hecho y la emoción. Para trabajar el debate paso a paso, volvé a «El modelo ABC de Ellis».\n\nCuando toques «Terminar», tu registro queda guardado: lo podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también lo puede ver."
     }
   ]
 }

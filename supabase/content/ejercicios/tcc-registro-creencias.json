@@ -1,0 +1,67 @@
+{
+  "slug": "tcc-registro-creencias",
+  "title": "Registro de creencias nucleares",
+  "description": "Anotá tu creencia antigua, una alternativa más ajustada y, cada día, la evidencia que apoya la nueva.",
+  "kind": "thought_record",
+  "approach": "tcc",
+  "audience": "adultos",
+  "collection": "tcc",
+  "estimated_minutes": 5,
+  "sort_order": 215,
+  "source": "Cuadernillo de TCC, Anexo 5 (página 38)",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Registro de creencias nucleares",
+      "content": "Es la hoja del Anexo 5 del cuadernillo y viene del capítulo «Creencias intermedias y nucleares».\n\nLa creencia nueva se sostiene con evidencia. Por eso, **cada día** anotá una prueba, por pequeña que sea, que la apoye.\n\nLa creencia antigua y la alternativa suelen ser las mismas de un día a otro: escribilas igual cada vez (las tenés en «Mis respuestas»). Lo que cambia es la evidencia del día.\n\nSi todavía no identificaste tu creencia nuclear, empezá por «Creencias intermedias y nucleares». Si te moviliza mucho, podés frenar, ir a **Calmarme** y retomarlo en sesión."
+    },
+    {
+      "id": "creencia_antigua",
+      "type": "text",
+      "prompt": "Creencia nuclear negativa (antigua): ¿cuál es?",
+      "help": "Una frase corta sobre vos: «soy…», «no…». Por ejemplo: «no sirvo»."
+    },
+    {
+      "id": "dominio",
+      "type": "choice",
+      "prompt": "¿En qué dominio la ubicás?",
+      "help": "Las creencias nucleares negativas sobre uno mismo suelen agruparse en tres dominios:\n\n- **Desamparo:** «soy impotente / incapaz». Por ejemplo: «no puedo con nada», «soy débil», «no tengo control», «estoy atrapado».\n- **Desamor:** «no soy querible». Por ejemplo: «no merezco cariño», «voy a terminar solo», «hay algo malo en mí».\n- **Desvalorización:** «no valgo / soy defectuoso». Por ejemplo: «soy un fracaso», «no sirvo», «soy mala persona».",
+      "options": [
+        "Desamparo: «soy impotente / incapaz»",
+        "Desamor: «no soy querible»",
+        "Desvalorización: «no valgo / soy defectuoso»",
+        "No lo tengo claro"
+      ],
+      "feedback": {
+        "No lo tengo claro": "Está bien. Seguí con el registro y revisalo en sesión con tu psicólogo."
+      }
+    },
+    {
+      "id": "creencia_alternativa",
+      "type": "text",
+      "prompt": "Creencia nuclear alternativa: ¿qué versión más ajustada podés formular?",
+      "help": "Más ajustada y realista. Por ejemplo: «soy suficiente, con virtudes y límites»."
+    },
+    {
+      "id": "situacion",
+      "type": "text",
+      "prompt": "Hoy: ¿en qué situación encontraste evidencia a favor de la creencia nueva?",
+      "help": "Dónde, cuándo, con quién. La fecha se guarda sola con el registro.",
+      "placeholder": "Qué pasó, dónde, con quién…"
+    },
+    {
+      "id": "evidencia",
+      "type": "text",
+      "prompt": "¿Qué evidencia de esa situación apoya la creencia nueva?",
+      "help": "Un hecho concreto, por pequeño que sea: lo que pasó, no lo que interpretaste."
+    },
+    {
+      "id": "resumen",
+      "type": "reflect",
+      "title": "Tu registro de hoy",
+      "template": "Creencia antigua: «{{creencia_antigua}}» ({{dominio}}). Creencia nueva, más ajustada: «{{creencia_alternativa}}». Situación de hoy: «{{situacion}}». Evidencia a favor de la nueva: «{{evidencia}}».",
+      "content": "Volvé a hacer este registro cada día, con una prueba nueva: así se va juntando la evidencia que sostiene la creencia más ajustada.\n\nCuando toques «Terminar», tu registro queda guardado: lo podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también lo puede ver."
+    }
+  ]
+}

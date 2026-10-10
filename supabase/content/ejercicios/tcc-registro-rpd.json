@@ -6,7 +6,7 @@
   "approach": "tcc",
   "audience": "adultos",
   "collection": "tcc",
-  "estimated_minutes": 5,
+  "estimated_minutes": 6,
   "sort_order": 211,
   "source": "Cuadernillo de TCC, Anexo 1 (página 34)",
   "steps": [
@@ -14,7 +14,7 @@
       "id": "intro",
       "type": "info",
       "title": "Registro de pensamientos (RPD)",
-      "content": "Es la hoja del Anexo 1 del cuadernillo. Viene de los capítulos «Los pensamientos automáticos» y «Cuestionamiento socrático y reestructuración».\n\nRegistrá tus pensamientos **lo antes posible después de la situación**.\n\nLas últimas preguntas (pensamiento alternativo, nueva credibilidad y nueva emoción) se completan al reestructurar. Si todavía no llegaste a ese capítulo, tocá «Saltar» en esas preguntas.\n\nUsalo tantas veces como necesites: la práctica repetida es lo que instala el cambio."
+      "content": "El **Registro de Pensamientos Disfuncionales (RPD)** es la hoja del Anexo 1 del cuadernillo. Viene de los capítulos «Los pensamientos automáticos» y «Cuestionamiento socrático y reestructuración».\n\nRegistrá tus pensamientos **lo antes posible después de la situación**.\n\nLas últimas preguntas (pensamiento alternativo, nueva credibilidad y nueva emoción) se completan al reestructurar. Si todavía no llegaste a ese capítulo, tocá «Saltar» en esas preguntas.\n\nUsalo tantas veces como necesites: la práctica repetida es lo que instala el cambio."
     },
     {
       "id": "situacion",
@@ -65,13 +65,13 @@
       "id": "pensamiento",
       "type": "text",
       "prompt": "Pensamiento automático: ¿qué te pasó por la cabeza?",
-      "help": "Usá la pregunta de oro: «¿qué me pasó por la cabeza justo antes de sentirme así?». Escribilo tal como apareció, con sus palabras crudas, sin traducirlo ni suavizarlo.\n\nSi hubo varios, quedate con el **pensamiento caliente**: el que trae más carga emocional."
+      "help": "Usá la pregunta de oro: «¿qué me pasó por la cabeza justo antes de sentirme así?». Escribilo tal como apareció, con sus palabras crudas, sin traducirlo ni suavizarlo.\n\nSi hubo varios, quedate con el **pensamiento caliente**: el que trae más carga emocional.\n\nAsí lo hizo Ana (26 años), que evita reuniones por miedo a «quedar en ridículo»: «todos van a ver que estoy nerviosa y me van a juzgar»."
     },
     {
       "id": "credibilidad",
       "type": "scale",
       "prompt": "¿Cuánto creés ese pensamiento? (de 0 a 100)",
-      "help": "Es su credibilidad: no importa solo qué pensás, sino cuánto lo creés.",
+      "help": "Es su credibilidad: no importa solo qué pensás, sino cuánto lo creés. Ana: 90.",
       "min": 0,
       "max": 100,
       "min_label": "Nada",
@@ -81,14 +81,14 @@
       "id": "alternativo",
       "type": "text",
       "prompt": "Pensamiento alternativo: ¿qué forma más ajustada hay de verlo?",
-      "help": "Se completa al reestructurar. Que integre toda la evidencia, no que niegue lo negativo: creíble para vos, equilibrado y que puedas usar la próxima vez. No un eslogan optimista. Si te ayuda, usá «50 preguntas socráticas».\n\nSi todavía no lo trabajaste, tocá «Saltar».",
+      "help": "Se completa al reestructurar. Que integre toda la evidencia, no que niegue lo negativo: creíble para vos, equilibrado y que puedas usar la próxima vez. No un eslogan optimista. Te pueden ayudar «50 preguntas socráticas» y el «Registro de evidencias».\n\nAna: «puedo estar algo nerviosa y aun así participar; la mayoría está pendiente de lo suyo, no de mí».\n\nSi todavía no lo trabajaste, tocá «Saltar».",
       "optional": true
     },
     {
       "id": "credibilidad_nueva",
       "type": "scale",
       "prompt": "¿Cuánto creés ahora el pensamiento automático? (de 0 a 100)",
-      "help": "Es la nueva credibilidad del pensamiento del principio, después de reestructurar. Si no escribiste un pensamiento alternativo, tocá «Saltar».",
+      "help": "Es la nueva credibilidad del pensamiento del principio, después de reestructurar. En el caso de Ana, bajó de 90 a 40. Si no escribiste un pensamiento alternativo, tocá «Saltar».",
       "min": 0,
       "max": 100,
       "min_label": "Nada",
@@ -99,7 +99,7 @@
       "id": "emocion_nueva",
       "type": "scale",
       "prompt": "¿Con qué intensidad sentís ahora la emoción? (de 0 a 100)",
-      "help": "Puntuá la misma emoción de antes. Si no escribiste un pensamiento alternativo, tocá «Saltar».",
+      "help": "Puntuá la misma emoción de antes. En Ana, la ansiedad bajó de 80 a 50. Si no escribiste un pensamiento alternativo, tocá «Saltar».",
       "min": 0,
       "max": 100,
       "min_label": "Nada",
@@ -111,7 +111,7 @@
       "type": "reflect",
       "title": "Tu registro",
       "template": "Situación: «{{situacion}}». Emoción: {{emocion}}. Pensamiento automático: «{{pensamiento}}». Pensamiento alternativo (si ya lo trabajaste): «{{alternativo}}».",
-      "content": "Si reestructuraste, compará tus puntuaciones de antes y de ahora: ¿bajaron la credibilidad del pensamiento y la intensidad de la emoción?\n\nTu registro queda guardado: lo podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también lo puede ver."
+      "content": "Si reestructuraste, compará tus puntuaciones de antes y de ahora (con «Atrás» las volvés a ver): ¿bajaron la credibilidad del pensamiento y la intensidad de la emoción?\n\nCuando toques «Terminar», tu registro queda guardado: lo podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también lo puede ver."
     }
   ]
 }
