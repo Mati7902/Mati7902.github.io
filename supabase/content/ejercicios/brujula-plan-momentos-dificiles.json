@@ -1,7 +1,7 @@
 {
   "slug": "brujula-plan-momentos-dificiles",
   "title": "Mi plan para momentos muy difíciles",
-  "description": "Un plan para ganar tiempo y conectar con ayuda en los momentos más difíciles. Lo armás con tu psicólogo/a.",
+  "description": "Armá con tu psicólogo/a un plan para ganar tiempo y conectar con ayuda en los momentos más difíciles.",
   "kind": "custom",
   "approach": "general",
   "audience": "adolescentes",
@@ -20,7 +20,7 @@
       "id": "pedi_ayuda_ya",
       "type": "info",
       "title": "Pedí ayuda ya si…",
-      "content": "**Pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano, si:**\n\n- pensás en quitarte la vida y tenés intención o un plan;\n- te hiciste daño o tomaste algo para hacerte daño;\n- estás intoxicado/a o tenés una lesión importante;\n- sentís que no podés mantenerte a salvo.\n\n**Para hablar con alguien ahora**, también hay una línea de crisis en salud mental, gratis y las 24 horas.\n\nEn la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos."
+      "content": "**Pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano, si:**\n\n- pensás en quitarte la vida y tenés intención o un plan;\n- te hiciste daño o tomaste algo para hacerte daño;\n- estás intoxicado/a o tenés una lesión importante;\n- sentís que no podés mantenerte a salvo.\n\n**Para hablar con alguien ahora**, en el recuadro «Si necesitás ayuda urgente» de **Calmarme** están las líneas de ayuda que dejó cargadas tu psicólogo/a.\n\nEn la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos."
     },
     {
       "id": "senales",
@@ -58,7 +58,7 @@
       "id": "psicologo",
       "type": "text",
       "prompt": "Profesionales y servicios: mi psicólogo/a",
-      "help": "**Parte 5 de 6.** Su nombre y su teléfono.\n\nLos teléfonos de emergencias y de la línea de crisis en salud mental ya están en **Calmarme**, en el recuadro «Si necesitás ayuda urgente».",
+      "help": "**Parte 5 de 6.** Su nombre y su teléfono.\n\nLos teléfonos de emergencia y de las líneas de ayuda están en **Calmarme**, en el recuadro «Si necesitás ayuda urgente»: copialos también en tu papel.",
       "placeholder": "Nombre y teléfono…",
       "optional": true
     },

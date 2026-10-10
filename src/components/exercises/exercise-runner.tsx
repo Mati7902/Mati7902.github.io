@@ -291,18 +291,39 @@ function Prompt({ step }: { step: Extract<ExerciseStep, { prompt: string }> }) {
   );
 }
 
+/** "40 segundos", "10 minutos", "1 min 30 s". */
+export function durationLabel(seconds: number): string {
+  if (seconds < 60) return `${seconds} segundos`;
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  if (s === 0) return m === 1 ? "1 minuto" : `${m} minutos`;
+  return `${m} min ${s} s`;
+}
+
+function clock(left: number): string {
+  return left >= 60 ? `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}` : `${left}s`;
+}
+
 function TimedInfo({ title, content, seconds, onDone }: { title?: string; content: string; seconds: number; onDone: () => void }) {
   const [left, setLeft] = useState(seconds);
-  const [running, setRunning] = useState(false);
+  const [endAt, setEndAt] = useState<number | null>(null);
+  const running = endAt !== null;
+  // Se cuenta contra la hora de finalización: si la persona sale de la app o bloquea el
+  // celular, al volver el tiempo sigue siendo el real.
   useEffect(() => {
-    if (!running) return;
-    if (left <= 0) {
-      onDone();
-      return;
-    }
-    const id = window.setTimeout(() => setLeft((l) => l - 1), 1000);
-    return () => window.clearTimeout(id);
-  }, [left, running, onDone]);
+    if (endAt === null) return;
+    const tick = () => {
+      const remaining = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
+      setLeft(remaining);
+      if (remaining <= 0) {
+        setEndAt(null);
+        onDone();
+      }
+    };
+    tick();
+    const id = window.setInterval(tick, 250);
+    return () => window.clearInterval(id);
+  }, [endAt, onDone]);
   return (
     <div className="space-y-5">
       {title ? <h2 className="font-display text-2xl font-medium sm:text-3xl">{title}</h2> : null}
@@ -313,11 +334,11 @@ function TimedInfo({ title, content, seconds, onDone }: { title?: string; conten
             <circle cx="18" cy="18" r="16" fill="none" stroke="var(--color-sand-300)" strokeWidth="3" />
             <circle cx="18" cy="18" r="16" fill="none" stroke="var(--primary)" strokeWidth="3" strokeDasharray={`${((seconds - left) / seconds) * 100} 100`} strokeLinecap="round" className="transition-[stroke-dasharray] duration-1000 ease-linear" />
           </svg>
-          <span className="absolute inset-0 flex items-center justify-center text-sm font-medium">{left}s</span>
+          <span className="absolute inset-0 flex items-center justify-center text-sm font-medium tabular-nums">{clock(left)}</span>
         </div>
         {!running ? (
-          <Button type="button" variant="secondary" onClick={() => setRunning(true)}>
-            Iniciar {seconds} segundos
+          <Button type="button" variant="secondary" onClick={() => setEndAt(Date.now() + seconds * 1000)}>
+            Iniciar {durationLabel(seconds)}
           </Button>
         ) : (
           <p className="text-sm text-muted-foreground" aria-live="polite">

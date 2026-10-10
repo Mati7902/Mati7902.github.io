@@ -66,7 +66,7 @@
       "id": "emotion",
       "type": "checklist",
       "prompt": "Emoción: ¿qué sentiste?",
-      "help": "Elegí hasta tres. Lucas sintió tristeza.",
+      "help": "Elegí hasta 3 palabras. Lucas sintió tristeza.",
       "options": [
         "Bronca",
         "Tristeza",

@@ -1,7 +1,7 @@
 {
   "slug": "brujula-emocion-sube-a-100",
   "title": "Cuando la emoción sube a 100",
-  "description": "Tu termómetro emocional, STOP y tu caja de herramientas para cuando la emoción sube mucho.",
+  "description": "Conocé tu termómetro emocional, aprendé STOP y armá tu caja de herramientas para cuando la emoción sube.",
   "kind": "dbt_skill",
   "approach": "dbt",
   "audience": "adolescentes",
@@ -114,7 +114,7 @@
       "id": "semana",
       "type": "info",
       "title": "Para esta semana",
-      "content": "**Unos 5 minutos.** Usá STOP o una herramienta de tu caja una vez.\n\n- **Antes:** ¿en qué número de tu termómetro estás, de 0 a 10?\n- **Después:** ¿y ahora?\n\nPodés anotarlo en «Registrar cómo me siento».\n\nLa emoción no es el enemigo: es información."
+      "content": "**Unos 5 minutos.** Usá STOP o una herramienta de tu caja una vez.\n\n- **Antes:** ¿en qué número de tu termómetro estás, de 0 a 10?\n- **Después:** ¿y ahora?\n\nPodés anotarlo en «Registrar cómo me siento»: un registro antes y otro después.\n\nLa emoción no es el enemigo: es información."
     }
   ],
   "material": {

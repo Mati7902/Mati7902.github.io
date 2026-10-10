@@ -6,7 +6,7 @@
   "approach": "tcc",
   "audience": "adultos",
   "collection": "tcc",
-  "estimated_minutes": 30,
+  "estimated_minutes": 20,
   "sort_order": 204,
   "source": "Cuadernillo de TCC, capítulo 4 (páginas 17 a 21)",
   "steps": [
@@ -92,8 +92,8 @@
       ],
       "feedback": {
         "Desamor": "**Exacto.** La creencia nuclear probable es «no soy querible», la idea central del desamor.",
-        "Desamparo": "**No en este caso.** El temor no es a no poder, sino a que lo dejen. La creencia probable es «no soy querible», del dominio **desamor**.",
-        "Desvalorización": "**No en este caso.** El temor central no es no valer, sino que lo dejen. La creencia probable es «no soy querible», del dominio **desamor**."
+        "Desamparo": "**No en este caso.** El temor no es a no poder con algo, sino al abandono: «me van a dejar». La creencia probable es «no soy querible», del dominio **desamor**.",
+        "Desvalorización": "**No en este caso.** El temor central no es a no valer, sino al abandono: «me van a dejar». La creencia probable es «no soy querible», del dominio **desamor**."
       }
     },
     {
@@ -128,7 +128,7 @@
       "id": "guiado_intro",
       "type": "info",
       "title": "Ejercicio guiado: de la hoja a la raíz",
-      "content": "Ahora vas a recorrer el camino con un pensamiento tuyo. Tus respuestas van a formar tu hoja de trabajo «reglas, supuestos y creencia nuclear».\n\n1. Elegí un pensamiento automático que te traiga mucha emoción.\n2. Aplicá la flecha descendente al menos tres veces.\n3. Cuando llegues a una frase corta sobre vos («soy…», «no…»), detenete: probablemente sea una creencia nuclear.\n4. Ubicala en uno de los tres dominios.\n5. Escribí la regla o supuesto que usás para no sentir esa creencia.\n6. Formulá una creencia alternativa más ajustada y realista.\n\nAndá a tu ritmo. Si te moviliza mucho, podés frenar, ir a **Calmarme** y retomarlo en sesión."
+      "content": "Ahora te toca a vos:\n\n1. Elegí un pensamiento automático que te traiga mucha emoción.\n2. Aplicá la flecha descendente al menos tres veces.\n3. Cuando llegues a una frase corta sobre vos («soy…», «no…»), detenete: probablemente sea una creencia nuclear.\n4. Ubicala en uno de los tres dominios.\n5. Escribí la regla o supuesto que usás para no sentir esa creencia.\n6. Formulá una creencia alternativa más ajustada y realista.\n\n**Andá a tu ritmo.** Si te moviliza mucho, frená, usá **Calmarme** y retomalo en sesión. En caso de crisis, pedí ayuda ya a una línea de ayuda, a emergencias o en la guardia del hospital más cercano; en **Calmarme** está el recuadro «Si necesitás ayuda urgente» con los teléfonos."
     },
     {
       "id": "pensamiento",
@@ -181,7 +181,7 @@
         "Desamparo: «soy impotente / incapaz»": "Otras creencias de este dominio: «no puedo con nada», «soy débil», «no tengo control», «estoy atrapado».",
         "Desamor: «no soy querible»": "Otras creencias de este dominio: «no merezco cariño», «voy a terminar solo», «hay algo malo en mí».",
         "Desvalorización: «no valgo / soy defectuoso»": "Otras creencias de este dominio: «soy un fracaso», «no sirvo», «soy mala persona». Es el dominio del ejemplo de la reunión y del caso de Carla.",
-        "No lo tengo claro": "Está bien. Volvé a mirar los ejemplos de cada dominio y, si seguís con dudas, revisalo en sesión con tu psicólogo."
+        "No lo tengo claro": "Está bien: no siempre es evidente. Seguí con el ejercicio y revisalo en sesión con tu psicólogo."
       }
     },
     {
@@ -201,7 +201,7 @@
       "type": "reflect",
       "title": "Tu hoja: reglas, supuestos y creencia nuclear",
       "template": "Pensamiento de partida: «{{pensamiento}}». Flecha descendente: «{{flecha_1}}» → «{{flecha_2}}» → «{{flecha_3}}». Creencia nuclear: «{{creencia}}» ({{dominio}}). Regla o supuesto que la protege: «{{regla}}». Creencia alternativa: «{{alternativa}}».",
-      "content": "Tus respuestas quedan guardadas: las podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también las puede ver."
+      "content": "Tu hoja se guarda cuando tocás «Terminar», al final del ejercicio: la vas a poder volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también la puede ver."
     },
     {
       "id": "registro",
@@ -214,7 +214,7 @@
       "id": "registro_evidencia",
       "type": "list",
       "prompt": "¿Qué evidencia apoya tu creencia nueva?",
-      "help": "Hechos de hoy o de tu historia, por mínimos que sean. El registro original tiene un renglón por día: completá los que puedas hoy y seguí durante la semana en «Registro de creencias nucleares».",
+      "help": "Hechos de hoy o de tu historia, por mínimos que sean. Completá los que puedas: la idea es sumar una prueba por día y seguir durante la semana en «Registro de creencias nucleares».",
       "count": 5,
       "min": 1
     },
@@ -276,7 +276,7 @@
       "id": "semana",
       "type": "info",
       "title": "Para esta semana",
-      "content": "Tareas para casa, a lo largo de la semana:\n\n- Aplicá la flecha descendente a **dos pensamientos** distintos: podés volver a hacer este ejercicio con cada uno.\n- Identificá una regla «si… entonces…» que ordena tu conducta y escribila.\n- Registrá cada día una prueba, mínima, a favor de tu creencia alternativa (podés usar «Registro de creencias nucleares»).\n- Diseñá un pequeño experimento para actuar en contra de una de tus reglas y anotá el resultado.\n\nEl próximo capítulo es **«Cuestionamiento socrático y reestructuración»**."
+      "content": "Tareas para casa, a lo largo de la semana:\n\n- Aplicá la flecha descendente a **dos pensamientos** distintos: podés volver a hacer este ejercicio con cada uno (la parte práctica lleva unos 10 minutos).\n- Identificá una regla «si… entonces…» que ordena tu conducta y escribila.\n- Registrá cada día una prueba, mínima, a favor de tu creencia alternativa: podés usar «Registro de creencias nucleares» (unos 5 minutos).\n- Diseñá un pequeño experimento para actuar en contra de una de tus reglas y anotá el resultado.\n\nEl próximo capítulo es **«Cuestionamiento socrático y reestructuración»**."
     }
   ],
   "material": {

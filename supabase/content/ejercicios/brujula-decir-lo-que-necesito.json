@@ -1,12 +1,12 @@
 {
   "slug": "brujula-decir-lo-que-necesito",
   "title": "Decir lo que necesito sin explotar ni callarme",
-  "description": "Decir lo que necesitás de forma clara y respetuosa: la fórmula, cómo poner un límite y tu propia frase.",
+  "description": "Decí lo que necesitás de forma clara y respetuosa: la fórmula, cómo poner un límite y tu propia frase.",
   "kind": "dbt_skill",
   "approach": "dbt",
   "audience": "adolescentes",
   "collection": "brujula",
-  "estimated_minutes": 10,
+  "estimated_minutes": 12,
   "sort_order": 109,
   "source": "Brújula, página 10",
   "steps": [

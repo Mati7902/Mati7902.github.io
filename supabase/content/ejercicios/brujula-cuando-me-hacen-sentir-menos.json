@@ -49,7 +49,7 @@
       "id": "tobi",
       "type": "info",
       "title": "Lo que pasó y lo que pensé sobre mí",
-      "content": "**El hecho no se discute: se trabaja lo que te quedó pensando de vos.**\n\nAsí lo hizo Tobi, 14 años:\n\n- **Lo que pasó:** Se burlaron de mi cuerpo. Pasó, y estuvo mal.\n- **Lo que pensé sobre mí después:** «Entonces soy horrible.»\n- **Lo que me diría alguien que me quiere:** «Que se burlen habla de cómo tratan ellos, no de lo que valés.»\n- **Lo que elijo creer sobre mí:** «Me dolió. No me define.»\n\nAhora te toca a vos, con alguna vez que alguien te hizo sentir menos."
+      "content": "**El hecho no se discute: se trabaja lo que te quedó pensando de vos.**\n\nAsí lo hizo Tobi, 14 años:\n\n- **Lo que pasó:** Se burlaron de mi cuerpo. Pasó, y estuvo mal.\n- **Lo que pensé sobre mí después:** «Entonces soy horrible.»\n- **Lo que me diría alguien que me quiere:** «Que se burlen habla de cómo tratan ellos, no de lo que valés.»\n- **Lo que elijo creer sobre mí:** «Me dolió. No me define.»\n\nAhora te toca a vos: pensá en alguna vez que alguien te hizo sentir menos."
     },
     {
       "id": "que_paso",
@@ -98,13 +98,13 @@
       "id": "adulto_fuera",
       "type": "text",
       "prompt": "¿Y a qué adulto fuera del colegio?",
-      "help": "Alguien de tu familia, tu psicólogo/a, tu entrenador/a, alguien del club o del barrio."
+      "help": "Alguien de tu familia en quien confíes, tu psicólogo/a, tu entrenador/a, alguien del club o del barrio."
     },
     {
       "id": "que_contar",
       "type": "text",
       "prompt": "¿Qué le vas a contar?",
-      "help": "Si te sirve, usá lo que anotaste en «¿Qué pasó?»."
+      "help": "Si te sirve, usá lo que anotaste en «¿Qué pasó?».\n\nSi hoy no te pasa nada de esto, anotá qué le contarías si pasara."
     },
     {
       "id": "pruebas",
@@ -130,7 +130,7 @@
       "id": "resumen_plan",
       "type": "reflect",
       "title": "Mi plan anti-bullying",
-      "template": "En el colegio le voy a contar a {{adulto_colegio}}, y fuera del colegio, a {{adulto_fuera}}. Les voy a contar: «{{que_contar}}». Estoy más acompañado/a: {{acompanado}}. Pruebas guardadas en: {{pruebas}}; compañeros/as que me hacen bien: {{companeros}}",
+      "template": "Adulto del colegio: {{adulto_colegio}}. Adulto fuera del colegio: {{adulto_fuera}}. Les voy a contar: «{{que_contar}}». Pruebas guardadas en: {{pruebas}}; compañeros/as que me hacen bien: {{companeros}}; dónde y cuándo estoy más acompañado/a: {{acompanado}}.",
       "content": "Cuando toques «Terminar», tu plan queda guardado y lo vas a poder volver a ver en este ejercicio, en «Mis respuestas»."
     },
     {

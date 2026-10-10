@@ -96,6 +96,7 @@
       "id": "tema_casa",
       "type": "text",
       "prompt": "Problemas en casa: ¿quién te puede ayudar y cómo la contactás?",
+      "help": "Si en tu casa no hay alguien así, o alguien te lastima o te da miedo, pensá en un adulto seguro de afuera.",
       "placeholder": "Persona y cómo la contacto",
       "optional": true
     },
@@ -117,7 +118,7 @@
       "id": "tema_crisis",
       "type": "text",
       "prompt": "Una crisis: ¿quién te puede ayudar y cómo la contactás?",
-      "help": "Para los momentos muy difíciles está también «Mi plan para momentos muy difíciles»: si ya lo armaste, lo abrís rápido desde **Calmarme**.\n\nSi estás en peligro ahora, pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano. En la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos.",
+      "help": "Para los momentos muy difíciles está también «Mi plan para momentos muy difíciles», en **Calmarme**: si ya lo armaste, lo abrís con «Ver mi plan»; si no, lo armás con «Armar mi plan».\n\nSi estás en peligro ahora, pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano. En la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos.",
       "placeholder": "Persona y cómo la contacto",
       "optional": true
     },

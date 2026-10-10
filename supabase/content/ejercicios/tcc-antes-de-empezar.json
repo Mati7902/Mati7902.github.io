@@ -1,12 +1,12 @@
 {
   "slug": "tcc-antes-de-empezar",
   "title": "Antes de empezar",
-  "description": "Qué vas a aprender, por qué funciona la TCC, qué dice la evidencia y cómo usar este cuadernillo.",
+  "description": "Conocé qué vas a aprender, por qué funciona la TCC, qué dice la evidencia y cómo usar el cuadernillo.",
   "kind": "custom",
   "approach": "tcc",
   "audience": "adultos",
   "collection": "tcc",
-  "estimated_minutes": 8,
+  "estimated_minutes": 6,
   "sort_order": 200,
   "source": "Cuadernillo de TCC, Introducción (páginas 2 a 4)",
   "steps": [
@@ -38,25 +38,31 @@
       "id": "como_usar",
       "type": "info",
       "title": "Cómo usar este cuadernillo",
-      "content": "Cada capítulo es un ejercicio de esta colección y termina con preguntas para completar, tareas para casa y preguntas de reflexión. El material rinde cuando lo completás, no solo cuando lo leés.\n\nAvanzá a tu ritmo: podés dedicar una semana a cada capítulo.\n\nAl final de la colección están los **registros** (los anexos del cuadernillo): podés repetirlos las veces que quieras.\n\nSi sos terapeuta en formación, podés usar las hojas y los casos como recursos para sesión y como plantillas para tus pacientes."
+      "content": "Cada capítulo es un ejercicio de esta colección y termina con preguntas para completar, tareas para casa y preguntas de reflexión. El material rinde cuando lo completás, no solo cuando lo leés.\n\nAvanzá a tu ritmo: podés dedicar una semana a cada capítulo.\n\nDespués de los capítulos vienen los **registros** (las hojas de los anexos del cuadernillo): podés repetirlos las veces que quieras.\n\n**Si sos terapeuta en formación:** podés usar las hojas y los casos como recursos para sesión y como plantillas para tus pacientes."
     },
     {
       "id": "tus_respuestas",
       "type": "info",
       "title": "Tus respuestas",
-      "content": "Lo que escribas en cada ejercicio queda guardado. Lo podés volver a ver cuando quieras, entrando al ejercicio, en **«Mis respuestas»**.\n\nTu psicólogo solo puede ver tus respuestas si activás **«Compartir mis registros con mi psicólogo»** en tu perfil."
+      "content": "Lo que escribís en un ejercicio se guarda cuando tocás **«Terminar»**, en la última pantalla. Si lo dejás por la mitad, no se guarda.\n\nPara volver a verlo, entrá al ejercicio y abrí **«Mis respuestas»**. Cada vez que repetís un ejercicio, empieza en blanco y se guarda aparte.\n\nSi en tu perfil está activado **«Compartir mis registros con mi psicólogo»** (viene activado), tu psicólogo también puede ver tus respuestas. Si lo desactivás, solo vos las ves. Podés cambiarlo cuando quieras."
     },
     {
       "id": "evidencia",
       "type": "info",
       "title": "La evidencia detrás de la TCC",
-      "content": "La TCC es uno de los enfoques psicoterapéuticos más estudiados. Nació del trabajo de Aaron T. Beck en la depresión durante los años sesenta y setenta, y del modelo racional-emotivo de Albert Ellis, desarrollado en paralelo desde mediados de los cincuenta. Desde entonces se ha investigado y refinado para un amplio rango de problemas.\n\nRevisiones y metaanálisis han mostrado que produce beneficios clínicamente relevantes en depresión y en los trastornos de ansiedad, con tamaños de efecto que suelen ubicarse en el rango moderado a grande. Guías como las del *National Institute for Health and Care Excellence* (NICE) del Reino Unido la recomiendan como tratamiento de primera línea para varios cuadros, y la *American Psychological Association* (APA) la incluye entre los tratamientos con apoyo empírico."
+      "content": "La Terapia Cognitivo-Conductual es uno de los enfoques psicoterapéuticos más estudiados.\n\nNació del trabajo de Aaron T. Beck en la depresión durante los años sesenta y setenta, y del modelo racional-emotivo de Albert Ellis, desarrollado en paralelo desde mediados de los cincuenta. Desde entonces se ha investigado y refinado para un amplio rango de problemas."
+    },
+    {
+      "id": "evidencia_estudios",
+      "type": "info",
+      "title": "Para profundizar: qué dicen los estudios",
+      "content": "Revisiones y metaanálisis han mostrado que la TCC produce beneficios clínicamente relevantes en depresión y en los trastornos de ansiedad, con tamaños de efecto que suelen ubicarse en el rango moderado a grande según el problema y la comparación empleada.\n\nGuías de práctica como las del National Institute for Health and Care Excellence (NICE) del Reino Unido la recomiendan como tratamiento de primera línea para varios cuadros, y organismos como la American Psychological Association (APA) la incluyen entre los tratamientos con apoyo empírico."
     },
     {
       "id": "aclaracion",
       "type": "info",
       "title": "Una aclaración honesta sobre la evidencia",
-      "content": "La TCC es eficaz para muchas personas, pero **no es mágica ni universal**. Su efecto varía según el problema, la calidad del vínculo terapéutico y el compromiso con la práctica.\n\nEste cuadernillo es un recurso psicoeducativo y de autoayuda guiada; no reemplaza una evaluación ni un tratamiento profesional. Si atravesás un malestar intenso o persistente, buscá acompañamiento.\n\nEn caso de crisis, pedí ayuda ya a emergencias o en la guardia del hospital más cercano. En la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos."
+      "content": "La TCC es eficaz para muchas personas, pero **no es mágica ni universal**. Su efecto varía según el problema, la calidad del vínculo terapéutico y el compromiso con la práctica.\n\nEste cuadernillo es un recurso psicoeducativo y de autoayuda guiada; no reemplaza una evaluación ni un tratamiento profesional. Si atravesás un malestar intenso o persistente, buscá acompañamiento.\n\nEn caso de crisis, pedí ayuda ya a una línea de ayuda, a emergencias o en la guardia del hospital más cercano. En la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos."
     },
     {
       "id": "faq_1",
@@ -80,7 +86,7 @@
       "id": "empezar",
       "type": "choice",
       "prompt": "¿Por qué capítulo te gustaría empezar?",
-      "help": "No hay respuesta correcta. Los capítulos están pensados para recorrerse paso a paso, en orden, pero lo podés hablar con tu psicólogo.",
+      "help": "No hay respuesta correcta: es para que lo hables con tu psicólogo. Los capítulos están pensados para recorrerse paso a paso, en orden.",
       "optional": true,
       "options": [
         "1. El modelo cognitivo",
@@ -97,7 +103,7 @@
       "id": "siguiente",
       "type": "info",
       "title": "Tu próximo paso",
-      "content": "Cuando quieras, seguí con el capítulo 1, **«El modelo cognitivo»**. Es la base de todo lo que viene después.\n\nAvanzá a tu ritmo y llevá tus dudas a la próxima sesión."
+      "content": "Cuando quieras, seguí con el capítulo 1, **«El modelo cognitivo»**: los capítulos se apoyan uno en el otro y conviene recorrerlos en orden. Si te interesa más otro tema, hablalo con tu psicólogo.\n\nAvanzá a tu ritmo y llevá tus dudas a la próxima sesión."
     }
   ],
   "material": {

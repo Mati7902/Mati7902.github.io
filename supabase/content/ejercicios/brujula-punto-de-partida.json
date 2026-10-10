@@ -1,7 +1,7 @@
 {
   "slug": "brujula-punto-de-partida",
   "title": "Mi punto de partida",
-  "description": "Para saber desde dónde arrancás y elegir lo que hoy pesa más. No es un test ni un diagnóstico.",
+  "description": "Mirá desde dónde arrancás y elegí lo que hoy pesa más. No es un test ni un diagnóstico.",
   "kind": "custom",
   "approach": "general",
   "audience": "adolescentes",
@@ -26,7 +26,7 @@
       "id": "privacidad",
       "type": "info",
       "title": "Lo que escribís es tuyo",
-      "content": "Vos elegís qué compartir y qué no. No hace falta contar nada que no quieras.\n\nTus respuestas quedan guardadas en cada ejercicio, en «Mis respuestas». Tu psicólogo/a solo las puede leer si activás **«Compartir mis registros con mi psicólogo»** en tu perfil. Si te sugirió un ejercicio, ve si lo hiciste, pero no lo que escribiste.\n\n**Hay un límite:** si aparece algo que pone en riesgo tu seguridad o la de otra persona, tu psicólogo o psicóloga va a buscar ayuda con un adulto responsable o con un servicio de protección. Siempre que se pueda, lo va a hablar antes con vos.\n\nSi te preocupa que alguien lea lo que escribís (por ejemplo, si compartís el celular), acordá con tu psicólogo/a cómo cuidarlo."
+      "content": "Vos elegís qué compartir y qué no. No hace falta contar nada que no quieras.\n\nCuando tocás «Terminar», tus respuestas quedan guardadas en «Mis respuestas». Tu psicólogo/a las puede leer si está activado **«Compartir mis registros con mi psicólogo»** en tu perfil (viene activado). Si lo desactivás, ve si hiciste los ejercicios que te sugirió, pero no lo que escribiste.\n\n**Hay un límite:** si aparece algo que pone en riesgo tu seguridad o la de otra persona, tu psicólogo o psicóloga va a buscar ayuda con un adulto responsable o con un servicio de protección. Siempre que se pueda, lo va a hablar antes con vos.\n\nSi te preocupa que alguien lea lo que escribís (por ejemplo, si compartís el celular), acordá con tu psicólogo/a cómo cuidarlo."
     },
     {
       "id": "como_me_dicen",
@@ -169,7 +169,7 @@
       "type": "reflect",
       "title": "Desde acá arranco",
       "template": "Lo que hoy me pasa o me preocupa: {{me_pasa}}. Lo que me gustaría que fuera diferente dentro de 2 o 3 meses: «{{diferente}}». Lo que quiero trabajar: {{tres_cosas}}",
-      "content": "Lo podés volver a ver cuando quieras en este ejercicio, en «Mis respuestas»."
+      "content": "Cuando toques «Terminar», lo vas a poder volver a ver cuando quieras en este ejercicio, en «Mis respuestas»."
     },
     {
       "id": "semana",

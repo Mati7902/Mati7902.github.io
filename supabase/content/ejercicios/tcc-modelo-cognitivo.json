@@ -6,9 +6,9 @@
   "approach": "tcc",
   "audience": "adultos",
   "collection": "tcc",
-  "estimated_minutes": 20,
+  "estimated_minutes": 15,
   "sort_order": 201,
-  "source": "Cuadernillo de TCC, Capítulo 1 (páginas 5 a 8)",
+  "source": "Cuadernillo de TCC, capítulo 1 (páginas 5 a 8)",
   "steps": [
     {
       "id": "intro",
@@ -31,14 +31,14 @@
     {
       "id": "clinica_1",
       "type": "info",
-      "title": "Para profundizar (1 de 2)",
-      "content": "*Explicación clínica. Si preferís, pasá a la pantalla siguiente.*\n\nEl modelo cognitivo propone que el procesamiento de la información media la respuesta emocional y conductual. Ante un estímulo (interno o externo), la persona activa **esquemas** —estructuras cognitivas de significado— que orientan la atención, la interpretación y la memoria, y que se expresan en pensamientos automáticos situacionales. Estos pensamientos generan respuestas emocionales, fisiológicas y conductuales que, a su vez, retroalimentan el sistema."
+      "title": "Para profundizar (opcional, 1 de 2)",
+      "content": "Esta pantalla y la siguiente son la explicación clínica, más técnica. Si preferís, salteá las dos.\n\nEl modelo cognitivo propone que el procesamiento de la información media la respuesta emocional y conductual. Ante un estímulo (interno o externo), la persona activa **esquemas** —estructuras cognitivas de significado— que orientan la atención, la interpretación y la memoria, y que se expresan en pensamientos automáticos situacionales. Estos pensamientos generan respuestas emocionales, fisiológicas y conductuales que, a su vez, retroalimentan el sistema."
     },
     {
       "id": "clinica_2",
       "type": "info",
-      "title": "Para profundizar (2 de 2)",
-      "content": "En su formulación más reciente (Beck y Haigh, 2014), el modelo subraya el carácter continuo entre respuestas normales y disfuncionales: no hay pensamientos «anormales», sino sesgos de interpretación que, cuando se vuelven rígidos, excesivos o desajustados respecto de la evidencia, sostienen el malestar. El objetivo no es «pensar en positivo», sino recuperar flexibilidad y ajuste.\n\nNiveles de cognición, de menor a mayor profundidad:\n\n- **Pensamientos automáticos:** superficiales, situacionales.\n- **Creencias intermedias:** reglas, supuestos y actitudes.\n- **Creencias nucleares:** esquemas absolutos sobre uno mismo, los demás y el mundo.\n\nLos capítulos siguientes recorren cada nivel."
+      "title": "Para profundizar (opcional, 2 de 2)",
+      "content": "En su formulación más reciente (Beck y Haigh, 2014), el modelo subraya el carácter continuo entre respuestas normales y disfuncionales: no hay pensamientos «anormales» distintos en naturaleza, sino sesgos de interpretación que, cuando se vuelven rígidos, excesivos o desajustados respecto de la evidencia, sostienen el malestar. El objetivo no es «pensar en positivo», sino recuperar flexibilidad y ajuste.\n\nNiveles de cognición, de menor a mayor profundidad:\n\n- **Pensamientos automáticos:** superficiales, situacionales.\n- **Creencias intermedias:** reglas, supuestos y actitudes.\n- **Creencias nucleares:** esquemas absolutos sobre uno mismo, los demás y el mundo.\n\nLos capítulos siguientes recorren cada nivel."
     },
     {
       "id": "cotidiano",
@@ -47,10 +47,10 @@
       "help": "Así se reconoce el modelo en acción. Cuando notás un cambio emocional brusco y no sabés bien por qué, casi siempre hubo un pensamiento en el medio. Marcá las que te pasan.",
       "optional": true,
       "options": [
-        "Noto un cambio emocional brusco (angustia, bronca, tristeza) y no sé bien por qué",
-        "Frente a un mismo hecho, otra persona y yo reaccionamos de manera muy distinta",
-        "Mi cuerpo reacciona (tensión, taquicardia, nudo en el estómago) antes de que pueda nombrar lo que pensé",
-        "Tomo una decisión (evitar, callar, irme) para aliviar una emoción que apareció «de la nada»"
+        "Me cambia la emoción de golpe (angustia, bronca, tristeza) y no sé por qué",
+        "Ante un mismo hecho, otra persona y yo reaccionamos muy distinto",
+        "Mi cuerpo reacciona (tensión, taquicardia, nudo) antes de que pueda nombrar lo que pensé",
+        "Evito, me callo o me voy para aliviar una emoción que apareció «de la nada»"
       ]
     },
     {
@@ -92,7 +92,7 @@
         "Situación": "**¡Bien! Es la situación:** el hecho observable. Es neutral; no contiene interpretación.",
         "Pensamiento": "**Es la situación:** el hecho observable. Es neutral; no contiene interpretación. El pensamiento sería la lectura que hacemos de ese hecho, como «se cansó de mí».",
         "Emoción": "**Es la situación:** el hecho observable. Una emoción se nombra con una palabra (tristeza, miedo) y se siente; esto es algo que pasó afuera.",
-        "Conducta": "**Es la situación:** el hecho observable, lo que pasó. La conducta es lo que hace la persona después, para aliviar lo que siente."
+        "Conducta": "**Es la situación:** el hecho observable, lo que pasó. La conducta es lo que hace la persona después; suele buscar aliviar lo que siente."
       }
     },
     {
@@ -153,7 +153,7 @@
       "id": "marcos_1",
       "type": "info",
       "title": "Marcos, 34 años (1 de 2)",
-      "content": "*Consulta por ansiedad.*\n\nMarcos llega a sesión angustiado tras una reunión de trabajo. Cuenta: «El gerente miró su celular mientras yo hablaba; supe que lo estaba haciendo mal». Desde entonces evita hablar en reuniones.\n\n**Desglose con el modelo:**\n\n- **Situación:** el gerente mira el celular.\n- **Pensamiento automático:** «lo estoy haciendo mal, no sirvo para esto».\n- **Emoción:** ansiedad y vergüenza.\n- **Respuesta física:** sudoración, voz temblorosa.\n- **Conducta:** acorta su intervención y evita futuras reuniones."
+      "content": "**Consulta por ansiedad.**\n\nMarcos llega a sesión angustiado tras una reunión de trabajo. Cuenta: «El gerente miró su celular mientras yo hablaba; supe que lo estaba haciendo mal». Desde entonces evita hablar en reuniones.\n\n**Desglose con el modelo:**\n\n- **Situación:** el gerente mira el celular.\n- **Pensamiento automático:** «lo estoy haciendo mal, no sirvo para esto».\n- **Emoción:** ansiedad y vergüenza.\n- **Respuesta física:** sudoración, voz temblorosa.\n- **Conducta:** acorta su intervención y evita futuras reuniones."
     },
     {
       "id": "marcos_2",
@@ -171,7 +171,7 @@
       "id": "situacion",
       "type": "text",
       "prompt": "Describí la situación en una frase, como si fuera una foto",
-      "help": "Qué, quién, cuándo, dónde. Sin interpretaciones. Así lo anotó Marcos: «El gerente mira el celular»."
+      "help": "Qué, quién, cuándo, dónde. Sin interpretaciones. En el caso de Marcos: «el gerente mira el celular»."
     },
     {
       "id": "emocion",
@@ -232,7 +232,7 @@
       "id": "otra_lectura",
       "type": "text",
       "prompt": "¿Qué otra interpretación sería posible, aunque no la creas del todo?",
-      "help": "Como la de Marcos: «tal vez respondía un mensaje urgente». No se trata de convencerte de nada, sino de ver el paso intermedio. Esto es parte de la tarea de la semana: podés hacerlo ahora o más adelante.",
+      "help": "Como en el caso de Marcos: «tal vez respondía un mensaje urgente». No se trata de convencerte de nada, sino de ver el paso intermedio. Esto es parte de la tarea de la semana: podés hacerlo ahora o más adelante.",
       "optional": true
     },
     {
@@ -240,7 +240,7 @@
       "type": "reflect",
       "title": "Tu desglose",
       "template": "Situación: «{{situacion}}» → Pensamiento: «{{pensamiento}}» → Emoción: {{emocion}} + Cuerpo: «{{cuerpo}}» → Conducta: «{{conducta}}». Otra lectura posible: «{{otra_lectura}}».",
-      "content": "**Situación → Pensamiento → Emoción + Respuesta física → Conducta.** Fijate que el pensamiento quedó en el medio: es la bisagra.\n\nEste desglose queda guardado en «Mis respuestas»."
+      "content": "**Situación → Pensamiento → Emoción + Respuesta física → Conducta.** Fijate que el pensamiento quedó en el medio: es la bisagra.\n\nTu desglose se guarda en «Mis respuestas» cuando tocás «Terminar», al final del ejercicio."
     },
     {
       "id": "reflexion",
@@ -252,7 +252,7 @@
       "id": "reflexion_respuesta",
       "type": "text",
       "prompt": "Si querés, respondé alguna de estas preguntas",
-      "help": "Elegí la que más te resuene. Podés llevar tu respuesta a la próxima sesión.",
+      "help": "Elegí la que más te resuene y anotá cuál es. Podés llevar tu respuesta a la próxima sesión.",
       "optional": true
     },
     {

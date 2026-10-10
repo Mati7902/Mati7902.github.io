@@ -79,7 +79,7 @@
       "id": "espera",
       "type": "timed_info",
       "title": "Espero 10 minutos",
-      "content": "Si tenés ganas ahora, iniciá el temporizador y mirá la hora. Mientras tanto, hacé lo que marcaste en tu plan.\n\nObservá la ola: sube, llega a un pico y baja.\n\nSi ahora no tenés ganas, tocá «Continuar».",
+      "content": "Si tenés ganas ahora, mirá la hora e iniciá el temporizador de 10 minutos. Mientras tanto, hacé lo que marcaste en tu plan. Si dejás el celular o salís de la app, guiate por la hora.\n\nObservá la ola: sube, llega a un pico y baja.\n\nSi ahora no tenés ganas, tocá «Continuar».",
       "seconds": 600
     },
     {
@@ -223,7 +223,7 @@
       "id": "semana",
       "type": "info",
       "title": "Para esta semana",
-      "content": "**Unos 10 minutos.** Anotá tus ganas 3 veces y probá el plan de 10 minutos una vez. Si no usás POD, practicá tu frase.\n\nCada vez, anotá lo mismo que en «Mis disparadores»: la situación, con quién estabas, qué sentías, qué pensaste, las ganas de 0 a 10 y qué hiciste.\n\nPodés hacerlo en «Registrar cómo me siento» (con quién estabas y las ganas van en «¿Qué estaba pasando?») o volviendo a hacer este ejercicio."
+      "content": "**Unos 10 minutos.** Anotá tus ganas 3 veces y probá el plan de 10 minutos una vez. Si no usás POD, practicá tu frase.\n\nCada vez, anotá lo mismo que en «Mis disparadores»: la situación, con quién estabas, qué sentías, qué pensaste, las ganas de 0 a 10 y qué hiciste.\n\nPodés anotarlo en «Registrar cómo me siento»: la situación, con quién estabas y las ganas van en «¿Qué estaba pasando?». También podés volver a hacer este ejercicio.\n\nSi el consumo te preocupa o te sentís muy mal, hablalo con tu psicólogo/a o con un adulto de «Mi red de apoyo». Para los momentos muy difíciles está «Mi plan para momentos muy difíciles», en **Calmarme**."
     }
   ],
   "material": {

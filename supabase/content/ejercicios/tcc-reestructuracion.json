@@ -1,12 +1,12 @@
 {
   "slug": "tcc-reestructuracion",
   "title": "Cuestionamiento socrático y reestructuración",
-  "description": "Poné a prueba un pensamiento con preguntas socráticas y construí uno alternativo con el registro de 7 columnas.",
+  "description": "Cuestioná un pensamiento con preguntas socráticas y construí uno alternativo con el registro de 7 columnas.",
   "kind": "thought_record",
   "approach": "tcc",
   "audience": "adultos",
   "collection": "tcc",
-  "estimated_minutes": 30,
+  "estimated_minutes": 20,
   "sort_order": 205,
   "source": "Cuadernillo de TCC, capítulo 5 (páginas 22 a 25)",
   "steps": [
@@ -136,7 +136,7 @@
       "id": "guiado_intro",
       "type": "info",
       "title": "Ejercicio guiado: tu primera reestructuración",
-      "content": "Tomá un pensamiento caliente de tus registros y recorré el formulario completo, columna por columna, **sin saltarte la evidencia en contra**.\n\nEs el registro de pensamientos de 7 columnas: situación, emoción, pensamiento automático, distorsión, evidencia a favor, evidencia en contra y pensamiento alternativo con nueva puntuación. En cada pregunta vas a ver cómo lo hizo Ana.\n\nSi empezaste un registro en «Los pensamientos automáticos», retomalo acá: lo encontrás en ese ejercicio, en «Mis respuestas»."
+      "content": "Tomá un pensamiento caliente de tus registros y recorré el formulario completo, columna por columna, **sin saltarte la evidencia en contra**.\n\nEs el registro de pensamientos de 7 columnas: situación, emoción, pensamiento automático, distorsión, evidencia a favor, evidencia en contra y pensamiento alternativo con nueva puntuación. En cada pregunta vas a ver cómo lo hizo Ana.\n\nSi empezaste un registro en «Los pensamientos automáticos» o en «Registro de pensamientos (RPD)», retomalo acá: está en «Mis respuestas» de ese ejercicio. Si salís a buscarlo, este ejercicio vuelve a empezar (hasta acá solo respondiste los repasos)."
     },
     {
       "id": "situacion",
@@ -271,8 +271,8 @@
       "id": "resumen",
       "type": "reflect",
       "title": "Tu reestructuración",
-      "template": "Situación: «{{situacion}}». Pensamiento automático: «{{pensamiento}}». Distorsión: {{distorsion}}. Evidencia en contra: «{{evidencia_contra}}». Pensamiento alternativo: «{{alternativo}}».",
-      "content": "Compará tus puntuaciones de antes y de ahora: ¿bajaron la credibilidad del pensamiento y la intensidad de la emoción?\n\nTus respuestas quedan guardadas: las podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también las puede ver."
+      "template": "Situación: «{{situacion}}». Pensamiento automático: «{{pensamiento}}». Distorsión: {{distorsion}}. Evidencia a favor: «{{evidencia_favor}}». Evidencia en contra: «{{evidencia_contra}}». Pensamiento alternativo: «{{alternativo}}».",
+      "content": "Compará tus puntuaciones de antes y de ahora (con «Atrás» las volvés a ver): ¿bajaron la credibilidad del pensamiento y la intensidad de la emoción?\n\nTu registro se guarda cuando tocás «Terminar», al final del ejercicio: lo vas a poder volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también lo puede ver."
     },
     {
       "id": "refl_preguntas",
@@ -326,12 +326,12 @@
       "id": "semana",
       "type": "info",
       "title": "Para esta semana",
-      "content": "Tareas para casa, a lo largo de la semana:\n\n- Completá el formulario de 7 columnas con al menos **tres pensamientos**: volvé a hacer este ejercicio con cada uno.\n- En cada uno, obligate a escribir tanta evidencia en contra como a favor.\n- Diseñá un experimento conductual para poner a prueba una predicción negativa.\n- Anotá si, al usar el pensamiento alternativo, la emoción baja de intensidad.\n- Repasá «50 preguntas socráticas» y elegí tus cinco favoritas.\n\nEl próximo capítulo es **«El modelo ABC de Ellis»**."
+      "content": "Tareas para casa, a lo largo de la semana:\n\n- Completá el formulario de 7 columnas con al menos **tres pensamientos**: volvé a hacer este ejercicio con cada uno (el formulario lleva unos 5 a 10 minutos).\n- En cada uno, obligate a escribir tanta evidencia en contra como a favor.\n- Diseñá un experimento conductual para poner a prueba una predicción negativa.\n- Anotá si, al usar el pensamiento alternativo, la emoción baja de intensidad.\n- Repasá «50 preguntas socráticas» y elegí tus cinco favoritas.\n\nEl próximo capítulo es **«El modelo ABC de Ellis»**."
     }
   ],
   "material": {
     "title": "Cuestionamiento socrático y reestructuración",
-    "description": "Las cuatro familias de preguntas socráticas, cómo construir un pensamiento alternativo, el caso de Ana y el RPD de 7 columnas.",
+    "description": "Las cuatro familias de preguntas socráticas, cómo construir un pensamiento alternativo, el caso de Ana y el registro de pensamientos de 7 columnas.",
     "category": "psicoeducacion"
   }
 }

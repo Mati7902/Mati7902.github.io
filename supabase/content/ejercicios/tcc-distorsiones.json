@@ -6,7 +6,7 @@
   "approach": "tcc",
   "audience": "adultos",
   "collection": "tcc",
-  "estimated_minutes": 30,
+  "estimated_minutes": 20,
   "sort_order": 203,
   "source": "Cuadernillo de TCC, capítulo 3 (páginas 13 a 16)",
   "steps": [
@@ -72,7 +72,7 @@
       "feedback": {
         "Adivinación del futuro": "**Exacto.** Predice lo peor como si fuera un hecho. Para cuestionarla: ¿cuántas veces esta predicción se cumplió tal cual?",
         "Sobregeneralización": "**Casi.** El «nunca» es una buena pista de que hay una distorsión, pero el pensamiento no saca una regla de un hecho aislado: predice el futuro como si fuera un hecho. Es **adivinación del futuro**.",
-        "Razonamiento emocional": "**No es la principal.** No usa un sentimiento como prueba («lo siento, entonces es verdad»): predice el futuro como si fuera un hecho. Es **adivinación del futuro**.",
+        "Razonamiento emocional": "**No.** No usa un sentimiento como prueba («lo siento, entonces es verdad»): predice el futuro como si fuera un hecho. Es **adivinación del futuro**.",
         "Etiquetación": "**No.** No pone una etiqueta global («soy un…»): predice el futuro como si fuera un hecho. Es **adivinación del futuro**."
       }
     },
@@ -89,7 +89,7 @@
       ],
       "feedback": {
         "Lectura de mente": "**Exacto.** Supone lo que el otro piensa o siente, sin datos. Para cuestionarla: ¿qué evidencia tengo? ¿Lo comprobé o lo asumí?",
-        "Catastrofización": "**No es la principal.** No imagina el peor escenario: da por hecho lo que la otra persona siente sin haberlo comprobado. Es **lectura de mente**.",
+        "Catastrofización": "**No es la principal.** Saca una conclusión dura, pero lo central es que da por hecho lo que la otra persona siente, sin haberlo comprobado. Es **lectura de mente**.",
         "Personalización": "**Se parece, pero no.** No se hace cargo de algo que no controla: supone lo que el otro siente. Es **lectura de mente**.",
         "Debería / tener que": "**No.** No hay una regla rígida («debería», «tengo que»): supone lo que el otro siente. Es **lectura de mente**."
       }
@@ -170,7 +170,7 @@
       "id": "guiado_intro",
       "type": "info",
       "title": "Ejercicio guiado: tu distorsión frecuente",
-      "content": "Ahora vas a buscar tu «lente» más frecuente:\n\n1. Volvé a tus registros de «Los pensamientos automáticos» y elegí tres pensamientos calientes.\n2. Para cada uno, buscá qué distorsión(es) encaja(n) mejor.\n3. Anotá qué palabra o pista te lo indicó («siempre», una etiqueta, una predicción).\n4. Identificá cuál distorsión aparece más seguido: esa es tu «lente» más frecuente.\n5. Escribí, para esa distorsión, la pregunta que mejor la desafía.\n\nTus registros están guardados en cada ejercicio, en «Mis respuestas». Si todavía no tenés, usá pensamientos de estos días."
+      "content": "Ahora vas a buscar tu «lente» más frecuente:\n\n1. Volvé a tus registros de «Los pensamientos automáticos» o del «Registro de pensamientos (RPD)» y elegí tres pensamientos calientes.\n2. Para cada uno, buscá qué distorsión(es) encaja(n) mejor.\n3. Anotá qué palabra o pista te lo indicó («siempre», una etiqueta, una predicción).\n4. Identificá cuál distorsión aparece más seguido: esa es tu «lente» más frecuente.\n5. Escribí, para esa distorsión, la pregunta que mejor la desafía.\n\nTus registros están en «Mis respuestas» de cada ejercicio. Si salís a buscarlos, este ejercicio vuelve a empezar (hasta acá solo respondiste los ejemplos). Si todavía no tenés registros, usá pensamientos de estos días."
     },
     {
       "id": "calientes",
@@ -183,14 +183,14 @@
       "id": "calientes_distorsion",
       "type": "list",
       "prompt": "Para cada pensamiento: ¿qué distorsión encaja y qué pista te lo indicó?",
-      "help": "Uno por renglón, en el mismo orden. Puede haber más de una distorsión. Por ejemplo: todo o nada, la pista fue «todo».\n\nLas doce: todo o nada, sobregeneralización, filtro mental, descalificar lo positivo, lectura de mente, adivinación del futuro, catastrofización, razonamiento emocional, debería / tener que, etiquetación, personalización y culpabilización.",
+      "help": "Uno por renglón, en el mismo orden (con «Atrás» los volvés a ver). Puede haber más de una distorsión. Por ejemplo: todo o nada, la pista fue «todo».\n\nLas doce: todo o nada, sobregeneralización, filtro mental, descalificar lo positivo, lectura de mente, adivinación del futuro, catastrofización, razonamiento emocional, debería / tener que, etiquetación, personalización y culpabilización.",
       "count": 3
     },
     {
       "id": "lente",
       "type": "choice",
       "prompt": "¿Cuál aparece más seguido? Esa es tu «lente» más frecuente",
-      "help": "Mirá tus tres respuestas anteriores.",
+      "help": "Mirá tus tres respuestas anteriores. Si ninguna se repite, elegí la que más te suene.",
       "options": [
         "Todo o nada",
         "Sobregeneralización",
@@ -224,13 +224,13 @@
       "id": "lente_pregunta",
       "type": "text",
       "prompt": "Escribí la pregunta que mejor desafía esa distorsión",
-      "help": "Podés usar la pregunta de la tabla tal cual o escribirla con tus palabras."
+      "help": "Es la que viste en la pantalla anterior: podés usarla tal cual o escribirla con tus palabras."
     },
     {
       "id": "hoja_intro",
       "type": "info",
       "title": "Hoja de trabajo: identificando distorsiones",
-      "content": "Ahora completá una fila de la hoja con una situación concreta: reciente o de tus registros.\n\nSon cinco preguntas: la situación, el pensamiento automático, la distorsión o distorsiones, la pista que la revela y la pregunta que la desafía. En cada una vas a ver cómo lo haría Rodrigo."
+      "content": "Ahora completá una fila de la hoja con una situación concreta: reciente o de tus registros.\n\nSon cuatro preguntas, una por columna: la situación, el pensamiento automático, la distorsión o distorsiones y la pista que la revela. En cada una vas a ver el ejemplo de Rodrigo."
     },
     {
       "id": "hoja_situacion",
@@ -248,7 +248,7 @@
       "id": "hoja_distorsiones",
       "type": "checklist",
       "prompt": "Distorsión(es): ¿cuáles encajan?",
-      "help": "Marcá todas las que veas: un pensamiento puede tener dos o tres a la vez. Rodrigo: todo o nada.",
+      "help": "Marcá todas las que veas: un pensamiento puede tener dos o tres a la vez. Rodrigo: todo o nada.\n\nPuede que no haya ninguna: estar triste tras una pérdida no es una distorsión.",
       "options": [
         "Todo o nada",
         "Sobregeneralización",
@@ -261,20 +261,15 @@
         "Debería / tener que",
         "Etiquetación",
         "Personalización",
-        "Culpabilización"
+        "Culpabilización",
+        "No encuentro ninguna"
       ]
     },
     {
       "id": "hoja_pista",
       "type": "text",
       "prompt": "¿Qué pista lo revela?",
-      "help": "Una palabra absoluta, una etiqueta, una predicción, un «debería», un sentimiento usado como prueba… Rodrigo: «todo»."
-    },
-    {
-      "id": "hoja_pregunta",
-      "type": "text",
-      "prompt": "¿Qué pregunta la desafía?",
-      "help": "Para el «está todo arruinado» de Rodrigo: «¿Hay puntos intermedios? ¿Qué habría entre 0 y 100?»."
+      "help": "Una palabra absoluta, una etiqueta, una predicción, un «debería», un sentimiento usado como prueba… En «Está todo arruinado», la pista es «todo».\n\nSi marcaste «No encuentro ninguna», escribí «ninguna»."
     },
     {
       "id": "refl_areas",
@@ -304,7 +299,8 @@
         "Tengo que",
         "No puedo fallar"
       ],
-      "optional": true
+      "optional": true,
+      "help": "Marcá las que reconozcas en tus pensamientos. Las últimas tres son pistas de reglas rígidas."
     },
     {
       "id": "refl_sin_distorsion",
@@ -322,8 +318,8 @@
       "id": "resumen",
       "type": "reflect",
       "title": "Tu lente y tu hoja",
-      "template": "Tu lente más frecuente: {{lente}}. La pregunta que la desafía: «{{lente_pregunta}}». En tu hoja, el pensamiento «{{hoja_pensamiento}}» mostró: {{hoja_distorsiones}}. Para desafiarlo: «{{hoja_pregunta}}».",
-      "content": "Tus respuestas quedan guardadas: las podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también las puede ver."
+      "template": "Tu lente más frecuente: {{lente}}. La pregunta que la desafía: «{{lente_pregunta}}». En tu hoja: «{{hoja_pensamiento}}». Distorsiones: {{hoja_distorsiones}}. Pista: {{hoja_pista}}.",
+      "content": "Tus respuestas se guardan cuando tocás «Terminar», al final del ejercicio: las vas a poder volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también las puede ver."
     },
     {
       "id": "para_llevar",
@@ -335,7 +331,7 @@
       "id": "semana",
       "type": "info",
       "title": "Para esta semana",
-      "content": "Tareas para casa, a lo largo de la semana:\n\n- Detectá y clasificá **cinco pensamientos** con distorsión. Por cada uno, volvé a completar la hoja de este ejercicio o usá «Registro de distorsiones».\n- Elegí tu distorsión más frecuente y llevá una «cuenta» de cuántas veces aparece por día.\n- Por cada una, escribí una frase alternativa más ajustada (sin exagerar hacia el otro extremo).\n- Aplicá el «doble estándar»: preguntate qué le dirías a un amigo que pensara eso.\n\nEl próximo capítulo es **«Creencias intermedias y nucleares»**. Cuestionar las distorsiones lo vas a trabajar en «Cuestionamiento socrático y reestructuración»."
+      "content": "Tareas para casa, a lo largo de la semana:\n\n- Detectá y clasificá **cinco pensamientos** con distorsión. Anotalos en «Registro de distorsiones» (unos 5 minutos cada uno).\n- Elegí tu distorsión más frecuente y llevá una «cuenta» de cuántas veces aparece por día.\n- Por cada una, escribí una frase alternativa más ajustada (sin exagerar hacia el otro extremo).\n- Aplicá el «doble estándar»: preguntate qué le dirías a un amigo que pensara eso.\n\nEl próximo capítulo es **«Creencias intermedias y nucleares»**. Cuestionar las distorsiones lo vas a trabajar en «Cuestionamiento socrático y reestructuración»."
     }
   ],
   "material": {
