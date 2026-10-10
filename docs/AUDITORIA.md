@@ -23,7 +23,7 @@ Cada punto indica **estado** (✅ cubierto · ⚠️ cubierto con observaciones 
 
 | Punto | Estado | Evidencia |
 | --- | --- | --- |
-| RLS habilitado en las 30 tablas | ✅ | `0004_rls_policies.sql` |
+| RLS habilitado en las 33 tablas | ✅ | `0004_rls_policies.sql` |
 | Paciente solo accede a sus datos (turnos, registros, materiales, notificaciones, perfil) | ✅ | tests SQL bloque 1 |
 | Paciente no puede escalar rol ni editar campos administrativos (triggers `guard_*`) | ✅ | bloque 2 |
 | Inserción de turnos solo vía RPC transaccional; double booking y solapamientos rechazados por exclusión GIST | ✅ | bloque 3 |
@@ -33,7 +33,7 @@ Cada punto indica **estado** (✅ cubierto · ⚠️ cubierto con observaciones 
 | Anónimo: solo planes, FAQs, settings públicos | ✅ | bloque 6 |
 | Storage: bucket `materials` privado con política por material accesible | ✅ | `0005_storage.sql` |
 
-Resultado: `pnpm test:db` → 89 aserciones OK sobre las migraciones reales (PostgreSQL 16 local con stub de `auth`/`storage`).
+Resultado: `pnpm test:db` → 108 aserciones OK sobre las migraciones reales (PostgreSQL 16 local con stub de `auth`/`storage`).
 
 ## Agenda
 
@@ -74,7 +74,7 @@ Resultado: `pnpm test:db` → 89 aserciones OK sobre las migraciones reales (Pos
 | Punto | Estado | Evidencia |
 | --- | --- | --- |
 | Mínimo almacenamiento: ficha administrativa, sin historia clínica; métricas de materiales solo asignado/visto/completado | ✅ | esquema |
-| Ficha de ingreso (única información de salud): tabla aparte, borrador privado, el profesional la lee solo enviada, recepción y bot sin acceso, sin borrado por clientes, lectura auditada, notificación sin contenido | ✅ | `20261010000001_patient_intake.sql`, `rls.test.sql`, `/admin/pacientes/[id]/ingreso` |
+| Ficha de ingreso (la información de salud más sensible, la única que el profesional ve sin que el paciente decida compartirla): tabla aparte, borrador privado, el profesional la lee solo enviada, recepción y bot sin acceso, sin borrado por clientes, el contenido solo se muestra en una página que audita cada apertura, notificación sin contenido | ✅ | `20261010000001_patient_intake.sql`, `rls.test.sql`, `/admin/pacientes/[id]/ingreso` |
 | Logger redacta campos sensibles; no se registran contenidos clínicos | ✅ | `lib/logger.ts` |
 | Eventos de Google con iniciales, sin notas | ✅ | `google-calendar/sync.ts` |
 | Consentimiento versionado al aceptar la invitación; textos legales marcados como borrador hasta revisión profesional | ⚠️ | `/privacidad`, `/terminos`, `legal.reviewed_by_professional`. **Acción requerida antes de producción:** revisión por profesional competente en derecho paraguayo. |
@@ -114,7 +114,7 @@ Resultado: `pnpm test:db` → 89 aserciones OK sobre las migraciones reales (Pos
 
 ## Verificación final
 
-* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (267 tests) · `pnpm test:bot` ✅ (33 recorridos) · `pnpm build` ✅ · `pnpm test:db` ✅ (89 aserciones)
+* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (267 tests) · `pnpm test:bot` ✅ (33 recorridos) · `pnpm build` ✅ · `pnpm test:db` ✅ (108 aserciones)
 
 ## Segunda ronda de auditoría (revisión adversarial)
 

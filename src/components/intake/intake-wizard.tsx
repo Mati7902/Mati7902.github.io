@@ -13,8 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { toDateKey } from "@/lib/dates";
 import {
   answeredCount,
+  CONTACT_NAME_MAX,
   type ContactValue,
-  firstPendingStep,
   INTAKE_INPUT_COUNT,
   INTAKE_SECTIONS,
   INTAKE_STEPS,
@@ -24,12 +24,14 @@ import {
   isInputQuestion,
   maxLength,
   questionLabel,
+  resumeStep,
   withPrefill,
 } from "@/lib/intake/form";
 import { cn } from "@/lib/utils";
 import { saveIntakeAction } from "@/server/actions/intake";
 
 type Screen = { kind: "intro" } | { kind: "step"; index: number } | { kind: "review" };
+type HistoryMode = "push" | "none";
 
 type Props = {
   initialAnswers: IntakeAnswers;
@@ -49,6 +51,32 @@ type Props = {
 
 const TOTAL_STEPS = INTAKE_STEPS.length;
 
+const sameScreen = (a: Screen, b: Screen) => a.kind === b.kind && (a.kind !== "step" || (b.kind === "step" && a.index === b.index));
+
+/** Cada pantalla tiene su dirección (?parte=N, ?parte=revision): así «atrás» del navegador o del celular vuelve a la parte anterior. */
+function urlFor(screen: Screen): string {
+  const path = window.location.pathname;
+  if (screen.kind === "step") return `${path}?parte=${screen.index}`;
+  if (screen.kind === "review") return `${path}?parte=revision`;
+  return path;
+}
+
+/** Algunos entornos (marcos aislados) no dejan tocar el historial: el formulario sigue igual sin eso. */
+function setHistory(method: "pushState" | "replaceState", screen: Screen) {
+  try {
+    window.history[method](null, "", urlFor(screen));
+  } catch {
+    // sin historial por pantalla
+  }
+}
+
+function screenFromUrl(): Screen {
+  const parte = new URLSearchParams(window.location.search).get("parte");
+  if (parte === "revision") return { kind: "review" };
+  if (parte && /^\d+$/.test(parte) && INTAKE_STEPS[Number(parte)]) return { kind: "step", index: Number(parte) };
+  return { kind: "intro" };
+}
+
 export function IntakeWizard({ initialAnswers, submitted, hasDraft = false, professionalName, firstName, welcome = false, startAt = null, crisis }: Props) {
   const router = useRouter();
   const [answers, setAnswers] = useState<IntakeAnswers>(initialAnswers);
@@ -56,11 +84,21 @@ export function IntakeWizard({ initialAnswers, submitted, hasDraft = false, prof
     startAt === "review" ? { kind: "review" } : typeof startAt === "number" && INTAKE_STEPS[startAt] ? { kind: "step", index: startAt } : { kind: "intro" },
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errorTick, setErrorTick] = useState(0);
   const [dirty, setDirty] = useState(false);
   const [wasSubmitted, setWasSubmitted] = useState(submitted);
   const [pending, startTransition] = useTransition();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const firstRender = useRef(true);
+  // Lo último escrito, para guardar desde listeners y al salir (sin depender de clausuras viejas).
+  const answersRef = useRef(answers);
+  const dirtyRef = useRef(dirty);
+  const screenRef = useRef(screen);
+  useEffect(() => {
+    answersRef.current = answers;
+    dirtyRef.current = dirty;
+    screenRef.current = screen;
+  }, [answers, dirty, screen]);
 
   // Al cambiar de pantalla: arriba de todo y el foco en el título (lectores de pantalla y teclado).
   useEffect(() => {
@@ -68,26 +106,55 @@ export function IntakeWizard({ initialAnswers, submitted, hasDraft = false, prof
       firstRender.current = false;
       return;
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0 });
     headingRef.current?.focus({ preventScroll: true });
   }, [screen]);
 
-  // Tras un error de validación, el foco va al primer campo marcado.
+  // Después de un error del servidor, el foco y la vista van al primer campo marcado (en orden).
   useEffect(() => {
-    if (Object.keys(errors).length === 0) return;
-    const el = document.querySelector<HTMLElement>('[aria-invalid="true"] input, input[aria-invalid="true"], textarea[aria-invalid="true"], fieldset[aria-invalid="true"] input');
-    el?.focus();
-  }, [errors]);
+    if (errorTick === 0) return;
+    const frame = requestAnimationFrame(() => {
+      const first = document.querySelector<HTMLElement>('[aria-invalid="true"]');
+      const el = first?.matches("input, textarea") ? first : first?.querySelector<HTMLElement>('input[aria-invalid="true"], textarea[aria-invalid="true"], input, textarea');
+      if (!el) return;
+      el.focus({ preventScroll: true });
+      el.scrollIntoView({ block: "center" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [errorTick]);
 
-  // Aviso del navegador si se cierra la pestaña con cambios sin guardar.
+  // La dirección refleja la pantalla con la que se abrió (por ejemplo, ?editar=1 → ?parte=revision).
   useEffect(() => {
-    if (!dirty) return;
+    const initial = screenRef.current;
+    if (initial.kind !== "intro" && !sameScreen(screenFromUrl(), initial)) setHistory("replaceState", initial);
+  }, []);
+
+  // Cambios sin guardar: aviso del navegador al cerrar la pestaña, guardado al pasar a otra app y
+  // al salir del formulario por la navegación de la app (barra inferior, campana, atrás).
+  useEffect(() => {
+    const saveQuietly = () => {
+      if (!dirtyRef.current) return;
+      const sent = answersRef.current;
+      void saveIntakeAction({ answers: sent, submit: false })
+        .then((result) => {
+          if (result.ok && answersRef.current === sent) setDirty(false);
+        })
+        .catch(() => {});
+    };
     const onBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
+      if (dirtyRef.current) event.preventDefault();
+    };
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") saveQuietly();
     };
     window.addEventListener("beforeunload", onBeforeUnload);
-    return () => window.removeEventListener("beforeunload", onBeforeUnload);
-  }, [dirty]);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.removeEventListener("beforeunload", onBeforeUnload);
+      document.removeEventListener("visibilitychange", onVisibility);
+      saveQuietly();
+    };
+  }, []);
 
   const update = (id: string, value: IntakeAnswers[string] | undefined) => {
     setAnswers((current) => {
@@ -100,32 +167,51 @@ export function IntakeWizard({ initialAnswers, submitted, hasDraft = false, prof
     if (errors[id]) setErrors(({ [id]: _removed, ...rest }) => rest);
   };
 
-  const open = (target: Screen) => {
+  const open = (target: Screen, history: HistoryMode = "push") => {
     if (target.kind === "step") {
       const step = INTAKE_STEPS[target.index]!;
-      const prefilled = withPrefill(step, answers);
-      if (prefilled !== answers) {
-        setAnswers(prefilled);
-        setDirty(true);
-      }
+      if (withPrefill(step, answersRef.current) !== answersRef.current) setDirty(true);
+      setAnswers((current) => withPrefill(step, current));
     }
-    setScreen(target);
+    setScreen((current) => (sameScreen(current, target) ? current : target));
+    if (history === "push" && !sameScreen(screenFromUrl(), target)) setHistory("pushState", target);
   };
 
-  /** Guarda (si hay cambios o hay que enviar) y recién después navega. */
-  const saveThen = (target: Screen | "exit", submit = false) =>
+  /** Guarda (si hay cambios o hay que enviar) y recién después navega. Si no se pudo guardar, se queda donde está. */
+  const go = (target: Screen | "exit", options: { submit?: boolean; history?: HistoryMode } = {}) =>
     startTransition(async () => {
-      if (dirty || submit) {
-        const result = await saveIntakeAction({ answers, submit });
+      const submit = options.submit === true;
+      // Si llegó por «atrás» del navegador y no se puede guardar, la dirección vuelve a esta pantalla.
+      const stay = () => {
+        if (!sameScreen(screenFromUrl(), screenRef.current)) setHistory("pushState", screenRef.current);
+      };
+      if (dirtyRef.current || submit) {
+        const sent = answersRef.current;
+        let result: Awaited<ReturnType<typeof saveIntakeAction>>;
+        try {
+          result = await saveIntakeAction({ answers: sent, submit });
+        } catch {
+          toast.error("No pudimos guardar. Revisá tu conexión e intentá de nuevo.");
+          stay();
+          return;
+        }
         if (!result.ok) {
           const fieldErrors = result.fieldErrors ?? {};
           setErrors(fieldErrors);
           const index = INTAKE_STEPS.findIndex((s) => s.questions.some((q) => fieldErrors[q.id]));
-          if (index !== -1) setScreen({ kind: "step", index });
+          if (index !== -1) {
+            const errorScreen: Screen = { kind: "step", index };
+            setScreen((current) => (sameScreen(current, errorScreen) ? current : errorScreen));
+            if (!sameScreen(screenFromUrl(), errorScreen)) setHistory("pushState", errorScreen);
+            setErrorTick((n) => n + 1);
+          } else {
+            stay();
+          }
           toast.error(index !== -1 ? "Revisá lo marcado antes de seguir." : result.error);
           return;
         }
-        setDirty(false);
+        // Lo que se escribió mientras se guardaba sigue pendiente.
+        setDirty(answersRef.current !== sent);
         if (submit) {
           setWasSubmitted(true);
           // La confirmación la arma el servidor (así no depende del estado de esta pantalla).
@@ -134,16 +220,29 @@ export function IntakeWizard({ initialAnswers, submitted, hasDraft = false, prof
         }
       }
       if (target === "exit") {
-        toast.success(wasSubmitted || submit ? "Cambios guardados." : "Guardado. Podés seguir cuando quieras.");
+        toast.success(wasSubmitted ? "Cambios guardados." : "Guardado. Podés seguir cuando quieras.");
         router.push("/app");
         router.refresh();
         return;
       }
-      open(target);
+      open(target, options.history ?? "push");
     });
 
+  // «Atrás» y «adelante» del navegador o del celular se mueven entre las partes (guardando antes).
+  const goRef = useRef(go);
+  useEffect(() => {
+    goRef.current = go;
+  });
+  useEffect(() => {
+    const onPopState = () => {
+      if (!window.location.pathname.includes("ingreso")) return;
+      goRef.current(screenFromUrl(), { history: "none" });
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
   const answered = answeredCount(answers);
-  const pendingStep = firstPendingStep(answers);
 
   if (screen.kind === "intro") {
     const started = hasDraft || wasSubmitted;
@@ -154,7 +253,7 @@ export function IntakeWizard({ initialAnswers, submitted, hasDraft = false, prof
             {welcome ? `Tu cuenta está lista, ${firstName}.` : started ? "Seguí con tu ficha de ingreso" : "Tu ficha de ingreso"}
           </h2>
           <p className="text-lg text-muted-foreground">
-            Antes de la primera sesión, {professionalName} te pide completar esta ficha: datos personales, tu historia de salud y cómo estás en distintas áreas de tu vida.
+            Para conocerte mejor y preparar las sesiones, {professionalName} te pide completar esta ficha: datos personales, tu historia de salud y cómo estás en distintas áreas de tu vida.
           </p>
         </div>
         <ul className="space-y-3 text-base">
@@ -174,7 +273,13 @@ export function IntakeWizard({ initialAnswers, submitted, hasDraft = false, prof
             <Link href="/app">Completar más tarde</Link>
           </Button>
           {started ? (
-            <Button size="lg" onClick={() => open(pendingStep === null ? { kind: "review" } : { kind: "step", index: pendingStep })}>
+            <Button
+              size="lg"
+              onClick={() => {
+                const next = resumeStep(answers);
+                open(next === null ? { kind: "review" } : { kind: "step", index: next });
+              }}
+            >
               Seguir donde lo dejé <ArrowRight aria-hidden />
             </Button>
           ) : (
@@ -239,12 +344,16 @@ export function IntakeWizard({ initialAnswers, submitted, hasDraft = false, prof
               ? `Cuando termines, tocá «Enviar cambios» y ${professionalName} va a recibir un aviso.`
               : `Al enviarla, ${professionalName} va a recibir un aviso y la va a leer antes de la sesión. Después la podés actualizar desde Mi perfil.`}
           </p>
+          <p className="text-muted-foreground">
+            No la lee en el momento: si antes de la sesión te sentís en peligro o pensás en hacerte daño, no esperes y buscá ayuda en{" "}
+            <Link href="/app/calmarme" className="font-medium text-primary underline underline-offset-2">Calmarme</Link>.
+          </p>
         </div>
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <Button variant="ghost" onClick={() => saveThen("exit")} disabled={pending}>
+          <Button variant="ghost" onClick={() => go("exit")} disabled={pending}>
             Guardar y salir
           </Button>
-          <Button size="lg" onClick={() => saveThen({ kind: "review" }, true)} loading={pending}>
+          <Button size="lg" onClick={() => go({ kind: "review" }, { submit: true })} loading={pending}>
             <Send aria-hidden /> {wasSubmitted ? "Enviar cambios" : "Enviar ficha"}
           </Button>
         </div>
@@ -292,14 +401,14 @@ export function IntakeWizard({ initialAnswers, submitted, hasDraft = false, prof
       </div>
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex gap-2">
-          <Button type="button" variant="ghost" onClick={() => saveThen(index === 0 ? { kind: "intro" } : { kind: "step", index: index - 1 })} disabled={pending}>
+          <Button type="button" variant="ghost" onClick={() => go(index === 0 ? { kind: "intro" } : { kind: "step", index: index - 1 })} disabled={pending}>
             <ArrowLeft aria-hidden /> Atrás
           </Button>
-          <Button type="button" variant="outline" onClick={() => saveThen("exit")} disabled={pending}>
+          <Button type="button" variant="outline" onClick={() => go("exit")} disabled={pending}>
             Guardar y salir
           </Button>
         </div>
-        <Button type="button" size="lg" onClick={() => saveThen(isLast ? { kind: "review" } : { kind: "step", index: index + 1 })} loading={pending}>
+        <Button type="button" size="lg" onClick={() => go(isLast ? { kind: "review" } : { kind: "step", index: index + 1 })} loading={pending}>
           {isLast ? (
             <>
               <Check aria-hidden /> Revisar y enviar
@@ -413,9 +522,9 @@ function Field({ question: q, answers, error, onChange }: FieldProps) {
           </div>
         ) : null}
         {current !== undefined ? (
-          <button type="button" onClick={() => onChange(undefined)} className="text-sm text-muted-foreground underline-offset-2 hover:text-foreground hover:underline">
+          <Button type="button" variant="ghost" size="sm" onClick={() => onChange(undefined)} className="mt-1 min-h-11 px-3 text-muted-foreground">
             Quitar respuesta
-          </button>
+          </Button>
         ) : null}
         {errorText}
       </fieldset>
@@ -437,7 +546,7 @@ function Field({ question: q, answers, error, onChange }: FieldProps) {
             <label htmlFor={`${id}-nombre`} className="text-sm text-muted-foreground">
               Nombre y vínculo
             </label>
-            <Input id={`${id}-nombre`} value={contact.nombre ?? ""} onChange={(e) => set("nombre", e.target.value)} placeholder="Ej.: Ana Pérez, mi hermana" maxLength={160} autoComplete="off" />
+            <Input id={`${id}-nombre`} value={contact.nombre ?? ""} onChange={(e) => set("nombre", e.target.value)} placeholder="Ej.: Ana Pérez, mi hermana" maxLength={CONTACT_NAME_MAX} autoComplete="off" />
           </div>
           <div className="space-y-1.5">
             <label htmlFor={`${id}-telefono`} className="text-sm text-muted-foreground">
@@ -453,6 +562,7 @@ function Field({ question: q, answers, error, onChange }: FieldProps) {
               maxLength={30}
               autoComplete="off"
               aria-invalid={error ? true : undefined}
+              aria-describedby={error ? `${id}-error` : undefined}
             />
           </div>
         </div>

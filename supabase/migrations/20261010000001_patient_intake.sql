@@ -2,8 +2,9 @@
 -- Ficha de ingreso del paciente («Cuestionario clínico completo – Datos + Historial
 -- + BASIC I.D.»). La completa el propio paciente al crear su cuenta.
 --
--- Es la única información de salud que guarda la plataforma, por eso va en una tabla
--- aparte con reglas propias:
+-- Es la información de salud más sensible y la única que el profesional ve sin que el
+-- paciente decida compartirla (los registros personales siguen share_records_with_professional),
+-- por eso va en una tabla aparte con reglas propias:
 --   · el paciente ve, crea y actualiza solo la suya (no la puede borrar: se la pide al profesional);
 --   · el profesional (admin/professional) la lee solo cuando el paciente la envía: el borrador
 --     es privado; recepción no la ve nunca;

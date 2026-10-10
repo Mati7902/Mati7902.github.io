@@ -16,10 +16,9 @@ import { requireAdmin } from "@/lib/auth/session";
 import { formatCompactDate, formatShortDate, formatTime, capitalize, nowMs } from "@/lib/dates";
 import { AUDIENCE_LABEL, type Audience, COLLECTIONS } from "@/lib/exercises/collections";
 import { answerEntries, parseSteps } from "@/lib/exercises/steps";
-import { formatIntakeAnswer, intakeQuestion } from "@/lib/intake/form";
 import { createClient } from "@/lib/supabase/server";
 import { getPatientOverview } from "@/server/services/admin-patients";
-import { getIntake, intakeAnswersOf } from "@/server/services/intake";
+import { getIntakeStatus } from "@/server/services/intake";
 import { listSharedResponses } from "@/server/services/exercises";
 import { getSetting } from "@/server/services/settings";
 import { APPOINTMENT_STATUS_LABEL, type AppointmentWithPatient, type Patient } from "@/types/domain";
@@ -41,8 +40,9 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
     supabase.from("session_preparations").select("appointment_id, week_rating, hardest, better, topics, practiced, important, submitted_at").eq("patient_id", id),
     supabase.from("emotional_logs").select("id", { count: "exact", head: true }).eq("patient_id", id),
     listSharedResponses(supabase, id),
+    // Solo el estado: el contenido se lee (y se audita) en la página de la ficha de ingreso.
     // Solo llega si el paciente ya la envió (RLS); un error de lectura no rompe la ficha.
-    getIntake(supabase, id).catch(() => null),
+    getIntakeStatus(supabase, id).catch(() => null),
   ]);
   const materialOptions = (materials ?? []).map((m) => ({ id: m.id, title: m.title, group: (m.material_categories as { name: string } | null)?.name ?? "Sin categoría" }));
   const templateOptions = (templates ?? []).map((t) => {
@@ -218,11 +218,9 @@ function Item({ label, value }: { label: string; value: string | null | undefine
   );
 }
 
-/** Estado de la ficha de ingreso y el motivo de consulta, con enlace a la ficha completa. */
-function IntakeSummary({ patientId, intake, hasAccount }: { patientId: string; intake: Awaited<ReturnType<typeof getIntake>>; hasAccount: boolean }) {
+/** Estado de la ficha de ingreso, con enlace a la ficha completa (sin mostrar respuestas acá). */
+function IntakeSummary({ patientId, intake, hasAccount }: { patientId: string; intake: Awaited<ReturnType<typeof getIntakeStatus>>; hasAccount: boolean }) {
   const submitted = Boolean(intake?.submitted_at);
-  const motivoQuestion = intakeQuestion("motivo");
-  const motivo = submitted && motivoQuestion ? formatIntakeAnswer(motivoQuestion, intakeAnswersOf(intake)) : null;
   return (
     <section className="surface-card flex flex-col gap-4 p-6 sm:flex-row sm:items-start sm:justify-between">
       <div className="flex min-w-0 gap-3">
@@ -235,12 +233,6 @@ function IntakeSummary({ patientId, intake, hasAccount }: { patientId: string; i
                 Enviada el {formatShortDate(intake.first_submitted_at ?? intake.submitted_at)}
                 {intake.first_submitted_at && intake.submitted_at !== intake.first_submitted_at ? ` · actualizada el ${formatShortDate(intake.submitted_at)}` : ""}
               </p>
-              {motivo ? (
-                <p className="line-clamp-3 text-sm break-words text-foreground">
-                  <span className="text-muted-foreground">Motivo de consulta: </span>
-                  {motivo}
-                </p>
-              ) : null}
             </>
           ) : (
             <p className="text-sm text-muted-foreground">

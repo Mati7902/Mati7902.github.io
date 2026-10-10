@@ -74,6 +74,8 @@ export type IntakeStep = {
 };
 
 const TEXT_MAX = 1000;
+/** Igual que el nombre del contacto de emergencia en el perfil y en el panel (se copia ahí). */
+export const CONTACT_NAME_MAX = 120;
 const LONG_MAX = 2000;
 
 const t = (id: string, label: string, extra: Partial<Base> & { max?: number } = {}): IntakeQuestion => ({ id, label, type: "text", ...extra });
@@ -166,8 +168,10 @@ export const INTAKE_STEPS: IntakeStep[] = [
       t("alcohol", "Alcohol"),
       t("cannabis", "Cannabis"),
       t("tabaco", "Tabaco", { help: "Cigarrillos, vapeador u otros." }),
-      t("estimulantes", "Estimulantes", { help: "Café, bebidas energizantes u otras sustancias estimulantes." }),
-      t("otras_sustancias", "Otros"),
+      t("estimulantes", "Estimulantes", {
+        help: "Cocaína, anfetaminas, éxtasis o pastillas para estar despierto/a o concentrarte sin receta. Si tomás mucho café o bebidas energizantes, también podés contarlo.",
+      }),
+      t("otras_sustancias", "Otros", { help: "Tranquilizantes o pastillas para dormir sin receta, inhalantes, alucinógenos u otras." }),
     ],
   },
   {
@@ -256,7 +260,10 @@ export const INTAKE_STEPS: IntakeStep[] = [
       t("pensamientos_negativos", "Pensamientos negativos", { help: "¿Qué te decís cuando las cosas salen mal?" }),
       t("pensamientos_acelerados", "Pensamientos acelerados", { help: "¿La cabeza va muy rápido, saltás de una idea a otra?" }),
       t("autocritica", "Autocrítica", { help: "¿Cuánto te exigís o te criticás?" }),
-      t("culpa_desesperanza", "Pensamientos de culpa o desesperanza"),
+      t("culpa_desesperanza", "Pensamientos de culpa o desesperanza", {
+        help: "¿Te sentís culpable seguido, o sentís que las cosas no van a mejorar? Podés contarlo con tus palabras o dejarlo para hablarlo en sesión.",
+        sensitive: true,
+      }),
       t("ideas_obsesivas", "Ideas obsesivas", { help: "Pensamientos que se repiten y cuesta sacarse de la cabeza." }),
       t("atencion", "Atención", { help: "¿Te cuesta concentrarte o mantener la atención?" }),
     ],
@@ -288,7 +295,7 @@ export const INTAKE_STEPS: IntakeStep[] = [
     questions: [
       t("bio_medicacion", "Medicación", { prefillFrom: ["medicacion"] }),
       t("bio_alcohol", "Alcohol", { prefillFrom: ["alcohol"] }),
-      t("bio_otras_sustancias", "Cannabis/tabaco/otras", { prefillFrom: ["cannabis", "tabaco", "otras_sustancias"] }),
+      t("bio_otras_sustancias", "Cannabis/tabaco/otras", { prefillFrom: ["cannabis", "tabaco", "estimulantes", "otras_sustancias"] }),
       t("bio_sueno", "Sueño", { prefillFrom: ["sueno"] }),
       t("bio_apetito", "Apetito", { prefillFrom: ["apetito"] }),
       t("salud_general", "Salud general"),
@@ -353,10 +360,16 @@ export function answeredCount(answers: IntakeAnswers, questions: IntakeQuestion[
   return questions.filter((q) => isInputQuestion(q) && isAnswered(q, answers[q.id])).length;
 }
 
-/** Primera parte sin ninguna respuesta (para retomar donde se dejó); null si todas tienen algo. */
-export function firstPendingStep(answers: IntakeAnswers): number | null {
-  const index = INTAKE_STEPS.findIndex((s) => answeredCount(answers, s.questions) === 0);
-  return index === -1 ? null : index;
+/**
+ * Dónde retomar: la parte que sigue a la última con alguna respuesta (las que el paciente dejó en
+ * blanco a propósito no se le vuelven a presentar). null = ya llegó al final: va a la revisión.
+ */
+export function resumeStep(answers: IntakeAnswers): number | null {
+  let last = -1;
+  INTAKE_STEPS.forEach((s, i) => {
+    if (answeredCount(answers, s.questions) > 0) last = i;
+  });
+  return last + 1 < INTAKE_STEPS.length ? last + 1 : null;
 }
 
 /** Edad calculada con la fecha de nacimiento respondida. */
@@ -430,7 +443,7 @@ function questionSchema(q: IntakeQuestion): z.ZodType<IntakeValue | undefined> |
     case "contact":
       return z
         .object({
-          nombre: z.string().max(160, "Máximo 160 caracteres.").optional(),
+          nombre: z.string().max(CONTACT_NAME_MAX, `Máximo ${CONTACT_NAME_MAX} caracteres.`).optional(),
           telefono: z.string().max(30, "Máximo 30 caracteres.").optional(),
         })
         .optional();

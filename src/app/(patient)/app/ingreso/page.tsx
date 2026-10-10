@@ -23,8 +23,19 @@ export default async function IntakePage({ searchParams }: { searchParams: Promi
   const [intake, resources, settings, params] = await Promise.all([getIntake(supabase, patient.id), getActiveEmergencyResources(), getPublicSettingsSafe(), searchParams]);
   const identity = settings["site.identity"];
   const submitted = Boolean(intake?.submitted_at);
-  const part = params.parte !== undefined && /^\d+$/.test(params.parte) && Number(params.parte) < INTAKE_STEPS.length ? Number(params.parte) : null;
+  const part = params.parte === "revision" ? "review" : params.parte !== undefined && /^\d+$/.test(params.parte) && Number(params.parte) < INTAKE_STEPS.length ? Number(params.parte) : null;
   const editing = params.editar === "1" || part !== null;
+  // Con una ficha ya guardada, los datos personales se muestran como están hoy en la ficha
+  // administrativa (pueden haberse corregido después desde el perfil o el panel).
+  const current = initialIntakeAnswers(patient);
+  const initialAnswers = intake
+    ? {
+        ...intakeAnswersOf(intake),
+        ...(current.fecha_nacimiento ? { fecha_nacimiento: current.fecha_nacimiento } : {}),
+        ...(current.telefono ? { telefono: current.telefono } : {}),
+        ...(current.contacto_emergencia ? { contacto_emergencia: current.contacto_emergencia } : {}),
+      }
+    : current;
 
   // Confirmación después de enviar (el formulario navega acá cuando la base confirmó el envío).
   if (intake && submitted && params.enviada === "1") {
@@ -36,6 +47,10 @@ export default async function IntakePage({ searchParams }: { searchParams: Promi
         <h1 className="font-display text-2xl font-medium sm:text-3xl">Gracias, {patient.first_name}.</h1>
         <p className="text-lg text-muted-foreground">
           Tu ficha de ingreso le llegó a {identity.professional_name}. La va a leer antes de la sesión. Si querés cambiar algo, la encontrás en Mi perfil.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Tené en cuenta que no la lee en el momento. Si antes de la sesión te sentís en peligro o pensás en hacerte daño, no esperes: en{" "}
+          <Link href="/app/calmarme" className="font-medium text-primary underline underline-offset-2">Calmarme</Link> tenés a quién llamar.
         </p>
         <div className="flex flex-col items-center gap-2">
           <Button asChild size="lg">
@@ -75,7 +90,7 @@ export default async function IntakePage({ searchParams }: { searchParams: Promi
     <div className="space-y-8">
       <PageHeader eyebrow={submitted ? "Mi cuenta" : "Antes de empezar"} title="Ficha de ingreso" />
       <IntakeWizard
-        initialAnswers={intake ? intakeAnswersOf(intake) : initialIntakeAnswers(patient)}
+        initialAnswers={initialAnswers}
         submitted={submitted}
         hasDraft={Boolean(intake)}
         professionalName={identity.professional_name}

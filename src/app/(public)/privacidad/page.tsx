@@ -28,7 +28,7 @@ export default async function PrivacyPage() {
       <h2>3. Para qué los usamos</h2>
       <ul>
         <li>Gestionar turnos, recordatorios y comunicaciones administrativas.</li>
-        <li>Que tu profesional conozca tu situación antes de la primera sesión y pueda planificar el tratamiento (ficha de ingreso).</li>
+        <li>Que tu profesional conozca tu situación y pueda planificar el tratamiento (ficha de ingreso).</li>
         <li>Ofrecer materiales y ejercicios como apoyo entre sesiones.</li>
         <li>Garantizar la seguridad de la plataforma y prevenir accesos no autorizados.</li>
       </ul>
@@ -38,7 +38,7 @@ export default async function PrivacyPage() {
         Tus registros emocionales y ejercicios son tuyos. Por defecto se comparten con tu profesional para acompañar el proceso; podés desactivar esto en cualquier momento desde tu perfil. Esta plataforma no reemplaza la historia clínica ni constituye un diagnóstico automático.
       </p>
       <p>
-        La ficha de ingreso es información de salud y tiene reglas propias: mientras no la envíes es un borrador que ves solo vos; una vez enviada, la ve solo tu profesional (no el personal administrativo ni la asistente virtual de WhatsApp) y cada consulta queda registrada. Podés verla y actualizarla desde tu perfil, y pedir que se elimine escribiendo al profesional.
+        La ficha de ingreso es información de salud y tiene reglas propias: mientras no la envíes es un borrador que ves solo vos; una vez enviada, la ve solo tu profesional (no el personal administrativo ni la asistente virtual de WhatsApp) y queda registrado cada vez que se abre, sin guardar su contenido en ese registro. Podés verla y actualizarla desde tu perfil, y pedir que se elimine escribiendo al profesional.
       </p>
       <h2>5. Seguridad</h2>
       <p>

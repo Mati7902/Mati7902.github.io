@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 
 import {
   answeredCount,
-  firstPendingStep,
   formatIntakeAnswer,
   INTAKE_INPUT_COUNT,
   INTAKE_QUESTIONS,
@@ -16,8 +15,10 @@ import {
   needsAttention,
   parseIntakeAnswers,
   prefillValue,
+  resumeStep,
   withPrefill,
 } from "@/lib/intake/form";
+import { patientUpdates } from "@/lib/intake/sync";
 
 /** Estructura del cuestionario en papel (solo los ítems, en orden). */
 const FORMATO: { heading: string | null; section: string; items: string[] }[] = [
@@ -120,7 +121,7 @@ describe("ficha de ingreso: formato", () => {
   it("la edad se calcula (no se pregunta) y la pregunta de autolesión se destaca", () => {
     expect(intakeQuestion("edad")?.type).toBe("age");
     expect(INTAKE_INPUT_COUNT).toBe(INTAKE_QUESTIONS.length - 1);
-    expect(INTAKE_QUESTIONS.filter((q) => q.sensitive).map((q) => q.id)).toEqual(["autolesion"]);
+    expect(INTAKE_QUESTIONS.filter((q) => q.sensitive).map((q) => q.id)).toEqual(["autolesion", "culpa_desesperanza"]);
   });
 
   it("los textos para el paciente no traen teléfonos", () => {
@@ -135,14 +136,14 @@ describe("ficha de ingreso: respuestas", () => {
       nombre: "  Ana Ejemplo ",
       motivo: "",
       hijos: "   ",
-      estado_animo: 7,
-      compromiso: "Alto",
+      estado_animo: 4,
+      compromiso: "Medio",
       contacto_emergencia: { nombre: " Luis ", telefono: "", otra: "x" },
       edad: "40",
       inventada: "no existe",
     });
     expect(result.errors).toBeNull();
-    expect(result.answers).toEqual({ nombre: "Ana Ejemplo", estado_animo: 7, compromiso: "Alto", contacto_emergencia: { nombre: "Luis" } });
+    expect(result.answers).toEqual({ nombre: "Ana Ejemplo", estado_animo: 4, compromiso: "Medio", contacto_emergencia: { nombre: "Luis" } });
   });
 
   it("rechaza valores fuera de rango, opciones inventadas, textos largos y fechas imposibles", () => {
@@ -161,45 +162,48 @@ describe("ficha de ingreso: respuestas", () => {
   });
 
   it("valida fechas de nacimiento reales", () => {
-    expect(isValidBirthDate("2001-07-14", "2026-10-10")).toBe(true);
+    expect(isValidBirthDate("1990-03-15", "2026-10-10")).toBe(true);
     expect(isValidBirthDate("2001-02-30", "2026-10-10")).toBe(false);
     expect(isValidBirthDate("2027-01-01", "2026-10-10")).toBe(false);
     expect(isValidBirthDate("1800-01-01", "2026-10-10")).toBe(false);
-    expect(isValidBirthDate("14/07/2001", "2026-10-10")).toBe(false);
+    expect(isValidBirthDate("15/03/1990", "2026-10-10")).toBe(false);
   });
 
-  it("cuenta respuestas y encuentra la primera parte sin empezar", () => {
+  it("cuenta respuestas y retoma después de la última parte con respuestas", () => {
     const answers = { nombre: "Ana", motivo: "Ansiedad", consultas_previas: "Sí", estado_animo: 5 };
     expect(answeredCount(answers)).toBe(4);
     expect(answeredCount({ contacto_emergencia: {} })).toBe(0);
-    expect(firstPendingStep(answers)).toBe(2);
-    const all = Object.fromEntries(INTAKE_STEPS.map((s) => [s.questions.find((q) => q.type !== "age")!.id, s.questions.find((q) => q.type !== "age")!.type === "scale" ? 5 : "x"]));
-    expect(firstPendingStep(all)).toBeNull();
+    // Dejó en blanco las partes intermedias (antecedentes, etc.) y llegó hasta «A — Afecto»: sigue en «S — Sensación».
+    const afecto = INTAKE_STEPS.findIndex((s) => s.id === "afecto");
+    expect(resumeStep(answers)).toBe(afecto + 1);
+    expect(resumeStep({ nombre: "Ana" })).toBe(1);
+    expect(resumeStep({})).toBe(0);
+    expect(resumeStep({ nombre: "Ana", compromiso: "Medio" })).toBeNull();
   });
 
   it("calcula la edad con la fecha de nacimiento", () => {
-    expect(intakeAge({ fecha_nacimiento: "2001-07-14" }, "2026-10-10")).toBe(25);
+    expect(intakeAge({ fecha_nacimiento: "1990-03-15" }, "2026-10-10")).toBe(36);
     expect(intakeAge({}, "2026-10-10")).toBeNull();
-    expect(formatIntakeAnswer(intakeQuestion("edad")!, { fecha_nacimiento: "2001-07-14" }, "2026-10-10")).toBe("25 años");
+    expect(formatIntakeAnswer(intakeQuestion("edad")!, { fecha_nacimiento: "1990-03-15" }, "2026-10-10")).toBe("36 años");
   });
 
   it("muestra las respuestas con el formato de la ficha", () => {
-    const answers = { fecha_nacimiento: "2001-07-14", estado_animo: 7, contacto_emergencia: { nombre: "Luis, mi hermano", telefono: "+595981000010" }, hijos: "Ninguno" };
-    expect(formatIntakeAnswer(intakeQuestion("fecha_nacimiento")!, answers)).toBe("14/07/2001");
-    expect(formatIntakeAnswer(intakeQuestion("estado_animo")!, answers)).toBe("7 de 10");
+    const answers = { fecha_nacimiento: "1990-03-15", estado_animo: 4, contacto_emergencia: { nombre: "Luis, mi hermano", telefono: "+595981000010" }, hijos: "Dos, de 8 y 5 años" };
+    expect(formatIntakeAnswer(intakeQuestion("fecha_nacimiento")!, answers)).toBe("15/03/1990");
+    expect(formatIntakeAnswer(intakeQuestion("estado_animo")!, answers)).toBe("4 de 10");
     expect(formatIntakeAnswer(intakeQuestion("contacto_emergencia")!, answers)).toBe("Luis, mi hermano · +595981000010");
-    expect(formatIntakeAnswer(intakeQuestion("hijos")!, answers)).toBe("Ninguno");
+    expect(formatIntakeAnswer(intakeQuestion("hijos")!, answers)).toBe("Dos, de 8 y 5 años");
     expect(formatIntakeAnswer(intakeQuestion("motivo")!, answers)).toBeNull();
   });
 
   it("completa las preguntas repetidas sin pisar lo que ya respondió", () => {
     const bio = INTAKE_STEPS.find((s) => s.id === "biologia")!;
-    const answers = { medicacion: "Sertralina", cannabis: "Nunca", tabaco: "A diario", bio_alcohol: "Ya lo respondí", alcohol: "Fines de semana" };
-    expect(prefillValue(intakeQuestion("bio_medicacion")!, answers)).toBe("Sertralina");
-    expect(prefillValue(intakeQuestion("bio_otras_sustancias")!, answers)).toBe("Cannabis: Nunca · Tabaco: A diario");
+    const answers = { medicacion: "Fluoxetina", cannabis: "Nunca", tabaco: "A diario", estimulantes: "Energizantes en época de parciales", bio_alcohol: "Ya lo respondí", alcohol: "Fines de semana" };
+    expect(prefillValue(intakeQuestion("bio_medicacion")!, answers)).toBe("Fluoxetina");
+    expect(prefillValue(intakeQuestion("bio_otras_sustancias")!, answers)).toBe("Cannabis: Nunca · Tabaco: A diario · Estimulantes: Energizantes en época de parciales");
     expect(prefillValue(intakeQuestion("bio_sueno")!, answers)).toBeNull();
     const next = withPrefill(bio, answers);
-    expect(next).toMatchObject({ bio_medicacion: "Sertralina", bio_alcohol: "Ya lo respondí", bio_otras_sustancias: "Cannabis: Nunca · Tabaco: A diario" });
+    expect(next).toMatchObject({ bio_medicacion: "Fluoxetina", bio_alcohol: "Ya lo respondí", bio_otras_sustancias: "Cannabis: Nunca · Tabaco: A diario · Estimulantes: Energizantes en época de parciales" });
     expect(next.bio_sueno).toBeUndefined();
     expect(withPrefill(bio, next)).toBe(next);
   });
@@ -219,5 +223,35 @@ describe("ficha de ingreso: respuestas", () => {
       initialIntakeAnswers({ first_name: "Ana", last_name: "Ejemplo", birth_date: "1990-03-04", phone: "+595981111111", emergency_contact_name: "Luis", emergency_contact_phone: null }),
     ).toEqual({ nombre: "Ana Ejemplo", fecha_nacimiento: "1990-03-04", telefono: "+595981111111", contacto_emergencia: { nombre: "Luis" } });
     expect(initialIntakeAnswers({ first_name: "Ana", last_name: "Ejemplo", birth_date: null, phone: null, emergency_contact_name: null, emergency_contact_phone: null })).toEqual({ nombre: "Ana Ejemplo" });
+  });
+});
+
+describe("ficha de ingreso: datos que pasan a la ficha administrativa", () => {
+  const record = { birth_date: "1990-03-15", phone: "+595981222333", emergency_contact_name: "Marta, mi mamá", emergency_contact_phone: "+595981000010" };
+
+  it("en el primer guardado pasa lo que difiere de la ficha administrativa", () => {
+    expect(patientUpdates(record, { telefono: "+595981999888", fecha_nacimiento: "1990-03-15" }, null)).toEqual({ phone: "+595981999888" });
+  });
+
+  it("un valor viejo de la ficha no pisa una corrección posterior", () => {
+    const previous = { telefono: "+595981111111", fecha_nacimiento: "1991-01-01", contacto_emergencia: { nombre: "Marta, mi mamá" } };
+    // El paciente solo cambió «Sueño»; los datos personales siguen como estaban en la ficha.
+    expect(patientUpdates(record, { ...previous, sueno: "Mejor" }, previous)).toEqual({});
+  });
+
+  it("si el paciente cambia el contacto de emergencia, se actualiza entero", () => {
+    const previous = { contacto_emergencia: { nombre: "Marta, mi mamá", telefono: "+595981000010" } };
+    expect(patientUpdates(record, { contacto_emergencia: { nombre: "Pedro, mi hermano" } }, previous)).toEqual({ emergency_contact_name: "Pedro, mi hermano", emergency_contact_phone: null });
+    // Las claves en otro orden (como las devuelve jsonb) no cuentan como cambio.
+    expect(patientUpdates({ ...record, emergency_contact_name: "Otra" }, { contacto_emergencia: { telefono: "+595981000010", nombre: "Marta, mi mamá" } }, previous)).toEqual({});
+  });
+
+  it("lo que queda en blanco no borra lo cargado", () => {
+    expect(patientUpdates(record, {}, { telefono: "+595981222333", contacto_emergencia: { nombre: "Marta, mi mamá" } })).toEqual({});
+  });
+
+  it("el nombre del contacto tiene el mismo límite que el perfil", () => {
+    expect(parseIntakeAnswers({ contacto_emergencia: { nombre: "a".repeat(121) } }).errors).toHaveProperty("contacto_emergencia");
+    expect(parseIntakeAnswers({ contacto_emergencia: { nombre: "a".repeat(120) } }).errors).toBeNull();
   });
 });

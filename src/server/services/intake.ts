@@ -15,6 +15,13 @@ export async function getIntake(client: ServerSupabaseClient, patientId: string)
   return data ?? null;
 }
 
+/** Solo el estado (fechas de envío), sin las respuestas: para pantallas que no muestran el contenido. */
+export async function getIntakeStatus(client: ServerSupabaseClient, patientId: string): Promise<Pick<PatientIntake, "submitted_at" | "first_submitted_at"> | null> {
+  const { data, error } = await client.from("patient_intakes").select("submitted_at, first_submitted_at").eq("patient_id", patientId).maybeSingle();
+  if (error) throw fromDatabaseError(error, "No pudimos cargar la ficha de ingreso.");
+  return data ?? null;
+}
+
 export function intakeAnswersOf(intake: Pick<PatientIntake, "answers"> | null): IntakeAnswers {
   const raw = intake?.answers;
   return raw && typeof raw === "object" && !Array.isArray(raw) ? (raw as IntakeAnswers) : {};

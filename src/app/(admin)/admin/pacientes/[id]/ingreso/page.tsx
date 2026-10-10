@@ -76,9 +76,16 @@ export default async function AdminIntakePage({ params }: { params: Promise<{ id
         }
       />
       <IntakeAnswers answers={intakeAnswersOf(intake)} audience="professional" className="max-w-4xl" />
+      {/* Solo en papel: pie de cada hoja con el paciente, para que ninguna quede sin identificar. */}
+      <style>{`@media print { @page { @bottom-center { content: ${cssString(`Ficha de ingreso · ${name} · enviada el ${formatShortDate(first)} · Confidencial`)}; font-size: 9px; color: #555; } } }`}</style>
       <p className="max-w-4xl text-xs text-muted-foreground print:hidden">
         Solo vos (y quien tenga rol de profesional o administrador) ve esta ficha. Recepción no tiene acceso y la secretaria virtual de WhatsApp no la usa.
       </p>
     </div>
   );
+}
+
+/** Texto como cadena CSS segura (sin cerrar la etiqueta <style> ni la cadena). */
+function cssString(text: string): string {
+  return `"${text.replace(/[\\"]/g, "\\$&").replace(/[<>\r\n]/g, " ")}"`;
 }

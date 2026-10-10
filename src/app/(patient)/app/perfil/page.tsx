@@ -52,7 +52,7 @@ export default async function ProfilePage() {
                 ? `La enviaste el ${formatShortDate(intake.first_submitted_at ?? intake.submitted_at)}. La ves solo vos y tu psicólogo/a; podés actualizarla cuando quieras.`
                 : intake
                   ? "Empezaste a completarla. Mientras no la envíes, es un borrador que ves solo vos."
-                  : "Todavía no la completaste. Son preguntas sobre vos y tu salud para preparar la primera sesión."}
+                  : "Todavía no la completaste. Son preguntas sobre vos y tu salud para que tu psicólogo/a te conozca mejor."}
             </p>
           </div>
           <Button asChild variant="outline" className="shrink-0">

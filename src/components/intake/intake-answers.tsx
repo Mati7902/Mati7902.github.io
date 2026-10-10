@@ -25,17 +25,17 @@ export function IntakeAnswers({ answers, audience, todayKey, editHref, className
       {INTAKE_SECTIONS.map((section) => {
         const steps = INTAKE_STEPS.map((step, index) => ({ step, index })).filter(({ step }) => step.section === section.key);
         return (
-          <section key={section.key} aria-labelledby={`ficha-${section.key}`} className="space-y-4 break-inside-avoid-page">
-            <h2 id={`ficha-${section.key}`} className="border-b border-divider pb-2 text-sm font-semibold uppercase tracking-[0.14em] text-primary">
+          <section key={section.key} aria-labelledby={`ficha-${section.key}`} className="space-y-4">
+            <h2 id={`ficha-${section.key}`} className="break-after-avoid border-b border-divider pb-2 text-sm font-semibold uppercase tracking-[0.14em] text-primary">
               {section.roman}. {section.title}
             </h2>
             {steps.map(({ step, index }) => (
               <div key={step.id} className="space-y-2">
                 {step.heading || editHref ? (
                   <div className="flex items-center justify-between gap-3">
-                    {step.heading ? <h3 className="font-medium text-foreground">{step.heading}:</h3> : <span />}
+                    {step.heading ? <h3 className="break-after-avoid font-medium text-foreground">{step.heading}:</h3> : <span />}
                     {editHref ? (
-                      <Link href={editHref(index)} className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-primary hover:bg-primary-soft print:hidden">
+                      <Link href={editHref(index)} className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg px-3 text-sm font-medium text-primary hover:bg-primary-soft print:hidden">
                         <Pencil className="size-3.5" aria-hidden /> Editar<span className="sr-only"> {step.title}</span>
                       </Link>
                     ) : null}
@@ -59,7 +59,7 @@ function Item({ question, marker, answers, audience, todayKey }: { question: Int
   const answer = formatIntakeAnswer(question, answers, todayKey);
   const flag = audience === "professional" && needsAttention(question, answers);
   return (
-    <li className={cn("grid gap-1 px-4 py-3 sm:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] sm:gap-4 print:px-0 print:py-1.5", flag && "bg-warning-soft/50")}>
+    <li className={cn("grid break-inside-avoid gap-1 px-4 py-3 sm:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] sm:gap-4 print:px-0 print:py-1.5", flag && "bg-warning-soft/50")}>
       <p className="text-sm text-muted-foreground">
         <span aria-hidden className="mr-1.5 tabular-nums text-subtle-foreground">{marker}</span>
         {questionLabel(question, audience)}

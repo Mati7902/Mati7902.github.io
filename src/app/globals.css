@@ -244,3 +244,14 @@
     display: none;
   }
 }
+
+/* Impresión (ficha de ingreso del panel): márgenes de hoja con lugar para el pie que identifica al paciente. */
+@media print {
+  @page {
+    margin: 14mm 12mm 18mm;
+  }
+  html,
+  body {
+    background: #fff;
+  }
+}

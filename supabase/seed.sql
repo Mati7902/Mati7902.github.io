@@ -201,7 +201,7 @@ begin
     "autopercepcion_social": "Creo que me ven tranquilo, aunque por dentro no lo esté",
     "bio_medicacion": "Ninguna",
     "bio_alcohol": "Los fines de semana, con amigos",
-    "bio_otras_sustancias": "Cannabis: Nunca · Tabaco: No",
+    "bio_otras_sustancias": "Cannabis: Nunca · Tabaco: No · Estimulantes: Mucho café en época de exámenes",
     "bio_sueno": "Unas 6 horas; me cuesta dormirme",
     "bio_apetito": "Normal",
     "salud_general": "Buena",
