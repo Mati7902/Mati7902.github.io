@@ -115,7 +115,10 @@ export function IntakeWizard({ initialAnswers, submitted, hasDraft = false, prof
     if (errorTick === 0) return;
     const frame = requestAnimationFrame(() => {
       const first = document.querySelector<HTMLElement>('[aria-invalid="true"]');
-      const el = first?.matches("input, textarea") ? first : first?.querySelector<HTMLElement>('input[aria-invalid="true"], textarea[aria-invalid="true"], input, textarea');
+      // En un grupo (contacto, opciones), primero el campo marcado; si no hay, el primero del grupo.
+      const el = first?.matches("input, textarea")
+        ? first
+        : (first?.querySelector<HTMLElement>('input[aria-invalid="true"], textarea[aria-invalid="true"]') ?? first?.querySelector<HTMLElement>("input, textarea"));
       if (!el) return;
       el.focus({ preventScroll: true });
       el.scrollIntoView({ block: "center" });
