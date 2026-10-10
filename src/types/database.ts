@@ -419,6 +419,25 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"patient_intakes": {
+                  Row: {
+                    "answers": Json,"created_at": string,"first_submitted_at": string | null,"form_version": string,"patient_id": string,"submitted_at": string | null,"updated_at": string
+                  }
+                  Insert: {
+                    "answers"?: Json,"created_at"?: string,"first_submitted_at"?: string | null,"form_version"?: string,"patient_id": string,"submitted_at"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "answers"?: Json,"created_at"?: string,"first_submitted_at"?: string | null,"form_version"?: string,"patient_id"?: string,"submitted_at"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "patient_intakes_patient_id_fkey"
+      columns: ["patient_id"]
+isOneToOne: true
+      referencedRelation: "patients"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"patient_materials": {
                   Row: {
                     "assigned_at": string,"assigned_by": string | null,"completed_at": string | null,"id": string,"material_id": string,"note": string | null,"patient_id": string,"viewed_at": string | null

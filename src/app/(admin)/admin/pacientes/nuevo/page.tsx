@@ -11,7 +11,7 @@ export default async function NewPatientPage() {
   await requireAdmin();
   return (
     <div className="mx-auto max-w-3xl space-y-8">
-      <PageHeader eyebrow="Pacientes" title="Nuevo paciente" description="Ficha administrativa mínima. Los registros clínicos no se guardan en esta plataforma." />
+      <PageHeader eyebrow="Pacientes" title="Nuevo paciente" description="Ficha administrativa mínima. La ficha de ingreso (antecedentes y BASIC I.D.) la completa el paciente al crear su cuenta." />
       <PatientForm defaultAdmissionDate={toDateKey(new Date())} />
     </div>
   );

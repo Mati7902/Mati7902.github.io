@@ -315,6 +315,89 @@ select pg_temp.assert((select count(*) from public.session_preparations) = 1, 'e
 select pg_temp.logout();
 rollback;
 
+-- Ficha de ingreso: borrador privado, el profesional la lee recién enviada, nadie más
+begin;
+select set_config('test.juan_patient', (select id::text from public.patients where email = 'juan.perez@demo.local'), true);
+select set_config('test.ana_patient', (select id::text from public.patients where email = 'ana.ejemplo@demo.local'), true);
+-- Usuario de recepción para comprobar que no accede a datos de salud.
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token)
+values ('55555555-5555-4555-8555-555555555555', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'recepcion@demo.local',
+        crypt('x', gen_salt('bf')), now(), '{"provider":"email","role":"receptionist"}'::jsonb, '{}'::jsonb, now(), now(), '', '')
+on conflict (id) do nothing;
+insert into public.profiles (id, role, email) values ('55555555-5555-4555-8555-555555555555', 'receptionist', 'recepcion@demo.local')
+on conflict (id) do update set role = 'receptionist';
+delete from public.patient_intakes;
+delete from public.notifications where title like 'Ficha de ingreso%';
+
+select pg_temp.login('22222222-2222-4222-8222-222222222222');
+insert into public.patient_intakes (patient_id, answers) values (public.current_patient_id(), '{"motivo": "Prueba"}');
+select pg_temp.assert((select count(*) from public.patient_intakes) = 1, 'el paciente guarda y ve su borrador de ficha de ingreso');
+select pg_temp.expect_error(
+  $q$insert into public.patient_intakes (patient_id, answers) values (current_setting('test.ana_patient')::uuid, '{}')$q$,
+  array['42501'], 'paciente no puede crear la ficha de ingreso de otro');
+select pg_temp.logout();
+
+select pg_temp.login('11111111-1111-4111-8111-111111111111');
+select pg_temp.assert((select count(*) from public.patient_intakes) = 0, 'el profesional no ve el borrador de la ficha de ingreso');
+select pg_temp.logout();
+
+-- Envío: la fecha la pone la base aunque el cliente mande otra, y se avisa al profesional.
+select pg_temp.login('22222222-2222-4222-8222-222222222222');
+update public.patient_intakes set submitted_at = '2000-01-01', first_submitted_at = '2000-01-01' where patient_id = public.current_patient_id();
+select pg_temp.assert((select submitted_at = now() and first_submitted_at = now() from public.patient_intakes), 'la base fija la fecha de envío de la ficha');
+select pg_temp.expect_error(
+  $q$update public.patient_intakes set submitted_at = null where patient_id = public.current_patient_id()$q$,
+  array['42501'], 'una ficha enviada no vuelve a borrador');
+select pg_temp.expect_error(
+  $q$update public.patient_intakes set patient_id = current_setting('test.ana_patient')::uuid where patient_id = public.current_patient_id()$q$,
+  array['42501'], 'paciente no puede pasar su ficha a otro paciente');
+select pg_temp.expect_error($q$delete from public.patient_intakes$q$, array['42501'], 'paciente no puede borrar la ficha de ingreso');
+select pg_temp.logout();
+select pg_temp.assert(
+  (select count(*) from public.notifications where user_id = '11111111-1111-4111-8111-111111111111' and title = 'Ficha de ingreso completa' and data ->> 'patient_id' = current_setting('test.juan_patient')) = 1,
+  'el profesional recibe un aviso cuando se envía la ficha');
+select pg_temp.assert(
+  (select body from public.notifications where user_id = '11111111-1111-4111-8111-111111111111' and title = 'Ficha de ingreso completa') = 'Juan Pérez completó su ficha de ingreso.',
+  'el aviso no lleva contenido de la ficha');
+
+select pg_temp.login('11111111-1111-4111-8111-111111111111');
+select pg_temp.assert((select count(*) from public.patient_intakes) = 1, 'el profesional ve la ficha enviada');
+update public.patient_intakes set answers = '{"motivo": "Cambiado"}';
+select pg_temp.expect_error($q$delete from public.patient_intakes$q$, array['42501'], 'el profesional no borra la ficha desde la API');
+select pg_temp.logout();
+select pg_temp.assert((select answers ->> 'motivo' from public.patient_intakes) = 'Prueba', 'el profesional no puede modificar las respuestas del paciente');
+
+select pg_temp.login('33333333-3333-4333-8333-333333333333');
+select pg_temp.assert((select count(*) from public.patient_intakes) = 0, 'otro paciente no ve la ficha de ingreso');
+select pg_temp.logout();
+select pg_temp.login('55555555-5555-4555-8555-555555555555');
+select pg_temp.assert((select count(*) from public.patient_intakes) = 0, 'recepción no ve la ficha de ingreso');
+select pg_temp.logout();
+select pg_temp.login(null, 'anon');
+select pg_temp.expect_error($q$select count(*) from public.patient_intakes$q$, array['42501'], 'anon no tiene acceso a las fichas de ingreso');
+select pg_temp.logout();
+rollback;
+
+-- Reenvío de una ficha ya enviada: aviso de actualización y se conserva el primer envío
+begin;
+delete from public.patient_intakes;
+delete from public.notifications where title like 'Ficha de ingreso%';
+insert into public.patient_intakes (patient_id, answers, submitted_at)
+select id, '{"motivo": "Antes"}', now() - interval '3 days' from public.patients where email = 'juan.perez@demo.local';
+select pg_temp.login('22222222-2222-4222-8222-222222222222');
+update public.patient_intakes set answers = '{"motivo": "Después"}', submitted_at = now() + interval '1 year' where patient_id = public.current_patient_id();
+select pg_temp.assert(
+  (select submitted_at = now() and first_submitted_at < now() - interval '2 days' from public.patient_intakes),
+  'el reenvío actualiza la fecha de envío y conserva la del primero');
+select pg_temp.logout();
+select pg_temp.assert(
+  (select count(*) from public.notifications where user_id = '11111111-1111-4111-8111-111111111111' and title = 'Ficha de ingreso actualizada') = 1,
+  'el profesional recibe un aviso cuando el paciente reenvía la ficha');
+select pg_temp.expect_error(
+  $q$insert into public.patient_intakes (patient_id, answers) select id, jsonb_build_object('x', repeat('a', 210000)) from public.patients where email = 'ana.ejemplo@demo.local'$q$,
+  array['23514'], 'la ficha de ingreso tiene un tamaño máximo');
+rollback;
+
 -- Notas administrativas: solo para el profesional
 begin;
 insert into public.patient_admin_notes (patient_id, notes) select id, 'Abona por transferencia' from public.patients where email = 'juan.perez@demo.local';

@@ -32,7 +32,7 @@ export default async function WelcomePage() {
   return (
     <AuthCard
       title={`Bienvenido/a${name}`}
-      subtitle={`Este es tu espacio privado en ${identity.platform_name}. Para empezar, creá tu contraseña.`}
+      subtitle={`Este es tu espacio privado en ${identity.platform_name}. Para empezar, creá tu contraseña; después te vamos a pedir tu ficha de ingreso.`}
     >
       <PasswordForm mode="invitation" />
     </AuthCard>

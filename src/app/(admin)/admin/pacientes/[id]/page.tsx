@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Pencil } from "lucide-react";
+import { ClipboardList, Pencil } from "lucide-react";
 
 import { AppointmentListClient } from "@/components/admin/agenda/agenda-client";
 import { NewAppointmentDialog } from "@/components/admin/agenda/new-appointment-dialog";
@@ -16,8 +16,10 @@ import { requireAdmin } from "@/lib/auth/session";
 import { formatCompactDate, formatShortDate, formatTime, capitalize, nowMs } from "@/lib/dates";
 import { AUDIENCE_LABEL, type Audience, COLLECTIONS } from "@/lib/exercises/collections";
 import { answerEntries, parseSteps } from "@/lib/exercises/steps";
+import { formatIntakeAnswer, intakeQuestion } from "@/lib/intake/form";
 import { createClient } from "@/lib/supabase/server";
 import { getPatientOverview } from "@/server/services/admin-patients";
+import { getIntake, intakeAnswersOf } from "@/server/services/intake";
 import { listSharedResponses } from "@/server/services/exercises";
 import { getSetting } from "@/server/services/settings";
 import { APPOINTMENT_STATUS_LABEL, type AppointmentWithPatient, type Patient } from "@/types/domain";
@@ -31,7 +33,7 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
   await requireAdmin();
   const { id } = await params;
   const supabase = await createClient();
-  const [overview, scheduling, { data: materials }, { data: templates }, { data: prepRows }, { count: logCount }, sharedResponses] = await Promise.all([
+  const [overview, scheduling, { data: materials }, { data: templates }, { data: prepRows }, { count: logCount }, sharedResponses, intake] = await Promise.all([
     getPatientOverview(supabase, id),
     getSetting(supabase, "scheduling"),
     supabase.from("materials").select("id, title, material_categories(name)").eq("is_published", true).order("title"),
@@ -39,6 +41,8 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
     supabase.from("session_preparations").select("appointment_id, week_rating, hardest, better, topics, practiced, important, submitted_at").eq("patient_id", id),
     supabase.from("emotional_logs").select("id", { count: "exact", head: true }).eq("patient_id", id),
     listSharedResponses(supabase, id),
+    // Solo llega si el paciente ya la envió (RLS); un error de lectura no rompe la ficha.
+    getIntake(supabase, id).catch(() => null),
   ]);
   const materialOptions = (materials ?? []).map((m) => ({ id: m.id, title: m.title, group: (m.material_categories as { name: string } | null)?.name ?? "Sin categoría" }));
   const templateOptions = (templates ?? []).map((t) => {
@@ -110,6 +114,8 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
           {!patient.email ? <p className="text-xs text-warning">Cargá un email para poder invitar al paciente.</p> : null}
         </section>
       </div>
+
+      <IntakeSummary patientId={patient.id} intake={intake} hasAccount={Boolean(patient.profile_id)} />
 
       <section className="space-y-3">
         <h2 className="font-display text-lg font-medium">Próximos turnos</h2>
@@ -209,5 +215,47 @@ function Item({ label, value }: { label: string; value: string | null | undefine
       <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</dt>
       <dd className="mt-0.5">{value || <span className="text-subtle-foreground">—</span>}</dd>
     </div>
+  );
+}
+
+/** Estado de la ficha de ingreso y el motivo de consulta, con enlace a la ficha completa. */
+function IntakeSummary({ patientId, intake, hasAccount }: { patientId: string; intake: Awaited<ReturnType<typeof getIntake>>; hasAccount: boolean }) {
+  const submitted = Boolean(intake?.submitted_at);
+  const motivoQuestion = intakeQuestion("motivo");
+  const motivo = submitted && motivoQuestion ? formatIntakeAnswer(motivoQuestion, intakeAnswersOf(intake)) : null;
+  return (
+    <section className="surface-card flex flex-col gap-4 p-6 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex min-w-0 gap-3">
+        <ClipboardList className="mt-1 size-5 shrink-0 text-primary" aria-hidden />
+        <div className="min-w-0 space-y-1">
+          <h2 className="font-display text-lg font-medium">Ficha de ingreso</h2>
+          {submitted && intake?.submitted_at ? (
+            <>
+              <p className="text-sm text-muted-foreground">
+                Enviada el {formatShortDate(intake.first_submitted_at ?? intake.submitted_at)}
+                {intake.first_submitted_at && intake.submitted_at !== intake.first_submitted_at ? ` · actualizada el ${formatShortDate(intake.submitted_at)}` : ""}
+              </p>
+              {motivo ? (
+                <p className="line-clamp-3 text-sm break-words text-foreground">
+                  <span className="text-muted-foreground">Motivo de consulta: </span>
+                  {motivo}
+                </p>
+              ) : null}
+            </>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              {hasAccount ? "Todavía no la envió. La completa desde su cuenta; el borrador es privado hasta que la envíe." : "La completa el paciente cuando crea su cuenta."}
+            </p>
+          )}
+        </div>
+      </div>
+      {submitted ? (
+        <Button asChild variant="outline" className="shrink-0">
+          <Link href={`/admin/pacientes/${patientId}/ingreso`}>Ver ficha completa</Link>
+        </Button>
+      ) : (
+        <Badge variant="muted" className="shrink-0 self-start">Pendiente</Badge>
+      )}
+    </section>
   );
 }

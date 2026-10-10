@@ -186,5 +186,6 @@ export async function completeInvitationAction(_prev: ActionResult | null, formD
     .eq("profile_id", user.id);
 
   await audit(supabase, "auth.invitation_completed", { type: "profile", id: user.id }, { consent_version: version });
-  redirect("/app");
+  // Recién creada la cuenta, lo primero es la ficha de ingreso (se puede dejar para más tarde).
+  redirect("/app/ingreso?bienvenida=1");
 }

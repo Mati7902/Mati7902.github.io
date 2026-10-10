@@ -3,13 +3,17 @@ import Link from "next/link";
 import { CalendarPlus } from "lucide-react";
 
 import { AppointmentCard } from "@/components/appointments/appointment-card";
+import { IntakeCard } from "@/components/intake/intake-card";
 import { PatientAppointmentActions } from "@/components/appointments/patient-appointment-actions";
 import { QuickActions } from "@/components/patient/quick-actions";
 import { Button } from "@/components/ui/button";
 import { requirePatient } from "@/lib/auth/session";
+import { answeredCount } from "@/lib/intake/form";
 import { createClient } from "@/lib/supabase/server";
 import { canPatientModify, canPrepareSession, getNextAppointment } from "@/server/services/appointments";
 import { weeklyExerciseCount } from "@/server/services/exercises";
+import { getIntake, intakeAnswersOf } from "@/server/services/intake";
+import { getPublicSettingsSafe } from "@/server/services/public-settings";
 import { getSessionPreparation } from "@/server/services/session-prep";
 import { getSettings } from "@/server/services/settings";
 
@@ -24,10 +28,13 @@ function greeting(hour: number): string {
 export default async function PatientHomePage() {
   const { patient } = await requirePatient();
   const supabase = await createClient();
-  const [next, settings, weekly] = await Promise.all([
+  const [next, settings, weekly, intake, publicSettings] = await Promise.all([
     getNextAppointment(supabase, patient.id),
     getSettings(supabase, ["scheduling", "gamification"] as const),
     weeklyExerciseCount(supabase, patient.id),
+    // Si la ficha no se puede leer, el inicio igual tiene que cargar (no se muestra el aviso).
+    getIntake(supabase, patient.id).catch(() => undefined),
+    getPublicSettingsSafe(),
   ]);
   const prep = next ? await getSessionPreparation(supabase, next.id) : null;
   const tz = settings.scheduling.timezone;
@@ -41,6 +48,10 @@ export default async function PatientHomePage() {
         <h1 className="font-display text-3xl font-medium sm:text-4xl">Hola, {patient.first_name}.</h1>
         <p className="text-lg text-muted-foreground">¿Cómo estás hoy?</p>
       </header>
+
+      {intake !== undefined && !intake?.submitted_at ? (
+        <IntakeCard answered={answeredCount(intakeAnswersOf(intake))} started={Boolean(intake)} professionalName={publicSettings["site.identity"].professional_name} />
+      ) : null}
 
       {next ? (
         <AppointmentCard

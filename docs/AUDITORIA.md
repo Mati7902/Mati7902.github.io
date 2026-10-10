@@ -74,6 +74,7 @@ Resultado: `pnpm test:db` → 89 aserciones OK sobre las migraciones reales (Pos
 | Punto | Estado | Evidencia |
 | --- | --- | --- |
 | Mínimo almacenamiento: ficha administrativa, sin historia clínica; métricas de materiales solo asignado/visto/completado | ✅ | esquema |
+| Ficha de ingreso (única información de salud): tabla aparte, borrador privado, el profesional la lee solo enviada, recepción y bot sin acceso, sin borrado por clientes, lectura auditada, notificación sin contenido | ✅ | `20261010000001_patient_intake.sql`, `rls.test.sql`, `/admin/pacientes/[id]/ingreso` |
 | Logger redacta campos sensibles; no se registran contenidos clínicos | ✅ | `lib/logger.ts` |
 | Eventos de Google con iniciales, sin notas | ✅ | `google-calendar/sync.ts` |
 | Consentimiento versionado al aceptar la invitación; textos legales marcados como borrador hasta revisión profesional | ⚠️ | `/privacidad`, `/terminos`, `legal.reviewed_by_professional`. **Acción requerida antes de producción:** revisión por profesional competente en derecho paraguayo. |

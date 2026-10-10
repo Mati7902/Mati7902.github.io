@@ -1,19 +1,24 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ClipboardList } from "lucide-react";
 
 import { ChangePasswordForm, ContactForm, SharingToggle } from "@/components/patient/profile-forms";
 import { SignOutButton } from "@/components/shell/sign-out-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { Separator } from "@/components/ui/separator";
 import { requirePatient } from "@/lib/auth/session";
 import { formatShortDate } from "@/lib/dates";
+import { createClient } from "@/lib/supabase/server";
 import { getInitials } from "@/lib/utils";
+import { getIntake } from "@/server/services/intake";
 
 export const metadata: Metadata = { title: "Mi perfil" };
 
 export default async function ProfilePage() {
   const { patient, profile, email } = await requirePatient();
+  const intake = await getIntake(await createClient(), patient.id).catch(() => null);
   const fullName = `${patient.first_name} ${patient.last_name}`;
   return (
     <div className="mx-auto max-w-2xl space-y-10">
@@ -33,6 +38,27 @@ export default async function ProfilePage() {
       <section className="space-y-4">
         <h2 className="font-display text-xl font-medium">Datos de contacto</h2>
         <ContactForm patient={patient} />
+      </section>
+
+      <Separator />
+
+      <section className="space-y-4">
+        <h2 className="font-display text-xl font-medium">Ficha de ingreso</h2>
+        <div className="flex flex-col gap-4 rounded-2xl border border-border/70 bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex gap-3">
+            <ClipboardList className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
+            <p className="text-sm text-muted-foreground">
+              {intake?.submitted_at
+                ? `La enviaste el ${formatShortDate(intake.first_submitted_at ?? intake.submitted_at)}. La ves solo vos y tu psicólogo/a; podés actualizarla cuando quieras.`
+                : intake
+                  ? "Empezaste a completarla. Mientras no la envíes, es un borrador que ves solo vos."
+                  : "Todavía no la completaste. Son preguntas sobre vos y tu salud para preparar la primera sesión."}
+            </p>
+          </div>
+          <Button asChild variant="outline" className="shrink-0">
+            <Link href="/app/ingreso">{intake?.submitted_at ? "Ver mi ficha" : intake ? "Seguir" : "Completar"}</Link>
+          </Button>
+        </div>
       </section>
 
       <Separator />

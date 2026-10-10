@@ -131,6 +131,90 @@ begin
   select a.id, v_patient_id, 6, 'La discusión con mi hermano', 'Aprobar el examen', 'Cómo no explotar cuando me enojo', 'Respiración, 3 veces', null, now()
   from public.appointments a where a.patient_id = v_patient_id and a.status = 'confirmed' order by a.start_time limit 1;
 
+  -- Ficha de ingreso enviada (respuestas ficticias) --------------------------------
+  update public.patients set emergency_contact_name = 'Marta Pérez, mi mamá', emergency_contact_phone = '+595981000010' where id = v_patient_id;
+  insert into public.patient_intakes (patient_id, answers, submitted_at, created_at, updated_at)
+  values (v_patient_id, '{
+    "nombre": "Juan Pérez",
+    "fecha_nacimiento": "2004-05-12",
+    "estado_civil": "Soltero",
+    "hijos": "No",
+    "ocupacion": "Estudiante de Ingeniería (3.er año)",
+    "residencia": "Encarnación, con mis padres y mi hermano",
+    "telefono": "+595981000000",
+    "contacto_emergencia": {"nombre": "Marta Pérez, mi mamá", "telefono": "+595981000010"},
+    "motivo": "Me pongo muy nervioso antes de los exámenes y me cuesta dormir. Últimamente discuto mucho en casa.",
+    "consultas_previas": "Fui a una psicóloga en el colegio, unos meses.",
+    "diagnosticos": "Ninguno",
+    "medicacion": "Ninguna",
+    "hospitalizaciones": "Ninguna",
+    "autolesion": "No",
+    "eventos_estresantes": "La separación de mis abuelos el año pasado me afectó bastante.",
+    "enfermedades_cronicas": "Ninguna",
+    "alergias": "Penicilina",
+    "cirugias": "Apendicitis a los 12",
+    "historia_neurologica": "Ninguna",
+    "dolencias_actuales": "Dolores de cabeza en época de exámenes",
+    "antecedentes_familiares": "Una tía tuvo depresión",
+    "relacion_familia": "Buena con mis padres; con mi hermano discutimos seguido",
+    "conflictos_familiares": "Discusiones por la compu y las tareas de la casa",
+    "alcohol": "Los fines de semana, con amigos",
+    "cannabis": "Nunca",
+    "tabaco": "No",
+    "estimulantes": "Mucho café en época de exámenes",
+    "sueno": "Unas 6 horas; me cuesta dormirme",
+    "apetito": "Normal",
+    "conductas_alimentarias": "Salteo el desayuno",
+    "conductas_problematicas": "Dejo todo para último momento",
+    "conductas_estres": "Me quedo con el celular hasta tarde",
+    "cambios_rutinas": "Desde que empezó el semestre duermo menos",
+    "evitacion": "Evito estudiar las materias que más me cuestan",
+    "impulsividad": "Contesto mal cuando me enojo",
+    "reaccion_enojo": "Grito y me encierro en mi cuarto",
+    "emociones_predominantes": "Ansiedad, cansancio",
+    "picos_emocionales": "Me enojo rápido y después se me pasa",
+    "regulacion_emocional": "Me cuesta bastante calmarme cuando me enojo",
+    "estado_animo": 6,
+    "ansiedad_irritabilidad": "Bastante, sobre todo antes de los exámenes",
+    "anhedonia": "No, sigo disfrutando del fútbol",
+    "sensaciones_estres": "Nudo en el estómago y me transpiran las manos",
+    "variaciones_energia": "Más cansado en época de exámenes",
+    "dolores_tensiones": "Tensión en el cuello",
+    "energia_general": "Media",
+    "cambios_fisicos": "Ninguno",
+    "imagenes_malestar": "Me imagino desaprobando y teniendo que contarlo en casa",
+    "recuerdos_intrusivos": "A veces, un examen que me fue muy mal",
+    "fantasias_negativas": "Que no voy a terminar la carrera",
+    "imagenes_idealizadas": "Recibido y trabajando en lo que me gusta",
+    "proyeccion": "Más organizado y durmiendo mejor",
+    "pensamientos_negativos": "«No voy a llegar», «soy un desastre»",
+    "pensamientos_acelerados": "De noche, cuando me acuesto",
+    "autocritica": "Bastante",
+    "culpa_desesperanza": "A veces culpa por no estudiar lo suficiente",
+    "ideas_obsesivas": "No",
+    "atencion": "Me distraigo con el celular",
+    "relaciones_importantes": "Mis padres, mi hermano y dos amigos de la facultad",
+    "conflictos_pareja": "Con mi hermano",
+    "confianza_limites": "Me cuesta decir que no cuando me piden favores",
+    "soledad": "En general, acompañado",
+    "reaccion_criticas": "Me cuesta, me lo tomo personal",
+    "autopercepcion_social": "Creo que me ven tranquilo, aunque por dentro no lo esté",
+    "bio_medicacion": "Ninguna",
+    "bio_alcohol": "Los fines de semana, con amigos",
+    "bio_otras_sustancias": "Cannabis: Nunca · Tabaco: No",
+    "bio_sueno": "Unas 6 horas; me cuesta dormirme",
+    "bio_apetito": "Normal",
+    "salud_general": "Buena",
+    "actividad_fisica": "Fútbol los sábados",
+    "objetivos": "Manejar mejor los nervios antes de los exámenes, dormir mejor y discutir menos en casa.",
+    "compromiso": "Alto",
+    "frecuencia": "1 vez por semana"
+  }'::jsonb, now() - interval '55 days', now() - interval '56 days', now() - interval '55 days')
+  on conflict (patient_id) do nothing;
+  -- El aviso al profesional se generó recién: se lo fecha con el envío y se marca como leído.
+  update public.notifications set created_at = now() - interval '55 days', read_at = now() - interval '54 days'
+  where data ->> 'patient_id' = v_patient_id::text and data ->> 'intake' = 'true';
+
   -- Contacto de WhatsApp vinculado --------------------------------------------------
   insert into public.whatsapp_contacts (phone, display_name, patient_id) values ('+595981000000', 'Juan Pérez', v_patient_id)
   on conflict (phone) do nothing;
