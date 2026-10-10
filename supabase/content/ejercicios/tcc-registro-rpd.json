@@ -1,0 +1,117 @@
+{
+  "slug": "tcc-registro-rpd",
+  "title": "Registro de pensamientos (RPD)",
+  "description": "Anotá la situación, la emoción y el pensamiento automático y, al reestructurar, el pensamiento alternativo.",
+  "kind": "thought_record",
+  "approach": "tcc",
+  "audience": "adultos",
+  "collection": "tcc",
+  "estimated_minutes": 5,
+  "sort_order": 211,
+  "source": "Cuadernillo de TCC, Anexo 1 (página 34)",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Registro de pensamientos (RPD)",
+      "content": "Es la hoja del Anexo 1 del cuadernillo. Viene de los capítulos «Los pensamientos automáticos» y «Cuestionamiento socrático y reestructuración».\n\nRegistrá tus pensamientos **lo antes posible después de la situación**.\n\nLas últimas preguntas (pensamiento alternativo, nueva credibilidad y nueva emoción) se completan al reestructurar. Si todavía no llegaste a ese capítulo, tocá «Saltar» en esas preguntas.\n\nUsalo tantas veces como necesites: la práctica repetida es lo que instala el cambio."
+    },
+    {
+      "id": "situacion",
+      "type": "text",
+      "prompt": "Fecha y situación: ¿qué pasó?",
+      "help": "Dónde, cuándo, con quién. La fecha se guarda sola con el registro.",
+      "placeholder": "Qué pasó, dónde, con quién…"
+    },
+    {
+      "id": "emocion",
+      "type": "checklist",
+      "prompt": "Emoción: ¿qué sentiste?",
+      "help": "Cada emoción se nombra con una sola palabra. Marcá hasta tres.",
+      "options": [
+        "Angustia",
+        "Ansiedad",
+        "Miedo",
+        "Nerviosismo",
+        "Pánico",
+        "Bronca",
+        "Tristeza",
+        "Vergüenza",
+        "Culpa",
+        "Frustración",
+        "Inseguridad",
+        "Otra"
+      ],
+      "max": 3
+    },
+    {
+      "id": "emocion_otra",
+      "type": "text",
+      "prompt": "Si marcaste «Otra», ¿cuál fue?",
+      "help": "Una sola palabra. Si no marcaste «Otra», tocá «Saltar».",
+      "optional": true
+    },
+    {
+      "id": "intensidad",
+      "type": "scale",
+      "prompt": "¿Con qué intensidad la sentiste? (de 0 a 100)",
+      "help": "Si marcaste más de una, puntuá la más fuerte.",
+      "min": 0,
+      "max": 100,
+      "min_label": "Nada",
+      "max_label": "Máxima"
+    },
+    {
+      "id": "pensamiento",
+      "type": "text",
+      "prompt": "Pensamiento automático: ¿qué te pasó por la cabeza?",
+      "help": "Usá la pregunta de oro: «¿qué me pasó por la cabeza justo antes de sentirme así?». Escribilo tal como apareció, con sus palabras crudas, sin traducirlo ni suavizarlo.\n\nSi hubo varios, quedate con el **pensamiento caliente**: el que trae más carga emocional."
+    },
+    {
+      "id": "credibilidad",
+      "type": "scale",
+      "prompt": "¿Cuánto creés ese pensamiento? (de 0 a 100)",
+      "help": "Es su credibilidad: no importa solo qué pensás, sino cuánto lo creés.",
+      "min": 0,
+      "max": 100,
+      "min_label": "Nada",
+      "max_label": "Totalmente"
+    },
+    {
+      "id": "alternativo",
+      "type": "text",
+      "prompt": "Pensamiento alternativo: ¿qué forma más ajustada hay de verlo?",
+      "help": "Se completa al reestructurar. Que integre toda la evidencia, no que niegue lo negativo: creíble para vos, equilibrado y que puedas usar la próxima vez. No un eslogan optimista. Si te ayuda, usá «50 preguntas socráticas».\n\nSi todavía no lo trabajaste, tocá «Saltar».",
+      "optional": true
+    },
+    {
+      "id": "credibilidad_nueva",
+      "type": "scale",
+      "prompt": "¿Cuánto creés ahora el pensamiento automático? (de 0 a 100)",
+      "help": "Es la nueva credibilidad del pensamiento del principio, después de reestructurar. Si no escribiste un pensamiento alternativo, tocá «Saltar».",
+      "min": 0,
+      "max": 100,
+      "min_label": "Nada",
+      "max_label": "Totalmente",
+      "optional": true
+    },
+    {
+      "id": "emocion_nueva",
+      "type": "scale",
+      "prompt": "¿Con qué intensidad sentís ahora la emoción? (de 0 a 100)",
+      "help": "Puntuá la misma emoción de antes. Si no escribiste un pensamiento alternativo, tocá «Saltar».",
+      "min": 0,
+      "max": 100,
+      "min_label": "Nada",
+      "max_label": "Máxima",
+      "optional": true
+    },
+    {
+      "id": "resumen",
+      "type": "reflect",
+      "title": "Tu registro",
+      "template": "Situación: «{{situacion}}». Emoción: {{emocion}}. Pensamiento automático: «{{pensamiento}}». Pensamiento alternativo (si ya lo trabajaste): «{{alternativo}}».",
+      "content": "Si reestructuraste, compará tus puntuaciones de antes y de ahora: ¿bajaron la credibilidad del pensamiento y la intensidad de la emoción?\n\nTu registro queda guardado: lo podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también lo puede ver."
+    }
+  ]
+}

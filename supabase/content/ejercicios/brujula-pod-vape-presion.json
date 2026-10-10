@@ -39,9 +39,9 @@
         "Las ganas"
       ],
       "feedback": {
-        "Un disparador": "**Es un pensamiento.** Los disparadores de Vale son las situaciones: la previa con sus amigas y antes de los exámenes. Después aparece lo que piensa, «me relaja, me lo merezco», y las ganas llegan a 8 de 10.",
-        "Un pensamiento": "**¡Bien! Es un pensamiento.** Los disparadores de Vale son la previa con sus amigas y antes de los exámenes. Después aparece lo que piensa, «me relaja, me lo merezco», y las ganas llegan a 8 de 10.",
-        "Las ganas": "**Es un pensamiento.** Las ganas son lo que Vale mide de 0 a 10: 8. «Me relaja, me lo merezco» es lo que piensa antes, después del disparador (la previa con sus amigas o los exámenes)."
+        "Un disparador": "**No: es un pensamiento.** Los disparadores de Vale son la previa con sus amigas y los momentos antes de los exámenes. Después aparece lo que piensa, «me relaja, me lo merezco», y las ganas llegan a 8 de 10.",
+        "Un pensamiento": "**¡Bien! Es un pensamiento.** Los disparadores de Vale son la previa con sus amigas y los momentos antes de los exámenes. Después aparece lo que piensa, «me relaja, me lo merezco», y las ganas llegan a 8 de 10.",
+        "Las ganas": "**No: es un pensamiento.** Las ganas son lo que Vale mide de 0 a 10, y llegan a 8. «Me relaja, me lo merezco» es lo que piensa entre el disparador (la previa o los exámenes) y las ganas."
       }
     },
     {
@@ -68,7 +68,7 @@
       "id": "ganas_antes",
       "type": "scale",
       "prompt": "Ganas antes: ¿cuánto miden, de 0 a 10?",
-      "help": "Completalo si tenés ganas ahora y vas a probar el plan. Si no, tocá «Saltar»: lo podés completar cuando vuelvas a este ejercicio.",
+      "help": "Completalo si tenés ganas ahora y vas a probar el plan. Si no, tocá «Saltar»: lo podés completar la próxima vez que hagas este ejercicio.",
       "min": 0,
       "max": 10,
       "min_label": "Nada",
@@ -79,7 +79,7 @@
       "id": "espera",
       "type": "timed_info",
       "title": "Espero 10 minutos",
-      "content": "Si tenés ganas ahora, iniciá el temporizador y, mientras tanto, hacé lo que marcaste en tu plan.\n\nObservá la ola: sube, llega a un pico y baja.\n\nSi ahora no tenés ganas, tocá «Continuar».",
+      "content": "Si tenés ganas ahora, iniciá el temporizador y mirá la hora. Mientras tanto, hacé lo que marcaste en tu plan.\n\nObservá la ola: sube, llega a un pico y baja.\n\nSi ahora no tenés ganas, tocá «Continuar».",
       "seconds": 600
     },
     {
@@ -159,14 +159,14 @@
       "id": "decir_no",
       "type": "checklist",
       "prompt": "Decir que no sin quedar afuera: ¿qué frases te sirven?",
-      "help": "Marcá las que te salgan más naturales.",
+      "help": "Marcá las que te salgan más naturales. Si ninguna te sirve, seguí: en la próxima pantalla escribís la tuya.",
       "options": [
         "«No, gracias, estoy bien así.»",
         "«Hoy paso, mañana tengo partido.»",
         "«No me pinta, pero me quedo un rato.»",
         "Cambiar de tema o proponer otra cosa: «¿Salimos a caminar?»"
       ],
-      "min": 1
+      "optional": true
     },
     {
       "id": "mi_frase",
@@ -184,8 +184,9 @@
     {
       "id": "me_cuesta",
       "type": "text",
-      "prompt": "¿Y qué te cuesta?",
-      "optional": true
+      "prompt": "¿Y qué te cuesta el POD?",
+      "optional": true,
+      "help": "Lo que te quita o te complica. Si no usás POD, pensalo con esa otra costumbre, o salteá esta pregunta."
     },
     {
       "id": "desliz_intro",
@@ -216,13 +217,13 @@
       "type": "reflect",
       "title": "Lo que armaste",
       "template": "Mi plan de 10 minutos: {{plan_10}}. Un disparador: «{{disp_situacion}}», y pensé: «{{disp_pense}}». Mi frase para decir que no: «{{mi_frase}}».",
-      "content": "**Tener ganas no es ser débil: es la forma en que aprende el cerebro.**\n\nTodo queda guardado: lo podés volver a ver en este ejercicio, en «Mis respuestas»."
+      "content": "**Tener ganas no es ser débil: es la forma en que aprende el cerebro.**\n\nCuando toques «Terminar», todo queda guardado y lo vas a poder volver a ver en este ejercicio, en «Mis respuestas»."
     },
     {
       "id": "semana",
       "type": "info",
       "title": "Para esta semana",
-      "content": "**Unos 10 minutos.** Anotá tus ganas 3 veces y probá el plan de 10 minutos una vez. Si no usás POD, practicá tu frase.\n\nPara anotar las ganas podés volver a este ejercicio, a «Mis disparadores»: cada vez queda guardado en «Mis respuestas». Traé lo que anotes a la sesión."
+      "content": "**Unos 10 minutos.** Anotá tus ganas 3 veces y probá el plan de 10 minutos una vez. Si no usás POD, practicá tu frase.\n\nCada vez, anotá lo mismo que en «Mis disparadores»: la situación, con quién estabas, qué sentías, qué pensaste, las ganas de 0 a 10 y qué hiciste.\n\nPodés hacerlo en «Registrar cómo me siento» (con quién estabas y las ganas van en «¿Qué estaba pasando?») o volviendo a hacer este ejercicio."
     }
   ],
   "material": {

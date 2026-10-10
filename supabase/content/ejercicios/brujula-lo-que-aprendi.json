@@ -20,7 +20,7 @@
       "id": "antes_ahora",
       "type": "info",
       "title": "Antes y ahora",
-      "content": "Son las mismas siete preguntas de «Mi punto de partida», de 0 a 10.\n\nLo que contestaste ahí está guardado en ese ejercicio, en «Mis respuestas». Miralo antes o después para comparar.\n\n**Si algo no cambió o empeoró, no es un fracaso: es información para seguir.**"
+      "content": "Son las mismas siete preguntas de «Mi punto de partida», de 0 a 10.\n\nSi hiciste ese ejercicio en la app, lo que contestaste está ahí, en «Mis respuestas». Miralo cuando termines para comparar.\n\n**Si algo no cambió o empeoró, no es un fracaso: es información para seguir.**"
     },
     {
       "id": "ahora_animo",
@@ -145,22 +145,22 @@
       "id": "si_noto",
       "type": "text",
       "prompt": "Si noto…",
-      "help": "Una señal de que estás empezando a estar mal: en tu cuerpo, en lo que pensás o en lo que hacés.",
-      "placeholder": "Si noto…"
+      "help": "Completá la frase con una señal de que estás empezando a estar mal: en tu cuerpo, en lo que pensás o en lo que hacés.",
+      "placeholder": "Por ejemplo: que me encierro en la pieza…"
     },
     {
       "id": "voy_a",
       "type": "text",
       "prompt": "voy a…",
       "help": "Algo que vas a hacer: por ejemplo, una de tus herramientas.",
-      "placeholder": "voy a…"
+      "placeholder": "Por ejemplo: usar STOP…"
     },
     {
       "id": "hablar_con",
       "type": "text",
       "prompt": "y voy a hablar con…",
-      "help": "Una persona de confianza.",
-      "placeholder": "y voy a hablar con…"
+      "help": "Una persona de confianza. Podés mirar tu mapa de «Mi red de apoyo».",
+      "placeholder": "Por ejemplo: la orientadora…"
     },
     {
       "id": "frase",
@@ -180,13 +180,13 @@
       "type": "reflect",
       "title": "Mirá cuánto recorriste",
       "template": "Lo que entendí sobre mí: «{{entendi}}» — Lo que quiero seguir practicando: «{{seguir_practicando}}» — Mis herramientas: {{herramientas}} — Mi próximo paso: «{{proximo_paso}}»",
-      "content": "Todo queda guardado en este ejercicio, en «Mis respuestas». Para comparar, mirá también tus respuestas de «Mi punto de partida»."
+      "content": "Cuando toques «Terminar», en la próxima pantalla, todo queda guardado en este ejercicio, en «Mis respuestas». Para comparar, mirá también tus respuestas de «Mi punto de partida»."
     },
     {
       "id": "recorda",
       "type": "info",
       "title": "Recordá",
-      "content": "**Pedir ayuda también es una habilidad.**\n\nSi un día lo necesitás, tu plan para momentos muy difíciles está en **Calmarme**."
+      "content": "**Pedir ayuda también es una habilidad.**\n\nSi un día lo necesitás, en **Calmarme** están «Mi plan para momentos muy difíciles» y el recuadro «Si necesitás ayuda urgente»."
     }
   ]
 }

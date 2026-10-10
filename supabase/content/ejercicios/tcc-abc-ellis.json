@@ -8,7 +8,7 @@
   "collection": "tcc",
   "estimated_minutes": 30,
   "sort_order": 206,
-  "source": "Cuadernillo de TCC, Capítulo 6 (páginas 26 a 29)",
+  "source": "Cuadernillo de TCC, capítulo 6 (páginas 26 a 29)",
   "steps": [
     {
       "id": "intro",
@@ -25,8 +25,8 @@
     {
       "id": "clinica",
       "type": "info",
-      "title": "Para profundizar",
-      "content": "Esta es la explicación clínica. Si preferís, pasá a la pantalla siguiente.\n\nLa Terapia Racional Emotiva Conductual (TREC/REBT) de Ellis sostiene que la perturbación emocional deriva de **creencias irracionales**: exigencias absolutas y rígidas («debo», «tengo que», «debería») desde las que se derivan tres conclusiones típicas:\n\n- el **tremendismo** (catastrofizar);\n- la **baja tolerancia a la frustración** («no lo soporto»);\n- la **condena global** de sí mismo o de otros («soy un inútil», «es una mala persona»).\n\nEl trabajo terapéutico consiste en detectar esas exigencias, debatirlas y sustituirlas por preferencias flexibles."
+      "title": "Para profundizar (opcional)",
+      "content": "Es la explicación clínica. Si preferís, pasá a la pantalla siguiente.\n\nLa Terapia Racional Emotiva Conductual (TREC/REBT) de Ellis sostiene que la perturbación emocional deriva de **creencias irracionales**: exigencias absolutas y rígidas («debo», «tengo que», «debería») desde las que se derivan tres conclusiones típicas:\n\n- el **tremendismo** (catastrofizar);\n- la **baja tolerancia a la frustración** («no lo soporto»);\n- la **condena global** de sí mismo o de otros («soy un inútil», «es una mala persona»).\n\nEl trabajo terapéutico consiste en detectar esas exigencias, debatirlas y sustituirlas por preferencias flexibles."
     },
     {
       "id": "letras",
@@ -227,7 +227,7 @@
       "id": "b_senales",
       "type": "checklist",
       "prompt": "¿Qué señales de creencia irracional encontrás en tu B?",
-      "help": "Es como subrayar las palabras de exigencia. Marcá todas las que aparezcan. Si no encontrás ninguna, tocá «Atrás» y preguntate qué exigencia («debo/debería/tengo que») estaba detrás.",
+      "help": "Es como subrayar las palabras de exigencia. Marcá todas las que aparezcan en lo que escribiste. Si no encontrás ninguna, volvé atrás y preguntate qué «debo», «debería» o «tengo que» estaba detrás.",
       "options": [
         "Exigencia absoluta: «debo», «tengo que», «debería», «no puede ser que»",
         "Tremendismo: «es horrible», «es lo peor que podría pasar»",
@@ -312,8 +312,8 @@
     {
       "id": "reflexion_respuesta",
       "type": "text",
-      "prompt": "Si querés, respondé alguna de estas preguntas",
-      "help": "Por ejemplo, por qué preferís uno u otro estilo. Podés llevar tu respuesta a la próxima sesión.",
+      "prompt": "Si querés, escribí tus respuestas",
+      "help": "Por ejemplo, por qué preferís uno u otro estilo, o qué te respondés a alguna de las preguntas de reflexión. También podés llevarlo a la próxima sesión.",
       "optional": true
     },
     {
@@ -326,7 +326,7 @@
       "id": "semana",
       "type": "info",
       "title": "Para esta semana",
-      "content": "- Completá **tres registros ABCDE** durante la semana: repetí este ejercicio cada vez (unos 10 minutos; las pantallas de lectura las podés pasar rápido). Para anotar en el momento, también tenés el «Registro ABC», al final de la colección.\n- En cada B, marcá las palabras de exigencia («debo», «tengo que», «debería»), como hiciste hoy.\n- Reescribí cada exigencia como una preferencia flexible.\n- Repetí en voz alta la preferencia que elegiste cuando aparezca la situación.\n\nEl próximo capítulo es **«Tríada cognitiva y activación conductual»**."
+      "content": "- Completá **tres registros ABCDE** durante la semana: repetí este ejercicio cada vez (unos 10 minutos; las pantallas de lectura las podés pasar rápido). Para anotar en el momento, también tenés el «Registro ABC».\n- En cada B, marcá las palabras de exigencia («debo», «tengo que», «debería»), como hiciste hoy.\n- Reescribí cada exigencia como una preferencia flexible.\n- Repetí en voz alta la preferencia que elegiste cuando aparezca la situación.\n\nEl próximo capítulo es **«Tríada cognitiva y activación conductual»**."
     }
   ],
   "material": {

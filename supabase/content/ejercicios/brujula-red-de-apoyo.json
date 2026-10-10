@@ -26,7 +26,13 @@
       "id": "mapa_info",
       "type": "info",
       "title": "Tu mapa",
-      "content": "Vas a armar un mapa con vos en el centro y tres zonas alrededor, de la más cercana a la más lejana:\n\n- **A quién le puedo contar algo.**\n- **A quién le puedo pedir ayuda.**\n- **Profesionales y adultos responsables.**\n\n**Meta: al menos 2 adultos.**\n\n**Tobi, 14:** en su mapa están su abuelo, el entrenador de básquet y la orientadora del colegio.\n\n**Tu mapa, tus reglas.** Si alguien te lastima o te da miedo, no tiene que estar en tu mapa."
+      "content": "Vas a armar un mapa con vos en el centro y tres zonas alrededor, de la más cercana a la más lejana:\n\n- **A quién le puedo contar algo.**\n- **A quién le puedo pedir ayuda.**\n- **Profesionales y adultos responsables.**\n\nEscribí nombres en cada zona. **Meta: al menos 2 adultos.**"
+    },
+    {
+      "id": "tus_reglas",
+      "type": "info",
+      "title": "Tu mapa, tus reglas",
+      "content": "**Tobi, 14:** en su mapa están su abuelo, el entrenador de básquet y la orientadora del colegio.\n\n**Tu mapa, tus reglas.** Si alguien te lastima o te da miedo, no tiene que estar en tu mapa."
     },
     {
       "id": "zona_contar",
@@ -48,7 +54,7 @@
       "id": "zona_profesionales",
       "type": "list",
       "prompt": "Profesionales y adultos responsables: ¿quiénes son?",
-      "help": "La zona de afuera. Por ejemplo, tu psicólogo/a, un profe, el orientador o la orientadora, un médico o una médica, tu entrenador/a.",
+      "help": "La zona de afuera. Por ejemplo, tu psicólogo/a, un profe, el orientador o la orientadora, un médico o una médica, tu entrenador/a.\n\nRecordá la meta: al menos 2 adultos en todo tu mapa.",
       "count": 3,
       "min": 1
     },
@@ -62,7 +68,7 @@
       ],
       "feedback": {
         "Sí": "**¡Bien!** Tenés más de un adulto a quien recurrir. No todas las personas tienen que poder ayudarte con todo.",
-        "Todavía no": "**Está bien: es un punto de partida.** Mirá de nuevo quiénes pueden ser personas seguras fuera de tu casa (un profe, el orientador o la orientadora, tu entrenador/a, alguien del club, de la iglesia o del barrio) y, si querés, pensalo con tu psicólogo/a.\n\nPodés volver a este ejercicio y sumar nombres cuando quieras."
+        "Todavía no": "**Está bien: es un punto de partida.** Pensá quiénes pueden ser personas seguras fuera de tu casa: un profe, el orientador o la orientadora, tu entrenador/a, un vecino o una vecina de confianza, alguien del club, de la iglesia o del barrio. Si se te ocurre alguien, tocá «Atrás» y sumalo.\n\nSi querés, pensalo con tu psicólogo/a."
       }
     },
     {
@@ -111,7 +117,7 @@
       "id": "tema_crisis",
       "type": "text",
       "prompt": "Una crisis: ¿quién te puede ayudar y cómo la contactás?",
-      "help": "Para los momentos muy difíciles también tenés «Mi plan para momentos muy difíciles», que se abre rápido desde **Calmarme**.\n\nSi estás en peligro ahora, pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano. En la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos.",
+      "help": "Para los momentos muy difíciles está también «Mi plan para momentos muy difíciles»: si ya lo armaste, lo abrís rápido desde **Calmarme**.\n\nSi estás en peligro ahora, pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano. En la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos.",
       "placeholder": "Persona y cómo la contacto",
       "optional": true
     },
@@ -120,13 +126,13 @@
       "type": "reflect",
       "title": "Mi red de apoyo",
       "template": "Le puedo contar algo a: {{zona_contar}}. Le puedo pedir ayuda a: {{zona_ayuda}}. Profesionales y adultos responsables: {{zona_profesionales}}.",
-      "content": "**Tu mapa, tus reglas.** Queda guardado, junto con a quién recurrir en cada tema: lo podés volver a ver en este ejercicio, en «Mis respuestas»."
+      "content": "**Tu mapa, tus reglas.** Cuando toques «Terminar», queda guardado junto con a quién recurrir en cada tema, y lo vas a poder volver a ver en este ejercicio, en «Mis respuestas»."
     },
     {
       "id": "semana",
       "type": "info",
       "title": "Para esta semana",
-      "content": "**Unos 10 minutos.** Hablá con uno de los adultos de tu mapa, del tema que vos elijas.\n\nSi te está pasando algo de lo que vimos en «Cuando otros me hacen sentir menos», ese es el tema."
+      "content": "**Unos 10 minutos.** Hablá con uno de los adultos de tu mapa, del tema que vos elijas.\n\nSi te está pasando algo de lo que viste en «Cuando otros me hacen sentir menos», ese es el tema."
     }
   ],
   "material": {

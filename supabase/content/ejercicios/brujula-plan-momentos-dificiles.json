@@ -14,7 +14,7 @@
       "id": "para_que",
       "type": "info",
       "title": "Mi plan para momentos muy difíciles",
-      "content": "**Un plan para ganar tiempo y conectar con ayuda.**\n\nEste plan lo armás con tu psicólogo/a y, si se puede, con un adulto de confianza. No reemplaza una evaluación profesional.\n\nTiene seis partes, una por pantalla. Si alguna te cuesta, la pueden completar juntos en la sesión."
+      "content": "**Un plan para ganar tiempo y conectar con ayuda.**\n\nEste plan lo armás con tu psicólogo/a y, si se puede, con un adulto de confianza. No reemplaza una evaluación profesional.\n\nTiene seis partes. Si alguna te cuesta, la completás en la sesión con tu psicólogo/a."
     },
     {
       "id": "pedi_ayuda_ya",
@@ -66,7 +66,7 @@
       "id": "guardia",
       "type": "text",
       "prompt": "Profesionales y servicios: guardia del hospital más cercano",
-      "help": "Cuál es y su teléfono.",
+      "help": "**Parte 5 de 6.** Cuál es y su teléfono.",
       "placeholder": "Hospital y teléfono…",
       "optional": true
     },
@@ -74,7 +74,7 @@
       "id": "otro_servicio",
       "type": "text",
       "prompt": "Profesionales y servicios: otro servicio",
-      "help": "Si hay otro servicio que te pueda ayudar, su nombre y su teléfono.",
+      "help": "**Parte 5 de 6.** Si hay otro servicio que te pueda ayudar, su nombre y su teléfono.",
       "placeholder": "Servicio y teléfono…",
       "optional": true
     },
@@ -82,7 +82,7 @@
       "id": "entorno",
       "type": "text",
       "prompt": "Cómo hacer mi entorno más seguro: lo acordé con…",
-      "help": "**Parte 6 de 6.** Con un adulto de confianza, acordar que guarde lo que podría usarse para hacerte daño. Escribí con quién lo acordaste.\n\nSi todavía no lo acordaste con nadie, hablalo con tu psicólogo/a.",
+      "help": "**Parte 6 de 6.** Acordá con un adulto de confianza que guarde lo que podría usarse para hacerte daño. Escribí con quién lo acordaste.\n\nSi todavía no lo acordaste con nadie, hablalo con tu psicólogo/a.",
       "placeholder": "Lo acordé con…",
       "optional": true
     },
@@ -104,13 +104,13 @@
       "type": "reflect",
       "title": "Mi plan",
       "template": "Mis señales de que estoy empezando a estar mal: {{senales}} — Lo que puedo hacer solo/a para ganar tiempo: {{cosas_solo}} — Lugares y personas que me ayudan a distraerme o calmarme: {{lugares_personas}} — Adultos a quienes les puedo pedir ayuda: {{adultos}}",
-      "content": "Tu plan completo queda guardado en este ejercicio, en «Mis respuestas». Tu psicólogo/a solo lo puede ver si activaste **«Compartir mis registros con mi psicólogo»** en tu perfil."
+      "content": "Acá ves las primeras cuatro partes. Cuando toques «Terminar», en la próxima pantalla, el plan completo queda guardado en este ejercicio, en «Mis respuestas».\n\nTu psicólogo/a lo puede ver en la app si tenés activado **«Compartir mis registros con mi psicólogo»** en tu perfil."
     },
     {
       "id": "semana",
       "type": "info",
       "title": "Para esta semana",
-      "content": "**Unos 10 minutos.** Copiá este plan en un papel que tengas siempre a mano. Sumale los teléfonos del recuadro «Si necesitás ayuda urgente», en **Calmarme**.\n\nTambién queda guardado en la app y lo podés abrir rápido desde **Calmarme**, en «Mi plan para momentos muy difíciles». Si cambia algo, como una persona o un teléfono, lo podés actualizar desde ahí.\n\n**Si estás en peligro ahora**, pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano."
+      "content": "**Unos 10 minutos.** Copiá este plan en un papel que tengas siempre a mano. Sumale los teléfonos del recuadro «Si necesitás ayuda urgente», en **Calmarme**.\n\nAl tocar «Terminar», el plan queda guardado en la app y lo abrís rápido desde **Calmarme**, con «Ver mi plan». Si cambia algo, como una persona o un teléfono, tocá «Actualizarlo» ahí mismo y armalo de nuevo.\n\n**Si estás en peligro ahora**, pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano."
     }
   ],
   "material": {

@@ -1,0 +1,75 @@
+{
+  "slug": "tcc-registro-evidencias",
+  "title": "Registro de evidencias",
+  "description": "Poné a prueba un pensamiento: juntá evidencia a favor y en contra antes de sacar una conclusión.",
+  "kind": "thought_record",
+  "approach": "tcc",
+  "audience": "adultos",
+  "collection": "tcc",
+  "estimated_minutes": 5,
+  "sort_order": 214,
+  "source": "Cuadernillo de TCC, Anexo 4 (página 37)",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Registro de evidencias",
+      "content": "Es la hoja del Anexo 4 del cuadernillo y viene del capítulo «Cuestionamiento socrático y reestructuración».\n\nSirve para poner a prueba un pensamiento: escribilo primero y juntá pruebas **a favor** y **en contra** antes de sacar conclusiones.\n\nUsalo tantas veces como necesites: la práctica repetida es lo que instala el cambio."
+    },
+    {
+      "id": "pensamiento",
+      "type": "text",
+      "prompt": "¿Qué pensamiento querés examinar?",
+      "help": "Escribilo tal como aparece. Así lo hizo Ana: «todos van a ver que estoy nerviosa y me van a juzgar»."
+    },
+    {
+      "id": "credibilidad_inicial",
+      "type": "scale",
+      "prompt": "¿Cuánto lo creés ahora? (de 0 a 100)",
+      "help": "Es la credibilidad inicial. Ana: 90.",
+      "min": 0,
+      "max": 100,
+      "min_label": "Nada",
+      "max_label": "Totalmente"
+    },
+    {
+      "id": "evidencia_favor",
+      "type": "list",
+      "prompt": "Evidencia a favor: ¿qué hechos apoyan el pensamiento?",
+      "help": "Hechos, no interpretaciones. Una prueba por renglón. Ana: «a veces me tiembla la voz».",
+      "count": 5,
+      "min": 1
+    },
+    {
+      "id": "evidencia_contra",
+      "type": "list",
+      "prompt": "Evidencia en contra: ¿qué hechos no encajan con el pensamiento?",
+      "help": "Lo que solés pasar por alto: forzate a buscar tanta como a favor. Te pueden ayudar estas preguntas: ¿qué datos estoy dejando afuera? ¿Estoy tomando una suposición como si fuera un hecho? ¿Confundo una opinión con un hecho?\n\nAna: «nunca nadie me lo comentó», «me han invitado de nuevo», «yo no juzgo a otros por estar nerviosos».",
+      "count": 5,
+      "min": 1
+    },
+    {
+      "id": "conclusion",
+      "type": "text",
+      "prompt": "Conclusión equilibrada: ¿qué pensamiento alternativo surge de la evidencia?",
+      "help": "Que integre toda la evidencia, no que niegue lo negativo: creíble para vos y equilibrado, no un eslogan optimista.\n\nAna: «puedo estar algo nerviosa y aun así participar; la mayoría está pendiente de lo suyo, no de mí»."
+    },
+    {
+      "id": "credibilidad_nueva",
+      "type": "scale",
+      "prompt": "¿Cuánto creés ahora el pensamiento del principio? (de 0 a 100)",
+      "help": "Es la nueva credibilidad. En el caso de Ana, bajó de 90 a 40.",
+      "min": 0,
+      "max": 100,
+      "min_label": "Nada",
+      "max_label": "Totalmente"
+    },
+    {
+      "id": "resumen",
+      "type": "reflect",
+      "title": "Tu registro de evidencias",
+      "template": "Pensamiento examinado: «{{pensamiento}}». A favor: {{evidencia_favor}}. En contra: {{evidencia_contra}}. Conclusión equilibrada: «{{conclusion}}».",
+      "content": "Compará la credibilidad del principio con la de ahora: ¿bajó?\n\nTu registro queda guardado: lo podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también lo puede ver."
+    }
+  ]
+}

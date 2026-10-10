@@ -14,7 +14,7 @@
       "id": "intro",
       "type": "info",
       "title": "Cuando otros me hacen sentir menos",
-      "content": "**El bullying no es culpa de quien lo sufre.**\n\nPrimero vas a ver la diferencia entre un conflicto, una broma y el bullying. Después, dónde está lo que te pasa y qué podés hacer.\n\nSi estás en peligro ahora, pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano. En la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos."
+      "content": "**El bullying no es culpa de quien lo sufre.**\n\nPrimero vas a ver la diferencia entre conflicto, broma, bullying y cyberbullying. Después, dónde está lo que te pasa y qué podés hacer.\n\nSi estás en peligro ahora, pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano. En la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos."
     },
     {
       "id": "tipos",
@@ -26,7 +26,7 @@
       "id": "semaforo",
       "type": "choice",
       "prompt": "El semáforo: ¿dónde está lo que te pasa?",
-      "help": "- **Verde.** Un conflicto o una broma que no lastima. Se puede hablar o resolver.\n- **Amarillo.** Algo te molesta, se repite o no para cuando lo pedís.\n- **Rojo.** Amenazas, golpes, te dejan afuera a propósito una y otra vez, publican cosas tuyas, o te presionan para mandar fotos o hacer algo que no querés.\n\nSi ahora no te pasa nada de esto, podés saltear esta pregunta.",
+      "help": "- **Verde.** Un conflicto o una broma que no lastima. Se puede hablar o resolver.\n- **Amarillo.** Algo te molesta, se repite o no para cuando lo pedís. Contáselo a alguien y anotá qué pasa.\n- **Rojo.** Amenazas, golpes, te dejan afuera a propósito una y otra vez, publican cosas tuyas, o te presionan para mandar fotos o hacer algo que no querés. **Contáselo ya a un adulto seguro. No lo enfrentes solo/a.**\n\nSi hoy no te pasa nada de esto, podés saltear esta pregunta.",
       "options": [
         "Verde",
         "Amarillo",
@@ -35,7 +35,7 @@
       "feedback": {
         "Verde": "**Verde: se puede hablar o resolver.** Un conflicto o una broma que no lastima pasa a veces. Si empieza a repetirse o no para cuando lo pedís, ya es amarillo.",
         "Amarillo": "**Amarillo: contáselo a alguien y anotá qué pasa.** En unos pasos vas a armar tu plan anti-bullying: a quién le vas a contar y qué.",
-        "Rojo": "**Rojo: contáselo ya a un adulto seguro. No lo enfrentes solo/a.** Lo que te pasa no es culpa tuya.\n\nSi estás en peligro, abrí «Mi plan para momentos muy difíciles» desde **Calmarme** y pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano. En la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos."
+        "Rojo": "**Rojo: contáselo ya a un adulto seguro. No lo enfrentes solo/a.** Lo que te pasa no es culpa tuya.\n\nNo esperes a terminar este ejercicio para contarlo. El plan anti-bullying de las próximas pantallas te puede ayudar a ordenar a quién y qué.\n\nSi estás en peligro ahora, pedí ayuda ya a un adulto, a emergencias o en la guardia del hospital más cercano. En la app, la sección **Calmarme** tiene el recuadro «Si necesitás ayuda urgente» con los teléfonos."
       },
       "optional": true
     },
@@ -49,7 +49,7 @@
       "id": "tobi",
       "type": "info",
       "title": "Lo que pasó y lo que pensé sobre mí",
-      "content": "**El hecho no se discute: se trabaja lo que te quedó pensando de vos.**\n\nAsí lo hizo Tobi, 14 años:\n\n- **Lo que pasó:** Se burlaron de mi cuerpo. Pasó, y estuvo mal.\n- **Lo que pensé sobre mí después:** «Entonces soy horrible.»\n- **Lo que me diría alguien que me quiere:** «Que se burlen habla de cómo tratan ellos, no de lo que valés.»\n- **Lo que elijo creer sobre mí:** «Me dolió. No me define.»\n\nAhora te toca a vos, con algo que te haya pasado."
+      "content": "**El hecho no se discute: se trabaja lo que te quedó pensando de vos.**\n\nAsí lo hizo Tobi, 14 años:\n\n- **Lo que pasó:** Se burlaron de mi cuerpo. Pasó, y estuvo mal.\n- **Lo que pensé sobre mí después:** «Entonces soy horrible.»\n- **Lo que me diría alguien que me quiere:** «Que se burlen habla de cómo tratan ellos, no de lo que valés.»\n- **Lo que elijo creer sobre mí:** «Me dolió. No me define.»\n\nAhora te toca a vos, con alguna vez que alguien te hizo sentir menos."
     },
     {
       "id": "que_paso",
@@ -86,7 +86,7 @@
       "id": "plan_intro",
       "type": "info",
       "title": "Mi plan anti-bullying",
-      "content": "Ahora armá tu plan: a quién le vas a contar, qué le vas a contar y cómo cuidarte mientras tanto.\n\nSon seis preguntas cortas."
+      "content": "Ahora armá tu plan: a quién le vas a contar, qué le vas a contar y cómo cuidarte mientras tanto.\n\nSon seis preguntas cortas. Si hoy no te pasa nada de esto, armalo igual, pensando a quién recurrirías."
     },
     {
       "id": "adulto_colegio",
@@ -130,8 +130,8 @@
       "id": "resumen_plan",
       "type": "reflect",
       "title": "Mi plan anti-bullying",
-      "template": "En el colegio le voy a contar a {{adulto_colegio}}, y fuera del colegio, a {{adulto_fuera}}. Les voy a contar: «{{que_contar}}». Las pruebas están en: {{pruebas}}. Estoy más acompañado/a: {{acompanado}}. Compañeros/as que me hacen bien: {{companeros}}.",
-      "content": "Tu plan queda guardado: lo podés volver a ver en este ejercicio, en «Mis respuestas»."
+      "template": "En el colegio le voy a contar a {{adulto_colegio}}, y fuera del colegio, a {{adulto_fuera}}. Les voy a contar: «{{que_contar}}». Estoy más acompañado/a: {{acompanado}}. Pruebas guardadas en: {{pruebas}}; compañeros/as que me hacen bien: {{companeros}}",
+      "content": "Cuando toques «Terminar», tu plan queda guardado y lo vas a poder volver a ver en este ejercicio, en «Mis respuestas»."
     },
     {
       "id": "otra_persona",
@@ -143,7 +143,7 @@
       "id": "semana",
       "type": "info",
       "title": "Para esta semana",
-      "content": "La tarea de esta semana está en «Mi red de apoyo» (unos 10 minutos): vas a armar tu mapa de personas seguras y hablar con uno de los adultos de tu mapa. Si te está pasando algo de lo que viste acá, ese es el tema.\n\n**El bullying no es culpa de quien lo sufre.**"
+      "content": "La tarea de esta semana está en el ejercicio «Mi red de apoyo», donde armás tu mapa de personas seguras.\n\n**Unos 10 minutos.** Hablá con uno de los adultos de tu mapa, del tema que vos elijas. Si te está pasando algo de lo que viste acá, ese es el tema.\n\n**El bullying no es culpa de quien lo sufre.**"
     }
   ],
   "material": {
