@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check, CircleCheck, Lock, Send } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Lock, Send } from "lucide-react";
 import { type ReactNode, useEffect, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
@@ -29,7 +29,7 @@ import {
 import { cn } from "@/lib/utils";
 import { saveIntakeAction } from "@/server/actions/intake";
 
-type Screen = { kind: "intro" } | { kind: "step"; index: number } | { kind: "review" } | { kind: "done" };
+type Screen = { kind: "intro" } | { kind: "step"; index: number } | { kind: "review" };
 
 type Props = {
   initialAnswers: IntakeAnswers;
@@ -71,6 +71,13 @@ export function IntakeWizard({ initialAnswers, submitted, hasDraft = false, prof
     window.scrollTo({ top: 0, behavior: "smooth" });
     headingRef.current?.focus({ preventScroll: true });
   }, [screen]);
+
+  // Tras un error de validación, el foco va al primer campo marcado.
+  useEffect(() => {
+    if (Object.keys(errors).length === 0) return;
+    const el = document.querySelector<HTMLElement>('[aria-invalid="true"] input, input[aria-invalid="true"], textarea[aria-invalid="true"], fieldset[aria-invalid="true"] input');
+    el?.focus();
+  }, [errors]);
 
   // Aviso del navegador si se cierra la pestaña con cambios sin guardar.
   useEffect(() => {
@@ -119,7 +126,12 @@ export function IntakeWizard({ initialAnswers, submitted, hasDraft = false, prof
           return;
         }
         setDirty(false);
-        if (submit) setWasSubmitted(true);
+        if (submit) {
+          setWasSubmitted(true);
+          // La confirmación la arma el servidor (así no depende del estado de esta pantalla).
+          router.replace("/app/ingreso?enviada=1");
+          return;
+        }
       }
       if (target === "exit") {
         toast.success(wasSubmitted || submit ? "Cambios guardados." : "Guardado. Podés seguir cuando quieras.");
@@ -171,25 +183,6 @@ export function IntakeWizard({ initialAnswers, submitted, hasDraft = false, prof
             </Button>
           )}
         </div>
-      </div>
-    );
-  }
-
-  if (screen.kind === "done") {
-    return (
-      <div className="mx-auto max-w-xl space-y-6 text-center">
-        <span className="mx-auto flex size-16 items-center justify-center rounded-full bg-mint-50 text-mint-700">
-          <CircleCheck className="size-8" aria-hidden />
-        </span>
-        <h2 ref={headingRef} tabIndex={-1} className="font-display text-2xl font-medium outline-none sm:text-3xl">
-          Gracias, {firstName}.
-        </h2>
-        <p className="text-lg text-muted-foreground">
-          Tu ficha de ingreso le llegó a {professionalName}. La va a leer antes de la sesión. Si querés cambiar algo, la encontrás en Mi perfil.
-        </p>
-        <Button asChild size="lg">
-          <Link href="/app">Ir al inicio</Link>
-        </Button>
       </div>
     );
   }
@@ -251,7 +244,7 @@ export function IntakeWizard({ initialAnswers, submitted, hasDraft = false, prof
           <Button variant="ghost" onClick={() => saveThen("exit")} disabled={pending}>
             Guardar y salir
           </Button>
-          <Button size="lg" onClick={() => saveThen({ kind: "done" }, true)} loading={pending}>
+          <Button size="lg" onClick={() => saveThen({ kind: "review" }, true)} loading={pending}>
             <Send aria-hidden /> {wasSubmitted ? "Enviar cambios" : "Enviar ficha"}
           </Button>
         </div>

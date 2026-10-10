@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Pencil } from "lucide-react";
+import { CircleCheck, Pencil } from "lucide-react";
 
 import { CrisisBanner } from "@/components/calm/crisis-banner";
 import { IntakeAnswers } from "@/components/intake/intake-answers";
@@ -17,7 +17,7 @@ import { getPublicSettingsSafe } from "@/server/services/public-settings";
 
 export const metadata: Metadata = { title: "Ficha de ingreso" };
 
-export default async function IntakePage({ searchParams }: { searchParams: Promise<{ bienvenida?: string; editar?: string; parte?: string }> }) {
+export default async function IntakePage({ searchParams }: { searchParams: Promise<{ bienvenida?: string; editar?: string; parte?: string; enviada?: string }> }) {
   const { patient } = await requirePatient();
   const supabase = await createClient();
   const [intake, resources, settings, params] = await Promise.all([getIntake(supabase, patient.id), getActiveEmergencyResources(), getPublicSettingsSafe(), searchParams]);
@@ -25,6 +25,29 @@ export default async function IntakePage({ searchParams }: { searchParams: Promi
   const submitted = Boolean(intake?.submitted_at);
   const part = params.parte !== undefined && /^\d+$/.test(params.parte) && Number(params.parte) < INTAKE_STEPS.length ? Number(params.parte) : null;
   const editing = params.editar === "1" || part !== null;
+
+  // Confirmación después de enviar (el formulario navega acá cuando la base confirmó el envío).
+  if (intake && submitted && params.enviada === "1") {
+    return (
+      <div className="mx-auto max-w-xl space-y-6 py-6 text-center">
+        <span className="mx-auto flex size-16 items-center justify-center rounded-full bg-mint-50 text-mint-700">
+          <CircleCheck className="size-8" aria-hidden />
+        </span>
+        <h1 className="font-display text-2xl font-medium sm:text-3xl">Gracias, {patient.first_name}.</h1>
+        <p className="text-lg text-muted-foreground">
+          Tu ficha de ingreso le llegó a {identity.professional_name}. La va a leer antes de la sesión. Si querés cambiar algo, la encontrás en Mi perfil.
+        </p>
+        <div className="flex flex-col items-center gap-2">
+          <Button asChild size="lg">
+            <Link href="/app">Ir al inicio</Link>
+          </Button>
+          <Button asChild variant="ghost">
+            <Link href="/app/ingreso">Ver mi ficha</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (intake && submitted && !editing) {
     const sent = intake.first_submitted_at ?? intake.submitted_at!;

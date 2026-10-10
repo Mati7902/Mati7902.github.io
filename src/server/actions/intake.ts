@@ -1,7 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
 import { assertPatient } from "@/lib/auth/session";
 import { type ActionResult, fail, ok, validationFail } from "@/lib/errors";
 import { type ContactValue, type IntakeAnswers, parseIntakeAnswers } from "@/lib/intake/form";
@@ -68,9 +66,8 @@ export async function saveIntakeAction(payload: SaveIntakePayload): Promise<Acti
       // Sin contenido: solo el hecho de que se envió.
       await audit(supabase, "patient.intake_submitted", { type: "patient", id: patient.id }, { form_version: intake.form_version });
     }
-    revalidatePath("/app");
-    revalidatePath("/app/ingreso");
-    revalidatePath("/app/perfil");
+    // Sin revalidatePath: refrescaría la página abierta en medio del formulario (y al enviar la
+    // cambiaría por la vista de la ficha). Las páginas son dinámicas y el formulario navega solo.
     return ok({ submittedAt: intake.submitted_at, firstSubmittedAt: intake.first_submitted_at, updatedAt: intake.updated_at });
   } catch (error) {
     return fail(error);
