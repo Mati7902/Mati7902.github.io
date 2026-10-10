@@ -6,7 +6,7 @@ import { CrisisBanner } from "@/components/calm/crisis-banner";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { requirePatient } from "@/lib/auth/session";
-import { capitalize, formatCompactDate } from "@/lib/dates";
+import { formatCompactDate } from "@/lib/dates";
 import { ageFrom, audiencesFor, isForAudience, PLAN_SLUG } from "@/lib/exercises/collections";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveEmergencyResources } from "@/server/services/public-content";
@@ -36,7 +36,7 @@ function PlanCard({ savedAt, slug, canEdit = true }: { savedAt: string | null; s
         <h2 className="font-display text-lg font-medium">Mi plan para momentos muy difíciles</h2>
         <p className="text-sm text-muted-foreground">
           {savedAt
-            ? `Lo armaste el ${capitalize(formatCompactDate(savedAt))}. Abrilo cuando lo necesites: tus señales, qué hacer y a quién llamar.`
+            ? `Lo armaste el ${formatCompactDate(savedAt)}. Abrilo cuando lo necesites: tus señales, qué hacer y a quién llamar.`
             : "Un plan para ganar tiempo y conectar con ayuda. Podés armarlo con tu psicólogo/a."}
         </p>
       </div>

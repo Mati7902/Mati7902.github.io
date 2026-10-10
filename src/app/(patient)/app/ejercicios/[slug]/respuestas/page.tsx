@@ -35,7 +35,11 @@ export default async function ExerciseResponsesPage({ params }: { params: Promis
       <PageHeader
         eyebrow="Mis respuestas"
         title={template.title}
-        description="Lo que escribiste cada vez que hiciste este ejercicio. Solo vos lo ves, salvo que compartas tus registros con tu psicólogo."
+        description={
+          patient.share_records_with_professional
+            ? "Lo que escribiste cada vez que hiciste este ejercicio. Tu psicólogo también lo puede ver, porque compartís tus registros (lo cambiás en tu perfil)."
+            : "Lo que escribiste cada vez que hiciste este ejercicio. Solo lo ves vos: no estás compartiendo tus registros con tu psicólogo."
+        }
       />
       {responses.length > 0 ? (
         <ExerciseResponseList
