@@ -544,13 +544,14 @@ select pg_temp.assert(not has_function_privilege('authenticated', 'public.tmp_pr
 rollback;
 
 -- ---------------------------------------------------------------------------
--- Testimonios: la web solo ve los publicados con autorización; solo el profesional los carga
+-- Testimonios: la web solo ve los publicados con autorización, sin fechas; solo el profesional los carga
 -- ---------------------------------------------------------------------------
 begin;
 delete from public.testimonials;
 insert into public.testimonials (gender, quote, consent_confirmed, is_published, sort_order) values
   ('mujer', 'Texto de prueba de un testimonio publicado.', true, true, 1),
-  ('hombre', 'Texto de prueba de un testimonio sin autorización.', false, false, 2);
+  ('hombre', 'Texto de prueba de un testimonio sin autorización.', false, false, 2),
+  ('hombre', 'Texto de prueba autorizado pero no publicado.', true, false, 3);
 select pg_temp.assert((select consent_confirmed_at is not null from public.testimonials where sort_order = 1), 'la base registra cuándo se confirmó la autorización de un testimonio');
 select pg_temp.assert((select consent_confirmed_at is null from public.testimonials where sort_order = 2), 'sin autorización no hay fecha de confirmación');
 select pg_temp.expect_error($q$insert into public.testimonials (gender, quote, is_published) values ('mujer', 'Publicado sin autorización confirmada.', true)$q$, array['23514'], 'no se publica un testimonio sin autorización');
@@ -561,36 +562,44 @@ alter table public.testimonials disable trigger testimonials_stamp_consent;
 update public.testimonials set consent_confirmed_at = '2026-01-15T12:00:00Z' where sort_order = 1;
 alter table public.testimonials enable trigger testimonials_stamp_consent;
 select pg_temp.login(null, 'anon');
-select pg_temp.assert((select count(*) from public.testimonials) = 1, 'anon ve solo el testimonio publicado con autorización');
+select pg_temp.assert((select count(*) from public.published_testimonials()) = 1 and (select quote from public.published_testimonials()) = 'Texto de prueba de un testimonio publicado.', 'anon ve solo el testimonio publicado con autorización (no los autorizados sin publicar)');
+select pg_temp.expect_error($q$select count(*) from public.testimonials$q$, array['42501'], 'anon no lee la tabla de testimonios (fechas ni datos internos)');
 select pg_temp.expect_error($q$insert into public.testimonials (gender, quote, consent_confirmed, is_published) values ('mujer', 'Un testimonio cargado desde afuera.', true, true)$q$, array['42501'], 'anon no puede cargar testimonios');
 select pg_temp.logout();
 select pg_temp.login('22222222-2222-4222-8222-222222222222');
-select pg_temp.assert((select count(*) from public.testimonials) = 1, 'un paciente ve solo el testimonio publicado');
+select pg_temp.assert((select count(*) from public.published_testimonials()) = 1, 'un paciente ve solo el testimonio publicado');
+select pg_temp.assert((select count(*) from public.testimonials) = 0, 'un paciente no lee la tabla de testimonios');
 select pg_temp.expect_error($q$insert into public.testimonials (gender, quote) values ('hombre', 'Un testimonio cargado por un paciente.')$q$, array['42501'], 'un paciente no puede cargar testimonios');
 update public.testimonials set quote = 'Texto cambiado por un paciente cualquiera.', is_published = true, consent_confirmed = true;
 delete from public.testimonials;
 select pg_temp.logout();
 select pg_temp.login('55555555-5555-4555-8555-555555555555');
-select pg_temp.assert((select count(*) from public.testimonials) = 1, 'recepción ve solo el testimonio publicado');
+select pg_temp.assert((select count(*) from public.published_testimonials()) = 1 and (select count(*) from public.testimonials) = 0, 'recepción ve solo el testimonio publicado');
+select pg_temp.expect_error($q$insert into public.testimonials (gender, quote) values ('mujer', 'Un testimonio cargado por recepción.')$q$, array['42501'], 'recepción no puede cargar testimonios');
 update public.testimonials set is_published = false;
+delete from public.testimonials;
 select pg_temp.logout();
 select pg_temp.assert(
-  (select count(*) from public.testimonials) = 2
+  (select count(*) from public.testimonials) = 3
   and (select quote from public.testimonials where sort_order = 1) = 'Texto de prueba de un testimonio publicado.'
   and (select is_published from public.testimonials where sort_order = 1)
   and (select not is_published and not consent_confirmed from public.testimonials where sort_order = 2),
   'un paciente o recepción no pueden cambiar, publicar ni borrar testimonios');
 select pg_temp.login('11111111-1111-4111-8111-111111111111');
-select pg_temp.assert((select count(*) from public.testimonials) = 2, 'el profesional ve todos los testimonios, también los no publicados');
+select pg_temp.assert((select count(*) from public.testimonials) = 3, 'el profesional ve todos los testimonios, también los no publicados');
 select pg_temp.expect_error($q$update public.testimonials set consent_confirmed = false where sort_order = 1$q$, array['23514'], 'quitar la autorización de un testimonio publicado exige despublicarlo');
 update public.testimonials set consent_confirmed = true, is_published = true where sort_order = 2;
 select pg_temp.assert((select consent_confirmed_at is not null and is_published from public.testimonials where sort_order = 2), 'el profesional confirma la autorización y publica');
-update public.testimonials set quote = 'Texto de prueba corregido con la persona.', consent_confirmed_at = '2020-01-01' where sort_order = 1;
-select pg_temp.assert((select consent_confirmed_at = '2026-01-15T12:00:00Z'::timestamptz from public.testimonials where sort_order = 1), 'editar el texto no cambia la fecha de la autorización ni se puede escribir a mano');
-update public.testimonials set is_published = false, consent_confirmed = false where sort_order = 1;
-select pg_temp.assert((select consent_confirmed_at is null from public.testimonials where sort_order = 1), 'al quitar la autorización se borra su fecha');
+update public.testimonials set sort_order = 4, consent_confirmed_at = '2020-01-01' where sort_order = 1;
+select pg_temp.assert((select consent_confirmed_at = '2026-01-15T12:00:00Z'::timestamptz from public.testimonials where sort_order = 4), 'cambiar el orden no cambia la fecha de la autorización, ni se puede escribir a mano');
+update public.testimonials set quote = 'Texto de prueba corregido con la persona.' where sort_order = 4;
+select pg_temp.assert((select consent_confirmed_at = now() from public.testimonials where sort_order = 4), 'si cambia el texto, la fecha de la autorización se vuelve a registrar');
+insert into public.testimonials (gender, quote, consent_confirmed, consent_confirmed_at, sort_order) values ('mujer', 'Texto de prueba con fecha inventada.', true, '2020-01-01', 5);
+select pg_temp.assert((select consent_confirmed_at = now() from public.testimonials where sort_order = 5), 'al cargar un testimonio la fecha de la autorización la pone la base');
+update public.testimonials set is_published = false, consent_confirmed = false where sort_order = 4;
+select pg_temp.assert((select consent_confirmed_at is null from public.testimonials where sort_order = 4), 'al quitar la autorización se borra su fecha');
 delete from public.testimonials where sort_order = 2;
-select pg_temp.assert((select count(*) from public.testimonials) = 1, 'el profesional elimina testimonios');
+select pg_temp.assert((select count(*) from public.testimonials) = 3, 'el profesional elimina testimonios');
 select pg_temp.logout();
 rollback;
 

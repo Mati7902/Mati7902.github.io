@@ -879,6 +879,14 @@ isOneToOne: false
 "pgp_armor_headers":
 { Args: { "": string }; Returns: Record<string, unknown>[]
                            },
+"published_testimonials":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "context": string | null,
+"gender": string,
+"id": string,
+"quote": string
+            }[]
+                           },
 "reschedule_appointment_tx":
 { Args: { "p_appointment_id": string,"p_new_end": string,"p_new_start": string,"p_new_status"?: Database["public"]['Enums']["appointment_status"],"p_reason"?: string,"p_source"?: Database["public"]['Enums']["appointment_source"] }; Returns: {
               "cancellation_reason": string | null,

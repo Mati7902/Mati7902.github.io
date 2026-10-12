@@ -65,10 +65,11 @@ export async function deleteFaqAction(id: string): Promise<ActionResult> {
 
 /** Guarda un testimonio anónimo y devuelve su id (el editor lo usa para no duplicarlo al volver a guardar). */
 export async function saveTestimonialAction(input: TestimonialInput): Promise<ActionResult<{ id: string }>> {
-  const parsed = testimonialSchema.safeParse(input);
-  if (!parsed.success) return validationFail(zodFieldErrors(parsed.error));
   try {
+    // Primero el permiso: la validación revisa el texto y no tiene que correr para cualquiera.
     await assertAdmin();
+    const parsed = testimonialSchema.safeParse(input);
+    if (!parsed.success) return validationFail(zodFieldErrors(parsed.error));
     const supabase = await createClient();
     const { id, ...rest } = parsed.data;
     const { data, error } = id

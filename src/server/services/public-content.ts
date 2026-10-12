@@ -49,19 +49,12 @@ export const getPublishedFaqs = cache(async (): Promise<Faq[]> =>
   ),
 );
 
-/** Testimonios publicados con autorización confirmada (la RLS tampoco deja ver otros). */
+/** Testimonios publicados con autorización confirmada, sin fechas ni datos internos (la tabla no es pública). */
 export const getPublishedTestimonials = cache(async (): Promise<PublicTestimonial[]> =>
   safe(
     "testimonios",
     async () => {
-      const { data, error } = await createAnonClient()
-        .from("testimonials")
-        .select("id, gender, quote, context")
-        .eq("is_published", true)
-        .eq("consent_confirmed", true)
-        .order("sort_order")
-        .order("created_at")
-        .limit(LANDING_TESTIMONIALS);
+      const { data, error } = await createAnonClient().rpc("published_testimonials").limit(LANDING_TESTIMONIALS);
       if (error) throw error;
       return data ?? [];
     },

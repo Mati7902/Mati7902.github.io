@@ -2,7 +2,7 @@
 
 import { Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -21,10 +21,12 @@ import {
   isTestimonialGender,
   LANDING_TESTIMONIALS,
   QUOTE_MAX,
+  QUOTE_MIN,
   TESTIMONIAL_EMOJI,
   TESTIMONIAL_GENDERS,
   TESTIMONIAL_LABEL,
   type TestimonialGender,
+  textLength,
 } from "@/lib/testimonials";
 import { cn } from "@/lib/utils";
 import { deleteTestimonialAction, saveTestimonialAction } from "@/server/actions/admin-settings";
@@ -44,6 +46,9 @@ const fieldsOf = (t: Testimonial): Fields => ({
 
 const pick = ({ gender, quote, context, sort_order, consent_confirmed, is_published }: Fields): Fields => ({ gender, quote, context, sort_order, consent_confirmed, is_published });
 const sameFields = (a: Fields, b: Fields) => (Object.keys(a) as (keyof Fields)[]).every((k) => a[k] === b[k]);
+// Lo que la persona autorizó: si cambia, hay que volver a confirmar la autorización.
+const TEXT_FIELDS = ["gender", "quote", "context"] as const;
+const textChanged = (a: Fields, b: Fields) => TEXT_FIELDS.some((k) => a[k] !== b[k]);
 
 /**
  * Testimonios anónimos de la portada. Solo se cargan testimonios reales, con la autorización
@@ -55,18 +60,30 @@ export function TestimonialsEditor({ testimonials }: { testimonials: Testimonial
   const [errors, setErrors] = useState<Record<string, Record<string, string>>>({});
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const trashRefs = useRef(new Map<string, HTMLButtonElement>());
+  const addRef = useRef<HTMLButtonElement>(null);
   const publishedCount = rows.filter((r) => r.saved?.is_published).length;
 
-  const update = (key: string, patch: Partial<Fields>) =>
+  const update = (key: string, patch: Partial<Fields>) => {
     setRows((list) =>
       list.map((r) => {
         if (r.key !== key) return r;
         const next = { ...r, ...patch };
+        // Si cambia lo que la persona autorizó, la autorización se vuelve a confirmar.
+        if (r.saved?.consent_confirmed && TEXT_FIELDS.some((k) => k in patch) && textChanged(next, r.saved)) next.consent_confirmed = false;
         // Sin autorización no se publica.
         if (!next.consent_confirmed) next.is_published = false;
         return next;
       }),
     );
+    // Los errores del servidor se van al corregir el campo.
+    setErrors((all) => {
+      const current = { ...(all[key] ?? {}) };
+      for (const field of Object.keys(patch)) delete current[field];
+      if ("is_published" in patch || "consent_confirmed" in patch) delete current.consent_confirmed;
+      return { ...all, [key]: current };
+    });
+  };
 
   const save = (row: Row) =>
     startTransition(async () => {
@@ -86,7 +103,8 @@ export function TestimonialsEditor({ testimonials }: { testimonials: Testimonial
       setErrors((e) => ({ ...e, [row.key]: {} }));
       // Lo que quedó guardado (sin las comillas ni los espacios que limpia el servidor).
       const saved = pick({ ...row, quote: cleanQuote(row.quote), context: row.context.trim() });
-      setRows((list) => list.map((r) => (r.key === row.key ? { ...r, ...saved, id: res.data.id, saved } : r)));
+      // Si se siguió editando mientras se guardaba, se conserva lo nuevo (y queda como cambio sin guardar).
+      setRows((list) => list.map((r) => (r.key !== row.key ? r : { ...r, ...(sameFields(pick(r), pick(row)) ? saved : {}), id: res.data.id, saved })));
       toast.success(row.is_published ? "Testimonio publicado." : "Testimonio guardado (no se ve en la web).");
       router.refresh();
     });
@@ -100,8 +118,14 @@ export function TestimonialsEditor({ testimonials }: { testimonials: Testimonial
       }
       setConfirmDelete(null);
       setRows((list) => list.filter((r) => r.key !== row.key));
+      requestAnimationFrame(() => addRef.current?.focus());
       router.refresh();
     });
+
+  const cancelDelete = (key: string) => {
+    setConfirmDelete(null);
+    requestAnimationFrame(() => trashRefs.current.get(key)?.focus());
+  };
 
   const add = () =>
     setRows((list) => [
@@ -115,12 +139,13 @@ export function TestimonialsEditor({ testimonials }: { testimonials: Testimonial
         <AlertTitle>Solo testimonios reales y autorizados</AlertTitle>
         <AlertDescription>
           <ul className="list-disc space-y-1 pl-4">
-            <li>Usá las palabras de la persona. Si acortás o corregís algo, que apruebe la versión final.</li>
+            <li>Usá las palabras de la persona. Si acortás o corregís algo, que apruebe la versión final (al cambiar el texto, la app te pide confirmar de nuevo la autorización).</li>
             <li>
               Pedilo cuando el proceso terminó, sin presión y aclarando que decir que no no cambia nada. Muchos códigos de ética (por ejemplo, la norma 5.05 del código de la APA) piden no solicitar
-              testimonios a pacientes en tratamiento: revisá lo que dice el que te rige.
+              testimonios a pacientes en tratamiento ni a otras personas que, por su situación, puedan sentirse presionadas a aceptar. Revisá lo que dice el código que te rige.
             </li>
-            <li>Guardá la autorización escrita (un formulario firmado o un mensaje). Si la persona la retira, despublicá o eliminá el testimonio.</li>
+            <li>Con menores de edad, conviene no pedirlos; si igual se publica uno, hace falta también la autorización escrita de madre, padre o tutor.</li>
+            <li>Guardá la autorización escrita (un formulario firmado o un mensaje). Si la persona la retira, desmarcá la autorización (se despublica sola) o eliminá el testimonio.</li>
             <li>Nada que permita reconocerla: ni nombre, iniciales, edad exacta, barrio, trabajo, fechas o situaciones muy particulares. En la web solo se ve 👩 o 👨.</li>
           </ul>
         </AlertDescription>
@@ -143,6 +168,8 @@ export function TestimonialsEditor({ testimonials }: { testimonials: Testimonial
             const quoteError = quoteFound.length ? identifyingDataMessage(quoteFound) : rowErrors.quote;
             const contextError = contextFound.length ? identifyingDataMessage(contextFound) : rowErrors.context;
             const dirty = !row.saved || !sameFields(pick(row), row.saved);
+            const quoteLength = textLength(cleanQuote(row.quote));
+            const reconfirm = Boolean(row.saved?.consent_confirmed && !row.consent_confirmed && textChanged(row, row.saved));
             const id = (field: string) => `testimonio-${row.key}-${field}`;
             return (
               <li key={row.key} className="space-y-4 rounded-2xl border border-border/70 bg-card p-4 sm:p-5">
@@ -177,19 +204,19 @@ export function TestimonialsEditor({ testimonials }: { testimonials: Testimonial
                   ) : null}
                 </fieldset>
 
-                <FormField id={id("quote")} label="Testimonio" hint="Qué cambió a partir de la terapia, con sus palabras. Sin comillas: la web ya lo muestra como cita." error={quoteError}>
+                <FormField id={id("quote")} label="Testimonio" hint={`Qué cambió a partir de la terapia, con sus palabras (entre ${QUOTE_MIN} y ${QUOTE_MAX} caracteres). Sin comillas: la web ya lo muestra como cita.`} error={quoteError}>
                   <Textarea
                     id={id("quote")}
                     value={row.quote}
-                    maxLength={QUOTE_MAX + 50}
+                    maxLength={QUOTE_MAX * 2}
                     onChange={(e) => update(row.key, { quote: e.target.value })}
                     aria-invalid={quoteError ? true : undefined}
                     aria-describedby={`${quoteError ? id("quote-error") : id("quote-hint")} ${id("quote-count")}`}
                     className="min-h-28"
                   />
                 </FormField>
-                <p id={id("quote-count")} className={cn("-mt-2 text-right text-xs tabular-nums", row.quote.trim().length > QUOTE_MAX ? "text-destructive" : "text-subtle-foreground")}>
-                  {row.quote.trim().length}/{QUOTE_MAX}
+                <p id={id("quote-count")} className={cn("-mt-2 text-right text-xs tabular-nums", (quoteLength > 0 && quoteLength < QUOTE_MIN) || quoteLength > QUOTE_MAX ? "text-destructive" : "text-subtle-foreground")}>
+                  {quoteLength}/{QUOTE_MAX}
                 </p>
 
                 <FormField id={id("context")} label="Contexto" optional hint="Por ejemplo: «Después de cinco meses de terapia» o «Consultó por ansiedad». Se ve debajo del testimonio." error={contextError}>
@@ -205,9 +232,20 @@ export function TestimonialsEditor({ testimonials }: { testimonials: Testimonial
 
                 <div className="space-y-3 rounded-xl bg-surface-muted p-3">
                   <label htmlFor={id("consent")} className="flex cursor-pointer items-start gap-3 text-sm">
-                    <Checkbox id={id("consent")} checked={row.consent_confirmed} onCheckedChange={(v) => update(row.key, { consent_confirmed: v === true })} className="mt-0.5" aria-describedby={rowErrors.consent_confirmed ? id("consent-error") : undefined} />
-                    <span>Tengo la autorización escrita de esta persona para publicar este texto de forma anónima.</span>
+                    <Checkbox
+                      id={id("consent")}
+                      checked={row.consent_confirmed}
+                      onCheckedChange={(v) => update(row.key, { consent_confirmed: v === true })}
+                      className="mt-0.5"
+                      aria-describedby={rowErrors.consent_confirmed ? id("consent-error") : reconfirm ? id("consent-reconfirm") : undefined}
+                    />
+                    <span>Tengo la autorización escrita de esta persona (y de quien la representa, si es menor) para publicar este texto de forma anónima.</span>
                   </label>
+                  {reconfirm && !rowErrors.consent_confirmed ? (
+                    <p id={id("consent-reconfirm")} className="text-xs font-medium text-[#7a5614]">
+                      Cambiaste el texto: volvé a confirmar que la persona aprobó esta versión.{row.saved?.is_published ? " Hasta que guardes, en la web sigue el texto anterior." : ""}
+                    </p>
+                  ) : null}
                   {rowErrors.consent_confirmed ? (
                     <p id={id("consent-error")} role="alert" className="text-xs font-medium text-destructive">
                       {rowErrors.consent_confirmed}
@@ -227,21 +265,33 @@ export function TestimonialsEditor({ testimonials }: { testimonials: Testimonial
                     <Input type="number" min={0} max={999} value={row.sort_order} onChange={(e) => update(row.key, { sort_order: Math.max(0, Math.trunc(Number(e.target.value) || 0)) })} className="h-9 w-20" />
                   </label>
                   {confirmDelete === row.key ? (
-                    <div className="flex flex-wrap items-center gap-2 text-sm" role="group" aria-label="Confirmar eliminación">
+                    <div key="confirmar" className="flex flex-wrap items-center gap-2 text-sm" role="group" aria-label={`Confirmar eliminación del testimonio ${index + 1}`}>
                       <span>¿Eliminar este testimonio?</span>
+                      {/* El foco va a «Cancelar»: borrar exige elegir «Eliminar» a propósito. */}
+                      <Button size="sm" variant="ghost" onClick={() => cancelDelete(row.key)} disabled={pending} autoFocus>
+                        Cancelar
+                      </Button>
                       <Button size="sm" variant="destructive" onClick={() => remove(row)} disabled={pending}>
                         Eliminar
                       </Button>
-                      <Button size="sm" variant="ghost" onClick={() => setConfirmDelete(null)} disabled={pending}>
-                        Cancelar
-                      </Button>
                     </div>
                   ) : (
-                    <div className="flex gap-1">
+                    <div key="acciones" className="flex gap-1">
                       <Button size="sm" onClick={() => save(row)} disabled={pending || !dirty || quoteFound.length > 0 || contextFound.length > 0}>
                         {row.is_published && !row.saved?.is_published ? "Guardar y publicar" : "Guardar"}
                       </Button>
-                      <Button size="icon-sm" variant="ghost" className="text-muted-foreground hover:text-destructive" onClick={() => setConfirmDelete(row.key)} disabled={pending} aria-label={`Eliminar testimonio ${index + 1}`}>
+                      <Button
+                        ref={(el) => {
+                          if (el) trashRefs.current.set(row.key, el);
+                          else trashRefs.current.delete(row.key);
+                        }}
+                        size="icon-sm"
+                        variant="ghost"
+                        className="text-muted-foreground hover:text-destructive"
+                        onClick={() => setConfirmDelete(row.key)}
+                        disabled={pending}
+                        aria-label={`Eliminar testimonio ${index + 1}`}
+                      >
                         <Trash2 />
                       </Button>
                     </div>
@@ -253,7 +303,8 @@ export function TestimonialsEditor({ testimonials }: { testimonials: Testimonial
         </ul>
       )}
 
-      <Button variant="outline" onClick={add} disabled={pending}>
+      {/* Sin deshabilitar mientras se guarda: agregar una fila no toca el servidor y recibe el foco al eliminar. */}
+      <Button ref={addRef} variant="outline" onClick={add}>
         <Plus aria-hidden /> Agregar testimonio
       </Button>
     </div>
