@@ -9,16 +9,16 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { requirePatient } from "@/lib/auth/session";
-import { consentParams, renderConsent } from "@/lib/consent/treatment";
+import { consentParams, renderConsent, signsAsMinor } from "@/lib/consent/treatment";
 import { formatShortDate } from "@/lib/dates";
 import { ageFrom } from "@/lib/exercises/collections";
 import { createClient } from "@/lib/supabase/server";
-import { getLatestConsent, sessionsSince, signedConsentText } from "@/server/services/consent";
+import { commitmentProgress, getLatestConsent, signedConsentText } from "@/server/services/consent";
 import { getSettings } from "@/server/services/settings";
 
 export const metadata: Metadata = { title: "Consentimiento informado" };
 
-export default async function ConsentPage({ searchParams }: { searchParams: Promise<{ bienvenida?: string; firmar?: string }> }) {
+export default async function ConsentPage({ searchParams }: { searchParams: Promise<{ bienvenida?: string }> }) {
   const { patient } = await requirePatient();
   const supabase = await createClient();
   const [settings, latest, params] = await Promise.all([
@@ -32,15 +32,15 @@ export default async function ConsentPage({ searchParams }: { searchParams: Prom
 
   const upToDate = latest !== null && latest.version === consent.version;
   // Ya firmado (o el profesional lo desactivó): se muestra lo que firmó, tal como quedó.
-  if (latest && (upToDate || !consent.enabled) && params.firmar !== "1") {
-    const done = await sessionsSince(supabase, patient.id, latest.accepted_at);
+  if (latest && (upToDate || !consent.enabled)) {
+    const { done, target } = await commitmentProgress(supabase, patient, latest, settings.scheduling.timezone);
     return (
       <div className="mx-auto max-w-3xl space-y-8">
         <PageHeader eyebrow="Mi cuenta" title="Consentimiento informado" description={`Lo firmaste el ${formatShortDate(latest.accepted_at)}.`} />
         <p className="rounded-2xl bg-mint-50 px-5 py-4 text-sm text-mint-700">
-          {done >= latest.sessions
-            ? `Completaste las ${latest.sessions} sesiones del compromiso inicial. Con ${identity.professional_name} revisan cómo seguir.`
-            : `Llevás ${done} de las ${latest.sessions} sesiones del compromiso inicial.`}
+          {done >= target
+            ? `Completaste las ${target} sesiones del compromiso inicial. Con ${identity.professional_name} revisan cómo seguir.`
+            : `Llevás ${done} de las ${target} sesiones del compromiso inicial.`}
         </p>
         <ConsentDocument
           title={latest.title}
@@ -80,7 +80,8 @@ export default async function ConsentPage({ searchParams }: { searchParams: Prom
         sessions={consent.sessions}
         professionalName={identity.professional_name}
         defaultName={`${patient.first_name} ${patient.last_name}`}
-        minor={age !== null && age < 18}
+        minor={signsAsMinor(age, patient.guardian_name)}
+        askBirthDate={!patient.birth_date}
         defaultGuardian={patient.guardian_name}
         welcome={params.bienvenida === "1"}
       />

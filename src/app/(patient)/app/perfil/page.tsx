@@ -66,7 +66,7 @@ export default async function ProfilePage() {
                 </p>
               </div>
               <Button asChild variant="outline" className="shrink-0">
-                <Link href={consentOutdated ? "/app/consentimiento-informado?firmar=1" : "/app/consentimiento-informado"}>{consent && !consentOutdated ? "Ver lo que firmé" : "Leer y firmar"}</Link>
+                <Link href="/app/consentimiento-informado">{consent && !consentOutdated ? "Ver lo que firmé" : "Leer y firmar"}</Link>
               </Button>
             </div>
           </section>
@@ -102,7 +102,7 @@ export default async function ProfilePage() {
         <p className="text-xs text-muted-foreground">
           Leé la <Link href="/privacidad" className="underline underline-offset-2">política de privacidad</Link> y los{" "}
           <Link href="/terminos" className="underline underline-offset-2">términos de uso</Link>.
-          {patient.consent_accepted_at ? ` Aceptaste el consentimiento el ${formatShortDate(patient.consent_accepted_at)}.` : ""}
+          {patient.consent_accepted_at ? ` Aceptaste los términos de uso y la política de privacidad el ${formatShortDate(patient.consent_accepted_at)}.` : ""}
         </p>
       </section>
 

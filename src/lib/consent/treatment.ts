@@ -38,6 +38,8 @@ La psicoterapia suele ayudar a entender lo que te pasa, a aliviar el malestar y 
 
 A veces, hablar de temas difíciles genera más malestar por un tiempo. Es parte del proceso y lo podés plantear en sesión.
 
+**Otras opciones.** Según el caso, también pueden ayudar otros enfoques de psicoterapia, una consulta psiquiátrica (por ejemplo, para evaluar medicación) o grupos de apoyo. Si vemos que otra opción te conviene más o que hace falta sumarla, te lo digo y te ayudo con la derivación. También podés decidir no empezar ahora.
+
 **3. Confidencialidad y sus límites**
 
 Lo que hablamos en sesión y lo que registrás en la app es confidencial y está protegido por el secreto profesional. Solo se puede compartir sin tu autorización:
@@ -48,7 +50,11 @@ Lo que hablamos en sesión y lo que registrás en la app es confidencial y está
 
 En esos casos se comparte solo lo indispensable y, siempre que sea posible, lo hablamos antes con vos.
 
-Si tenés menos de 18 años, tu madre, padre o tutor tiene que autorizar el tratamiento. Lo que contás en sesión se mantiene en reserva, salvo en las situaciones de riesgo de arriba.
+**Si tenés menos de 18 años**
+
+Tu madre, tu padre o tu tutor tiene que autorizar el tratamiento, y vos también tenés que estar de acuerdo. Lo que contás en sesión es reservado: a la persona adulta que te acompaña le contamos cosas generales (si venís, cómo va el proceso en general), pero no lo que dijiste, salvo que vos quieras. Si hay un riesgo serio para tu vida o tu seguridad, sí le vamos a avisar y, siempre que se pueda, lo hablamos antes con vos.
+
+Para la persona adulta: al autorizar, aceptás que el tratamiento se haga en estas condiciones, respetás la reserva de lo que se habla en sesión y te comprometés a facilitar la asistencia a las primeras {{sesiones}} sesiones.
 
 **4. Sesiones virtuales y uso de la app**
 
@@ -60,10 +66,10 @@ Si en algún momento estás en peligro o pensás en hacerte daño, no esperes a 
 
 Te pedimos que te comprometas a asistir a las primeras {{sesiones}} sesiones. Estas son las razones:
 
-- **Es el tiempo que suele necesitar un proceso para mostrar resultados.** Las investigaciones sobre psicoterapia muestran que alrededor de la mitad de las personas tiene una mejoría clara hacia la octava sesión (Howard y colaboradores, 1986).
+- **Es un primer tramo razonable para empezar a notar cambios.** En un estudio clásico sobre psicoterapia, alrededor de la mitad de las personas ya mostraba alguna mejoría medible hacia la octava sesión (Howard y colaboradores, 1986). No es igual para todos y no es una promesa: es el tiempo mínimo para evaluar juntos si el tratamiento te está sirviendo.
 - **El tratamiento tiene etapas.** En las primeras sesiones evaluamos y entendemos lo que te pasa; en las siguientes practicamos estrategias concretas; al final de este primer tramo revisamos juntos lo logrado.
 - **El cerebro aprende con práctica repetida.** Formas de pensar, sentir y reaccionar que se repitieron durante años no cambian en una o dos sesiones: lo nuevo necesita practicarse durante varias semanas para consolidarse.
-- **Dejar al principio es lo que menos ayuda.** Alrededor de una de cada cinco personas deja la terapia antes de tiempo (Swift y Greenberg, 2012), muchas veces justo cuando el trabajo empieza a tocar temas difíciles. Sostener el proceso permite atravesar esa etapa con acompañamiento.
+- **Dejar muy pronto puede cortar el proceso antes de que dé frutos.** En personas adultas, alrededor de una de cada cinco deja la terapia antes de terminarla (Swift y Greenberg, 2012). Si en algún momento pensás en dejar, contámelo: podemos ajustar lo que haga falta.
 
 En la sesión {{sesiones}} revisamos los objetivos y decidimos juntos si seguir, con qué frecuencia, o si el tratamiento puede terminar.
 
@@ -118,4 +124,23 @@ export function unknownPlaceholders(template: string): string[] {
   const known = new Set<string>(CONSENT_PLACEHOLDERS.map((p) => p.key));
   const found = [...template.matchAll(/\{\{\s*([^}]*?)\s*\}\}/g)].map((m) => m[1] ?? "");
   return [...new Set(found.filter((key) => !known.has(key)))];
+}
+
+/**
+ * ¿Firma como menor de edad? Menos de 18 años según la fecha de nacimiento o, si no hay fecha,
+ * con madre, padre o tutor cargado en la ficha (la misma regla que aplica la base al firmar).
+ */
+export function signsAsMinor(age: number | null, guardianName: string | null | undefined): boolean {
+  if (age !== null) return age < 18;
+  return Boolean(guardianName?.trim());
+}
+
+/**
+ * Desde cuándo se cuentan las sesiones del compromiso: el comienzo del tratamiento (fecha de
+ * ingreso) o la primera firma, lo que sea antes. Así ni una versión nueva del texto ni firmar
+ * después de la primera sesión reinician el contador.
+ */
+export function commitmentStart(admissionStartIso: string | null, firstSignedIso: string): string {
+  if (!admissionStartIso) return firstSignedIso;
+  return new Date(admissionStartIso).getTime() < new Date(firstSignedIso).getTime() ? admissionStartIso : firstSignedIso;
 }

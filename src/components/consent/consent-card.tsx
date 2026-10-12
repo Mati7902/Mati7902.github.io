@@ -17,7 +17,7 @@ export function ConsentCard({ updated, sessions }: { updated: boolean; sessions:
               {updated ? "Firmá la versión nueva del consentimiento" : "Leé y firmá el consentimiento informado"}
             </h2>
             <p className="text-sm text-muted-foreground">
-              Cómo es el tratamiento, la confidencialidad y el compromiso de asistir a las primeras {sessions} sesiones.
+              Cómo es el tratamiento, la confidencialidad y el compromiso de asistir a las primeras {sessions} sesiones.{updated ? "" : " Después sigue la ficha de ingreso."}
             </p>
           </div>
         </div>

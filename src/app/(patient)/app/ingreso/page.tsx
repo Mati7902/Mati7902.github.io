@@ -31,8 +31,9 @@ export default async function IntakePage({ searchParams }: { searchParams: Promi
     getSetting(supabase, "treatment_consent"),
     getLatestConsent(supabase, patient.id),
   ]);
-  // El consentimiento informado va antes que la ficha (una vez firmado, una versión nueva no la bloquea).
-  if (consentSettings.enabled && !consent) redirect(params.bienvenida === "1" ? "/app/consentimiento-informado?bienvenida=1" : "/app/consentimiento-informado");
+  // El consentimiento informado va antes que la ficha (es un orden de la interfaz: una versión nueva
+  // o una ficha ya enviada no quedan bloqueadas).
+  if (consentSettings.enabled && !consent && !intake?.submitted_at) redirect(params.bienvenida === "1" ? "/app/consentimiento-informado?bienvenida=1" : "/app/consentimiento-informado");
   const identity = settings["site.identity"];
   const submitted = Boolean(intake?.submitted_at);
   const part = params.parte === "revision" ? "review" : params.parte !== undefined && /^\d+$/.test(params.parte) && Number(params.parte) < INTAKE_STEPS.length ? Number(params.parte) : null;

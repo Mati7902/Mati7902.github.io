@@ -1,7 +1,8 @@
 import "server-only";
 
 import { fromDatabaseError } from "@/lib/errors";
-import { type ConsentParams, renderConsent } from "@/lib/consent/treatment";
+import { commitmentStart, type ConsentParams, renderConsent } from "@/lib/consent/treatment";
+import { zonedToUtc } from "@/lib/dates";
 import type { ServerSupabaseClient } from "@/lib/supabase/server";
 import type { TreatmentConsent } from "@/types/domain";
 
@@ -33,15 +34,31 @@ export function signedConsentText(consent: Pick<TreatmentConsent, "body_template
   return renderConsent(consent.body_template, params);
 }
 
-/** Sesiones realizadas desde la firma (para seguir el compromiso de las primeras sesiones). */
-export async function sessionsSince(client: ServerSupabaseClient, patientId: string, since: string): Promise<number> {
+export async function getFirstConsent(client: ServerSupabaseClient, patientId: string): Promise<Pick<TreatmentConsent, "accepted_at"> | null> {
+  const { data } = await client.from("treatment_consents").select("accepted_at").eq("patient_id", patientId).order("accepted_at", { ascending: true }).limit(1).maybeSingle();
+  return data ?? null;
+}
+
+/**
+ * Avance del compromiso: sesiones marcadas como completadas desde el comienzo del tratamiento
+ * (fecha de ingreso o primera firma, lo que sea antes), con la meta de la firma vigente.
+ */
+export async function commitmentProgress(
+  client: ServerSupabaseClient,
+  patient: { id: string; admission_date: string | null },
+  latest: Pick<TreatmentConsent, "sessions">,
+  timezone?: string,
+): Promise<{ done: number; target: number }> {
+  const first = await getFirstConsent(client, patient.id);
+  const admission = patient.admission_date ? zonedToUtc(patient.admission_date.slice(0, 10), "00:00", timezone).toISOString() : null;
+  const since = commitmentStart(admission, first?.accepted_at ?? new Date().toISOString());
   const { count } = await client
     .from("appointments")
     .select("id", { count: "exact", head: true })
-    .eq("patient_id", patientId)
+    .eq("patient_id", patient.id)
     .eq("status", "completed")
     .gte("start_time", since);
-  return count ?? 0;
+  return { done: count ?? 0, target: latest.sessions };
 }
 
 /**

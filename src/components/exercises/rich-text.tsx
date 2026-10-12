@@ -17,9 +17,11 @@ function inline(text: string) {
 
 /**
  * Texto de los ejercicios: párrafos separados por una línea en blanco, viñetas con "- " y
- * **negrita**. Un salto de línea simple se respeta dentro del párrafo.
+ * **negrita**. Un salto de línea simple se respeta dentro del párrafo. Con `headingLevel`, un
+ * párrafo que está entero en negrita se muestra como encabezado (documentos largos).
  */
-export function RichText({ text, className }: { text: string; className?: string }) {
+export function RichText({ text, className, headingLevel }: { text: string; className?: string; headingLevel?: 2 | 3 | 4 }) {
+  const Heading = headingLevel ? (`h${headingLevel}` as const) : null;
   const blocks = text.split(/\n\s*\n/).map((b) => b.trim()).filter(Boolean);
   return (
     <div className={cn("space-y-3", className)}>
@@ -33,6 +35,13 @@ export function RichText({ text, className }: { text: string; className?: string
                 <li key={j}>{inline(l.replace(/^\s*[-•]\s+/, ""))}</li>
               ))}
             </ul>
+          );
+        }
+        if (Heading && /^\*\*[^*]+\*\*$/.test(block)) {
+          return (
+            <Heading key={i} className="pt-2 font-semibold text-foreground break-after-avoid">
+              {block.slice(2, -2)}
+            </Heading>
           );
         }
         return (

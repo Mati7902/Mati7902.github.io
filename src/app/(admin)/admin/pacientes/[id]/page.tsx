@@ -18,7 +18,9 @@ import { AUDIENCE_LABEL, type Audience, COLLECTIONS } from "@/lib/exercises/coll
 import { answerEntries, parseSteps } from "@/lib/exercises/steps";
 import { createClient } from "@/lib/supabase/server";
 import { getPatientOverview } from "@/server/services/admin-patients";
-import { getLatestConsent, sessionsSince } from "@/server/services/consent";
+import { commitmentProgress, getLatestConsent } from "@/server/services/consent";
+import { ageFrom } from "@/lib/exercises/collections";
+import { toDateKey } from "@/lib/dates";
 import { getIntakeStatus } from "@/server/services/intake";
 import { listSharedResponses } from "@/server/services/exercises";
 import { getSetting, getSettings } from "@/server/services/settings";
@@ -49,7 +51,7 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
     getLatestConsent(supabase, id).catch(() => null),
     getSettings(supabase, ["treatment_consent"] as const),
   ]);
-  const consentSessions = consent ? await sessionsSince(supabase, id, consent.accepted_at) : 0;
+
   const materialOptions = (materials ?? []).map((m) => ({ id: m.id, title: m.title, group: (m.material_categories as { name: string } | null)?.name ?? "Sin categoría" }));
   const templateOptions = (templates ?? []).map((t) => {
     const collection = t.collection ? COLLECTIONS[t.collection] : undefined;
@@ -122,7 +124,14 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <ConsentSummary patientId={patient.id} consent={consent} currentVersion={consentSettings.enabled ? consentSettings.version : null} sessionsDone={consentSessions} hasAccount={Boolean(patient.profile_id)} />
+        <ConsentSummary
+          patientId={patient.id}
+          consent={consent}
+          currentVersion={consentSettings.enabled ? consentSettings.version : null}
+          progress={consent ? await commitmentProgress(supabase, patient, consent, scheduling.timezone) : null}
+          ageWarning={consent ? consentAgeWarning(consent, patient.birth_date) : null}
+          hasAccount={Boolean(patient.profile_id)}
+        />
         <IntakeSummary patientId={patient.id} intake={intake} hasAccount={Boolean(patient.profile_id)} />
       </div>
 
@@ -266,13 +275,15 @@ function ConsentSummary({
   patientId,
   consent,
   currentVersion,
-  sessionsDone,
+  progress,
+  ageWarning,
   hasAccount,
 }: {
   patientId: string;
   consent: Awaited<ReturnType<typeof getLatestConsent>>;
   currentVersion: string | null;
-  sessionsDone: number;
+  progress: { done: number; target: number } | null;
+  ageWarning: string | null;
   hasAccount: boolean;
 }) {
   const outdated = consent !== null && currentVersion !== null && consent.version !== currentVersion;
@@ -288,9 +299,12 @@ function ConsentSummary({
                 Firmado el {formatShortDate(consent.accepted_at)} por {consent.signed_name}
                 {consent.guardian_name ? ` (autoriza ${consent.guardian_name})` : ""}.
               </p>
-              <p className="text-sm text-foreground">
-                Compromiso: {Math.min(sessionsDone, consent.sessions)} de {consent.sessions} sesiones realizadas.
-              </p>
+              {progress ? (
+                <p className="text-sm text-foreground">
+                  Compromiso: {Math.min(progress.done, progress.target)} de {progress.target} sesiones completadas.
+                </p>
+              ) : null}
+              {ageWarning ? <p className="text-sm text-warning">{ageWarning}</p> : null}
               {outdated ? <p className="text-sm text-warning">Firmó la versión {consent.version}; la vigente es {currentVersion}.</p> : null}
               {consent.is_minor ? <p className="text-xs text-muted-foreground">Menor de edad: confirmá la autorización con su madre, padre o tutor.</p> : null}
             </>
@@ -310,4 +324,12 @@ function ConsentSummary({
       ) : null}
     </section>
   );
+}
+
+/** Aviso cuando la firma quedó como de una persona adulta pero la edad no lo confirma. */
+function consentAgeWarning(consent: { is_minor: boolean; accepted_at: string }, birthDate: string | null): string | null {
+  if (consent.is_minor) return null;
+  if (!birthDate) return "Sin fecha de nacimiento al firmar: confirmá si necesita la autorización de su madre, padre o tutor.";
+  const age = ageFrom(birthDate, toDateKey(consent.accepted_at));
+  return age !== null && age < 18 ? "Firmó sin la autorización de una persona adulta y era menor de edad: confirmala con su madre, padre o tutor." : null;
 }

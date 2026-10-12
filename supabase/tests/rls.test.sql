@@ -441,10 +441,25 @@ select pg_temp.expect_error(
   array['22023'], 'una menor no firma sin el nombre de su madre, padre o tutor');
 insert into public.treatment_consents (patient_id, version, signed_name, guardian_name) values (public.current_patient_id(), '2026-10', 'Sofía Benítez', 'Laura Benítez');
 select pg_temp.assert((select is_minor and guardian_name = 'Laura Benítez' from public.treatment_consents), 'la firma de una menor queda marcada con quien autoriza');
+select pg_temp.expect_error(
+  $q$insert into public.treatment_consents (patient_id, version, signed_name, guardian_name) values (public.current_patient_id(), '2026-10', 'Sofía Benítez', 'Laura Benítez')$q$,
+  array['23505'], 'una sola firma por versión');
 select pg_temp.logout();
+-- Sin fecha de nacimiento pero con tutor cargado, también se la trata como menor
+update public.patients set birth_date = null where email = 'sofia.benitez@demo.local';
+delete from public.treatment_consents where patient_id = (select id from public.patients where email = 'sofia.benitez@demo.local');
+select pg_temp.login('44444444-4444-4444-8444-444444444444');
+select pg_temp.expect_error(
+  $q$insert into public.treatment_consents (patient_id, version, signed_name) values (public.current_patient_id(), '2026-10', 'Sofía Benítez')$q$,
+  array['22023'], 'sin fecha de nacimiento y con tutor cargado, se pide quien autoriza');
+select pg_temp.logout();
+-- La base calcula la minoría también en inserciones privilegiadas (seed, servidor)
+select pg_temp.expect_error(
+  $q$insert into public.treatment_consents (patient_id, version, signed_name) select id, '2026-10', 'Sofía Benítez' from public.patients where email = 'sofia.benitez@demo.local'$q$,
+  array['22023'], 'tampoco el servidor guarda la firma de una menor sin quien autoriza');
 
 select pg_temp.login('11111111-1111-4111-8111-111111111111');
-select pg_temp.assert((select count(*) from public.treatment_consents) = 3, 'el profesional ve todas las firmas');
+select pg_temp.assert((select count(*) from public.treatment_consents) = 2, 'el profesional ve todas las firmas (Juan y Ana)');
 select pg_temp.expect_error(
   $q$insert into public.treatment_consents (patient_id, version, signed_name) values (current_setting('test.juan_patient')::uuid, '2026-10', 'Juan Pérez')$q$,
   array['42501'], 'el profesional no firma en nombre del paciente');

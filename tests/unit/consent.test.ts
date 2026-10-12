@@ -4,6 +4,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 import {
+  commitmentStart,
   CONSENT_PLACEHOLDERS,
   consentParams,
   DEFAULT_CONSENT_BODY,
@@ -11,6 +12,7 @@ import {
   DEFAULT_CONSENT_TITLE,
   DEFAULT_CONSENT_VERSION,
   renderConsent,
+  signsAsMinor,
   unknownPlaceholders,
 } from "@/lib/consent/treatment";
 import { treatmentConsentSchema } from "@/server/services/settings";
@@ -49,6 +51,17 @@ describe("consentimiento informado: texto", () => {
     expect(DEFAULT_CONSENT_BODY).toMatch(/Swift y Greenberg, 2012/);
     expect(DEFAULT_CONSENT_BODY).toMatch(/no es una obligación legal/);
     expect(DEFAULT_CONSENT_BODY).toMatch(/Podés interrumpir el tratamiento cuando quieras/);
+    // Sin exagerar lo que dicen los estudios.
+    expect(DEFAULT_CONSENT_BODY).toMatch(/alguna mejoría medible hacia la octava sesión/);
+    expect(DEFAULT_CONSENT_BODY).toMatch(/no es una promesa/);
+    expect(DEFAULT_CONSENT_BODY).toMatch(/En personas adultas, alrededor de una de cada cinco/);
+  });
+
+  it("explica alternativas y la reserva con adolescentes", () => {
+    expect(DEFAULT_CONSENT_BODY).toMatch(/\*\*Otras opciones\.\*\*/);
+    expect(DEFAULT_CONSENT_BODY).toMatch(/También podés decidir no empezar ahora/);
+    expect(DEFAULT_CONSENT_BODY).toContain("**Si tenés menos de 18 años**");
+    expect(DEFAULT_CONSENT_BODY).toMatch(/Para la persona adulta:/);
   });
 
   it("no trae teléfonos de emergencia (salen de la configuración)", () => {
@@ -77,5 +90,21 @@ describe("consentimiento informado: datos del consultorio", () => {
   it("deja a la vista los marcadores desconocidos o sin dato", () => {
     expect(renderConsent("Hola {{profesional}}, {{inventado}} y {{titulo}}", { profesional: "Lic. Ejemplo", titulo: " " })).toBe("Hola Lic. Ejemplo, {{inventado}} y {{titulo}}");
     expect(unknownPlaceholders("{{profesional}} {{ inventado }} {{otro}} {{inventado}}")).toEqual(["inventado", "otro"]);
+  });
+});
+
+describe("consentimiento informado: reglas", () => {
+  it("firma como menor con menos de 18 años, o sin fecha pero con tutor cargado", () => {
+    expect(signsAsMinor(15, null)).toBe(true);
+    expect(signsAsMinor(18, "Laura")).toBe(false);
+    expect(signsAsMinor(null, "Laura Benítez")).toBe(true);
+    expect(signsAsMinor(null, "  ")).toBe(false);
+    expect(signsAsMinor(null, null)).toBe(false);
+  });
+
+  it("cuenta el compromiso desde el comienzo del tratamiento o la primera firma, lo que sea antes", () => {
+    expect(commitmentStart("2026-08-01T04:00:00.000Z", "2026-08-15T12:00:00.000Z")).toBe("2026-08-01T04:00:00.000Z");
+    expect(commitmentStart("2026-09-01T04:00:00.000Z", "2026-08-15T12:00:00.000Z")).toBe("2026-08-15T12:00:00.000Z");
+    expect(commitmentStart(null, "2026-08-15T12:00:00.000Z")).toBe("2026-08-15T12:00:00.000Z");
   });
 });

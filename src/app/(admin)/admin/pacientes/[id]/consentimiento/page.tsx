@@ -12,7 +12,8 @@ import { requireAdmin } from "@/lib/auth/session";
 import { formatShortDate } from "@/lib/dates";
 import { printFooterCss } from "@/lib/print";
 import { createClient } from "@/lib/supabase/server";
-import { listConsents, sessionsSince, signedConsentText } from "@/server/services/consent";
+import { commitmentProgress, listConsents, signedConsentText } from "@/server/services/consent";
+import { getSetting } from "@/server/services/settings";
 import { getPatientById } from "@/server/services/patients";
 
 export const metadata: Metadata = { title: "Consentimiento informado", robots: { index: false } };
@@ -44,13 +45,14 @@ export default async function AdminConsentPage({ params }: { params: Promise<{ i
     );
   }
 
-  const done = await sessionsSince(supabase, patient.id, latest.accepted_at);
+  const scheduling = await getSetting(supabase, "scheduling");
+  const { done, target } = await commitmentProgress(supabase, patient, latest, scheduling.timezone);
   return (
     <div className="space-y-8">
       <PageHeader
         eyebrow="Consentimiento informado"
         title={name}
-        description={`Firmado el ${formatShortDate(latest.accepted_at)} · Compromiso: ${Math.min(done, latest.sessions)} de ${latest.sessions} sesiones realizadas.`}
+        description={`Firmado el ${formatShortDate(latest.accepted_at)} · Compromiso: ${Math.min(done, target)} de ${target} sesiones completadas.`}
         actions={
           <>
             {back}
@@ -67,7 +69,7 @@ export default async function AdminConsentPage({ params }: { params: Promise<{ i
         className="max-w-3xl"
         title={latest.title}
         text={signedConsentText(latest)}
-        signature={{ name: latest.signed_name, guardian: latest.guardian_name, date: formatShortDate(latest.accepted_at), version: latest.version }}
+        signature={{ name: latest.signed_name, guardian: latest.guardian_name, minor: latest.is_minor, date: formatShortDate(latest.accepted_at), version: latest.version }}
       />
       {previous.length > 0 ? (
         <details className="max-w-3xl rounded-2xl border border-border/70 bg-card px-5 py-3 text-sm print:hidden">

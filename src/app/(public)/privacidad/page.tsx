@@ -58,7 +58,7 @@ export default async function PrivacyPage() {
       </p>
       <h2>8. Conservación y derechos</h2>
       <p>
-        Conservamos los datos mientras dure la relación profesional y el tiempo que exija la normativa aplicable. Podés solicitar acceso, rectificación, actualización o eliminación de tus datos escribiendo al profesional. Para menores de edad, los derechos se ejercen a través de madre, padre o tutor.
+        Conservamos los datos mientras dure la relación profesional y el tiempo que exija la normativa aplicable. Podés solicitar acceso, rectificación, actualización o eliminación de tus datos escribiendo al profesional. Para menores de edad, los derechos se ejercen a través de madre, padre o tutor; su acceso a la información clínica respeta la reserva de lo hablado en sesión, salvo situaciones de riesgo, como explica el consentimiento informado.
       </p>
       <h2>9. Cambios</h2>
       <p>Esta política puede actualizarse. Publicaremos la versión vigente en esta página e indicaremos la fecha de la última modificación.</p>

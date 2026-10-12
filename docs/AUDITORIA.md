@@ -33,7 +33,7 @@ Cada punto indica **estado** (✅ cubierto · ⚠️ cubierto con observaciones 
 | Anónimo: solo planes, FAQs, settings públicos | ✅ | bloque 6 |
 | Storage: bucket `materials` privado con política por material accesible | ✅ | `0005_storage.sql` |
 
-Resultado: `pnpm test:db` → 124 aserciones OK sobre las migraciones reales (PostgreSQL 16 local con stub de `auth`/`storage`).
+Resultado: `pnpm test:db` → 127 aserciones OK sobre las migraciones reales (PostgreSQL 16 local con stub de `auth`/`storage`).
 
 ## Agenda
 
@@ -78,7 +78,7 @@ Resultado: `pnpm test:db` → 124 aserciones OK sobre las migraciones reales (Po
 | Logger redacta campos sensibles; no se registran contenidos clínicos | ✅ | `lib/logger.ts` |
 | Eventos de Google con iniciales, sin notas | ✅ | `google-calendar/sync.ts` |
 | Consentimiento versionado al aceptar la invitación; textos legales marcados como borrador hasta revisión profesional | ⚠️ | `/privacidad`, `/terminos`, `legal.reviewed_by_professional`. **Acción requerida antes de producción:** revisión por profesional competente en derecho paraguayo. |
-| Consentimiento informado: texto versionado, documento completado por la base al firmar, firmas inmutables, menores con quien autoriza, recepción sin acceso | ✅ | `20261012000001_treatment_consent.sql`, `rls.test.sql` |
+| Consentimiento informado: texto versionado, documento completado por la base al firmar, firmas inmutables y únicas por versión, menores con quien autoriza, recepción sin acceso | ⚠️ | `20261012000001_treatment_consent.sql`, `rls.test.sql`. **Acción requerida antes de producción:** el profesional revisa y adapta el modelo en Configuración › Consentimiento (se instala habilitado). |
 | Control del paciente sobre compartir registros | ✅ | `share_records_with_professional` + RLS |
 
 ## UX y accesibilidad
@@ -115,7 +115,7 @@ Resultado: `pnpm test:db` → 124 aserciones OK sobre las migraciones reales (Po
 
 ## Verificación final
 
-* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (267 tests) · `pnpm test:bot` ✅ (33 recorridos) · `pnpm build` ✅ · `pnpm test:db` ✅ (124 aserciones)
+* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (267 tests) · `pnpm test:bot` ✅ (33 recorridos) · `pnpm build` ✅ · `pnpm test:db` ✅ (127 aserciones)
 
 ## Segunda ronda de auditoría (revisión adversarial)
 

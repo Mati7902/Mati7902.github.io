@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { toDateKey } from "@/lib/dates";
+import { ageFrom } from "@/lib/exercises/collections";
 import { signConsentAction } from "@/server/actions/consent";
 
 type Props = {
@@ -17,12 +19,14 @@ type Props = {
   defaultName: string;
   /** Menor de 18 años: también firma (escribe su nombre) quien autoriza. */
   minor: boolean;
+  /** La ficha no tiene fecha de nacimiento: se pide para saber si firma como menor. */
+  askBirthDate?: boolean;
   defaultGuardian?: string | null;
   /** Viene de crear la cuenta: la ficha de ingreso sigue con la bienvenida. */
   welcome?: boolean;
 };
 
-export function ConsentSignForm({ version, sessions, professionalName, defaultName, minor, defaultGuardian, welcome = false }: Props) {
+export function ConsentSignForm({ version, sessions, professionalName, defaultName, minor: minorByRecord, askBirthDate = false, defaultGuardian, welcome = false }: Props) {
   const router = useRouter();
   const id = useId();
   const [acceptTreatment, setAcceptTreatment] = useState(false);
@@ -30,7 +34,11 @@ export function ConsentSignForm({ version, sessions, professionalName, defaultNa
   const [guardianAgrees, setGuardianAgrees] = useState(false);
   const [signedName, setSignedName] = useState(defaultName);
   const [guardianName, setGuardianName] = useState(defaultGuardian ?? "");
+  const [birthDate, setBirthDate] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  // Sin fecha en la ficha, la edad escrita acá decide si hace falta quien autoriza.
+  const typedAge = askBirthDate && birthDate ? ageFrom(birthDate) : null;
+  const minor = typedAge !== null ? typedAge < 18 : minorByRecord;
   const [pending, startTransition] = useTransition();
 
   const clear = (key: string) => setErrors(({ [key]: _removed, ...rest }) => rest);
@@ -40,7 +48,7 @@ export function ConsentSignForm({ version, sessions, professionalName, defaultNa
     startTransition(async () => {
       let result: Awaited<ReturnType<typeof signConsentAction>>;
       try {
-        result = await signConsentAction({ version, signedName, guardianName, acceptTreatment, acceptCommitment, guardianAgrees });
+        result = await signConsentAction({ version, signedName, guardianName, acceptTreatment, acceptCommitment, guardianAgrees, ...(askBirthDate ? { birthDate } : {}) });
       } catch {
         toast.error("No pudimos guardar tu firma. Revisá tu conexión e intentá de nuevo.");
         return;
@@ -63,7 +71,7 @@ export function ConsentSignForm({ version, sessions, professionalName, defaultNa
     <form onSubmit={submit} noValidate className="space-y-6 rounded-3xl border border-primary/15 bg-primary-soft/40 p-6 sm:p-8">
       <div className="space-y-1">
         <h2 className="font-display text-xl font-medium">Firma</h2>
-        <p className="text-sm text-muted-foreground">Si tenés dudas, podés firmarlo después de hablarlo con {professionalName} en la primera sesión.</p>
+        <p className="text-sm text-muted-foreground">Si tenés dudas, escribile a {professionalName} antes de firmar. Después de firmar sigue la ficha de ingreso.</p>
       </div>
 
       <div className="space-y-3">
@@ -115,6 +123,35 @@ export function ConsentSignForm({ version, sessions, professionalName, defaultNa
           </p>
         ) : null}
       </div>
+
+      {askBirthDate ? (
+        <div className="space-y-2">
+          <label htmlFor={`${id}-birthDate`} className="block text-base font-medium text-foreground">
+            Tu fecha de nacimiento
+          </label>
+          <p id={`${id}-birthDate-help`} className="text-sm text-muted-foreground">
+            La necesitamos para saber si, por ser menor de edad, también lo autoriza una persona adulta.
+          </p>
+          <Input
+            id={`${id}-birthDate`}
+            type="date"
+            max={toDateKey(new Date())}
+            value={birthDate}
+            onChange={(e) => {
+              setBirthDate(e.target.value);
+              clear("birthDate");
+            }}
+            aria-invalid={errors.birthDate ? true : undefined}
+            aria-describedby={errors.birthDate ? `${id}-birthDate-error` : `${id}-birthDate-help`}
+            className="sm:max-w-xs"
+          />
+          {errors.birthDate ? (
+            <p id={`${id}-birthDate-error`} role="alert" className="text-sm font-medium text-destructive">
+              {errors.birthDate}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
 
       {minor ? (
         <div className="space-y-4 rounded-2xl border border-border/70 bg-card p-5">

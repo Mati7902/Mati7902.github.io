@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useSettingsSave } from "@/hooks/use-settings-save";
+import { toDateKey } from "@/lib/dates";
 import { CONSENT_PLACEHOLDERS, type ConsentParams, DEFAULT_CONSENT_BODY, DEFAULT_CONSENT_TITLE, renderConsent, unknownPlaceholders } from "@/lib/consent/treatment";
 import type { TreatmentConsentSettings } from "@/server/services/settings";
 
@@ -21,20 +22,27 @@ import type { TreatmentConsentSettings } from "@/server/services/settings";
  */
 export function TreatmentConsentForm({ initial, params, signedCount }: { initial: TreatmentConsentSettings; params: Omit<ConsentParams, "sesiones">; signedCount: number }) {
   const [value, setValue] = useState(initial);
+  // Mientras se escribe, el número de sesiones es texto (si no, no se puede borrar y escribir «12»).
+  const [sessionsText, setSessionsText] = useState(String(initial.sessions));
   const [preview, setPreview] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const { save, pending, fieldErrors } = useSettingsSave("treatment_consent");
-  const textChanged = value.body !== initial.body || value.title !== initial.title || value.sessions !== initial.sessions;
-  const sameVersion = value.version.trim() === initial.version;
+  const sessions = Number(sessionsText);
+  const textChanged = value.body !== initial.body || value.title !== initial.title || sessions !== initial.sessions;
+  const norm = (v: string) => v.trim().toLowerCase();
+  const sameVersion = norm(value.version) === norm(initial.version);
   const unknown = unknownPlaceholders(`${value.title}\n${value.body}`);
-  const today = new Date().toISOString().slice(0, 10);
+  // Versión sugerida: la fecha de hoy (en la zona del consultorio); si ya es esa, con un sufijo.
+  const today = toDateKey(new Date());
+  let suggested = today;
+  for (let n = 2; norm(suggested) === norm(initial.version); n++) suggested = `${today}-${n}`;
 
   return (
     <form
       className="space-y-6"
       onSubmit={(e) => {
         e.preventDefault();
-        save({ ...value, version: value.version.trim(), title: value.title.trim(), body: value.body.trim() }, "Consentimiento guardado.");
+        save({ ...value, sessions, version: value.version.trim(), title: value.title.trim(), body: value.body.trim() }, "Consentimiento guardado.");
       }}
     >
       <Alert variant="warning">
@@ -64,8 +72,8 @@ export function TreatmentConsentForm({ initial, params, signedCount }: { initial
             inputMode="numeric"
             min={1}
             max={40}
-            value={value.sessions}
-            onChange={(e) => setValue({ ...value, sessions: Math.max(1, Math.min(40, Math.round(Number(e.target.value) || 1))) })}
+            value={sessionsText}
+            onChange={(e) => setSessionsText(e.target.value)}
           />
         </FormField>
         <FormField id="tc-version" label="Versión" error={fieldErrors.version} hint="Cambiala si cambiás el texto.">
@@ -81,8 +89,8 @@ export function TreatmentConsentForm({ initial, params, signedCount }: { initial
               Cambiaste el texto y {signedCount === 1 ? "1 paciente ya firmó" : `${signedCount} pacientes ya firmaron`} la versión {initial.version}. Si es un cambio de fondo, poné una versión nueva: se
               les va a pedir que firmen la versión nueva. Si es una corrección menor, podés dejar la misma (cada firma conserva el texto que se firmó).
             </p>
-            <Button type="button" size="sm" variant="outline" className="mt-3" onClick={() => setValue({ ...value, version: today })}>
-              Usar la versión {today}
+            <Button type="button" size="sm" variant="outline" className="mt-3" onClick={() => setValue({ ...value, version: suggested })}>
+              Usar la versión {suggested}
             </Button>
           </AlertDescription>
         </Alert>
@@ -144,7 +152,7 @@ export function TreatmentConsentForm({ initial, params, signedCount }: { initial
       {preview ? (
         <article className="space-y-5 rounded-3xl border border-border/70 bg-card p-6 sm:p-8">
           <h3 className="font-display text-2xl font-medium">{value.title}</h3>
-          <RichText text={renderConsent(value.body, { ...params, sesiones: String(value.sessions) })} className="space-y-4 text-[0.95rem] leading-relaxed" />
+          <RichText text={renderConsent(value.body, { ...params, sesiones: sessionsText.trim() || String(initial.sessions) })} headingLevel={4} className="space-y-4 text-[0.95rem] leading-relaxed" />
         </article>
       ) : null}
     </form>
