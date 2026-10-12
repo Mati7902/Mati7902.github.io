@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { ServerSupabaseClient } from "@/lib/supabase/server";
 import type { AdminSupabaseClient } from "@/lib/supabase/admin";
 import { siteDefaults } from "@/lib/config/site";
+import { DEFAULT_CONSENT_BODY, DEFAULT_CONSENT_SESSIONS, DEFAULT_CONSENT_TITLE, DEFAULT_CONSENT_VERSION } from "@/lib/consent/treatment";
 
 /* ------------------------------------------------------------------------ */
 /* Schemas de cada clave de configuración (fuente de verdad para la UI)       */
@@ -103,6 +104,16 @@ export const legalSchema = z.object({
   reviewed_by_professional: z.boolean().default(false),
 });
 
+/** Consentimiento informado y compromiso terapéutico (src/lib/consent/treatment.ts). */
+export const treatmentConsentSchema = z.object({
+  enabled: z.boolean().default(true),
+  /** Cambiarla cuando cambia el texto: a quien firmó otra versión se le pide firmar de nuevo. */
+  version: z.string().trim().min(1).max(40).default(DEFAULT_CONSENT_VERSION),
+  title: z.string().trim().min(3).max(200).default(DEFAULT_CONSENT_TITLE),
+  sessions: z.number().int().min(1).max(40).default(DEFAULT_CONSENT_SESSIONS),
+  body: z.string().trim().min(50).max(20000).default(DEFAULT_CONSENT_BODY),
+});
+
 const specialtySchema = z.object({ title: z.string(), text: z.string() });
 
 export const landingSchema = z.object({
@@ -126,6 +137,7 @@ export const settingsSchemas = {
   theme: themeSchema,
   legal: legalSchema,
   landing: landingSchema,
+  treatment_consent: treatmentConsentSchema,
 } as const;
 
 export type SettingsKey = keyof typeof settingsSchemas;
@@ -135,6 +147,7 @@ export type SchedulingSettings = SettingsValue<"scheduling">;
 export type RemindersSettings = SettingsValue<"reminders">;
 export type WhatsAppSettings = SettingsValue<"whatsapp">;
 export type EmergencySettings = SettingsValue<"emergency">;
+export type TreatmentConsentSettings = SettingsValue<"treatment_consent">;
 
 type AnyClient = ServerSupabaseClient | AdminSupabaseClient;
 

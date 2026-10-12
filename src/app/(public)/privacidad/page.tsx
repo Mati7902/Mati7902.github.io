@@ -20,6 +20,7 @@ export default async function PrivacyPage() {
         <li>
           Ficha de ingreso, que completás vos al crear tu cuenta: datos personales, antecedentes psicológicos y médicos (incluida la medicación), historia familiar, consumo de sustancias, sueño y alimentación, y cómo estás en distintas áreas de tu vida (conducta, emociones, sensaciones, imágenes, pensamientos, relaciones y salud física). Todas las preguntas se pueden dejar en blanco.
         </li>
+        <li>Consentimiento informado: el texto que firmaste, la fecha, tu nombre escrito como firma y, si sos menor de edad, el nombre de quien autoriza el tratamiento.</li>
         <li>Datos de agenda: turnos solicitados, confirmaciones, cancelaciones y su historial.</li>
         <li>Registros personales que vos decidís guardar en la plataforma: registros emocionales, respuestas a ejercicios y preparación de sesiones.</li>
         <li>Mensajes intercambiados por WhatsApp con la asistente virtual, con fines administrativos y de agenda.</li>

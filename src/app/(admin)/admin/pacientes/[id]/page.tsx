@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ClipboardList, Pencil } from "lucide-react";
+import { ClipboardList, FileSignature, Pencil } from "lucide-react";
 
 import { AppointmentListClient } from "@/components/admin/agenda/agenda-client";
 import { NewAppointmentDialog } from "@/components/admin/agenda/new-appointment-dialog";
@@ -18,9 +18,10 @@ import { AUDIENCE_LABEL, type Audience, COLLECTIONS } from "@/lib/exercises/coll
 import { answerEntries, parseSteps } from "@/lib/exercises/steps";
 import { createClient } from "@/lib/supabase/server";
 import { getPatientOverview } from "@/server/services/admin-patients";
+import { getLatestConsent, sessionsSince } from "@/server/services/consent";
 import { getIntakeStatus } from "@/server/services/intake";
 import { listSharedResponses } from "@/server/services/exercises";
-import { getSetting } from "@/server/services/settings";
+import { getSetting, getSettings } from "@/server/services/settings";
 import { APPOINTMENT_STATUS_LABEL, type AppointmentWithPatient, type Patient } from "@/types/domain";
 
 export const metadata: Metadata = { title: "Ficha del paciente" };
@@ -44,6 +45,11 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
     // Solo llega si el paciente ya la envió (RLS); un error de lectura no rompe la ficha.
     getIntakeStatus(supabase, id).catch(() => null),
   ]);
+  const [consent, { treatment_consent: consentSettings }] = await Promise.all([
+    getLatestConsent(supabase, id).catch(() => null),
+    getSettings(supabase, ["treatment_consent"] as const),
+  ]);
+  const consentSessions = consent ? await sessionsSince(supabase, id, consent.accepted_at) : 0;
   const materialOptions = (materials ?? []).map((m) => ({ id: m.id, title: m.title, group: (m.material_categories as { name: string } | null)?.name ?? "Sin categoría" }));
   const templateOptions = (templates ?? []).map((t) => {
     const collection = t.collection ? COLLECTIONS[t.collection] : undefined;
@@ -115,7 +121,10 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
         </section>
       </div>
 
-      <IntakeSummary patientId={patient.id} intake={intake} hasAccount={Boolean(patient.profile_id)} />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <ConsentSummary patientId={patient.id} consent={consent} currentVersion={consentSettings.enabled ? consentSettings.version : null} sessionsDone={consentSessions} hasAccount={Boolean(patient.profile_id)} />
+        <IntakeSummary patientId={patient.id} intake={intake} hasAccount={Boolean(patient.profile_id)} />
+      </div>
 
       <section className="space-y-3">
         <h2 className="font-display text-lg font-medium">Próximos turnos</h2>
@@ -248,6 +257,57 @@ function IntakeSummary({ patientId, intake, hasAccount }: { patientId: string; i
       ) : (
         <Badge variant="muted" className="shrink-0 self-start">Pendiente</Badge>
       )}
+    </section>
+  );
+}
+
+/** Firma del consentimiento informado y avance del compromiso de las primeras sesiones. */
+function ConsentSummary({
+  patientId,
+  consent,
+  currentVersion,
+  sessionsDone,
+  hasAccount,
+}: {
+  patientId: string;
+  consent: Awaited<ReturnType<typeof getLatestConsent>>;
+  currentVersion: string | null;
+  sessionsDone: number;
+  hasAccount: boolean;
+}) {
+  const outdated = consent !== null && currentVersion !== null && consent.version !== currentVersion;
+  return (
+    <section className="surface-card flex flex-col gap-4 p-6 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex min-w-0 gap-3">
+        <FileSignature className="mt-1 size-5 shrink-0 text-primary" aria-hidden />
+        <div className="min-w-0 space-y-1">
+          <h2 className="font-display text-lg font-medium">Consentimiento informado</h2>
+          {consent ? (
+            <>
+              <p className="text-sm text-muted-foreground">
+                Firmado el {formatShortDate(consent.accepted_at)} por {consent.signed_name}
+                {consent.guardian_name ? ` (autoriza ${consent.guardian_name})` : ""}.
+              </p>
+              <p className="text-sm text-foreground">
+                Compromiso: {Math.min(sessionsDone, consent.sessions)} de {consent.sessions} sesiones realizadas.
+              </p>
+              {outdated ? <p className="text-sm text-warning">Firmó la versión {consent.version}; la vigente es {currentVersion}.</p> : null}
+              {consent.is_minor ? <p className="text-xs text-muted-foreground">Menor de edad: confirmá la autorización con su madre, padre o tutor.</p> : null}
+            </>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              {currentVersion === null ? "Desactivado en Configuración › Consentimiento." : hasAccount ? "Todavía no lo firmó. Lo ve al entrar a su cuenta." : "Lo firma el paciente cuando crea su cuenta."}
+            </p>
+          )}
+        </div>
+      </div>
+      {consent ? (
+        <Button asChild variant="outline" className="shrink-0">
+          <Link href={`/admin/pacientes/${patientId}/consentimiento`}>Ver lo firmado</Link>
+        </Button>
+      ) : currentVersion !== null ? (
+        <Badge variant="muted" className="shrink-0 self-start">Pendiente</Badge>
+      ) : null}
     </section>
   );
 }

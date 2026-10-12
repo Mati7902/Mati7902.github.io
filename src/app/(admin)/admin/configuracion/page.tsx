@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { AvailabilityEditor, BlockedSlotsList } from "@/components/admin/settings/availability-editor";
+import { TreatmentConsentForm } from "@/components/admin/settings/consent-form";
 import { LandingForm, PreferencesForm, ThemeForm } from "@/components/admin/settings/content-form";
 import { EmergencyMessageForm, EmergencyResourcesEditor } from "@/components/admin/settings/emergency-form";
 import { FaqsEditor } from "@/components/admin/settings/faqs-form";
@@ -11,6 +12,7 @@ import { SchedulingForm } from "@/components/admin/settings/scheduling-form";
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { requireAdmin } from "@/lib/auth/session";
+import { consentParams } from "@/lib/consent/treatment";
 import { createClient } from "@/lib/supabase/server";
 import { listAvailabilityRules, listBlockedSlots } from "@/server/services/admin-schedule";
 import { isGoogleConfigured } from "@/server/services/google-calendar/client";
@@ -18,7 +20,7 @@ import { getSettings } from "@/server/services/settings";
 
 export const metadata: Metadata = { title: "Configuración" };
 
-const TABS = ["identidad", "agenda", "recordatorios", "emergencia", "preguntas", "textos", "apariencia", "preferencias"] as const;
+const TABS = ["identidad", "agenda", "recordatorios", "emergencia", "preguntas", "textos", "consentimiento", "apariencia", "preferencias"] as const;
 type Tab = (typeof TABS)[number];
 
 export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ tab?: string; google?: string }> }) {
@@ -26,13 +28,16 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
   const { tab, google } = await searchParams;
   const supabase = await createClient();
   const [settings, rules, blocked, { data: resources }, { data: faqs }, { data: integration }] = await Promise.all([
-    getSettings(supabase, ["site.identity", "scheduling", "reminders", "emergency", "gamification", "theme", "legal", "landing"] as const),
+    getSettings(supabase, ["site.identity", "scheduling", "reminders", "emergency", "gamification", "theme", "legal", "landing", "treatment_consent"] as const),
     listAvailabilityRules(supabase),
     listBlockedSlots(supabase, new Date()),
     supabase.from("emergency_resources").select("*").order("sort_order"),
     supabase.from("faqs").select("*").order("sort_order"),
     supabase.from("calendar_integrations").select("external_account_email, last_synced_at, last_error, is_active").eq("owner_profile_id", session.userId).eq("provider", "google").maybeSingle(),
   ]);
+  // Firmas de la versión vigente (para avisar al editar el texto).
+  const { count: consentCount } = await supabase.from("treatment_consents").select("id", { count: "exact", head: true }).eq("version", settings.treatment_consent.version);
+  const { sesiones: _sessions, ...consentPreviewParams } = consentParams(settings["site.identity"], settings.scheduling, settings.treatment_consent.sessions);
   const active: Tab = TABS.includes(tab as Tab) ? (tab as Tab) : "identidad";
 
   return (
@@ -46,6 +51,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
           <TabsTrigger value="emergencia">Emergencia</TabsTrigger>
           <TabsTrigger value="preguntas">Preguntas</TabsTrigger>
           <TabsTrigger value="textos">Textos</TabsTrigger>
+          <TabsTrigger value="consentimiento">Consentimiento</TabsTrigger>
           <TabsTrigger value="apariencia">Apariencia</TabsTrigger>
           <TabsTrigger value="preferencias">Preferencias</TabsTrigger>
         </TabsList>
@@ -95,6 +101,10 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
 
         <TabsContent value="textos" className="max-w-3xl">
           <LandingForm initial={settings.landing} />
+        </TabsContent>
+
+        <TabsContent value="consentimiento" className="max-w-4xl">
+          <TreatmentConsentForm initial={settings.treatment_consent} params={consentPreviewParams} signedCount={consentCount ?? 0} />
         </TabsContent>
 
         <TabsContent value="apariencia" className="max-w-3xl">

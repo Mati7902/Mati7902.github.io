@@ -398,6 +398,75 @@ select pg_temp.expect_error(
   array['23514'], 'la ficha de ingreso tiene un tamaño máximo');
 rollback;
 
+-- Consentimiento informado: la base completa el documento, las firmas no se tocan
+begin;
+select set_config('test.juan_patient', (select id::text from public.patients where email = 'juan.perez@demo.local'), true);
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token)
+values ('55555555-5555-4555-8555-555555555555', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'recepcion@demo.local',
+        crypt('x', gen_salt('bf')), now(), '{"provider":"email","role":"receptionist"}'::jsonb, '{}'::jsonb, now(), now(), '', '')
+on conflict (id) do nothing;
+insert into public.profiles (id, role, email) values ('55555555-5555-4555-8555-555555555555', 'receptionist', 'recepcion@demo.local')
+on conflict (id) do update set role = 'receptionist';
+
+select pg_temp.assert(public.consent_number('12'::jsonb) = '12' and public.consent_number('12.0'::jsonb) = '12' and public.consent_number('1.5'::jsonb) = '1,5', 'los números del consentimiento se escriben como en la app');
+
+select pg_temp.login('22222222-2222-4222-8222-222222222222');
+select pg_temp.assert((select count(*) from public.treatment_consents) = 1, 'el paciente ve su consentimiento firmado');
+select pg_temp.expect_error($q$update public.treatment_consents set signed_name = 'Otro nombre'$q$, array['42501'], 'una firma no se puede modificar');
+select pg_temp.expect_error($q$delete from public.treatment_consents$q$, array['42501'], 'una firma no se puede borrar');
+select pg_temp.logout();
+
+select pg_temp.login('33333333-3333-4333-8333-333333333333');
+select pg_temp.assert((select count(*) from public.treatment_consents) = 0, 'otro paciente no ve consentimientos ajenos');
+select pg_temp.expect_error(
+  $q$insert into public.treatment_consents (patient_id, version, signed_name) values (current_setting('test.juan_patient')::uuid, '2026-10', 'Ana Ejemplo')$q$,
+  array['42501'], 'paciente no puede firmar por otro');
+select pg_temp.expect_error(
+  $q$insert into public.treatment_consents (patient_id, version, signed_name) values (public.current_patient_id(), '1999-01', 'Ana Ejemplo')$q$,
+  array['P0001'], 'no se firma una versión que no es la vigente');
+-- El cliente no elige texto, sesiones, fecha ni si es menor: lo completa la base.
+insert into public.treatment_consents (patient_id, version, signed_name, title, body_template, sessions, accepted_at, is_minor, params)
+values (public.current_patient_id(), '2026-10', '  Ana Ejemplo  ', 'Otro título', 'Texto inventado', 1, '2000-01-01', true, '{"profesional":"Otro"}');
+select pg_temp.assert(
+  (select body_template = (select value ->> 'body' from public.settings where key = 'treatment_consent') and sessions = 8 and title = 'Consentimiento informado y compromiso terapéutico'
+     and accepted_at = now() and not is_minor and signed_name = 'Ana Ejemplo' and params ->> 'profesional' = 'Lic. Matías Sánchez' and params ->> 'sesiones' = '8'
+   from public.treatment_consents),
+  'la base completa el documento firmado con la configuración vigente');
+select pg_temp.logout();
+
+-- Menor de edad: hace falta el nombre de quien autoriza
+select pg_temp.login('44444444-4444-4444-8444-444444444444');
+select pg_temp.expect_error(
+  $q$insert into public.treatment_consents (patient_id, version, signed_name) values (public.current_patient_id(), '2026-10', 'Sofía Benítez')$q$,
+  array['22023'], 'una menor no firma sin el nombre de su madre, padre o tutor');
+insert into public.treatment_consents (patient_id, version, signed_name, guardian_name) values (public.current_patient_id(), '2026-10', 'Sofía Benítez', 'Laura Benítez');
+select pg_temp.assert((select is_minor and guardian_name = 'Laura Benítez' from public.treatment_consents), 'la firma de una menor queda marcada con quien autoriza');
+select pg_temp.logout();
+
+select pg_temp.login('11111111-1111-4111-8111-111111111111');
+select pg_temp.assert((select count(*) from public.treatment_consents) = 3, 'el profesional ve todas las firmas');
+select pg_temp.expect_error(
+  $q$insert into public.treatment_consents (patient_id, version, signed_name) values (current_setting('test.juan_patient')::uuid, '2026-10', 'Juan Pérez')$q$,
+  array['42501'], 'el profesional no firma en nombre del paciente');
+select pg_temp.logout();
+select pg_temp.login('55555555-5555-4555-8555-555555555555');
+select pg_temp.assert((select count(*) from public.treatment_consents) = 0, 'recepción no ve los consentimientos');
+select pg_temp.logout();
+select pg_temp.login(null, 'anon');
+select pg_temp.expect_error($q$select count(*) from public.treatment_consents$q$, array['42501'], 'anon no tiene acceso a los consentimientos');
+select pg_temp.assert((select count(*) from public.settings where key = 'treatment_consent') = 1, 'el texto del consentimiento es público');
+select pg_temp.logout();
+
+-- Desactivado en la configuración: no se puede firmar
+update public.settings set value = value || '{"enabled": false}'::jsonb where key = 'treatment_consent';
+delete from public.treatment_consents where patient_id = (select id from public.patients where email = 'ana.ejemplo@demo.local');
+select pg_temp.login('33333333-3333-4333-8333-333333333333');
+select pg_temp.expect_error(
+  $q$insert into public.treatment_consents (patient_id, version, signed_name) values (public.current_patient_id(), '2026-10', 'Ana Ejemplo')$q$,
+  array['P0001'], 'con el consentimiento desactivado no se firma');
+select pg_temp.logout();
+rollback;
+
 -- Notas administrativas: solo para el profesional
 begin;
 insert into public.patient_admin_notes (patient_id, notes) select id, 'Abona por transferencia' from public.patients where email = 'juan.perez@demo.local';

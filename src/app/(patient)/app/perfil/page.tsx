@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, FileSignature } from "lucide-react";
 
 import { ChangePasswordForm, ContactForm, SharingToggle } from "@/components/patient/profile-forms";
 import { SignOutButton } from "@/components/shell/sign-out-button";
@@ -12,13 +12,21 @@ import { requirePatient } from "@/lib/auth/session";
 import { formatShortDate } from "@/lib/dates";
 import { createClient } from "@/lib/supabase/server";
 import { getInitials } from "@/lib/utils";
+import { getLatestConsent } from "@/server/services/consent";
 import { getIntake } from "@/server/services/intake";
+import { getSetting } from "@/server/services/settings";
 
 export const metadata: Metadata = { title: "Mi perfil" };
 
 export default async function ProfilePage() {
   const { patient, profile, email } = await requirePatient();
-  const intake = await getIntake(await createClient(), patient.id).catch(() => null);
+  const supabase = await createClient();
+  const [intake, consent, consentSettings] = await Promise.all([
+    getIntake(supabase, patient.id).catch(() => null),
+    getLatestConsent(supabase, patient.id).catch(() => null),
+    getSetting(supabase, "treatment_consent"),
+  ]);
+  const consentOutdated = consent !== null && consentSettings.enabled && consent.version !== consentSettings.version;
   const fullName = `${patient.first_name} ${patient.last_name}`;
   return (
     <div className="mx-auto max-w-2xl space-y-10">
@@ -41,6 +49,31 @@ export default async function ProfilePage() {
       </section>
 
       <Separator />
+
+      {consentSettings.enabled || consent ? (
+        <>
+          <section className="space-y-4">
+            <h2 className="font-display text-xl font-medium">Consentimiento informado</h2>
+            <div className="flex flex-col gap-4 rounded-2xl border border-border/70 bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex gap-3">
+                <FileSignature className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
+                <p className="text-sm text-muted-foreground">
+                  {consent
+                    ? consentOutdated
+                      ? `Firmaste la versión ${consent.version} el ${formatShortDate(consent.accepted_at)}. Hay una versión nueva para leer y firmar.`
+                      : `Lo firmaste el ${formatShortDate(consent.accepted_at)}, con el compromiso de asistir a las primeras ${consent.sessions} sesiones.`
+                    : "Todavía no lo firmaste. Explica cómo es el tratamiento y el compromiso de las primeras sesiones."}
+                </p>
+              </div>
+              <Button asChild variant="outline" className="shrink-0">
+                <Link href={consentOutdated ? "/app/consentimiento-informado?firmar=1" : "/app/consentimiento-informado"}>{consent && !consentOutdated ? "Ver lo que firmé" : "Leer y firmar"}</Link>
+              </Button>
+            </div>
+          </section>
+
+          <Separator />
+        </>
+      ) : null}
 
       <section className="space-y-4">
         <h2 className="font-display text-xl font-medium">Ficha de ingreso</h2>

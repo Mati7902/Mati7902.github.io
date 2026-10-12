@@ -596,6 +596,25 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"treatment_consents": {
+                  Row: {
+                    "accepted_at": string,"body_template": string,"created_at": string,"guardian_name": string | null,"id": string,"is_minor": boolean,"params": Json,"patient_id": string,"sessions": number,"signed_name": string,"title": string,"version": string
+                  }
+                  Insert: {
+                    "accepted_at"?: string,"body_template"?: string,"created_at"?: string,"guardian_name"?: string | null,"id"?: string,"is_minor"?: boolean,"params"?: Json,"patient_id": string,"sessions"?: number,"signed_name": string,"title"?: string,"version": string
+                  }
+                  Update: {
+                    "accepted_at"?: string,"body_template"?: string,"created_at"?: string,"guardian_name"?: string | null,"id"?: string,"is_minor"?: boolean,"params"?: Json,"patient_id"?: string,"sessions"?: number,"signed_name"?: string,"title"?: string,"version"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "treatment_consents_patient_id_fkey"
+      columns: ["patient_id"]
+isOneToOne: false
+      referencedRelation: "patients"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"whatsapp_contacts": {
                   Row: {
                     "created_at": string,"display_name": string | null,"id": string,"last_inbound_at": string | null,"last_outbound_at": string | null,"opted_out": boolean,"patient_id": string | null,"phone": string,"updated_at": string,"wa_id": string | null

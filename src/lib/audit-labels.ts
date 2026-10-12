@@ -21,6 +21,7 @@ const AUDIT_ACTION_LABELS: Record<string, string> = {
   "patient.invited": "Paciente invitado",
   "patient.intake_submitted": "Ficha de ingreso enviada",
   "patient.intake_viewed": "Ficha de ingreso consultada",
+  "patient.treatment_consent_signed": "Consentimiento informado firmado",
   "material.assigned": "Material asignado",
   "material.deleted": "Material eliminado",
   "exercise.assigned": "Ejercicio sugerido",

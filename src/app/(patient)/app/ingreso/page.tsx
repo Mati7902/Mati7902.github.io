@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { CircleCheck, Pencil } from "lucide-react";
 
 import { CrisisBanner } from "@/components/calm/crisis-banner";
@@ -11,16 +12,27 @@ import { requirePatient } from "@/lib/auth/session";
 import { formatShortDate } from "@/lib/dates";
 import { INTAKE_STEPS, initialIntakeAnswers } from "@/lib/intake/form";
 import { createClient } from "@/lib/supabase/server";
+import { getLatestConsent } from "@/server/services/consent";
 import { getIntake, intakeAnswersOf } from "@/server/services/intake";
 import { getActiveEmergencyResources } from "@/server/services/public-content";
 import { getPublicSettingsSafe } from "@/server/services/public-settings";
+import { getSetting } from "@/server/services/settings";
 
 export const metadata: Metadata = { title: "Ficha de ingreso" };
 
 export default async function IntakePage({ searchParams }: { searchParams: Promise<{ bienvenida?: string; editar?: string; parte?: string; enviada?: string }> }) {
   const { patient } = await requirePatient();
   const supabase = await createClient();
-  const [intake, resources, settings, params] = await Promise.all([getIntake(supabase, patient.id), getActiveEmergencyResources(), getPublicSettingsSafe(), searchParams]);
+  const [intake, resources, settings, params, consentSettings, consent] = await Promise.all([
+    getIntake(supabase, patient.id),
+    getActiveEmergencyResources(),
+    getPublicSettingsSafe(),
+    searchParams,
+    getSetting(supabase, "treatment_consent"),
+    getLatestConsent(supabase, patient.id),
+  ]);
+  // El consentimiento informado va antes que la ficha (una vez firmado, una versión nueva no la bloquea).
+  if (consentSettings.enabled && !consent) redirect(params.bienvenida === "1" ? "/app/consentimiento-informado?bienvenida=1" : "/app/consentimiento-informado");
   const identity = settings["site.identity"];
   const submitted = Boolean(intake?.submitted_at);
   const part = params.parte === "revision" ? "review" : params.parte !== undefined && /^\d+$/.test(params.parte) && Number(params.parte) < INTAKE_STEPS.length ? Number(params.parte) : null;

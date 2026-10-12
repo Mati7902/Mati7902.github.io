@@ -131,6 +131,10 @@ begin
   select a.id, v_patient_id, 6, 'La discusión con mi hermano', 'Aprobar el examen', 'Cómo no explotar cuando me enojo', 'Respiración, 3 veces', null, now()
   from public.appointments a where a.patient_id = v_patient_id and a.status = 'confirmed' order by a.start_time limit 1;
 
+  -- Consentimiento informado firmado (la base completa el texto con la configuración) --
+  insert into public.treatment_consents (patient_id, version, signed_name, accepted_at, created_at)
+  values (v_patient_id, '2026-10', 'Juan Pérez', now() - interval '56 days', now() - interval '56 days');
+
   -- Ficha de ingreso enviada (respuestas ficticias) --------------------------------
   update public.patients set emergency_contact_name = 'Marta Pérez, mi mamá', emergency_contact_phone = '+595981000010' where id = v_patient_id;
   insert into public.patient_intakes (patient_id, answers, submitted_at, created_at, updated_at)

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CalendarPlus } from "lucide-react";
 
 import { AppointmentCard } from "@/components/appointments/appointment-card";
+import { ConsentCard } from "@/components/consent/consent-card";
 import { IntakeCard } from "@/components/intake/intake-card";
 import { PatientAppointmentActions } from "@/components/appointments/patient-appointment-actions";
 import { QuickActions } from "@/components/patient/quick-actions";
@@ -11,6 +12,7 @@ import { requirePatient } from "@/lib/auth/session";
 import { answeredCount } from "@/lib/intake/form";
 import { createClient } from "@/lib/supabase/server";
 import { canPatientModify, canPrepareSession, getNextAppointment } from "@/server/services/appointments";
+import { getLatestConsent } from "@/server/services/consent";
 import { weeklyExerciseCount } from "@/server/services/exercises";
 import { getIntake, intakeAnswersOf } from "@/server/services/intake";
 import { getPublicSettingsSafe } from "@/server/services/public-settings";
@@ -28,14 +30,19 @@ function greeting(hour: number): string {
 export default async function PatientHomePage() {
   const { patient } = await requirePatient();
   const supabase = await createClient();
-  const [next, settings, weekly, intake, publicSettings] = await Promise.all([
+  const [next, settings, weekly, intake, publicSettings, consent] = await Promise.all([
     getNextAppointment(supabase, patient.id),
-    getSettings(supabase, ["scheduling", "gamification"] as const),
+    getSettings(supabase, ["scheduling", "gamification", "treatment_consent"] as const),
     weeklyExerciseCount(supabase, patient.id),
     // Si la ficha no se puede leer, el inicio igual tiene que cargar (no se muestra el aviso).
     getIntake(supabase, patient.id).catch(() => undefined),
     getPublicSettingsSafe(),
+    getLatestConsent(supabase, patient.id).catch(() => undefined),
   ]);
+  // Primero el consentimiento; la ficha de ingreso se ofrece una vez firmado.
+  const consentSettings = settings.treatment_consent;
+  const needsConsent = consentSettings.enabled && consent !== undefined && consent?.version !== consentSettings.version;
+  const consentPending = consentSettings.enabled && consent === null;
   const prep = next ? await getSessionPreparation(supabase, next.id) : null;
   const tz = settings.scheduling.timezone;
   const hour = Number(new Intl.DateTimeFormat("es-PY", { hour: "numeric", hour12: false, timeZone: tz }).format(new Date()));
@@ -49,7 +56,9 @@ export default async function PatientHomePage() {
         <p className="text-lg text-muted-foreground">¿Cómo estás hoy?</p>
       </header>
 
-      {intake !== undefined && !intake?.submitted_at ? (
+      {needsConsent ? <ConsentCard updated={consent !== null} sessions={consentSettings.sessions} /> : null}
+
+      {!consentPending && intake !== undefined && !intake?.submitted_at ? (
         <IntakeCard answered={answeredCount(intakeAnswersOf(intake))} started={Boolean(intake)} professionalName={publicSettings["site.identity"].professional_name} />
       ) : null}
 

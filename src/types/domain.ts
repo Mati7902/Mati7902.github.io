@@ -26,6 +26,7 @@ export type AvailabilityRule = Tables<"availability_rules">;
 export type BlockedSlot = Tables<"blocked_slots">;
 export type SessionPreparation = Tables<"session_preparations">;
 export type PatientIntake = Tables<"patient_intakes">;
+export type TreatmentConsent = Tables<"treatment_consents">;
 export type Faq = Tables<"faqs">;
 export type EmergencyResource = Tables<"emergency_resources">;
 export type WhatsAppContact = Tables<"whatsapp_contacts">;

@@ -14,6 +14,7 @@ import { getSession } from "@/lib/auth/session";
 import { safeInternalPath } from "@/lib/safe-redirect";
 import { audit } from "@/server/services/audit";
 import { allowAttempt } from "@/server/services/rate-limit";
+import { getSetting } from "@/server/services/settings";
 
 const log = createLogger("auth");
 
@@ -186,6 +187,7 @@ export async function completeInvitationAction(_prev: ActionResult | null, formD
     .eq("profile_id", user.id);
 
   await audit(supabase, "auth.invitation_completed", { type: "profile", id: user.id }, { consent_version: version });
-  // Recién creada la cuenta, lo primero es la ficha de ingreso (se puede dejar para más tarde).
-  redirect("/app/ingreso?bienvenida=1");
+  // Recién creada la cuenta: consentimiento informado (si está habilitado) y ficha de ingreso.
+  const treatment = await getSetting(supabase, "treatment_consent");
+  redirect(treatment.enabled ? "/app/consentimiento-informado?bienvenida=1" : "/app/ingreso?bienvenida=1");
 }
