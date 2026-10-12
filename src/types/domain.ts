@@ -28,6 +28,9 @@ export type SessionPreparation = Tables<"session_preparations">;
 export type PatientIntake = Tables<"patient_intakes">;
 export type TreatmentConsent = Tables<"treatment_consents">;
 export type Faq = Tables<"faqs">;
+export type Testimonial = Tables<"testimonials">;
+/** Lo que ve la web anónima de un testimonio. */
+export type PublicTestimonial = Pick<Testimonial, "id" | "gender" | "quote" | "context">;
 export type EmergencyResource = Tables<"emergency_resources">;
 export type WhatsAppContact = Tables<"whatsapp_contacts">;
 export type WhatsAppConversation = Tables<"whatsapp_conversations">;

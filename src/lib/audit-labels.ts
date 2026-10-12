@@ -28,6 +28,8 @@ const AUDIT_ACTION_LABELS: Record<string, string> = {
   "plan.deleted": "Plan eliminado",
   "settings.updated": "Configuración actualizada",
   "emergency_resource.saved": "Recurso de emergencia guardado",
+  "testimonial.saved": "Testimonio guardado",
+  "testimonial.deleted": "Testimonio eliminado",
   "notification_template.updated": "Plantilla de mensaje actualizada",
   "integration.google_connected": "Google Calendar conectado",
   "integration.google_disconnected": "Google Calendar desconectado",

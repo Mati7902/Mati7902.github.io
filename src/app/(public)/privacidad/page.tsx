@@ -41,6 +41,9 @@ export default async function PrivacyPage() {
       <p>
         La ficha de ingreso es información de salud y tiene reglas propias: mientras no la envíes es un borrador que ves solo vos; una vez enviada, la ve solo tu profesional (no el personal administrativo ni la asistente virtual de WhatsApp) y queda registrado cada vez que se abre, sin guardar su contenido en ese registro. Podés verla y actualizarla desde tu perfil, y pedir que se elimine escribiendo al profesional.
       </p>
+      <p>
+        Los testimonios de la web se publican solo con la autorización escrita de cada persona, de forma anónima (sin nombre ni datos que permitan reconocerla) y no se vinculan con su ficha. Quien compartió un testimonio puede retirar la autorización cuando quiera y se quita de la web.
+      </p>
       <h2>5. Seguridad</h2>
       <p>
         Aplicamos cifrado en tránsito, control de acceso por usuario (cada paciente accede únicamente a su propia información), mínimo privilegio, auditoría de acciones críticas y almacenamiento en proveedores con certificaciones de seguridad reconocidas.

@@ -290,3 +290,8 @@ begin
   end if;
 end $$;
 
+
+-- Testimonios: solo un ejemplo SIN publicar, para ver el editor. Los testimonios de la portada
+-- tienen que ser reales y autorizados por escrito: no se cargan testimonios inventados.
+insert into public.testimonials (gender, quote, context, consent_confirmed, is_published, sort_order)
+values ('mujer', 'Ejemplo para ver el editor: reemplazá este texto por un testimonio real, con las palabras que la persona aprobó por escrito.', 'Ejemplo (no se publica)', false, false, 1);

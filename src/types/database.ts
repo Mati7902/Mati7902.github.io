@@ -583,6 +583,19 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"testimonials": {
+                  Row: {
+                    "consent_confirmed": boolean,"consent_confirmed_at": string | null,"context": string | null,"created_at": string,"gender": string,"id": string,"is_published": boolean,"quote": string,"sort_order": number,"updated_at": string
+                  }
+                  Insert: {
+                    "consent_confirmed"?: boolean,"consent_confirmed_at"?: string | null,"context"?: string | null,"created_at"?: string,"gender": string,"id"?: string,"is_published"?: boolean,"quote": string,"sort_order"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "consent_confirmed"?: boolean,"consent_confirmed_at"?: string | null,"context"?: string | null,"created_at"?: string,"gender"?: string,"id"?: string,"is_published"?: boolean,"quote"?: string,"sort_order"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"therapy_plans": {
                   Row: {
                     "created_at": string,"cta_label": string,"cta_type": string,"currency": string,"description": string | null,"duration_minutes": number | null,"features": (string)[],"id": string,"is_active": boolean,"is_featured": boolean,"name": string,"price_amount": number | null,"sessions_included": number | null,"short_description": string | null,"slug": string,"sort_order": number,"updated_at": string

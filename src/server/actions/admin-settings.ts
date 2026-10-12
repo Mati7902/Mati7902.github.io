@@ -6,6 +6,7 @@ import { z } from "zod";
 import { assertAdmin } from "@/lib/auth/session";
 import { type ActionResult, fail, ok, validationFail, AppError } from "@/lib/errors";
 import { createClient } from "@/lib/supabase/server";
+import { testimonialSchema, type TestimonialInput } from "@/lib/testimonials";
 import { zodFieldErrors } from "@/lib/validation";
 import { audit } from "@/server/services/audit";
 import { saveSetting, settingsSchemas, type SettingsKey, type SettingsValue } from "@/server/services/settings";
@@ -55,6 +56,41 @@ export async function deleteFaqAction(id: string): Promise<ActionResult> {
     const supabase = await createClient();
     const { error } = await supabase.from("faqs").delete().eq("id", id);
     if (error) throw error;
+    revalidateAll();
+    return ok(undefined);
+  } catch (error) {
+    return fail(error);
+  }
+}
+
+/** Guarda un testimonio anónimo y devuelve su id (el editor lo usa para no duplicarlo al volver a guardar). */
+export async function saveTestimonialAction(input: TestimonialInput): Promise<ActionResult<{ id: string }>> {
+  const parsed = testimonialSchema.safeParse(input);
+  if (!parsed.success) return validationFail(zodFieldErrors(parsed.error));
+  try {
+    await assertAdmin();
+    const supabase = await createClient();
+    const { id, ...rest } = parsed.data;
+    const { data, error } = id
+      ? await supabase.from("testimonials").update(rest).eq("id", id).select("id").single()
+      : await supabase.from("testimonials").insert(rest).select("id").single();
+    if (error) throw error;
+    await audit(supabase, "testimonial.saved", { type: "testimonial", id: data.id }, { published: rest.is_published });
+    revalidateAll();
+    return ok({ id: data.id });
+  } catch (error) {
+    return fail(error);
+  }
+}
+
+export async function deleteTestimonialAction(id: string): Promise<ActionResult> {
+  if (!z.string().uuid().safeParse(id).success) return fail(new AppError("VALIDATION", "Testimonio inválido."));
+  try {
+    await assertAdmin();
+    const supabase = await createClient();
+    const { error } = await supabase.from("testimonials").delete().eq("id", id);
+    if (error) throw error;
+    await audit(supabase, "testimonial.deleted", { type: "testimonial", id });
     revalidateAll();
     return ok(undefined);
   } catch (error) {

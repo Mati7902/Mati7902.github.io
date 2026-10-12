@@ -4,13 +4,14 @@ import Link from "next/link";
 
 import { FaqList } from "@/components/public/faq-list";
 import { NeuralField } from "@/components/public/neural-field";
+import { TestimonialsSection } from "@/components/public/testimonials-section";
 import { WaveLines } from "@/components/public/wave-lines";
 import { PlanCard } from "@/components/plans/plan-card";
 import { Button } from "@/components/ui/button";
 import { brandPhoto, splitEmphasis } from "@/lib/brand";
 import { publicEnv } from "@/lib/env";
 import { MODALITY_COPY, modalityMode } from "@/lib/modalities";
-import { getActivePlans, getPublicAvailability, getPublishedFaqs } from "@/server/services/public-content";
+import { getActivePlans, getPublicAvailability, getPublishedFaqs, getPublishedTestimonials } from "@/server/services/public-content";
 import { getPublicSettingsSafe } from "@/server/services/public-settings";
 
 export const revalidate = 300;
@@ -18,11 +19,12 @@ export const revalidate = 300;
 const WEEKDAYS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
 export default async function LandingPage() {
-  const [{ "site.identity": identity, landing, scheduling }, plans, faqs, availability] = await Promise.all([
+  const [{ "site.identity": identity, landing, scheduling }, plans, faqs, availability, testimonials] = await Promise.all([
     getPublicSettingsSafe(),
     getActivePlans(),
     getPublishedFaqs(),
     getPublicAvailability(),
+    getPublishedTestimonials(),
   ]);
 
   const featuredPlans = plans.slice(0, 2);
@@ -197,6 +199,9 @@ export default async function LandingPage() {
           </ol>
         </div>
       </section>
+
+      {/* Testimonios: solo si hay alguno publicado con autorización */}
+      <TestimonialsSection testimonials={testimonials} />
 
       {/* Planes */}
       <section id="planes" className="scroll-mt-20">

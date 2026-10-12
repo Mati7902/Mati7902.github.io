@@ -9,6 +9,7 @@ import { GoogleCalendarCard } from "@/components/admin/settings/google-calendar-
 import { IdentityForm } from "@/components/admin/settings/identity-form";
 import { RemindersForm } from "@/components/admin/settings/reminders-form";
 import { SchedulingForm } from "@/components/admin/settings/scheduling-form";
+import { TestimonialsEditor } from "@/components/admin/settings/testimonials-form";
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { requireAdmin } from "@/lib/auth/session";
@@ -20,19 +21,20 @@ import { getSettings } from "@/server/services/settings";
 
 export const metadata: Metadata = { title: "Configuración" };
 
-const TABS = ["identidad", "agenda", "recordatorios", "emergencia", "preguntas", "textos", "consentimiento", "apariencia", "preferencias"] as const;
+const TABS = ["identidad", "agenda", "recordatorios", "emergencia", "preguntas", "testimonios", "textos", "consentimiento", "apariencia", "preferencias"] as const;
 type Tab = (typeof TABS)[number];
 
 export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ tab?: string; google?: string }> }) {
   const session = await requireAdmin();
   const { tab, google } = await searchParams;
   const supabase = await createClient();
-  const [settings, rules, blocked, { data: resources }, { data: faqs }, { data: integration }] = await Promise.all([
+  const [settings, rules, blocked, { data: resources }, { data: faqs }, { data: testimonials }, { data: integration }] = await Promise.all([
     getSettings(supabase, ["site.identity", "scheduling", "reminders", "emergency", "gamification", "theme", "legal", "landing", "treatment_consent"] as const),
     listAvailabilityRules(supabase),
     listBlockedSlots(supabase, new Date()),
     supabase.from("emergency_resources").select("*").order("sort_order"),
     supabase.from("faqs").select("*").order("sort_order"),
+    supabase.from("testimonials").select("*").order("sort_order").order("created_at"),
     supabase.from("calendar_integrations").select("external_account_email, last_synced_at, last_error, is_active").eq("owner_profile_id", session.userId).eq("provider", "google").maybeSingle(),
   ]);
   // Firmas de la versión vigente (para avisar al editar el texto).
@@ -50,6 +52,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
           <TabsTrigger value="recordatorios">Recordatorios</TabsTrigger>
           <TabsTrigger value="emergencia">Emergencia</TabsTrigger>
           <TabsTrigger value="preguntas">Preguntas</TabsTrigger>
+          <TabsTrigger value="testimonios">Testimonios</TabsTrigger>
           <TabsTrigger value="textos">Textos</TabsTrigger>
           <TabsTrigger value="consentimiento">Consentimiento</TabsTrigger>
           <TabsTrigger value="apariencia">Apariencia</TabsTrigger>
@@ -97,6 +100,10 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
 
         <TabsContent value="preguntas" className="max-w-3xl">
           <FaqsEditor faqs={faqs ?? []} />
+        </TabsContent>
+
+        <TabsContent value="testimonios" className="max-w-3xl">
+          <TestimonialsEditor testimonials={testimonials ?? []} />
         </TabsContent>
 
         <TabsContent value="textos" className="max-w-3xl">
