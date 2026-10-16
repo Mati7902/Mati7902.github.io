@@ -19,6 +19,8 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   typedRoutes: false,
   images: {
+    // 90 solo para la foto profesional de la portada; el resto usa 75 (el valor por defecto).
+    qualities: [75, 90],
     remotePatterns: [
       // Archivos públicos del bucket de Supabase Storage (fotos de perfil, portadas de materiales).
       { protocol: "https", hostname: "*.supabase.co", pathname: "/storage/v1/object/public/**" },

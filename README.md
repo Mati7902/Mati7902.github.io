@@ -206,7 +206,7 @@ Las migraciones crean: extensiones (`pgcrypto`, `btree_gist`), enums, 35 tablas 
 
 ### 7.3 Primer administrador
 
-Sin instalar nada: creá el usuario en **Authentication › Users › Add user** (con *Auto Confirm User*) y en el SQL Editor ejecutá `update public.profiles set role = 'admin' where email = '…';` (ver [PUBLICAR.md](PUBLICAR.md), paso 7). Con Node:
+Sin instalar nada: creá el usuario en **Authentication › Users › Add user** (con *Auto Confirm User*) y en el SQL Editor ejecutá `update public.profiles set role = 'admin' where email = '…';` (ver [PUBLICAR.md](PUBLICAR.md), paso 8). Con Node:
 
 ```bash
 SUPABASE_URL=https://TU_REF.supabase.co SUPABASE_SERVICE_ROLE_KEY=... \
@@ -297,11 +297,11 @@ Pendiente de evolución: creación automática de enlaces Google Meet (requiere 
 
 ## 11. Deployment en Vercel
 
-Guía paso a paso sin instalar nada, de la compra del dominio al primer paciente (Vercel + Supabase + Resend): **[PUBLICAR.md](PUBLICAR.md)**. Ojo: el plan gratuito de Vercel (*Hobby*) es solo para uso no comercial; la página de una práctica que cobra consultas necesita Vercel Pro.
+Guía paso a paso para personas sin conocimientos técnicos, sin instalar nada, de cero al primer paciente (Supabase + Vercel + dominio + Resend + recordatorios): **[PUBLICAR.md](PUBLICAR.md)**. Ojo: el plan gratuito de Vercel (*Hobby*) es solo para uso no comercial; la página de una práctica que cobra consultas necesita Vercel Pro.
 
 1. Importá el repositorio en Vercel (framework Next.js, Node 22). Región sugerida: `gru1` (São Paulo), ya definida en `vercel.json`.
 2. Cargá todas las variables de entorno de producción (ver §6). Generá `CRON_SECRET` (`openssl rand -hex 32`).
-3. Tareas programadas: `vercel.json` define `/api/cron/housekeeping` diario a las 04:00 UTC (compatible con el plan Hobby, que solo admite tareas diarias). Los recordatorios (`/api/cron/reminders`) necesitan correr cada 15 minutos: los dispara el workflow `.github/workflows/recordatorios.yml` con los secretos `APP_URL` y `CRON_SECRET` del repositorio. En el plan Pro podés agregar el cron `*/15 * * * *` a `vercel.json` y desactivar el workflow. Ambos envían `Authorization: Bearer $CRON_SECRET`.
+3. Tareas programadas: `vercel.json` define `/api/cron/housekeeping` diario a las 04:00 UTC (compatible con el plan Hobby, que solo admite tareas diarias). Los recordatorios (`/api/cron/reminders`) necesitan correr cada 15 minutos: los programa la propia base con [`supabase/recordatorios.sql`](supabase/recordatorios.sql) (Supabase Cron: `pg_cron` + `pg_net`, disponible en todos los planes), que llama al endpoint con `Authorization: Bearer $CRON_SECRET`. Antes lo hacía un workflow de GitHub Actions, pero sus ejecuciones programadas llegaban con horas de atraso y se perdían avisos. Con Vercel Pro también podés agregar el cron `*/15 * * * *` a `vercel.json` (no hace falta usar los dos; si coinciden, los recordatorios no se duplican).
 4. Dominio propio → ver [PUBLICAR.md](PUBLICAR.md). Conectalo en Vercel y volvé a publicar (si definiste `NEXT_PUBLIC_APP_URL`, actualizala); después actualizá la *Site URL*/Redirect URLs de Supabase, la URI de Google y el webhook de Meta.
 5. Verificá `GET /api/health`.
 6. PWA: en producción se registra `public/sw.js` (navegación *network-first* con página `/offline`; nunca cachea API ni datos). En iPhone: Safari › Compartir › *Agregar a pantalla de inicio*; en Android: *Instalar app*.

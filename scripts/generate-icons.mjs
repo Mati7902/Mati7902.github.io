@@ -1,5 +1,5 @@
 // Genera los iconos de la PWA, el favicon y la imagen para redes (OpenGraph) a partir del emblema
-// (public/marca/emblema.svg) y la foto (public/marca/matias-sanchez.webp).
+// (public/marca/emblema.svg) y la foto (public/marca/matias-sanchez-2026.webp).
 // Uso: pnpm icons
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -80,7 +80,7 @@ await png(iconSvg(512, { maskable: true }), 512, "icons/icon-maskable-512.png");
 await png(iconSvg(512), 180, "icons/apple-touch-icon.png");
 await png(smallIconSvg(512), 32, "icons/icon-32.png");
 await writeFile(path.join(OUT, "icons/icon.svg"), iconSvg(512));
-const photo = await sharp(path.join(OUT, "marca/matias-sanchez.webp")).resize(340, 340).png().toBuffer();
+const photo = await sharp(path.join(OUT, "marca/matias-sanchez-2026.webp")).resize(340, 340).png().toBuffer();
 await sharp(Buffer.from(ogSvg(`data:image/png;base64,${photo.toString("base64")}`))).png().toFile(path.join(OUT, "og.png"));
 // favicon.ico (formato ICO con PNG de 16 y 32 px embebidos)
 const sizes = [16, 32];

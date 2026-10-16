@@ -107,7 +107,7 @@ export default async function LandingPage() {
             <div aria-hidden className="absolute inset-[13%] rounded-full border border-mint-300/70" />
             <div aria-hidden className="absolute inset-[16.5%] rounded-full border-2 border-[#d8c9a5]/80" />
             <div className="absolute inset-[19%] overflow-hidden rounded-full bg-card shadow-[var(--shadow-float)] ring-4 ring-card">
-              <Image src={brandPhoto(identity)} alt={identity.professional_name} fill sizes="(max-width: 640px) 60vw, (max-width: 1024px) 300px, 330px" className="object-cover" priority />
+              <Image src={brandPhoto(identity)} alt={identity.professional_name} fill sizes="(max-width: 640px) 60vw, (max-width: 1024px) 300px, 330px" quality={90} className="object-cover" priority />
             </div>
           </div>
         </div>

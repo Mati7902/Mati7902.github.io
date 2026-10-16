@@ -2,7 +2,7 @@ import type { SiteIdentity } from "@/server/services/settings";
 
 /** Emblema y foto de la identidad que vienen con la plataforma; se reemplazan desde Configuración › Identidad. */
 export const DEFAULT_LOGO = "/marca/emblema.svg";
-export const DEFAULT_PHOTO = "/marca/matias-sanchez.webp";
+export const DEFAULT_PHOTO = "/marca/matias-sanchez-2026.webp";
 
 export function brandLogo(identity: Pick<SiteIdentity, "logo_url">): string {
   return identity.logo_url || DEFAULT_LOGO;

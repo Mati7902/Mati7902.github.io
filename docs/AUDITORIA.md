@@ -64,7 +64,7 @@ Resultado: `pnpm test:db` → 149 aserciones OK sobre las migraciones reales (Po
 
 | Punto | Estado | Evidencia |
 | --- | --- | --- |
-| Job cada 15 min, ventana configurable, horas de silencio | ✅ | `services/reminders.ts`, `.github/workflows/recordatorios.yml` |
+| Job cada 15 min, ventana configurable, horas de silencio | ✅ | `services/reminders.ts`, `supabase/recordatorios.sql` (Supabase Cron) |
 | Sin duplicados: marca atómica (`update … is null`) antes de enviar; liberación si falla | ✅ | `claim()/release()` + tests |
 | Resultado, `message_id` y error guardados | ✅ | `whatsapp_messages` |
 | Aviso automático al modificar un turno con botones Confirmar / Solicitar otro horario | ✅ | `adminRescheduleAppointmentAction` → `appointment_changed` |
@@ -242,9 +242,10 @@ Cuatro revisores independientes (estados y agenda, interpretación de texto, cri
 | --- | --- |
 | Con la plantilla por defecto de Supabase, la invitación vuelve con la sesión en el fragmento (`#access_token`), que el servidor no ve: el paciente terminaba en "enlace inválido" | Plantillas propias con `token_hash` (`supabase/templates`) y, como respaldo, una página intermedia en `/auth/callback` que entrega el fragmento a `/auth/callback/session` (solo mismo origen y JSON) |
 | La recuperación de contraseña (PKCE) fallaba si el email se abría en otro navegador o en el celular | La plantilla de recuperación usa `token_hash`, que no depende del navegador |
-| El plan Hobby de Vercel solo admite tareas programadas diarias: el cron de recordatorios cada 15 min hacía fallar el despliegue | `vercel.json` queda con el mantenimiento diario y los recordatorios los dispara `.github/workflows/recordatorios.yml` |
+| El plan Hobby de Vercel solo admite tareas programadas diarias: el cron de recordatorios cada 15 min hacía fallar el despliegue | `vercel.json` queda con el mantenimiento diario y los recordatorios los programa Supabase Cron (`supabase/recordatorios.sql`) |
+| El workflow de GitHub programado cada 15 min corría en la práctica cada 3 a 10 horas (21 ejecuciones en 104 h): con la ventana de 90 min se perdían casi todos los recordatorios | Se reemplazó por Supabase Cron (`pg_cron` + `pg_net`), disponible en todos los planes y que además mantiene activa la base del plan gratuito |
 | El email incluido en Supabase solo envía a los miembros del equipo (2 por hora) | Documentado como paso obligatorio: SMTP propio |
-| El plan Hobby de Vercel es solo para uso personal y no comercial (y su contenido puede usarse para entrenar modelos de IA) | La guía indica Vercel Pro para la práctica; los recordatorios por GitHub Actions siguen funcionando en ambos planes |
+| El plan Hobby de Vercel es solo para uso personal y no comercial (y su contenido puede usarse para entrenar modelos de IA) | La guía indica Vercel Pro para la práctica; los recordatorios (Supabase Cron) funcionan con cualquier plan |
 | Al comprar un dominio había que cambiar `NEXT_PUBLIC_APP_URL` y volver a publicar; un valor con barra final o sin `https://` rompía enlaces o el arranque | Sin la variable, la dirección es el dominio de producción de Vercel (`VERCEL_PROJECT_PRODUCTION_URL`): el dominio propio en cuanto se conecta. Se normalizan barra final y esquema (6 tests) |
 | Crear la base exigía pegar seis migraciones en orden | `supabase/instalar.sql` en una sola transacción, generado por `pnpm db:instalar` y verificado por un test; probado en una base nueva con todos los tests de RLS |
 | Si el dominio quedaba a medio conectar, los emails salían con la dirección vieja sin que nadie lo notara | Aviso en el panel del profesional y `app_url` en `/api/health` |
