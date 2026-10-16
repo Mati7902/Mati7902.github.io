@@ -12,7 +12,7 @@ export function PublicMobileMenu({ links }: { links: { href: string; label: stri
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden" aria-label="Abrir menú">
+        <Button variant="ghost" size="icon" className="xl:hidden" aria-label="Abrir menú">
           <Menu className="size-5" />
         </Button>
       </SheetTrigger>

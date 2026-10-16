@@ -27,6 +27,9 @@ function hrefFor(n: Notification, basePath: string): string | null {
   if (typeof data.appointment_id === "string") return `${basePath}/agenda`;
   if (typeof data.material_id === "string") return `${basePath}/materiales`;
   if (typeof data.template_id === "string") return `${basePath}/ejercicios`;
+  if (basePath === "/admin" && data.intake === true && typeof data.patient_id === "string" && /^[0-9a-f-]{36}$/i.test(data.patient_id)) {
+    return `/admin/pacientes/${data.patient_id}/ingreso`;
+  }
   return null;
 }
 

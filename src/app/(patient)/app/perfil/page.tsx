@@ -1,19 +1,32 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ClipboardList, FileSignature } from "lucide-react";
 
 import { ChangePasswordForm, ContactForm, SharingToggle } from "@/components/patient/profile-forms";
 import { SignOutButton } from "@/components/shell/sign-out-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { Separator } from "@/components/ui/separator";
 import { requirePatient } from "@/lib/auth/session";
 import { formatShortDate } from "@/lib/dates";
+import { createClient } from "@/lib/supabase/server";
 import { getInitials } from "@/lib/utils";
+import { getLatestConsent } from "@/server/services/consent";
+import { getIntake } from "@/server/services/intake";
+import { getSetting } from "@/server/services/settings";
 
 export const metadata: Metadata = { title: "Mi perfil" };
 
 export default async function ProfilePage() {
   const { patient, profile, email } = await requirePatient();
+  const supabase = await createClient();
+  const [intake, consent, consentSettings] = await Promise.all([
+    getIntake(supabase, patient.id).catch(() => null),
+    getLatestConsent(supabase, patient.id).catch(() => null),
+    getSetting(supabase, "treatment_consent"),
+  ]);
+  const consentOutdated = consent !== null && consentSettings.enabled && consent.version !== consentSettings.version;
   const fullName = `${patient.first_name} ${patient.last_name}`;
   return (
     <div className="mx-auto max-w-2xl space-y-10">
@@ -37,13 +50,59 @@ export default async function ProfilePage() {
 
       <Separator />
 
+      {consentSettings.enabled || consent ? (
+        <>
+          <section className="space-y-4">
+            <h2 className="font-display text-xl font-medium">Consentimiento informado</h2>
+            <div className="flex flex-col gap-4 rounded-2xl border border-border/70 bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex gap-3">
+                <FileSignature className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
+                <p className="text-sm text-muted-foreground">
+                  {consent
+                    ? consentOutdated
+                      ? `Firmaste la versión ${consent.version} el ${formatShortDate(consent.accepted_at)}. Hay una versión nueva para leer y firmar.`
+                      : `Lo firmaste el ${formatShortDate(consent.accepted_at)}, con el compromiso de asistir a las primeras ${consent.sessions} sesiones.`
+                    : "Todavía no lo firmaste. Explica cómo es el tratamiento y el compromiso de las primeras sesiones."}
+                </p>
+              </div>
+              <Button asChild variant="outline" className="shrink-0">
+                <Link href="/app/consentimiento-informado">{consent && !consentOutdated ? "Ver lo que firmé" : "Leer y firmar"}</Link>
+              </Button>
+            </div>
+          </section>
+
+          <Separator />
+        </>
+      ) : null}
+
+      <section className="space-y-4">
+        <h2 className="font-display text-xl font-medium">Ficha de ingreso</h2>
+        <div className="flex flex-col gap-4 rounded-2xl border border-border/70 bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex gap-3">
+            <ClipboardList className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
+            <p className="text-sm text-muted-foreground">
+              {intake?.submitted_at
+                ? `La enviaste el ${formatShortDate(intake.first_submitted_at ?? intake.submitted_at)}. La ves solo vos y tu psicólogo/a; podés actualizarla cuando quieras.`
+                : intake
+                  ? "Empezaste a completarla. Mientras no la envíes, es un borrador que ves solo vos."
+                  : "Todavía no la completaste. Son preguntas sobre vos y tu salud para que tu psicólogo/a te conozca mejor."}
+            </p>
+          </div>
+          <Button asChild variant="outline" className="shrink-0">
+            <Link href="/app/ingreso">{intake?.submitted_at ? "Ver mi ficha" : intake ? "Seguir" : "Completar"}</Link>
+          </Button>
+        </div>
+      </section>
+
+      <Separator />
+
       <section className="space-y-4">
         <h2 className="font-display text-xl font-medium">Privacidad</h2>
         <SharingToggle initial={patient.share_records_with_professional} />
         <p className="text-xs text-muted-foreground">
           Leé la <Link href="/privacidad" className="underline underline-offset-2">política de privacidad</Link> y los{" "}
           <Link href="/terminos" className="underline underline-offset-2">términos de uso</Link>.
-          {patient.consent_accepted_at ? ` Aceptaste el consentimiento el ${formatShortDate(patient.consent_accepted_at)}.` : ""}
+          {patient.consent_accepted_at ? ` Aceptaste los términos de uso y la política de privacidad el ${formatShortDate(patient.consent_accepted_at)}.` : ""}
         </p>
       </section>
 

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Pencil } from "lucide-react";
+import { ClipboardList, FileSignature, Pencil } from "lucide-react";
 
 import { AppointmentListClient } from "@/components/admin/agenda/agenda-client";
 import { NewAppointmentDialog } from "@/components/admin/agenda/new-appointment-dialog";
 import { AssignExerciseForm, AssignMaterialForm } from "@/components/admin/patients/assign-forms";
+import { ExerciseResponseList } from "@/components/exercises/exercise-response-list";
 import { PatientAccessControls } from "@/components/admin/patients/patient-access-controls";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,9 +14,16 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Separator } from "@/components/ui/separator";
 import { requireAdmin } from "@/lib/auth/session";
 import { formatCompactDate, formatShortDate, formatTime, capitalize, nowMs } from "@/lib/dates";
+import { AUDIENCE_LABEL, type Audience, COLLECTIONS } from "@/lib/exercises/collections";
+import { answerEntries, parseSteps } from "@/lib/exercises/steps";
 import { createClient } from "@/lib/supabase/server";
 import { getPatientOverview } from "@/server/services/admin-patients";
-import { getSetting } from "@/server/services/settings";
+import { commitmentProgress, getLatestConsent } from "@/server/services/consent";
+import { ageFrom } from "@/lib/exercises/collections";
+import { toDateKey } from "@/lib/dates";
+import { getIntakeStatus } from "@/server/services/intake";
+import { listSharedResponses } from "@/server/services/exercises";
+import { getSetting, getSettings } from "@/server/services/settings";
 import { APPOINTMENT_STATUS_LABEL, type AppointmentWithPatient, type Patient } from "@/types/domain";
 
 export const metadata: Metadata = { title: "Ficha del paciente" };
@@ -27,14 +35,29 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
   await requireAdmin();
   const { id } = await params;
   const supabase = await createClient();
-  const [overview, scheduling, { data: materials }, { data: templates }, { data: prepRows }, { count: logCount }] = await Promise.all([
+  const [overview, scheduling, { data: materials }, { data: templates }, { data: prepRows }, { count: logCount }, sharedResponses, intake] = await Promise.all([
     getPatientOverview(supabase, id),
     getSetting(supabase, "scheduling"),
-    supabase.from("materials").select("id, title").eq("is_published", true).order("title"),
-    supabase.from("exercise_templates").select("id, title").eq("is_active", true).order("sort_order"),
+    supabase.from("materials").select("id, title, material_categories(name)").eq("is_published", true).order("title"),
+    supabase.from("exercise_templates").select("id, title, collection, audience").eq("is_active", true).order("sort_order"),
     supabase.from("session_preparations").select("appointment_id, week_rating, hardest, better, topics, practiced, important, submitted_at").eq("patient_id", id),
     supabase.from("emotional_logs").select("id", { count: "exact", head: true }).eq("patient_id", id),
+    listSharedResponses(supabase, id),
+    // Solo el estado: el contenido se lee (y se audita) en la página de la ficha de ingreso.
+    // Solo llega si el paciente ya la envió (RLS); un error de lectura no rompe la ficha.
+    getIntakeStatus(supabase, id).catch(() => null),
   ]);
+  const [consent, { treatment_consent: consentSettings }] = await Promise.all([
+    getLatestConsent(supabase, id).catch(() => null),
+    getSettings(supabase, ["treatment_consent"] as const),
+  ]);
+
+  const materialOptions = (materials ?? []).map((m) => ({ id: m.id, title: m.title, group: (m.material_categories as { name: string } | null)?.name ?? "Sin categoría" }));
+  const templateOptions = (templates ?? []).map((t) => {
+    const collection = t.collection ? COLLECTIONS[t.collection] : undefined;
+    const audience = t.audience !== "todos" ? ` (${AUDIENCE_LABEL[t.audience as Audience]?.toLowerCase() ?? t.audience})` : "";
+    return { id: t.id, title: t.title, group: collection ? `${collection.title}${audience}` : `Ejercicios${audience}` };
+  });
   if (!overview) notFound();
   const { patient, appointments, materials: assigned, assignments, profile, adminNote } = overview;
   const now = nowMs();
@@ -100,6 +123,18 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
         </section>
       </div>
 
+      <div className="grid gap-6 lg:grid-cols-2">
+        <ConsentSummary
+          patientId={patient.id}
+          consent={consent}
+          currentVersion={consentSettings.enabled ? consentSettings.version : null}
+          progress={consent ? await commitmentProgress(supabase, patient, consent, scheduling.timezone) : null}
+          ageWarning={consent ? consentAgeWarning(consent, patient.birth_date) : null}
+          hasAccount={Boolean(patient.profile_id)}
+        />
+        <IntakeSummary patientId={patient.id} intake={intake} hasAccount={Boolean(patient.profile_id)} />
+      </div>
+
       <section className="space-y-3">
         <h2 className="font-display text-lg font-medium">Próximos turnos</h2>
         <AppointmentListClient appointments={upcoming} preps={prepRows ?? []} timezone={scheduling.timezone} defaultDuration={scheduling.default_duration_minutes} emptyText="Sin turnos próximos." showDate showPatient={false} />
@@ -121,7 +156,7 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
       <section className="grid gap-6 lg:grid-cols-2">
         <div className="surface-card space-y-4 p-6">
           <h2 className="font-display text-lg font-medium">Materiales asignados</h2>
-          <AssignMaterialForm patientId={patient.id} materials={(materials ?? []).filter((m) => !assigned.some((a) => a.material_id === m.id))} />
+          <AssignMaterialForm patientId={patient.id} materials={materialOptions.filter((m) => !assigned.some((a) => a.material_id === m.id))} />
           {assigned.length === 0 ? (
             <p className="text-sm text-muted-foreground">Todavía no asignaste materiales.</p>
           ) : (
@@ -140,7 +175,7 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
         </div>
         <div className="surface-card space-y-4 p-6">
           <h2 className="font-display text-lg font-medium">Ejercicios sugeridos</h2>
-          <AssignExerciseForm patientId={patient.id} templates={templates ?? []} />
+          <AssignExerciseForm patientId={patient.id} templates={templateOptions} />
           {assignments.length === 0 ? (
             <p className="text-sm text-muted-foreground">Todavía no sugeriste ejercicios.</p>
           ) : (
@@ -161,6 +196,33 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
           )}
         </div>
       </section>
+
+      <section className="surface-card space-y-4 p-6">
+        <div className="space-y-1">
+          <h2 className="font-display text-lg font-medium">Respuestas de ejercicios</h2>
+          <p className="text-sm text-muted-foreground">
+            {patient.share_records_with_professional
+              ? "Lo que escribió en los ejercicios (las 20 más recientes). Las ves porque comparte sus registros con vos."
+              : "No comparte sus registros: sus respuestas de ejercicios son privadas. Puede activarlo desde su perfil."}
+          </p>
+        </div>
+        {patient.share_records_with_professional ? (
+          sharedResponses.length > 0 ? (
+            <ExerciseResponseList
+              responses={sharedResponses.map((r) => ({
+                id: r.id,
+                completedAt: r.completed_at,
+                title: r.exercise_templates?.title ?? "Ejercicio",
+                entries: answerEntries(parseSteps(r.exercise_templates?.steps), (r.answers ?? {}) as Record<string, unknown>),
+                emotionBefore: r.emotion_before,
+                emotionAfter: r.emotion_after,
+              }))}
+            />
+          ) : (
+            <p className="text-sm text-muted-foreground">Todavía no completó ejercicios.</p>
+          )
+        ) : null}
+      </section>
     </div>
   );
 }
@@ -172,4 +234,102 @@ function Item({ label, value }: { label: string; value: string | null | undefine
       <dd className="mt-0.5">{value || <span className="text-subtle-foreground">—</span>}</dd>
     </div>
   );
+}
+
+/** Estado de la ficha de ingreso, con enlace a la ficha completa (sin mostrar respuestas acá). */
+function IntakeSummary({ patientId, intake, hasAccount }: { patientId: string; intake: Awaited<ReturnType<typeof getIntakeStatus>>; hasAccount: boolean }) {
+  const submitted = Boolean(intake?.submitted_at);
+  return (
+    <section className="surface-card flex flex-col gap-4 p-6 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex min-w-0 gap-3">
+        <ClipboardList className="mt-1 size-5 shrink-0 text-primary" aria-hidden />
+        <div className="min-w-0 space-y-1">
+          <h2 className="font-display text-lg font-medium">Ficha de ingreso</h2>
+          {submitted && intake?.submitted_at ? (
+            <>
+              <p className="text-sm text-muted-foreground">
+                Enviada el {formatShortDate(intake.first_submitted_at ?? intake.submitted_at)}
+                {intake.first_submitted_at && intake.submitted_at !== intake.first_submitted_at ? ` · actualizada el ${formatShortDate(intake.submitted_at)}` : ""}
+              </p>
+            </>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              {hasAccount ? "Todavía no la envió. La completa desde su cuenta; el borrador es privado hasta que la envíe." : "La completa el paciente cuando crea su cuenta."}
+            </p>
+          )}
+        </div>
+      </div>
+      {submitted ? (
+        <Button asChild variant="outline" className="shrink-0">
+          <Link href={`/admin/pacientes/${patientId}/ingreso`}>Ver ficha completa</Link>
+        </Button>
+      ) : (
+        <Badge variant="muted" className="shrink-0 self-start">Pendiente</Badge>
+      )}
+    </section>
+  );
+}
+
+/** Firma del consentimiento informado y avance del compromiso de las primeras sesiones. */
+function ConsentSummary({
+  patientId,
+  consent,
+  currentVersion,
+  progress,
+  ageWarning,
+  hasAccount,
+}: {
+  patientId: string;
+  consent: Awaited<ReturnType<typeof getLatestConsent>>;
+  currentVersion: string | null;
+  progress: { done: number; target: number } | null;
+  ageWarning: string | null;
+  hasAccount: boolean;
+}) {
+  const outdated = consent !== null && currentVersion !== null && consent.version !== currentVersion;
+  return (
+    <section className="surface-card flex flex-col gap-4 p-6 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex min-w-0 gap-3">
+        <FileSignature className="mt-1 size-5 shrink-0 text-primary" aria-hidden />
+        <div className="min-w-0 space-y-1">
+          <h2 className="font-display text-lg font-medium">Consentimiento informado</h2>
+          {consent ? (
+            <>
+              <p className="text-sm text-muted-foreground">
+                Firmado el {formatShortDate(consent.accepted_at)} por {consent.signed_name}
+                {consent.guardian_name ? ` (autoriza ${consent.guardian_name})` : ""}.
+              </p>
+              {progress ? (
+                <p className="text-sm text-foreground">
+                  Compromiso: {Math.min(progress.done, progress.target)} de {progress.target} sesiones completadas.
+                </p>
+              ) : null}
+              {ageWarning ? <p className="text-sm text-warning">{ageWarning}</p> : null}
+              {outdated ? <p className="text-sm text-warning">Firmó la versión {consent.version}; la vigente es {currentVersion}.</p> : null}
+              {consent.is_minor ? <p className="text-xs text-muted-foreground">Menor de edad: confirmá la autorización con su madre, padre o tutor.</p> : null}
+            </>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              {currentVersion === null ? "Desactivado en Configuración › Consentimiento." : hasAccount ? "Todavía no lo firmó. Lo ve al entrar a su cuenta." : "Lo firma el paciente cuando crea su cuenta."}
+            </p>
+          )}
+        </div>
+      </div>
+      {consent ? (
+        <Button asChild variant="outline" className="shrink-0">
+          <Link href={`/admin/pacientes/${patientId}/consentimiento`}>Ver lo firmado</Link>
+        </Button>
+      ) : currentVersion !== null ? (
+        <Badge variant="muted" className="shrink-0 self-start">Pendiente</Badge>
+      ) : null}
+    </section>
+  );
+}
+
+/** Aviso cuando la firma quedó como de una persona adulta pero la edad no lo confirma. */
+function consentAgeWarning(consent: { is_minor: boolean; accepted_at: string }, birthDate: string | null): string | null {
+  if (consent.is_minor) return null;
+  if (!birthDate) return "Sin fecha de nacimiento al firmar: confirmá si necesita la autorización de su madre, padre o tutor.";
+  const age = ageFrom(birthDate, toDateKey(consent.accepted_at));
+  return age !== null && age < 18 ? "Firmó sin la autorización de una persona adulta y era menor de edad: confirmala con su madre, padre o tutor." : null;
 }

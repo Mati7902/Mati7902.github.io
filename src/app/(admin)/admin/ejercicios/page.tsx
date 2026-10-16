@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/ui/page-header";
 import { requireAdmin } from "@/lib/auth/session";
 import { daysAgo } from "@/lib/dates";
+import { AUDIENCE_LABEL, type Audience, COLLECTIONS } from "@/lib/exercises/collections";
 import { createClient } from "@/lib/supabase/server";
 import { listExerciseTemplates } from "@/server/services/exercises";
 
@@ -35,13 +36,14 @@ export default async function AdminExercisesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Entre sesiones" title="Ejercicios" description="Ejercicios interactivos disponibles para los pacientes. Podés ocultar los que no quieras ofrecer. Para sugerir uno a alguien, hacelo desde su ficha." />
+      <PageHeader eyebrow="Entre sesiones" title="Ejercicios" description="Ejercicios interactivos disponibles para los pacientes. Cada paciente ve los de su edad (Brújula hasta los 18 años, el cuadernillo de TCC desde los 18; sin fecha de nacimiento cargada, el de adultos) y siempre los que le sugieras desde su ficha. Podés ocultar los que no quieras ofrecer." />
       <div className="overflow-hidden rounded-2xl border border-border/70 bg-card">
         <table className="w-full text-sm">
           <thead className="bg-surface-muted/60 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground">
             <tr>
               <th className="px-4 py-3">Ejercicio</th>
               <th className="hidden px-4 py-3 md:table-cell">Enfoque</th>
+              <th className="hidden px-4 py-3 sm:table-cell">Para</th>
               <th className="hidden px-4 py-3 lg:table-cell">Tipo</th>
               <th className="hidden px-4 py-3 md:table-cell">Usos (30 días)</th>
               <th className="px-4 py-3 text-right">Visible</th>
@@ -56,6 +58,10 @@ export default async function AdminExercisesPage() {
                 </td>
                 <td className="hidden px-4 py-3 md:table-cell">
                   <Badge variant="muted">{APPROACH_LABEL[t.approach]}</Badge>
+                </td>
+                <td className="hidden px-4 py-3 sm:table-cell">
+                  <p className="text-sm">{AUDIENCE_LABEL[t.audience as Audience] ?? t.audience}</p>
+                  {t.collection && COLLECTIONS[t.collection] ? <p className="text-xs text-muted-foreground">{COLLECTIONS[t.collection]!.title}</p> : null}
                 </td>
                 <td className="hidden px-4 py-3 text-muted-foreground lg:table-cell">{KIND_LABEL[t.kind] ?? t.kind}</td>
                 <td className="hidden px-4 py-3 text-muted-foreground md:table-cell">{usageMap.get(t.id) ?? 0}</td>

@@ -4,8 +4,9 @@ import { cache } from "react";
 
 import { isSupabaseConfigured } from "@/lib/env";
 import { createLogger, errorMeta } from "@/lib/logger";
+import { LANDING_TESTIMONIALS } from "@/lib/testimonials";
 import { createAnonClient } from "@/server/services/public-settings";
-import type { AvailabilityRule, EmergencyResource, Faq, TherapyPlan } from "@/types/domain";
+import type { AvailabilityRule, EmergencyResource, Faq, PublicTestimonial, TherapyPlan } from "@/types/domain";
 
 const log = createLogger("public-content");
 
@@ -41,6 +42,19 @@ export const getPublishedFaqs = cache(async (): Promise<Faq[]> =>
     "faqs",
     async () => {
       const { data, error } = await createAnonClient().from("faqs").select("*").eq("is_published", true).order("sort_order");
+      if (error) throw error;
+      return data ?? [];
+    },
+    [],
+  ),
+);
+
+/** Testimonios publicados con autorización confirmada, sin fechas ni datos internos (la tabla no es pública). */
+export const getPublishedTestimonials = cache(async (): Promise<PublicTestimonial[]> =>
+  safe(
+    "testimonios",
+    async () => {
+      const { data, error } = await createAnonClient().rpc("published_testimonials").limit(LANDING_TESTIMONIALS);
       if (error) throw error;
       return data ?? [];
     },

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { fromDatabaseError } from "@/lib/errors";
+import { type Audience, isForAudience } from "@/lib/exercises/collections";
 import type { ServerSupabaseClient } from "@/lib/supabase/server";
 import type { AdminSupabaseClient } from "@/lib/supabase/admin";
 import type { Material, MaterialCategory, PatientMaterial } from "@/types/domain";
@@ -9,7 +10,7 @@ type AnyClient = ServerSupabaseClient | AdminSupabaseClient;
 
 export type MaterialWithMeta = Material & {
   material_categories: Pick<MaterialCategory, "id" | "slug" | "name"> | null;
-  exercise_templates: { slug: string; title: string } | null;
+  exercise_templates: { slug: string; title: string; audience?: string; sort_order?: number } | null;
 };
 
 export type PatientMaterialView = MaterialWithMeta & {
@@ -22,22 +23,34 @@ export async function listCategories(client: AnyClient): Promise<MaterialCategor
   return data ?? [];
 }
 
-/** Biblioteca del paciente: materiales públicos + asignados, con estado de visto/completado. */
-export async function getPatientMaterials(client: ServerSupabaseClient, patientId: string): Promise<PatientMaterialView[]> {
+/**
+ * Biblioteca del paciente: materiales públicos + asignados, con estado de visto/completado.
+ * Los materiales que abren un ejercicio se filtran por el público del ejercicio (edad del
+ * paciente), salvo los que el profesional le recomendó; si el ejercicio está desactivado, no
+ * se muestran (no habría nada para abrir).
+ */
+export async function getPatientMaterials(client: ServerSupabaseClient, patientId: string, audiences?: Audience[]): Promise<PatientMaterialView[]> {
   const [{ data: materials, error }, { data: assignments }] = await Promise.all([
     client
       .from("materials")
-      .select("*, material_categories(id, slug, name), exercise_templates(slug, title)")
+      .select("*, material_categories(id, slug, name), exercise_templates(slug, title, audience, sort_order)")
       .eq("is_published", true)
       .order("created_at", { ascending: false }),
     client.from("patient_materials").select("id, material_id, assigned_at, viewed_at, completed_at, note, assigned_by").eq("patient_id", patientId),
   ]);
   if (error) throw fromDatabaseError(error);
   const byMaterial = new Map((assignments ?? []).map((a) => [a.material_id, a]));
-  return ((materials ?? []) as MaterialWithMeta[]).map((m) => {
-    const a = byMaterial.get(m.id) ?? null;
-    return { ...m, assignment: a, recommended: Boolean(a?.assigned_by) };
-  });
+  return ((materials ?? []) as MaterialWithMeta[])
+    .map((m) => {
+      const a = byMaterial.get(m.id) ?? null;
+      return { ...m, assignment: a, recommended: Boolean(a?.assigned_by) };
+    })
+    .filter((m) => {
+      if (m.type !== "exercise") return true;
+      if (!m.exercise_templates) return false;
+      return m.recommended || !audiences || isForAudience(m.exercise_templates.audience, audiences);
+    })
+    .sort((a, b) => b.created_at.localeCompare(a.created_at) || (a.exercise_templates?.sort_order ?? 0) - (b.exercise_templates?.sort_order ?? 0));
 }
 
 export async function getPatientMaterial(client: ServerSupabaseClient, patientId: string, materialId: string): Promise<PatientMaterialView | null> {

@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import { NotebookPen } from "lucide-react";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { APPROACH_LABEL, exerciseHref } from "@/components/exercises/exercise-card";
 import { ExerciseRunner } from "@/components/exercises/exercise-runner";
 import { PageHeader } from "@/components/ui/page-header";
 import { requirePatient } from "@/lib/auth/session";
+import { COLLECTIONS, PLAN_SLUG } from "@/lib/exercises/collections";
 import { parseSteps } from "@/lib/exercises/steps";
 import { createClient } from "@/lib/supabase/server";
 import { getExerciseTemplateBySlug } from "@/server/services/exercises";
@@ -32,11 +35,28 @@ export default async function ExercisePage({ params, searchParams }: { params: P
     const { data } = await supabase.from("exercise_assignments").select("id").eq("id", asignacion).eq("patient_id", patient.id).maybeSingle();
     assignmentId = data?.id ?? null;
   }
+  const { count: done } = await supabase.from("exercise_responses").select("id", { count: "exact", head: true }).eq("patient_id", patient.id).eq("template_id", template.id);
+  const collection = template.collection ? COLLECTIONS[template.collection] : undefined;
 
   return (
     <div className="space-y-8">
-      <PageHeader eyebrow={APPROACH_LABEL[template.approach]} title={template.title} description={template.description ?? undefined} />
-      <ExerciseRunner templateId={template.id} title={template.title} steps={steps} assignmentId={assignmentId} />
+      <PageHeader eyebrow={collection?.title ?? APPROACH_LABEL[template.approach]} title={template.title} description={template.description ?? undefined} />
+      {done ? (
+        <Link
+          href={`/app/ejercicios/${template.slug}/respuestas`}
+          className="mx-auto flex max-w-lg items-center gap-3 rounded-2xl border border-border/70 bg-card px-4 py-3 text-sm font-medium text-primary transition-colors hover:bg-primary-soft"
+        >
+          <NotebookPen className="size-4" aria-hidden />
+          Mis respuestas anteriores ({done})
+        </Link>
+      ) : null}
+      <ExerciseRunner
+        templateId={template.id}
+        title={template.title}
+        steps={steps}
+        assignmentId={assignmentId}
+        returnTo={template.slug === PLAN_SLUG ? "/app/calmarme" : undefined}
+      />
     </div>
   );
 }

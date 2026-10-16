@@ -294,13 +294,13 @@ isOneToOne: false
                   ]
                 },"exercise_templates": {
                   Row: {
-                    "approach": Database["public"]['Enums']["therapeutic_approach"],"created_at": string,"description": string | null,"estimated_minutes": number | null,"id": string,"is_active": boolean,"kind": Database["public"]['Enums']["exercise_kind"],"slug": string,"sort_order": number,"steps": NonNullable<Json>,"title": string,"updated_at": string
+                    "approach": Database["public"]['Enums']["therapeutic_approach"],"audience": string,"collection": string | null,"created_at": string,"description": string | null,"estimated_minutes": number | null,"id": string,"is_active": boolean,"kind": Database["public"]['Enums']["exercise_kind"],"slug": string,"sort_order": number,"steps": NonNullable<Json>,"title": string,"updated_at": string
                   }
                   Insert: {
-                    "approach"?: Database["public"]['Enums']["therapeutic_approach"],"created_at"?: string,"description"?: string | null,"estimated_minutes"?: number | null,"id"?: string,"is_active"?: boolean,"kind": Database["public"]['Enums']["exercise_kind"],"slug": string,"sort_order"?: number,"steps"?: NonNullable<Json>,"title": string,"updated_at"?: string
+                    "approach"?: Database["public"]['Enums']["therapeutic_approach"],"audience"?: string,"collection"?: string | null,"created_at"?: string,"description"?: string | null,"estimated_minutes"?: number | null,"id"?: string,"is_active"?: boolean,"kind": Database["public"]['Enums']["exercise_kind"],"slug": string,"sort_order"?: number,"steps"?: NonNullable<Json>,"title": string,"updated_at"?: string
                   }
                   Update: {
-                    "approach"?: Database["public"]['Enums']["therapeutic_approach"],"created_at"?: string,"description"?: string | null,"estimated_minutes"?: number | null,"id"?: string,"is_active"?: boolean,"kind"?: Database["public"]['Enums']["exercise_kind"],"slug"?: string,"sort_order"?: number,"steps"?: NonNullable<Json>,"title"?: string,"updated_at"?: string
+                    "approach"?: Database["public"]['Enums']["therapeutic_approach"],"audience"?: string,"collection"?: string | null,"created_at"?: string,"description"?: string | null,"estimated_minutes"?: number | null,"id"?: string,"is_active"?: boolean,"kind"?: Database["public"]['Enums']["exercise_kind"],"slug"?: string,"sort_order"?: number,"steps"?: NonNullable<Json>,"title"?: string,"updated_at"?: string
                   }
                   Relationships: [
                     
@@ -416,6 +416,25 @@ isOneToOne: true
       columns: ["updated_by"]
 isOneToOne: false
       referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"patient_intakes": {
+                  Row: {
+                    "answers": Json,"created_at": string,"first_submitted_at": string | null,"form_version": string,"patient_id": string,"submitted_at": string | null,"updated_at": string
+                  }
+                  Insert: {
+                    "answers"?: Json,"created_at"?: string,"first_submitted_at"?: string | null,"form_version"?: string,"patient_id": string,"submitted_at"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "answers"?: Json,"created_at"?: string,"first_submitted_at"?: string | null,"form_version"?: string,"patient_id"?: string,"submitted_at"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "patient_intakes_patient_id_fkey"
+      columns: ["patient_id"]
+isOneToOne: true
+      referencedRelation: "patients"
       referencedColumns: ["id"]
     }
                   ]
@@ -564,6 +583,19 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"testimonials": {
+                  Row: {
+                    "consent_confirmed": boolean,"consent_confirmed_at": string | null,"context": string | null,"created_at": string,"gender": string,"id": string,"is_published": boolean,"quote": string,"sort_order": number,"updated_at": string
+                  }
+                  Insert: {
+                    "consent_confirmed"?: boolean,"consent_confirmed_at"?: string | null,"context"?: string | null,"created_at"?: string,"gender": string,"id"?: string,"is_published"?: boolean,"quote": string,"sort_order"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "consent_confirmed"?: boolean,"consent_confirmed_at"?: string | null,"context"?: string | null,"created_at"?: string,"gender"?: string,"id"?: string,"is_published"?: boolean,"quote"?: string,"sort_order"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"therapy_plans": {
                   Row: {
                     "created_at": string,"cta_label": string,"cta_type": string,"currency": string,"description": string | null,"duration_minutes": number | null,"features": (string)[],"id": string,"is_active": boolean,"is_featured": boolean,"name": string,"price_amount": number | null,"sessions_included": number | null,"short_description": string | null,"slug": string,"sort_order": number,"updated_at": string
@@ -576,6 +608,25 @@ isOneToOne: false
                   }
                   Relationships: [
                     
+                  ]
+                },"treatment_consents": {
+                  Row: {
+                    "accepted_at": string,"body_template": string,"created_at": string,"guardian_name": string | null,"id": string,"is_minor": boolean,"params": Json,"patient_id": string,"sessions": number,"signed_name": string,"title": string,"version": string
+                  }
+                  Insert: {
+                    "accepted_at"?: string,"body_template"?: string,"created_at"?: string,"guardian_name"?: string | null,"id"?: string,"is_minor"?: boolean,"params"?: Json,"patient_id": string,"sessions"?: number,"signed_name": string,"title"?: string,"version": string
+                  }
+                  Update: {
+                    "accepted_at"?: string,"body_template"?: string,"created_at"?: string,"guardian_name"?: string | null,"id"?: string,"is_minor"?: boolean,"params"?: Json,"patient_id"?: string,"sessions"?: number,"signed_name"?: string,"title"?: string,"version"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "treatment_consents_patient_id_fkey"
+      columns: ["patient_id"]
+isOneToOne: false
+      referencedRelation: "patients"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"whatsapp_contacts": {
                   Row: {
@@ -827,6 +878,14 @@ isOneToOne: false
                            },
 "pgp_armor_headers":
 { Args: { "": string }; Returns: Record<string, unknown>[]
+                           },
+"published_testimonials":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "context": string | null,
+"gender": string,
+"id": string,
+"quote": string
+            }[]
                            },
 "reschedule_appointment_tx":
 { Args: { "p_appointment_id": string,"p_new_end": string,"p_new_start": string,"p_new_status"?: Database["public"]['Enums']["appointment_status"],"p_reason"?: string,"p_source"?: Database["public"]['Enums']["appointment_source"] }; Returns: {

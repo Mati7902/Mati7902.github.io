@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { ServerSupabaseClient } from "@/lib/supabase/server";
 import type { AdminSupabaseClient } from "@/lib/supabase/admin";
 import { siteDefaults } from "@/lib/config/site";
+import { DEFAULT_CONSENT_BODY, DEFAULT_CONSENT_SESSIONS, DEFAULT_CONSENT_TITLE, DEFAULT_CONSENT_VERSION } from "@/lib/consent/treatment";
 
 /* ------------------------------------------------------------------------ */
 /* Schemas de cada clave de configuración (fuente de verdad para la UI)       */
@@ -20,6 +21,9 @@ export const siteIdentitySchema = z.object({
   tagline: z.string().default(siteDefaults.tagline),
   bio: z.string().default(""),
   photo_url: z.string().url().nullable().default(null),
+  logo_url: z.string().url().nullable().default(null),
+  /** Línea bajo el nombre en el logo (p. ej. "Psicología · Neurociencia aplicada"). */
+  brand_subtitle: z.string().default(siteDefaults.brandSubtitle),
   email: z.string().email().nullable().default(null),
   phone: z.string().nullable().default(null),
   whatsapp: z.string().nullable().default(null),
@@ -88,9 +92,9 @@ export const gamificationSchema = z.object({
 });
 
 export const themeSchema = z.object({
-  primary: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#1f4e5f"),
-  accent: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#a8dccb"),
-  background: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#faf8f5"),
+  primary: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#2f6468"),
+  accent: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#27b088"),
+  background: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#fbfdfc"),
 });
 
 export const legalSchema = z.object({
@@ -100,10 +104,27 @@ export const legalSchema = z.object({
   reviewed_by_professional: z.boolean().default(false),
 });
 
+/** Consentimiento informado y compromiso terapéutico (src/lib/consent/treatment.ts). */
+export const treatmentConsentSchema = z.object({
+  enabled: z.boolean().default(true),
+  /** Cambiarla cuando cambia el texto: a quien firmó otra versión se le pide firmar de nuevo. */
+  version: z.string().trim().min(1).max(40).default(DEFAULT_CONSENT_VERSION),
+  title: z.string().trim().min(3).max(200).default(DEFAULT_CONSENT_TITLE),
+  sessions: z.number().int().min(1).max(40).default(DEFAULT_CONSENT_SESSIONS),
+  body: z.string().trim().min(50).max(20000).default(DEFAULT_CONSENT_BODY),
+});
+
+const specialtySchema = z.object({ title: z.string(), text: z.string() });
+
 export const landingSchema = z.object({
-  hero_title: z.string().default(siteDefaults.tagline),
-  hero_subtitle: z.string().default(""),
+  /** Las palabras entre asteriscos se muestran en cursiva y en el color de acento: "Terapia desde *donde estés*". */
+  hero_title: z.string().default(siteDefaults.heroTitle),
+  hero_subtitle: z.string().default(siteDefaults.heroSubtitle),
   how_it_works: z.array(z.object({ title: z.string(), text: z.string() })).default([]),
+  specialties_title: z.string().default(siteDefaults.specialtiesTitle),
+  specialties: z.array(specialtySchema).default([...siteDefaults.specialties]),
+  approach_label: z.string().default("Enfoque diferencial"),
+  approach_text: z.string().default(siteDefaults.approachText),
 });
 
 export const settingsSchemas = {
@@ -116,6 +137,7 @@ export const settingsSchemas = {
   theme: themeSchema,
   legal: legalSchema,
   landing: landingSchema,
+  treatment_consent: treatmentConsentSchema,
 } as const;
 
 export type SettingsKey = keyof typeof settingsSchemas;
@@ -125,6 +147,7 @@ export type SchedulingSettings = SettingsValue<"scheduling">;
 export type RemindersSettings = SettingsValue<"reminders">;
 export type WhatsAppSettings = SettingsValue<"whatsapp">;
 export type EmergencySettings = SettingsValue<"emergency">;
+export type TreatmentConsentSettings = SettingsValue<"treatment_consent">;
 
 type AnyClient = ServerSupabaseClient | AdminSupabaseClient;
 

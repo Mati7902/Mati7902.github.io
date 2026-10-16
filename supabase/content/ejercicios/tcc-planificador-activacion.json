@@ -1,0 +1,69 @@
+{
+  "slug": "tcc-planificador-activacion",
+  "title": "Planificador semanal de activación",
+  "description": "Agendá actividades de placer y de dominio con día y hora concretos, y hacé el balance al cerrar la semana.",
+  "kind": "custom",
+  "approach": "tcc",
+  "audience": "adultos",
+  "collection": "tcc",
+  "estimated_minutes": 8,
+  "sort_order": 217,
+  "source": "Cuadernillo de TCC, Anexo 7 (página 40) y hoja de trabajo del capítulo 7 (página 32)",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Planificador semanal de activación",
+      "content": "Es la hoja del Anexo 7 del cuadernillo y viene del capítulo «Tríada cognitiva y activación conductual».\n\nAgendá actividades de **placer (P)** y **dominio (D)** con día y hora concretos: una o dos por día alcanzan. Al terminarlas, puntualas en el «Registro de actividades».\n\n- **Placer:** disfrute, conexión, bienestar.\n- **Dominio:** logro, competencia, sensación de utilidad.\n\nSi hiciste tu lista de activación, la encontrás en «Tríada cognitiva y activación conductual», en «Mis respuestas»."
+    },
+    {
+      "id": "balance",
+      "type": "text",
+      "prompt": "Si cerrás una semana: ¿hubo placer y dominio? ¿Qué ajustás para la próxima?",
+      "help": "Es el balance de la semana que termina. Mirá tu planificador anterior y tus registros de actividades: los encontrás en «Mis respuestas» de cada ejercicio. Para el ajuste: subí un escalón la dificultad de una actividad.\n\nSi es tu primera semana, tocá «Saltar».",
+      "optional": true
+    },
+    {
+      "id": "reglas_oro",
+      "type": "info",
+      "title": "Reglas de oro de la activación",
+      "content": "- **De afuera hacia adentro:** primero la acción, después el ánimo.\n- **Concreto y pequeño:** mejor un paso mínimo cumplido que un plan enorme abandonado.\n- **Programado, no espontáneo:** agendá la actividad como si fuera una cita.\n- **Registrar es parte del tratamiento:** lo que se mide, se puede ajustar."
+    },
+    {
+      "id": "actividades",
+      "type": "list",
+      "prompt": "Agendá tus actividades de la semana: día, hora y P o D",
+      "help": "Una por renglón, como si fuera una cita: no «cuando pueda», sino día y hora. Por ejemplo: «martes 18:00 — caminar 10 minutos (P)» o «jueves 10:00 — pagar una cuenta (D)».\n\nIdealmente, al menos una por día; si un día tiene dos, ponelas en el mismo renglón. Empezá por lo más fácil.",
+      "count": 7,
+      "min": 1
+    },
+    {
+      "id": "equilibrio",
+      "type": "choice",
+      "prompt": "¿Hay equilibrio entre placer y dominio en tu semana?",
+      "options": [
+        "Sí, hay de los dos",
+        "Hay más placer que dominio",
+        "Hay más dominio que placer"
+      ],
+      "feedback": {
+        "Sí, hay de los dos": "**Bien.** Una buena semana equilibra placer y dominio.",
+        "Hay más placer que dominio": "Solo placer puede sentirse vacío. Si querés, volvé atrás y sumá algo de dominio: una tarea pequeña que te dé sensación de logro, como ordenar un cajón o hacer un trámite.",
+        "Hay más dominio que placer": "Solo dominio puede sentirse agotador. Si querés, volvé atrás y sumá algo de placer: algo que te dé disfrute o conexión, como escuchar música o ver a un amigo."
+      }
+    },
+    {
+      "id": "resumen",
+      "type": "reflect",
+      "title": "Tu semana",
+      "template": "Mis actividades: {{actividades}}.",
+      "content": "Hacelas aunque no tengas ganas: la motivación llega después de empezar.\n\nCuando toques «Terminar», en la última pantalla, tu planificador queda guardado: lo podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también lo puede ver."
+    },
+    {
+      "id": "semana",
+      "type": "info",
+      "title": "Para esta semana",
+      "content": "- Al terminar cada actividad, puntuá placer (P) y dominio (D) de 0 a 10 en el **«Registro de actividades»** (unos 3 minutos) y observá la relación con tu ánimo.\n- Al cerrar la semana, volvé a hacer este planificador: empezá por el balance (¿hubo placer y dominio?) y subí un escalón la dificultad de una actividad."
+    }
+  ]
+}

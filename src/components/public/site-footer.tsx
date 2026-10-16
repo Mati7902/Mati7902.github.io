@@ -1,13 +1,17 @@
 import Link from "next/link";
 
+import { BrandMark } from "@/components/shell/brand-mark";
+import { brandLogo } from "@/lib/brand";
 import type { SiteIdentity } from "@/server/services/settings";
 
 export function SiteFooter({ identity }: { identity: SiteIdentity }) {
   return (
     <footer className="border-t border-border/60 bg-card">
       <div className="mx-auto grid max-w-6xl gap-8 px-5 py-12 md:grid-cols-3 lg:px-8">
-        <div className="space-y-2">
-          <p className="font-display text-lg font-medium text-primary">{identity.platform_name}</p>
+        <div className="min-w-0 space-y-2">
+          <p className="text-lg">
+            <BrandMark name={identity.professional_name} subtitle={identity.brand_subtitle} logoUrl={brandLogo(identity)} />
+          </p>
           <p className="text-sm text-muted-foreground">
             {identity.professional_name} · {identity.professional_title}
             <br />

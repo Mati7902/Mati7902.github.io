@@ -9,27 +9,31 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useSettingsSave } from "@/hooks/use-settings-save";
-import { uploadProfessionalPhotoAction } from "@/server/actions/admin-settings";
+import { brandLogo, brandPhoto } from "@/lib/brand";
+import { uploadBrandingImageAction } from "@/server/actions/admin-settings";
 import type { SiteIdentity } from "@/server/services/settings";
 
 export function IdentityForm({ initial }: { initial: SiteIdentity }) {
   const [value, setValue] = useState(initial);
   const { save, pending, fieldErrors } = useSettingsSave("site.identity");
   const [uploading, startUpload] = useTransition();
+  const [uploadingLogo, startLogoUpload] = useTransition();
   const fileRef = useRef<HTMLInputElement>(null);
+  const logoRef = useRef<HTMLInputElement>(null);
   const set = <K extends keyof SiteIdentity>(key: K, v: SiteIdentity[K]) => setValue((s) => ({ ...s, [key]: v }));
   const nullable = (v: string) => (v.trim() === "" ? null : v.trim());
 
-  const upload = () => {
-    const file = fileRef.current?.files?.[0];
-    if (!file) return;
+  const upload = (kind: "photo" | "logo") => {
+    const file = (kind === "logo" ? logoRef : fileRef).current?.files?.[0];
+    if (!file) return void toast.error("Elegí una imagen.");
     const fd = new FormData();
-    fd.set("photo", file);
-    startUpload(async () => {
-      const res = await uploadProfessionalPhotoAction(fd);
+    fd.set("kind", kind);
+    fd.set("file", file);
+    (kind === "logo" ? startLogoUpload : startUpload)(async () => {
+      const res = await uploadBrandingImageAction(fd);
       if (!res.ok) return void toast.error(res.error);
-      set("photo_url", res.data.url);
-      toast.success("Foto actualizada.");
+      set(kind === "logo" ? "logo_url" : "photo_url", res.data.url);
+      toast.success(kind === "logo" ? "Logo actualizado." : "Foto actualizada.");
     });
   };
 
@@ -43,15 +47,40 @@ export function IdentityForm({ initial }: { initial: SiteIdentity }) {
     >
       <div className="flex flex-wrap items-center gap-5 rounded-2xl border border-border/70 bg-card p-5">
         <div className="relative size-24 overflow-hidden rounded-2xl bg-primary-soft">
-          {value.photo_url ? <Image src={value.photo_url} alt="" fill sizes="96px" className="object-cover" /> : null}
+          <Image src={brandPhoto(value)} alt="" fill sizes="96px" className="object-cover" />
         </div>
-        <div className="space-y-2">
-          <p className="text-sm font-medium">Fotografía profesional</p>
+        <div className="min-w-[16rem] flex-1 space-y-2">
+          <p className="text-sm font-medium">
+            Fotografía profesional{value.photo_url ? null : <span className="ml-2 text-xs font-normal text-muted-foreground">(predeterminada)</span>}
+          </p>
           <div className="flex flex-wrap items-center gap-2">
             <Input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp" className="max-w-xs" aria-label="Elegir foto" />
-            <Button type="button" variant="outline" size="sm" onClick={upload} loading={uploading}>Subir</Button>
+            <Button type="button" variant="outline" size="sm" onClick={() => upload("photo")} loading={uploading}>Subir</Button>
+            {value.photo_url ? (
+              <Button type="button" variant="ghost" size="sm" onClick={() => set("photo_url", null)}>Volver a la predeterminada</Button>
+            ) : null}
           </div>
           <p className="text-xs text-muted-foreground">PNG, JPG o WebP, hasta 5 MB. Se muestra en la página pública.</p>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-5 rounded-2xl border border-border/70 bg-card p-5">
+        <div className="flex h-24 w-36 items-center justify-center overflow-hidden rounded-2xl bg-primary-soft p-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={brandLogo(value)} alt="" className="max-h-full max-w-full object-contain" />
+        </div>
+        <div className="min-w-[16rem] flex-1 space-y-2">
+          <p className="text-sm font-medium">
+            Logo{value.logo_url ? null : <span className="ml-2 text-xs font-normal text-muted-foreground">(predeterminado)</span>}
+          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <Input ref={logoRef} type="file" accept="image/svg+xml,image/png,image/webp,image/jpeg" className="max-w-xs" aria-label="Elegir logo" />
+            <Button type="button" variant="outline" size="sm" onClick={() => upload("logo")} loading={uploadingLogo}>Subir</Button>
+            {value.logo_url ? (
+              <Button type="button" variant="ghost" size="sm" onClick={() => set("logo_url", null)}>Volver al predeterminado</Button>
+            ) : null}
+          </div>
+          <p className="text-xs text-muted-foreground">SVG o PNG con fondo transparente, hasta 5 MB. Aparece junto al nombre en la página, el ingreso y los paneles. Después de volver al predeterminado, guardá los cambios.</p>
         </div>
       </div>
 
@@ -67,6 +96,9 @@ export function IdentityForm({ initial }: { initial: SiteIdentity }) {
         </FormField>
         <FormField id="id-license" label="Matrícula">
           <Input id="id-license" value={value.license} onChange={(e) => set("license", e.target.value)} />
+        </FormField>
+        <FormField id="id-brand-sub" label="Bajada del logo" className="sm:col-span-2" hint="Aparece debajo de tu nombre junto al emblema, por ejemplo: Psicología · Neurociencia aplicada.">
+          <Input id="id-brand-sub" value={value.brand_subtitle} onChange={(e) => set("brand_subtitle", e.target.value)} />
         </FormField>
         <FormField id="id-tagline" label="Frase principal" className="sm:col-span-2">
           <Input id="id-tagline" value={value.tagline} onChange={(e) => set("tagline", e.target.value)} />

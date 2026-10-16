@@ -6,6 +6,17 @@ export const siteDefaults = {
   license: "RP 14394-LP",
   country: "Paraguay",
   tagline: "Un espacio para comprender lo que te pasa y trabajar en lo que necesitás.",
+  brandSubtitle: "Psicología · Neurociencia aplicada",
+  heroTitle: "Terapia desde *donde estés*, con el rigor de una consulta clínica.",
+  heroSubtitle: "Acompañamiento psicológico profesional en modalidad virtual, con el mismo marco clínico, ético y basado en evidencia que en consultorio.",
+  specialtiesTitle: "Terapia basada en neurociencia aplicada",
+  specialties: [
+    { title: "Trastornos de ansiedad", text: "Ansiedad generalizada, pánico, fobias y ansiedad social." },
+    { title: "Depresión", text: "Depresión mayor, distimia y episodios del estado de ánimo." },
+    { title: "Estrés y burnout", text: "Estrés crónico, agotamiento laboral e insomnio." },
+    { title: "Trauma y duelo", text: "Estrés postraumático, duelos y procesos de cambio vital." },
+  ],
+  approachText: "Integración de psicoterapia clínica y neurociencia aplicada, con intervenciones respaldadas por evidencia actualizada.",
   locale: "es-PY",
 } as const;
 

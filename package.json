@@ -22,7 +22,8 @@
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "icons": "node scripts/generate-icons.mjs",
     "db:types": "supabase gen types typescript --local --schema public > src/types/database.ts",
-    "db:instalar": "node scripts/build-install-sql.mjs"
+    "db:instalar": "node scripts/build-install-sql.mjs",
+    "db:contenido": "node scripts/build-content-sql.mjs && node scripts/build-install-sql.mjs"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.2.6",

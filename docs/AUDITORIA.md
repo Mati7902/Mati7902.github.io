@@ -23,17 +23,17 @@ Cada punto indica **estado** (✅ cubierto · ⚠️ cubierto con observaciones 
 
 | Punto | Estado | Evidencia |
 | --- | --- | --- |
-| RLS habilitado en las 30 tablas | ✅ | `0004_rls_policies.sql` |
+| RLS habilitado en las 35 tablas | ✅ | `0004_rls_policies.sql` |
 | Paciente solo accede a sus datos (turnos, registros, materiales, notificaciones, perfil) | ✅ | tests SQL bloque 1 |
 | Paciente no puede escalar rol ni editar campos administrativos (triggers `guard_*`) | ✅ | bloque 2 |
 | Inserción de turnos solo vía RPC transaccional; double booking y solapamientos rechazados por exclusión GIST | ✅ | bloque 3 |
 | Ventanas de cancelación/reprogramación aplicadas también en la base | ✅ | bloque 4 |
 | Admin: acceso completo; notificaciones ajenas no visibles ni para admin | ✅ | bloque 5 |
 | Privacidad: registros no compartidos invisibles para el profesional | ✅ | bloque 5b |
-| Anónimo: solo planes, FAQs, settings públicos | ✅ | bloque 6 |
+| Anónimo: solo planes, FAQs, settings públicos y testimonios publicados con autorización | ✅ | bloque 6 y bloque de testimonios |
 | Storage: bucket `materials` privado con política por material accesible | ✅ | `0005_storage.sql` |
 
-Resultado: `pnpm test:db` → 89 aserciones OK sobre las migraciones reales (PostgreSQL 16 local con stub de `auth`/`storage`).
+Resultado: `pnpm test:db` → 149 aserciones OK sobre las migraciones reales (PostgreSQL 16 local con stub de `auth`/`storage`).
 
 ## Agenda
 
@@ -64,7 +64,7 @@ Resultado: `pnpm test:db` → 89 aserciones OK sobre las migraciones reales (Pos
 
 | Punto | Estado | Evidencia |
 | --- | --- | --- |
-| Job cada 15 min, ventana configurable, horas de silencio | ✅ | `services/reminders.ts`, `.github/workflows/recordatorios.yml` |
+| Job cada 15 min, ventana configurable, horas de silencio | ✅ | `services/reminders.ts`, `supabase/recordatorios.sql` (Supabase Cron) |
 | Sin duplicados: marca atómica (`update … is null`) antes de enviar; liberación si falla | ✅ | `claim()/release()` + tests |
 | Resultado, `message_id` y error guardados | ✅ | `whatsapp_messages` |
 | Aviso automático al modificar un turno con botones Confirmar / Solicitar otro horario | ✅ | `adminRescheduleAppointmentAction` → `appointment_changed` |
@@ -74,9 +74,12 @@ Resultado: `pnpm test:db` → 89 aserciones OK sobre las migraciones reales (Pos
 | Punto | Estado | Evidencia |
 | --- | --- | --- |
 | Mínimo almacenamiento: ficha administrativa, sin historia clínica; métricas de materiales solo asignado/visto/completado | ✅ | esquema |
+| Ficha de ingreso (la información de salud más sensible, la única que el profesional ve sin que el paciente decida compartirla): tabla aparte, borrador privado, el profesional la lee solo enviada, recepción y bot sin acceso, sin borrado por clientes, el contenido solo se muestra en una página que audita cada apertura, notificación sin contenido | ✅ | `20261010000001_patient_intake.sql`, `rls.test.sql`, `/admin/pacientes/[id]/ingreso` |
 | Logger redacta campos sensibles; no se registran contenidos clínicos | ✅ | `lib/logger.ts` |
 | Eventos de Google con iniciales, sin notas | ✅ | `google-calendar/sync.ts` |
 | Consentimiento versionado al aceptar la invitación; textos legales marcados como borrador hasta revisión profesional | ⚠️ | `/privacidad`, `/terminos`, `legal.reviewed_by_professional`. **Acción requerida antes de producción:** revisión por profesional competente en derecho paraguayo. |
+| Consentimiento informado: texto versionado, documento completado por la base al firmar, firmas inmutables y únicas por versión, menores con quien autoriza, recepción sin acceso | ⚠️ | `20261012000001_treatment_consent.sql`, `rls.test.sql`. **Acción requerida antes de producción:** el profesional revisa y adapta el modelo en Configuración › Consentimiento (se instala habilitado). |
+| Testimonios: anónimos (sin vínculo con pacientes, solo 👩/👨), publicación solo con autorización escrita confirmada (lo exige la base; se reconfirma si cambia el texto), bloqueo de emails, usuarios de redes, enlaces y números largos, tabla solo para el profesional y lectura pública por `published_testimonials()` sin fechas | ⚠️ | `20261012000002_testimonials.sql`, `src/lib/testimonials.ts`, `rls.test.sql`. **Acción requerida:** cargar solo testimonios reales, guardar la autorización escrita y revisar el código de ética aplicable antes de pedirlos. |
 | Control del paciente sobre compartir registros | ✅ | `share_records_with_professional` + RLS |
 
 ## UX y accesibilidad
@@ -113,7 +116,7 @@ Resultado: `pnpm test:db` → 89 aserciones OK sobre las migraciones reales (Pos
 
 ## Verificación final
 
-* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (267 tests) · `pnpm test:bot` ✅ (33 recorridos) · `pnpm build` ✅ · `pnpm test:db` ✅ (89 aserciones)
+* `pnpm lint` ✅ · `pnpm typecheck` ✅ · `pnpm test` ✅ (377 tests) · `pnpm test:bot` ✅ (33 recorridos) · `pnpm build` ✅ · `pnpm test:db` ✅ (149 aserciones)
 
 ## Segunda ronda de auditoría (revisión adversarial)
 
@@ -239,11 +242,14 @@ Cuatro revisores independientes (estados y agenda, interpretación de texto, cri
 | --- | --- |
 | Con la plantilla por defecto de Supabase, la invitación vuelve con la sesión en el fragmento (`#access_token`), que el servidor no ve: el paciente terminaba en "enlace inválido" | Plantillas propias con `token_hash` (`supabase/templates`) y, como respaldo, una página intermedia en `/auth/callback` que entrega el fragmento a `/auth/callback/session` (solo mismo origen y JSON) |
 | La recuperación de contraseña (PKCE) fallaba si el email se abría en otro navegador o en el celular | La plantilla de recuperación usa `token_hash`, que no depende del navegador |
-| El plan Hobby de Vercel solo admite tareas programadas diarias: el cron de recordatorios cada 15 min hacía fallar el despliegue | `vercel.json` queda con el mantenimiento diario y los recordatorios los dispara `.github/workflows/recordatorios.yml` |
+| El plan Hobby de Vercel solo admite tareas programadas diarias: el cron de recordatorios cada 15 min hacía fallar el despliegue | `vercel.json` queda con el mantenimiento diario y los recordatorios los programa Supabase Cron (`supabase/recordatorios.sql`) |
+| El workflow de GitHub programado cada 15 min corría en la práctica cada 3 a 10 horas (21 ejecuciones en 104 h): con la ventana de 90 min se perdían casi todos los recordatorios | Se reemplazó por Supabase Cron (`pg_cron` + `pg_net`), disponible en todos los planes y que además mantiene activa la base del plan gratuito |
 | El email incluido en Supabase solo envía a los miembros del equipo (2 por hora) | Documentado como paso obligatorio: SMTP propio |
-| El plan Hobby de Vercel es solo para uso personal y no comercial (y su contenido puede usarse para entrenar modelos de IA) | La guía indica Vercel Pro para la práctica; los recordatorios por GitHub Actions siguen funcionando en ambos planes |
+| El plan Hobby de Vercel es solo para uso personal y no comercial (y su contenido puede usarse para entrenar modelos de IA) | La guía indica Vercel Pro para la práctica; los recordatorios (Supabase Cron) funcionan con cualquier plan |
 | Al comprar un dominio había que cambiar `NEXT_PUBLIC_APP_URL` y volver a publicar; un valor con barra final o sin `https://` rompía enlaces o el arranque | Sin la variable, la dirección es el dominio de producción de Vercel (`VERCEL_PROJECT_PRODUCTION_URL`): el dominio propio en cuanto se conecta. Se normalizan barra final y esquema (6 tests) |
 | Crear la base exigía pegar seis migraciones en orden | `supabase/instalar.sql` en una sola transacción, generado por `pnpm db:instalar` y verificado por un test; probado en una base nueva con todos los tests de RLS |
+| Los proyectos nuevos de Supabase pueden venir sin permisos automáticos en las tablas (*Automatically expose new tables* apagado) y la app fallaba con `permission denied` | Migración `20261005000000_default_privileges.sql` con los permisos por defecto explícitos; instalación probada con y sin esos permisos: los mismos 149 tests de RLS |
+| Una base instalada con la primera versión no tenía cómo recibir las tablas nuevas | `supabase/actualizar.sql`, generado junto con el instalador y verificado por un test; aplicado sobre la base de la primera versión deja el mismo esquema y permisos que una instalación nueva (comparado con `pg_dump`), con y sin permisos automáticos, y conserva los datos y los textos personalizados |
 | Si el dominio quedaba a medio conectar, los emails salían con la dirección vieja sin que nadie lo notara | Aviso en el panel del profesional y `app_url` en `/api/health` |
 
 Guía para publicar con dominio propio, sin instalar nada: [`PUBLICAR.md`](../PUBLICAR.md).

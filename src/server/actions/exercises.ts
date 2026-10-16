@@ -8,7 +8,7 @@ import { type ActionResult, fail, ok, validationFail, AppError } from "@/lib/err
 import { answersSchema } from "@/lib/exercises/steps";
 import { createClient } from "@/lib/supabase/server";
 import { zodFieldErrors } from "@/lib/validation";
-import { saveExerciseResponse } from "@/server/services/exercises";
+import { deleteExerciseResponse, saveExerciseResponse } from "@/server/services/exercises";
 
 const schema = z.object({
   templateId: z.string().uuid(),
@@ -41,6 +41,20 @@ export async function saveExerciseResponseAction(payload: ExerciseResponsePayloa
     revalidatePath("/app/ejercicios");
     revalidatePath("/app");
     return ok({ id: response.id });
+  } catch (error) {
+    return fail(error);
+  }
+}
+
+export async function deleteExerciseResponseAction(id: string): Promise<ActionResult> {
+  if (!z.string().uuid().safeParse(id).success) return fail(new AppError("VALIDATION", "Respuesta inválida."));
+  try {
+    const { patient } = await assertPatient();
+    const supabase = await createClient();
+    await deleteExerciseResponse(supabase, patient.id, id);
+    revalidatePath("/app/ejercicios", "layout");
+    revalidatePath("/app/calmarme");
+    return ok(undefined);
   } catch (error) {
     return fail(error);
   }

@@ -1,0 +1,73 @@
+{
+  "slug": "tcc-registro-distorsiones",
+  "title": "Registro de distorsiones",
+  "description": "Anotá la situación y el pensamiento, marcá qué distorsiones contiene y escribí la pregunta que lo desafía.",
+  "kind": "thought_record",
+  "approach": "tcc",
+  "audience": "adultos",
+  "collection": "tcc",
+  "estimated_minutes": 5,
+  "sort_order": 216,
+  "source": "Cuadernillo de TCC, Anexo 6 (página 39)",
+  "steps": [
+    {
+      "id": "intro",
+      "type": "info",
+      "title": "Registro de distorsiones",
+      "content": "Es la hoja del Anexo 6 del cuadernillo y viene del capítulo «Las distorsiones cognitivas».\n\nSon cuatro preguntas: la situación, el pensamiento, la distorsión o distorsiones que contiene y la pregunta que la desafía.\n\nPistas para reconocerlas: palabras absolutas («siempre», «nunca», «todo», «nadie», «todos»), etiquetas globales («soy un…», «es un…»), predecir el futuro con certeza o leer la mente ajena sin datos, usar un sentimiento como prueba de un hecho, y los «debería», «tengo que», «no puedo fallar».\n\nUsalo tantas veces como necesites: la práctica repetida es lo que instala el cambio."
+    },
+    {
+      "id": "situacion",
+      "type": "text",
+      "prompt": "Situación: ¿qué pasó?",
+      "help": "Breve y concreta: dónde, cuándo, con quién. La fecha se guarda sola con el registro.",
+      "placeholder": "Qué pasó, dónde, con quién…"
+    },
+    {
+      "id": "pensamiento",
+      "type": "text",
+      "prompt": "Pensamiento: ¿qué te pasó por la cabeza?",
+      "help": "La frase tal como apareció, sin suavizarla. Así lo hizo Rodrigo (29 años), el caso de «Las distorsiones cognitivas»: entregó un informe muy valorado, pero con una cifra mal tipeada, y pensó: «Está todo arruinado»."
+    },
+    {
+      "id": "repaso",
+      "type": "info",
+      "title": "Las 12 distorsiones, en una línea",
+      "content": "Si ya las conocés, seguí de largo.\n\n- **Todo o nada:** ver en extremos, sin matices.\n- **Sobregeneralización:** de un hecho aislado a una regla universal.\n- **Filtro mental:** fijarse solo en lo negativo.\n- **Descalificar lo positivo:** restar valor a lo bueno.\n- **Lectura de mente:** suponer lo que otros piensan.\n- **Adivinación del futuro:** predecir lo peor como un hecho.\n- **Catastrofización:** imaginar el peor escenario y darlo por cierto.\n- **Razonamiento emocional:** «lo siento, entonces es verdad».\n- **Debería / tener que:** reglas rígidas sobre cómo deben ser las cosas.\n- **Etiquetación:** ponerse (o poner) una etiqueta global.\n- **Personalización:** asumir responsabilidad de lo que no controlás.\n- **Culpabilización:** cargar toda la culpa en uno mismo o en otro."
+    },
+    {
+      "id": "distorsiones",
+      "type": "checklist",
+      "prompt": "Distorsión(es): ¿cuáles encajan con tu pensamiento?",
+      "help": "Marcá todas las que veas: un pensamiento puede tener dos o tres a la vez. Rodrigo: todo o nada.\n\nPuede que no haya ninguna: estar triste tras una pérdida no es una distorsión; pensar «no merezco estar bien nunca más» sí puede serlo. Si es así, marcá «No encuentro ninguna».",
+      "options": [
+        "Todo o nada",
+        "Sobregeneralización",
+        "Filtro mental",
+        "Descalificar lo positivo",
+        "Lectura de mente",
+        "Adivinación del futuro",
+        "Catastrofización",
+        "Razonamiento emocional",
+        "Debería / tener que",
+        "Etiquetación",
+        "Personalización",
+        "Culpabilización",
+        "No encuentro ninguna"
+      ]
+    },
+    {
+      "id": "pregunta",
+      "type": "text",
+      "prompt": "¿Qué pregunta la desafía?",
+      "help": "Buscá la de tu distorsión o escribila con tus palabras:\n\n- **Todo o nada:** ¿hay puntos intermedios? ¿Qué habría entre 0 y 100?\n- **Sobregeneralización:** ¿«siempre»? ¿Podés nombrar excepciones concretas?\n- **Filtro mental:** ¿qué datos positivos estoy dejando afuera?\n- **Descalificar lo positivo:** si un amigo lograra esto, ¿le dirías que fue solo suerte?\n- **Lectura de mente:** ¿qué evidencia tengo? ¿Lo comprobé o lo asumí?\n- **Adivinación del futuro:** ¿cuántas veces esta predicción se cumplió tal cual?\n- **Catastrofización:** ¿qué es lo más probable, no lo peor? ¿Y si pasara, cómo lo afrontaría?\n- **Razonamiento emocional:** ¿un sentimiento es una prueba? ¿Los hechos coinciden?\n- **Debería / tener que:** ¿esa regla es realista? ¿La aplicarías a otro?\n- **Etiquetación:** ¿un error define a toda la persona? Describí la conducta, no la etiqueta.\n- **Personalización:** ¿qué otros factores pudieron influir?\n- **Culpabilización:** ¿qué parte es mía, qué parte del contexto y qué parte de otros?\n\nSi no encontraste ninguna, o querés otras, usá «50 preguntas socráticas»."
+    },
+    {
+      "id": "resumen",
+      "type": "reflect",
+      "title": "Tu registro",
+      "template": "Situación: «{{situacion}}». Pensamiento: «{{pensamiento}}». Distorsión(es): {{distorsiones}}. Pregunta que la desafía: «{{pregunta}}».",
+      "content": "Nombrar la distorsión es el primer paso; el fin es entender, no juzgarse. Para cuestionar el pensamiento y construir uno alternativo, podés seguir con «Registro de pensamientos (RPD)» o «Registro de evidencias».\n\nCuando toques «Terminar», tu registro queda guardado: lo podés volver a ver en este ejercicio, en «Mis respuestas». Si en tu perfil está activado «Compartir mis registros con mi psicólogo», tu psicólogo también lo puede ver."
+    }
+  ]
+}

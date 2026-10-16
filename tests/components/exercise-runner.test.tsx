@@ -1,7 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { ExerciseRunner } from "@/components/exercises/exercise-runner";
+import { durationLabel, ExerciseRunner } from "@/components/exercises/exercise-runner";
 import type { ExerciseStep } from "@/lib/exercises/steps";
 
 vi.mock("@/server/actions/exercises", () => ({ saveExerciseResponseAction: vi.fn(async () => ({ ok: true, data: { id: "r1" } })) }));
@@ -39,5 +39,80 @@ describe("ExerciseRunner (wizard)", () => {
   it("muestra el progreso accesible", () => {
     render(<ExerciseRunner templateId="t1" title="Test" steps={steps} />);
     expect(screen.getByRole("progressbar", { name: "Paso 1 de 4" })).toBeInTheDocument();
+  });
+
+  it("selección múltiple con tope y devolución en quizzes", () => {
+    const quizSteps: ExerciseStep[] = [
+      { id: "values", type: "checklist", prompt: "¿Qué te importa?", options: ["Amigos", "Familia", "Salud"], max: 2 },
+      { id: "quiz", type: "choice", prompt: "«Soy un burro»", options: ["Hecho", "Pensamiento"], feedback: { Pensamiento: "Bien: es una **etiqueta**, no un hecho." } },
+    ];
+    render(<ExerciseRunner templateId="t1" title="Test" steps={quizSteps} />);
+    const next = screen.getByRole("button", { name: /continuar/i });
+    expect(next).toBeDisabled();
+    fireEvent.click(screen.getByRole("checkbox", { name: "Amigos" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Salud" }));
+    expect(screen.getByRole("checkbox", { name: "Familia" })).toBeDisabled();
+    expect(screen.getByText("2 de 2 elegidas")).toBeInTheDocument();
+    fireEvent.click(next);
+    fireEvent.click(screen.getByRole("button", { name: "Pensamiento" }));
+    expect(screen.getByRole("status")).toHaveTextContent("Bien: es una etiqueta, no un hecho.");
+    expect(screen.getByText("etiqueta").tagName).toBe("STRONG");
+  });
+
+  it("muestra párrafos y viñetas en los textos informativos", () => {
+    render(
+      <ExerciseRunner
+        templateId="t1"
+        title="Test"
+        steps={[{ id: "intro", type: "info", title: "Trampas", content: "Primer párrafo.\n\n- Todo o nada\n- Leer la mente" }]}
+      />,
+    );
+    expect(screen.getByText("Primer párrafo.").tagName).toBe("P");
+    expect(screen.getAllByRole("listitem").map((li) => li.textContent)).toEqual(["Todo o nada", "Leer la mente"]);
+  });
+
+  it("una lista con mínimo deja seguir con menos renglones completos", () => {
+    render(<ExerciseRunner templateId="t1" title="Test" steps={[{ id: "people", type: "list", prompt: "Personas de confianza", count: 4, min: 2 }, { id: "end", type: "info", content: "Fin" }]} />);
+    const next = screen.getByRole("button", { name: /continuar/i });
+    expect(screen.getByText("Completá al menos 2.")).toBeInTheDocument();
+    const inputs = screen.getAllByRole("textbox");
+    fireEvent.change(inputs[0]!, { target: { value: "Abuela" } });
+    expect(next).toBeDisabled();
+    fireEvent.change(inputs[1]!, { target: { value: "Profe de música" } });
+    expect(next).toBeEnabled();
+  });
+
+  it("los pasos con temporizador muestran minutos y cuentan contra la hora real", () => {
+    expect(durationLabel(40)).toBe("40 segundos");
+    expect(durationLabel(600)).toBe("10 minutos");
+    expect(durationLabel(90)).toBe("1 min 30 s");
+    vi.useFakeTimers();
+    try {
+      render(
+        <ExerciseRunner
+          templateId="t1"
+          title="Test"
+          steps={[
+            { id: "wait", type: "timed_info", title: "Esperá", content: "Mirá la hora.", seconds: 600 },
+            { id: "after", type: "info", title: "Después", content: "Listo" },
+          ]}
+        />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: "Iniciar 10 minutos" }));
+      expect(screen.getByText("10:00")).toBeInTheDocument();
+      // Como si la app hubiera quedado en segundo plano: el reloj avanza sin ticks intermedios.
+      act(() => {
+        vi.setSystemTime(Date.now() + 9 * 60 * 1000);
+        vi.advanceTimersByTime(300);
+      });
+      expect(screen.getByText("1:00")).toBeInTheDocument();
+      act(() => {
+        vi.setSystemTime(Date.now() + 61 * 1000);
+        vi.advanceTimersByTime(300);
+      });
+      expect(screen.getByRole("heading", { name: "Después" })).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

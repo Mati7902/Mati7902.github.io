@@ -34,7 +34,7 @@ export function fragmentSessionPage(): string {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Ingresando…</title>
-<style>body{font-family:system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;margin:0;background:#faf8f5;color:#1f2937}</style>
+<style>body{font-family:system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;margin:0;background:#fbfdfc;color:#0f2333}</style>
 </head>
 <body>
 <p>Ingresando…</p>

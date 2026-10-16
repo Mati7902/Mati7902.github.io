@@ -77,6 +77,8 @@ commit;
 -- 1. Un paciente solo ve sus propios datos
 -- ---------------------------------------------------------------------------
 begin;
+-- Materiales públicos publicados (los del seed y los de los cuadernillos), contados sin RLS.
+select set_config('test.public_materials', (select count(*) from public.materials where is_published and visibility = 'public')::text, true);
 select pg_temp.login('22222222-2222-4222-8222-222222222222');
 select pg_temp.assert((select count(*) from public.patients) = 1, 'paciente ve exactamente 1 ficha (la propia)');
 select pg_temp.assert((select count(*) from public.patients where email = 'ana.ejemplo@demo.local') = 0, 'paciente no ve a otros pacientes');
@@ -89,8 +91,9 @@ select pg_temp.assert((select count(*) from public.audit_logs) = 0, 'paciente no
 select pg_temp.assert((select count(*) from public.whatsapp_messages) = 0, 'paciente no ve mensajes de WhatsApp');
 select pg_temp.assert((select count(*) from public.settings where key = 'whatsapp') = 0, 'paciente no ve settings privados');
 select pg_temp.assert((select count(*) from public.settings where key = 'site.identity') = 1, 'paciente ve settings públicos');
--- Materiales: públicos + asignados (2 asignados + 3 públicos = 5)
-select pg_temp.assert((select count(*) from public.materials) = 5, 'paciente ve materiales públicos y asignados');
+-- Materiales: públicos + los 2 asignados (que no son públicos)
+select pg_temp.assert((select count(*) from public.materials) = current_setting('test.public_materials')::int + 2, 'paciente ve materiales públicos y asignados');
+select pg_temp.assert((select count(*) from public.materials where visibility = 'assigned') = 2, 'paciente ve solo los materiales asignados a él');
 select pg_temp.logout();
 rollback;
 
@@ -312,6 +315,173 @@ select pg_temp.assert((select count(*) from public.session_preparations) = 1, 'e
 select pg_temp.logout();
 rollback;
 
+-- Ficha de ingreso: borrador privado, el profesional la lee recién enviada, nadie más
+begin;
+select set_config('test.juan_patient', (select id::text from public.patients where email = 'juan.perez@demo.local'), true);
+select set_config('test.ana_patient', (select id::text from public.patients where email = 'ana.ejemplo@demo.local'), true);
+-- Usuario de recepción para comprobar que no accede a datos de salud.
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token)
+values ('55555555-5555-4555-8555-555555555555', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'recepcion@demo.local',
+        crypt('x', gen_salt('bf')), now(), '{"provider":"email","role":"receptionist"}'::jsonb, '{}'::jsonb, now(), now(), '', '')
+on conflict (id) do nothing;
+insert into public.profiles (id, role, email) values ('55555555-5555-4555-8555-555555555555', 'receptionist', 'recepcion@demo.local')
+on conflict (id) do update set role = 'receptionist';
+delete from public.patient_intakes;
+delete from public.notifications where title like 'Ficha de ingreso%';
+
+select pg_temp.login('22222222-2222-4222-8222-222222222222');
+insert into public.patient_intakes (patient_id, answers) values (public.current_patient_id(), '{"motivo": "Prueba"}');
+select pg_temp.assert((select count(*) from public.patient_intakes) = 1, 'el paciente guarda y ve su borrador de ficha de ingreso');
+select pg_temp.expect_error(
+  $q$insert into public.patient_intakes (patient_id, answers) values (current_setting('test.ana_patient')::uuid, '{}')$q$,
+  array['42501'], 'paciente no puede crear la ficha de ingreso de otro');
+select pg_temp.logout();
+
+select pg_temp.login('11111111-1111-4111-8111-111111111111');
+select pg_temp.assert((select count(*) from public.patient_intakes) = 0, 'el profesional no ve el borrador de la ficha de ingreso');
+select pg_temp.logout();
+
+-- Envío: la fecha la pone la base aunque el cliente mande otra, y se avisa al profesional.
+select pg_temp.login('22222222-2222-4222-8222-222222222222');
+update public.patient_intakes set submitted_at = '2000-01-01', first_submitted_at = '2000-01-01' where patient_id = public.current_patient_id();
+select pg_temp.assert((select submitted_at = now() and first_submitted_at = now() from public.patient_intakes), 'la base fija la fecha de envío de la ficha');
+select pg_temp.expect_error(
+  $q$update public.patient_intakes set submitted_at = null where patient_id = public.current_patient_id()$q$,
+  array['42501'], 'una ficha enviada no vuelve a borrador');
+select pg_temp.expect_error(
+  $q$update public.patient_intakes set patient_id = current_setting('test.ana_patient')::uuid where patient_id = public.current_patient_id()$q$,
+  array['42501'], 'paciente no puede pasar su ficha a otro paciente');
+select pg_temp.expect_error($q$delete from public.patient_intakes$q$, array['42501'], 'paciente no puede borrar la ficha de ingreso');
+select pg_temp.logout();
+select pg_temp.assert(
+  (select count(*) from public.notifications where user_id = '11111111-1111-4111-8111-111111111111' and title = 'Ficha de ingreso completa' and data ->> 'patient_id' = current_setting('test.juan_patient')) = 1,
+  'el profesional recibe un aviso cuando se envía la ficha');
+select pg_temp.assert(
+  (select body from public.notifications where user_id = '11111111-1111-4111-8111-111111111111' and title = 'Ficha de ingreso completa') = 'Juan Pérez completó su ficha de ingreso.',
+  'el aviso no lleva contenido de la ficha');
+
+select pg_temp.login('11111111-1111-4111-8111-111111111111');
+select pg_temp.assert((select count(*) from public.patient_intakes) = 1, 'el profesional ve la ficha enviada');
+update public.patient_intakes set answers = '{"motivo": "Cambiado"}';
+select pg_temp.expect_error($q$delete from public.patient_intakes$q$, array['42501'], 'el profesional no borra la ficha desde la API');
+select pg_temp.logout();
+select pg_temp.assert((select answers ->> 'motivo' from public.patient_intakes) = 'Prueba', 'el profesional no puede modificar las respuestas del paciente');
+
+select pg_temp.login('33333333-3333-4333-8333-333333333333');
+select pg_temp.assert((select count(*) from public.patient_intakes) = 0, 'otro paciente no ve la ficha de ingreso');
+select pg_temp.logout();
+select pg_temp.login('55555555-5555-4555-8555-555555555555');
+select pg_temp.assert((select count(*) from public.patient_intakes) = 0, 'recepción no ve la ficha de ingreso');
+select pg_temp.logout();
+select pg_temp.login(null, 'anon');
+select pg_temp.expect_error($q$select count(*) from public.patient_intakes$q$, array['42501'], 'anon no tiene acceso a las fichas de ingreso');
+select pg_temp.logout();
+rollback;
+
+-- Reenvío de una ficha ya enviada: aviso de actualización y se conserva el primer envío
+begin;
+delete from public.patient_intakes;
+delete from public.notifications where title like 'Ficha de ingreso%';
+insert into public.patient_intakes (patient_id, answers, submitted_at)
+select id, '{"motivo": "Antes"}', now() - interval '3 days' from public.patients where email = 'juan.perez@demo.local';
+select pg_temp.login('22222222-2222-4222-8222-222222222222');
+update public.patient_intakes set answers = '{"motivo": "Después"}', submitted_at = now() + interval '1 year' where patient_id = public.current_patient_id();
+select pg_temp.assert(
+  (select submitted_at = now() and first_submitted_at < now() - interval '2 days' from public.patient_intakes),
+  'el reenvío actualiza la fecha de envío y conserva la del primero');
+select pg_temp.logout();
+select pg_temp.assert(
+  (select count(*) from public.notifications where user_id = '11111111-1111-4111-8111-111111111111' and title = 'Ficha de ingreso actualizada') = 1,
+  'el profesional recibe un aviso cuando el paciente reenvía la ficha');
+select pg_temp.expect_error(
+  $q$insert into public.patient_intakes (patient_id, answers) select id, jsonb_build_object('x', repeat('a', 210000)) from public.patients where email = 'ana.ejemplo@demo.local'$q$,
+  array['23514'], 'la ficha de ingreso tiene un tamaño máximo');
+rollback;
+
+-- Consentimiento informado: la base completa el documento, las firmas no se tocan
+begin;
+select set_config('test.juan_patient', (select id::text from public.patients where email = 'juan.perez@demo.local'), true);
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token)
+values ('55555555-5555-4555-8555-555555555555', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'recepcion@demo.local',
+        crypt('x', gen_salt('bf')), now(), '{"provider":"email","role":"receptionist"}'::jsonb, '{}'::jsonb, now(), now(), '', '')
+on conflict (id) do nothing;
+insert into public.profiles (id, role, email) values ('55555555-5555-4555-8555-555555555555', 'receptionist', 'recepcion@demo.local')
+on conflict (id) do update set role = 'receptionist';
+
+select pg_temp.assert(public.consent_number('12'::jsonb) = '12' and public.consent_number('12.0'::jsonb) = '12' and public.consent_number('1.5'::jsonb) = '1,5', 'los números del consentimiento se escriben como en la app');
+
+select pg_temp.login('22222222-2222-4222-8222-222222222222');
+select pg_temp.assert((select count(*) from public.treatment_consents) = 1, 'el paciente ve su consentimiento firmado');
+select pg_temp.expect_error($q$update public.treatment_consents set signed_name = 'Otro nombre'$q$, array['42501'], 'una firma no se puede modificar');
+select pg_temp.expect_error($q$delete from public.treatment_consents$q$, array['42501'], 'una firma no se puede borrar');
+select pg_temp.logout();
+
+select pg_temp.login('33333333-3333-4333-8333-333333333333');
+select pg_temp.assert((select count(*) from public.treatment_consents) = 0, 'otro paciente no ve consentimientos ajenos');
+select pg_temp.expect_error(
+  $q$insert into public.treatment_consents (patient_id, version, signed_name) values (current_setting('test.juan_patient')::uuid, '2026-10', 'Ana Ejemplo')$q$,
+  array['42501'], 'paciente no puede firmar por otro');
+select pg_temp.expect_error(
+  $q$insert into public.treatment_consents (patient_id, version, signed_name) values (public.current_patient_id(), '1999-01', 'Ana Ejemplo')$q$,
+  array['P0001'], 'no se firma una versión que no es la vigente');
+-- El cliente no elige texto, sesiones, fecha ni si es menor: lo completa la base.
+insert into public.treatment_consents (patient_id, version, signed_name, title, body_template, sessions, accepted_at, is_minor, params)
+values (public.current_patient_id(), '2026-10', '  Ana Ejemplo  ', 'Otro título', 'Texto inventado', 1, '2000-01-01', true, '{"profesional":"Otro"}');
+select pg_temp.assert(
+  (select body_template = (select value ->> 'body' from public.settings where key = 'treatment_consent') and sessions = 8 and title = 'Consentimiento informado y compromiso terapéutico'
+     and accepted_at = now() and not is_minor and signed_name = 'Ana Ejemplo' and params ->> 'profesional' = 'Lic. Matías Sánchez' and params ->> 'sesiones' = '8'
+   from public.treatment_consents),
+  'la base completa el documento firmado con la configuración vigente');
+select pg_temp.logout();
+
+-- Menor de edad: hace falta el nombre de quien autoriza
+select pg_temp.login('44444444-4444-4444-8444-444444444444');
+select pg_temp.expect_error(
+  $q$insert into public.treatment_consents (patient_id, version, signed_name) values (public.current_patient_id(), '2026-10', 'Sofía Benítez')$q$,
+  array['22023'], 'una menor no firma sin el nombre de su madre, padre o tutor');
+insert into public.treatment_consents (patient_id, version, signed_name, guardian_name) values (public.current_patient_id(), '2026-10', 'Sofía Benítez', 'Laura Benítez');
+select pg_temp.assert((select is_minor and guardian_name = 'Laura Benítez' from public.treatment_consents), 'la firma de una menor queda marcada con quien autoriza');
+select pg_temp.expect_error(
+  $q$insert into public.treatment_consents (patient_id, version, signed_name, guardian_name) values (public.current_patient_id(), '2026-10', 'Sofía Benítez', 'Laura Benítez')$q$,
+  array['23505'], 'una sola firma por versión');
+select pg_temp.logout();
+-- Sin fecha de nacimiento pero con tutor cargado, también se la trata como menor
+update public.patients set birth_date = null where email = 'sofia.benitez@demo.local';
+delete from public.treatment_consents where patient_id = (select id from public.patients where email = 'sofia.benitez@demo.local');
+select pg_temp.login('44444444-4444-4444-8444-444444444444');
+select pg_temp.expect_error(
+  $q$insert into public.treatment_consents (patient_id, version, signed_name) values (public.current_patient_id(), '2026-10', 'Sofía Benítez')$q$,
+  array['22023'], 'sin fecha de nacimiento y con tutor cargado, se pide quien autoriza');
+select pg_temp.logout();
+-- La base calcula la minoría también en inserciones privilegiadas (seed, servidor)
+select pg_temp.expect_error(
+  $q$insert into public.treatment_consents (patient_id, version, signed_name) select id, '2026-10', 'Sofía Benítez' from public.patients where email = 'sofia.benitez@demo.local'$q$,
+  array['22023'], 'tampoco el servidor guarda la firma de una menor sin quien autoriza');
+
+select pg_temp.login('11111111-1111-4111-8111-111111111111');
+select pg_temp.assert((select count(*) from public.treatment_consents) = 2, 'el profesional ve todas las firmas (Juan y Ana)');
+select pg_temp.expect_error(
+  $q$insert into public.treatment_consents (patient_id, version, signed_name) values (current_setting('test.juan_patient')::uuid, '2026-10', 'Juan Pérez')$q$,
+  array['42501'], 'el profesional no firma en nombre del paciente');
+select pg_temp.logout();
+select pg_temp.login('55555555-5555-4555-8555-555555555555');
+select pg_temp.assert((select count(*) from public.treatment_consents) = 0, 'recepción no ve los consentimientos');
+select pg_temp.logout();
+select pg_temp.login(null, 'anon');
+select pg_temp.expect_error($q$select count(*) from public.treatment_consents$q$, array['42501'], 'anon no tiene acceso a los consentimientos');
+select pg_temp.assert((select count(*) from public.settings where key = 'treatment_consent') = 1, 'el texto del consentimiento es público');
+select pg_temp.logout();
+
+-- Desactivado en la configuración: no se puede firmar
+update public.settings set value = value || '{"enabled": false}'::jsonb where key = 'treatment_consent';
+delete from public.treatment_consents where patient_id = (select id from public.patients where email = 'ana.ejemplo@demo.local');
+select pg_temp.login('33333333-3333-4333-8333-333333333333');
+select pg_temp.expect_error(
+  $q$insert into public.treatment_consents (patient_id, version, signed_name) values (public.current_patient_id(), '2026-10', 'Ana Ejemplo')$q$,
+  array['P0001'], 'con el consentimiento desactivado no se firma');
+select pg_temp.logout();
+rollback;
+
 -- Notas administrativas: solo para el profesional
 begin;
 insert into public.patient_admin_notes (patient_id, notes) select id, 'Abona por transferencia' from public.patients where email = 'juan.perez@demo.local';
@@ -371,6 +541,66 @@ begin;
 create function public.tmp_probe_default_privileges() returns integer language sql as 'select 1';
 select pg_temp.assert(not has_function_privilege('anon', 'public.tmp_probe_default_privileges()', 'execute'), 'una función nueva no queda ejecutable por anon');
 select pg_temp.assert(not has_function_privilege('authenticated', 'public.tmp_probe_default_privileges()', 'execute'), 'una función nueva no queda ejecutable por authenticated');
+rollback;
+
+-- ---------------------------------------------------------------------------
+-- Testimonios: la web solo ve los publicados con autorización, sin fechas; solo el profesional los carga
+-- ---------------------------------------------------------------------------
+begin;
+delete from public.testimonials;
+insert into public.testimonials (gender, quote, consent_confirmed, is_published, sort_order) values
+  ('mujer', 'Texto de prueba de un testimonio publicado.', true, true, 1),
+  ('hombre', 'Texto de prueba de un testimonio sin autorización.', false, false, 2),
+  ('hombre', 'Texto de prueba autorizado pero no publicado.', true, false, 3);
+select pg_temp.assert((select consent_confirmed_at is not null from public.testimonials where sort_order = 1), 'la base registra cuándo se confirmó la autorización de un testimonio');
+select pg_temp.assert((select consent_confirmed_at is null from public.testimonials where sort_order = 2), 'sin autorización no hay fecha de confirmación');
+select pg_temp.expect_error($q$insert into public.testimonials (gender, quote, is_published) values ('mujer', 'Publicado sin autorización confirmada.', true)$q$, array['23514'], 'no se publica un testimonio sin autorización');
+select pg_temp.expect_error($q$insert into public.testimonials (gender, quote) values ('otro', 'Un texto suficientemente largo.')$q$, array['23514'], 'un testimonio se muestra solo como mujer u hombre');
+select pg_temp.expect_error($q$insert into public.testimonials (gender, quote) values ('mujer', 'Muy corto')$q$, array['23514'], 'un testimonio tiene un largo mínimo');
+-- Fecha fija de la autorización (dentro de la transacción now() no cambia).
+alter table public.testimonials disable trigger testimonials_stamp_consent;
+update public.testimonials set consent_confirmed_at = '2026-01-15T12:00:00Z' where sort_order = 1;
+alter table public.testimonials enable trigger testimonials_stamp_consent;
+select pg_temp.login(null, 'anon');
+select pg_temp.assert((select count(*) from public.published_testimonials()) = 1 and (select quote from public.published_testimonials()) = 'Texto de prueba de un testimonio publicado.', 'anon ve solo el testimonio publicado con autorización (no los autorizados sin publicar)');
+select pg_temp.expect_error($q$select count(*) from public.testimonials$q$, array['42501'], 'anon no lee la tabla de testimonios (fechas ni datos internos)');
+select pg_temp.expect_error($q$insert into public.testimonials (gender, quote, consent_confirmed, is_published) values ('mujer', 'Un testimonio cargado desde afuera.', true, true)$q$, array['42501'], 'anon no puede cargar testimonios');
+select pg_temp.logout();
+select pg_temp.login('22222222-2222-4222-8222-222222222222');
+select pg_temp.assert((select count(*) from public.published_testimonials()) = 1, 'un paciente ve solo el testimonio publicado');
+select pg_temp.assert((select count(*) from public.testimonials) = 0, 'un paciente no lee la tabla de testimonios');
+select pg_temp.expect_error($q$insert into public.testimonials (gender, quote) values ('hombre', 'Un testimonio cargado por un paciente.')$q$, array['42501'], 'un paciente no puede cargar testimonios');
+update public.testimonials set quote = 'Texto cambiado por un paciente cualquiera.', is_published = true, consent_confirmed = true;
+delete from public.testimonials;
+select pg_temp.logout();
+select pg_temp.login('55555555-5555-4555-8555-555555555555');
+select pg_temp.assert((select count(*) from public.published_testimonials()) = 1 and (select count(*) from public.testimonials) = 0, 'recepción ve solo el testimonio publicado');
+select pg_temp.expect_error($q$insert into public.testimonials (gender, quote) values ('mujer', 'Un testimonio cargado por recepción.')$q$, array['42501'], 'recepción no puede cargar testimonios');
+update public.testimonials set is_published = false;
+delete from public.testimonials;
+select pg_temp.logout();
+select pg_temp.assert(
+  (select count(*) from public.testimonials) = 3
+  and (select quote from public.testimonials where sort_order = 1) = 'Texto de prueba de un testimonio publicado.'
+  and (select is_published from public.testimonials where sort_order = 1)
+  and (select not is_published and not consent_confirmed from public.testimonials where sort_order = 2),
+  'un paciente o recepción no pueden cambiar, publicar ni borrar testimonios');
+select pg_temp.login('11111111-1111-4111-8111-111111111111');
+select pg_temp.assert((select count(*) from public.testimonials) = 3, 'el profesional ve todos los testimonios, también los no publicados');
+select pg_temp.expect_error($q$update public.testimonials set consent_confirmed = false where sort_order = 1$q$, array['23514'], 'quitar la autorización de un testimonio publicado exige despublicarlo');
+update public.testimonials set consent_confirmed = true, is_published = true where sort_order = 2;
+select pg_temp.assert((select consent_confirmed_at is not null and is_published from public.testimonials where sort_order = 2), 'el profesional confirma la autorización y publica');
+update public.testimonials set sort_order = 4, consent_confirmed_at = '2020-01-01' where sort_order = 1;
+select pg_temp.assert((select consent_confirmed_at = '2026-01-15T12:00:00Z'::timestamptz from public.testimonials where sort_order = 4), 'cambiar el orden no cambia la fecha de la autorización, ni se puede escribir a mano');
+update public.testimonials set quote = 'Texto de prueba corregido con la persona.' where sort_order = 4;
+select pg_temp.assert((select consent_confirmed_at = now() from public.testimonials where sort_order = 4), 'si cambia el texto, la fecha de la autorización se vuelve a registrar');
+insert into public.testimonials (gender, quote, consent_confirmed, consent_confirmed_at, sort_order) values ('mujer', 'Texto de prueba con fecha inventada.', true, '2020-01-01', 5);
+select pg_temp.assert((select consent_confirmed_at = now() from public.testimonials where sort_order = 5), 'al cargar un testimonio la fecha de la autorización la pone la base');
+update public.testimonials set is_published = false, consent_confirmed = false where sort_order = 4;
+select pg_temp.assert((select consent_confirmed_at is null from public.testimonials where sort_order = 4), 'al quitar la autorización se borra su fecha');
+delete from public.testimonials where sort_order = 2;
+select pg_temp.assert((select count(*) from public.testimonials) = 3, 'el profesional elimina testimonios');
+select pg_temp.logout();
 rollback;
 
 -- ---------------------------------------------------------------------------

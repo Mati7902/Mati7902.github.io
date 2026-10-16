@@ -6,6 +6,7 @@ import { z } from "zod";
 import { assertAdmin } from "@/lib/auth/session";
 import { type ActionResult, fail, ok, validationFail, AppError } from "@/lib/errors";
 import { createClient } from "@/lib/supabase/server";
+import { testimonialSchema, type TestimonialInput } from "@/lib/testimonials";
 import { zodFieldErrors } from "@/lib/validation";
 import { audit } from "@/server/services/audit";
 import { saveSetting, settingsSchemas, type SettingsKey, type SettingsValue } from "@/server/services/settings";
@@ -55,6 +56,42 @@ export async function deleteFaqAction(id: string): Promise<ActionResult> {
     const supabase = await createClient();
     const { error } = await supabase.from("faqs").delete().eq("id", id);
     if (error) throw error;
+    revalidateAll();
+    return ok(undefined);
+  } catch (error) {
+    return fail(error);
+  }
+}
+
+/** Guarda un testimonio anónimo y devuelve su id (el editor lo usa para no duplicarlo al volver a guardar). */
+export async function saveTestimonialAction(input: TestimonialInput): Promise<ActionResult<{ id: string }>> {
+  try {
+    // Primero el permiso: la validación revisa el texto y no tiene que correr para cualquiera.
+    await assertAdmin();
+    const parsed = testimonialSchema.safeParse(input);
+    if (!parsed.success) return validationFail(zodFieldErrors(parsed.error));
+    const supabase = await createClient();
+    const { id, ...rest } = parsed.data;
+    const { data, error } = id
+      ? await supabase.from("testimonials").update(rest).eq("id", id).select("id").single()
+      : await supabase.from("testimonials").insert(rest).select("id").single();
+    if (error) throw error;
+    await audit(supabase, "testimonial.saved", { type: "testimonial", id: data.id }, { published: rest.is_published });
+    revalidateAll();
+    return ok({ id: data.id });
+  } catch (error) {
+    return fail(error);
+  }
+}
+
+export async function deleteTestimonialAction(id: string): Promise<ActionResult> {
+  if (!z.string().uuid().safeParse(id).success) return fail(new AppError("VALIDATION", "Testimonio inválido."));
+  try {
+    await assertAdmin();
+    const supabase = await createClient();
+    const { error } = await supabase.from("testimonials").delete().eq("id", id);
+    if (error) throw error;
+    await audit(supabase, "testimonial.deleted", { type: "testimonial", id });
     revalidateAll();
     return ok(undefined);
   } catch (error) {
@@ -123,26 +160,42 @@ export async function saveNotificationTemplateAction(input: z.infer<typeof templ
   }
 }
 
-/** Sube la foto profesional al bucket público "branding" y actualiza site.identity.photo_url. */
-export async function uploadProfessionalPhotoAction(formData: FormData): Promise<ActionResult<{ url: string }>> {
-  const file = formData.get("photo");
+const BRANDING = {
+  photo: { field: "photo_url", prefix: "profesional", types: ["image/png", "image/jpeg", "image/webp"], label: "PNG, JPG o WebP" },
+  logo: { field: "logo_url", prefix: "logo", types: ["image/png", "image/webp", "image/svg+xml", "image/jpeg"], label: "SVG, PNG, WebP o JPG" },
+} as const;
+const EXTENSIONS: Record<string, string> = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/svg+xml": "svg" };
+
+/**
+ * Sube la foto profesional o el logo al bucket público "branding" y actualiza
+ * site.identity (photo_url o logo_url).
+ */
+export async function uploadBrandingImageAction(formData: FormData): Promise<ActionResult<{ url: string }>> {
+  const kind = formData.get("kind") === "logo" ? "logo" : "photo";
+  const spec = BRANDING[kind];
+  const file = formData.get("file") ?? formData.get("photo");
   if (!(file instanceof File) || file.size === 0) return fail(new AppError("VALIDATION", "Elegí una imagen."));
-  if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) return fail(new AppError("VALIDATION", "Formato no permitido (PNG, JPG o WebP)."));
+  if (!(spec.types as readonly string[]).includes(file.type)) return fail(new AppError("VALIDATION", `Formato no permitido (${spec.label}).`));
   if (file.size > 5 * 1024 * 1024) return fail(new AppError("VALIDATION", "La imagen supera los 5 MB."));
   try {
     const session = await assertAdmin();
     const supabase = await createClient();
-    const ext = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
-    const path = `profesional-${Date.now()}.${ext}`;
+    const path = `${spec.prefix}-${Date.now()}.${EXTENSIONS[file.type] ?? "png"}`;
     const { error } = await supabase.storage.from("branding").upload(path, file, { contentType: file.type, upsert: true });
     if (error) throw new AppError("EXTERNAL", `No pudimos subir la imagen: ${error.message}`);
     const { data } = supabase.storage.from("branding").getPublicUrl(path);
     const { data: current } = await supabase.from("settings").select("value").eq("key", "site.identity").maybeSingle();
     const identity = settingsSchemas["site.identity"].parse(current?.value ?? {});
-    await saveSetting(supabase, "site.identity", { ...identity, photo_url: data.publicUrl }, session.userId);
+    await saveSetting(supabase, "site.identity", { ...identity, [spec.field]: data.publicUrl }, session.userId);
     revalidateAll();
     return ok({ url: data.publicUrl });
   } catch (error) {
     return fail(error);
   }
+}
+
+/** Compatibilidad: sube la foto profesional. */
+export async function uploadProfessionalPhotoAction(formData: FormData): Promise<ActionResult<{ url: string }>> {
+  formData.set("kind", "photo");
+  return uploadBrandingImageAction(formData);
 }

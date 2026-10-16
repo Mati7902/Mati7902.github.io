@@ -6,6 +6,7 @@ import { MaterialCard } from "@/components/materials/material-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { requirePatient } from "@/lib/auth/session";
+import { ageFrom, audiencesFor } from "@/lib/exercises/collections";
 import { createClient } from "@/lib/supabase/server";
 import { getPatientMaterials } from "@/server/services/materials";
 
@@ -15,7 +16,7 @@ export default async function MaterialsPage({ searchParams }: { searchParams: Pr
   const { patient } = await requirePatient();
   const { categoria } = await searchParams;
   const supabase = await createClient();
-  const materials = await getPatientMaterials(supabase, patient.id);
+  const materials = await getPatientMaterials(supabase, patient.id, audiencesFor(ageFrom(patient.birth_date)));
   const recommended = materials.filter((m) => m.recommended);
   const categories = Array.from(new Map(materials.filter((m) => m.material_categories).map((m) => [m.material_categories!.slug, m.material_categories!])).values());
   const rest = materials.filter((m) => !m.recommended && (!categoria || m.material_categories?.slug === categoria));

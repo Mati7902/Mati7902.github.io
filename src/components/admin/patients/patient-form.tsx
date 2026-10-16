@@ -59,7 +59,7 @@ export function PatientForm({ patient, adminNote, defaultAdmissionDate }: { pati
           <FormField id={`${id}-birth`} label="Fecha de nacimiento" optional error={errors.birth_date}>
             <Input id={`${id}-birth`} name="birth_date" type="date" defaultValue={patient?.birth_date ?? ""} />
           </FormField>
-          <FormField id={`${id}-guardian`} label="Madre / padre / tutor" optional hint="Para pacientes menores de edad.">
+          <FormField id={`${id}-guardian`} label="Madre / padre / tutor" optional hint="Para pacientes menores de edad." error={errors.guardian_name}>
             <Input id={`${id}-guardian`} name="guardian_name" defaultValue={patient?.guardian_name ?? ""} />
           </FormField>
         </div>
@@ -68,7 +68,7 @@ export function PatientForm({ patient, adminNote, defaultAdmissionDate }: { pati
       <section className="space-y-4">
         <h2 className="font-display text-lg font-medium">Contacto de emergencia</h2>
         <div className="grid gap-4 sm:grid-cols-2">
-          <FormField id={`${id}-ecn`} label="Nombre" optional>
+          <FormField id={`${id}-ecn`} label="Nombre" optional error={errors.emergency_contact_name}>
             <Input id={`${id}-ecn`} name="emergency_contact_name" defaultValue={patient?.emergency_contact_name ?? ""} />
           </FormField>
           <FormField id={`${id}-ecp`} label="Teléfono" optional error={errors.emergency_contact_phone}>

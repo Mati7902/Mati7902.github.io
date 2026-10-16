@@ -1,11 +1,12 @@
-import { Fraunces, Inter } from "next/font/google";
+import { Inter, Libre_Baskerville } from "next/font/google";
 
-/** Tipografía de títulos: elegante, con personalidad y ejes variables (opsz/SOFT). */
-export const fontDisplay = Fraunces({
+/** Tipografía de títulos: la serif de la identidad del Lic. Matías Sánchez (Libre Baskerville). */
+export const fontDisplay = Libre_Baskerville({
   subsets: ["latin"],
-  variable: "--font-fraunces",
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-display-face",
   display: "swap",
-  axes: ["opsz", "SOFT"],
 });
 
 /** Tipografía de contenido, formularios y dashboard: extremadamente legible. */
