@@ -74,7 +74,9 @@ en una rama de trabajo; la página se publica desde `main`.
   request** (o **Squash and merge**) y después **Confirm merge**. Tiene que aparecer el cartel
   violeta **Merged**.
 
-Hacé este paso antes que los demás: el instalador de la base corresponde a esta versión.
+Hacé este paso antes que los demás: el instalador de la base corresponde a esta versión. Si tu
+página ya estaba publicada, Vercel la actualiza solo en uno o dos minutos; después corré la
+actualización de la base (paso 4).
 
 ### Paso 2. Apagar la página vieja de GitHub
 
@@ -88,7 +90,9 @@ site**. No borra nada del código.
 1. Entrá a [supabase.com](https://supabase.com/dashboard) con **Continue with GitHub**.
 2. Si te pide una organización: tu nombre, tipo **Personal**, plan **Free**.
 3. Proyecto: nombre `psicologia`; **Database Password** con **Generate a password** (guardala en
-   tu gestor); región **South America (São Paulo)**. Tocá **Create new project** y esperá.
+   tu gestor); en **Region**, dentro de *Specific regions*, **South America (São Paulo)** (no la
+   opción general *Americas*). Si aparecen **Enable Data API** y **Automatically expose new
+   tables**, dejalas marcadas. Tocá **Create new project** y esperá.
 4. Buscá tres datos:
    - **Project URL** (`https://abcd1234.supabase.co`): botón **Connect** de arriba.
    - **Publishable key** (`sb_publishable_…`): en **Connect** o en **Settings › API Keys**.
@@ -101,25 +105,26 @@ Las claves viejas también funcionan: *anon* equivale a la publishable y *servic
 
 1. Abrí [`supabase/instalar.sql`](supabase/instalar.sql) en GitHub y copiá **todo** el contenido
    con el botón de copiar del archivo (o el botón «Copiar el instalador» de la guía interactiva).
-2. En Supabase: **SQL Editor › New query**, pegá y tocá **Run**.
+2. En Supabase: **SQL Editor › New query**, pegá y tocá **Run**. Si aparece *Potential issue
+   detected*, es esperable: tocá **Run query**.
 3. Tiene que decir **Success. No rows returned**.
 
-Si dice *already exists*, la base ya estaba instalada. Si hay otro error, no queda nada a medias:
-revisá que se haya pegado completo (termina con `commit;`) y corrélo de nuevo. **Nunca** corras
-`supabase/seed.sql`: son datos inventados de demostración.
+**¿Ya la habías instalado con una versión anterior?** No la instales de nuevo: corré igual
+[`supabase/actualizar.sql`](supabase/actualizar.sql). Agrega lo nuevo (cuadernillos, ficha de
+ingreso, consentimiento, testimonios) sin borrar pacientes, turnos ni nada de lo que cargaste.
 
-### Paso 5. Ajustar el inicio de sesión y los emails
+Si el instalador dice *already exists*, la base ya estaba instalada: corré la actualización. Si
+la actualización también dice *already exists*, la base ya está al día. Si hay otro error, no
+queda nada a medias: revisá que se haya pegado completo (termina con `commit;`) y corrélo de
+nuevo. Si dice *Query is too large*, la guía interactiva tiene el instalador en tres partes (para
+actualizar, alcanza con la 2 y la 3). **Nunca** corras `supabase/seed.sql`: son datos inventados
+de demostración.
 
-1. **Authentication › Sign In / Providers:** apagá **Allow new users to sign up** y guardá (los
-   pacientes entran solo por invitación).
-2. **Authentication › Emails › Templates:** en cada plantilla reemplazá el asunto (*Subject*) y
-   el cuerpo (*Body*) por los de [`supabase/templates`](supabase/templates):
+### Paso 5. Cerrar el registro libre
 
-   | Plantilla | Subject | Body |
-   | --- | --- | --- |
-   | Invite user | Tu invitación a la plataforma de pacientes | `invite.html` |
-   | Reset Password | Cambiar tu contraseña | `recovery.html` |
-   | Magic Link | Tu enlace de acceso | `magic_link.html` |
+**Authentication › Sign In / Providers:** en *User Signups* apagá **Allow new users to sign up** y
+tocá **Save changes** (los pacientes entran solo por invitación). Los textos de los emails van en
+el paso 11: Supabase no deja editarlos hasta configurar tu propio envío de emails.
 
 ## Etapa 3 · La página (Vercel)
 
@@ -153,8 +158,8 @@ un *Redeploy*.
 
 ### Paso 8. Crear tu cuenta de profesional
 
-1. **Authentication › Users › Add user › Create new user:** tu email, una contraseña segura y
-   **Auto Confirm User**.
+1. **Authentication › Users › Add user › Create new user:** tu email (*Email address*), una
+   contraseña segura (*User Password*), dejá marcada **Auto confirm user?** y tocá **Create user**.
 2. **SQL Editor › New query**, con tu email y tu nombre, y **Run**:
 
    ```sql
@@ -226,6 +231,18 @@ este paso.
    | Username | `resend` |
    | Password | la API key de Resend |
 
+   Tocá **Save changes**.
+7. En Resend, si ves *Click Tracking* u *Open Tracking*, dejalos apagados: cambian los enlaces y
+   las invitaciones dejarían de funcionar.
+8. **Authentication › Emails › Templates:** en cada plantilla reemplazá el asunto (*Subject*) y
+   el cuerpo por los de [`supabase/templates`](supabase/templates) y tocá **Save changes**:
+
+   | Plantilla | Subject | Cuerpo |
+   | --- | --- | --- |
+   | Invite user | Tu invitación a la plataforma de pacientes | `invite.html` |
+   | Reset password | Cambiar tu contraseña | `recovery.html` |
+   | Magic link or OTP | Tu enlace de acceso | `magic_link.html` |
+
 Resend gratis envía 100 emails por día. Supabase empieza con un máximo de 30 por hora
 (**Authentication › Rate Limits**).
 
@@ -291,13 +308,18 @@ cargar pacientes reales pasá a Supabase Pro (copia diaria de los últimos 7 dí
 | Lo que ves | Qué hacer |
 | --- | --- |
 | *Build failed* en Vercel | Una variable mal copiada o vacía (paso 6). Corregila y hacé *Redeploy*. El detalle está en **Deployments › (el despliegue) › Build Logs**. |
-| *already exists* al instalar la base | Ya estaba instalada: seguí. |
+| *already exists* al instalar la base | Ya estaba instalada, quizás con una versión anterior: corré `supabase/actualizar.sql` (paso 4). Si también dice *already exists*, está al día. |
+| *Query is too large* | Usá el instalador en tres partes de la guía interactiva (para actualizar, la 2 y la 3). |
+| *Set up custom SMTP to edit templates* | Es normal hasta el SMTP del paso 11: hacé eso primero. |
+| Tu dominio muestra la página con otro diseño o sin tu foto nueva | En `main` quedó una versión vieja: hacé el paso 1 (Vercel publica solo en uno o dos minutos) y la actualización del paso 4. Recargá con Ctrl + F5. |
+| Tu dominio muestra textos técnicos o un 404 de GitHub | Apunta a GitHub Pages: hacé el paso 2 y dejá en tu DNS solo los registros que muestra Vercel (borrá los de `github.io` o `185.199.…`). |
+| *permission denied for table* | Corré `supabase/actualizar.sql`: da a las tablas los permisos que faltan. |
 | «Tu cuenta todavía no está vinculada» al entrar | Corré el SQL del paso 8 con tu email exacto y volvé a entrar. |
 | «Demasiados intentos» | Esperá 15 minutos. |
 | *Invalid Configuration* en el dominio | Registros DNS distintos de los de Vercel o registros viejos para `@` o `www`. Puede tardar hasta 48 horas. |
 | El dominio dejó de funcionar | ¿Confirmaste tus datos en el email del registrador? |
 | No llegan los emails | Dominio *Verified* en Resend, datos SMTP del paso 11, carpeta de spam, límite de 100 por día. |
-| «Enlace inválido» en una invitación | *Site URL* del paso 12 y plantillas del paso 5. Los enlaces se usan una sola vez: reenviá la invitación. |
+| «Enlace inválido» en una invitación | *Site URL* del paso 12 y plantillas del paso 11. Los enlaces se usan una sola vez: reenviá la invitación. |
 | Los emails siguen con `.vercel.app` | Falta el *Redeploy* del paso 10. |
 | Los recordatorios dan 401 | El `CRON_SECRET` de Vercel y el del paso 13 no coinciden. |
 

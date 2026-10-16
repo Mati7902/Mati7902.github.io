@@ -200,7 +200,9 @@ npx supabase link --project-ref TU_REF
 npx supabase db push                 # aplica supabase/migrations/* en orden
 ```
 
-Sin CLI: pegá `supabase/instalar.sql` en el SQL Editor (reúne todas las migraciones en una transacción; se regenera con `pnpm db:instalar`), o ejecutá los archivos de `supabase/migrations/` en orden.
+Sin CLI: pegá `supabase/instalar.sql` en el SQL Editor (reúne todas las migraciones en una transacción; se regenera con `pnpm db:instalar`), o ejecutá los archivos de `supabase/migrations/` en orden. Una base instalada con la primera versión publicada (9 de octubre de 2026) se actualiza con `supabase/actualizar.sql`, que trae solo las migraciones posteriores y no toca los datos cargados.
+
+La primera migración (`20261005000000_default_privileges.sql`) declara los permisos de tabla que Supabase solía dar solo: los proyectos creados sin *Automatically expose new tables* no los traen, y sin ellos la app falla con `permission denied`. Lo que ve cada usuario lo siguen decidiendo las políticas RLS.
 
 Las migraciones crean: extensiones (`pgcrypto`, `btree_gist`), enums, 35 tablas con UUID y `created_at/updated_at`, funciones transaccionales de agenda, triggers de historial/notificaciones/guardas, políticas RLS, buckets de Storage (`materials` privado, `avatars` y `branding` públicos) y datos de referencia (roles, configuración, categorías, planes precargados, FAQs, plantillas de mensajes, intents y 15 ejercicios) y los **cuadernillos del profesional**: 32 ejercicios más (Brújula para adolescentes y el Cuadernillo de TCC para adultos), con sus recursos en la biblioteca de Materiales.
 
@@ -222,7 +224,7 @@ El rol se guarda en `app_metadata` (no editable por el usuario). Recibís un ema
 
 ### 7.4.1 Contenido de los cuadernillos
 
-Los ejercicios de los cuadernillos viven en `supabase/content/ejercicios/*.json` (un archivo por ejercicio: pasos, público, colección y, si corresponde, su recurso en Materiales). Después de editarlos corré `pnpm db:contenido`: regenera la migración `20261009000003_cuadernillos.sql` y `supabase/instalar.sql`. `tests/unit/content.test.ts` valida cada archivo (formato de los pasos, referencias de los resúmenes, devoluciones de los quizzes, sin teléfonos, largo de las pantallas). La migración solo agrega lo que falta: no pisa ejercicios ni materiales editados desde el panel. Para cambiar un ejercicio ya instalado en producción, creá una migración nueva.
+Los ejercicios de los cuadernillos viven en `supabase/content/ejercicios/*.json` (un archivo por ejercicio: pasos, público, colección y, si corresponde, su recurso en Materiales). Después de editarlos corré `pnpm db:contenido`: regenera la migración `20261009000003_cuadernillos.sql`, `supabase/instalar.sql` y `supabase/actualizar.sql`. `tests/unit/content.test.ts` valida cada archivo (formato de los pasos, referencias de los resúmenes, devoluciones de los quizzes, sin teléfonos, largo de las pantallas). La migración solo agrega lo que falta: no pisa ejercicios ni materiales editados desde el panel. Para cambiar un ejercicio ya instalado en producción, creá una migración nueva.
 
 Los teléfonos de emergencia nunca van en el contenido: los ejercicios remiten al recuadro «Si necesitás ayuda urgente» de Calmarme, que muestra los recursos activos de **Configuración › Emergencia**.
 
