@@ -31,7 +31,8 @@ const button = z.object({ payload: z.string().optional(), text: z.string().optio
 
 export const inboundMessageSchema = z.object({
   id: z.string(),
-  from: z.string(),
+  // Desde 2026 Meta omite el teléfono (from / wa_id) si el contacto usa nombre de usuario y no lo comparte.
+  from: z.string().optional(),
   timestamp: z.string(),
   type: z.string(),
   text: textMessage.optional(),
@@ -59,7 +60,7 @@ export const webhookPayloadSchema = z.object({
           value: z.object({
             messaging_product: z.string().optional(),
             metadata: z.object({ display_phone_number: z.string().optional(), phone_number_id: z.string().optional() }).optional(),
-            contacts: z.array(z.object({ wa_id: z.string(), profile: z.object({ name: z.string().optional() }).optional() })).optional(),
+            contacts: z.array(z.object({ wa_id: z.string().optional(), profile: z.object({ name: z.string().optional() }).optional() })).optional(),
             messages: z.array(inboundMessageSchema).optional(),
             statuses: z.array(statusSchema).optional(),
           }),
@@ -87,18 +88,26 @@ export type NormalizedInbound = {
 
 export type NormalizedStatus = { waMessageId: string; status: string; timestamp: Date; error: string | null };
 
-export type NormalizedEvents = { messages: NormalizedInbound[]; statuses: NormalizedStatus[] };
+/** `skipped`: mensajes entrantes sin teléfono, que no se pueden vincular a una ficha ni responder. */
+export type NormalizedEvents = { messages: NormalizedInbound[]; statuses: NormalizedStatus[]; skipped: number };
+
+const PHONE_ID = /^\+?\d{8,15}$/;
 
 /** Extrae mensajes y estados de un payload válido, en un formato plano y estable. */
 export function normalizeWebhook(payload: WebhookPayload): NormalizedEvents {
   const messages: NormalizedInbound[] = [];
   const statuses: NormalizedStatus[] = [];
+  let skipped = 0;
   for (const entry of payload.entry) {
     for (const change of entry.changes) {
       if (change.field !== "messages") continue;
       const value = change.value;
-      const names = new Map((value.contacts ?? []).map((c) => [c.wa_id, c.profile?.name ?? null]));
+      const names = new Map((value.contacts ?? []).flatMap((c) => (c.wa_id ? [[c.wa_id, c.profile?.name ?? null] as const] : [])));
       for (const m of value.messages ?? []) {
+        if (!m.from || !PHONE_ID.test(m.from)) {
+          skipped += 1;
+          continue;
+        }
         let type: NormalizedInbound["type"] = "unsupported";
         let text = "";
         let payloadId: string | null = null;
@@ -138,7 +147,7 @@ export function normalizeWebhook(payload: WebhookPayload): NormalizedEvents {
       }
     }
   }
-  return { messages, statuses };
+  return { messages, statuses, skipped };
 }
 
 /** Clave de idempotencia: un mensaje o estado se procesa una sola vez. */

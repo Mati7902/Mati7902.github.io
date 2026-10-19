@@ -54,12 +54,31 @@ describe("webhook de WhatsApp", () => {
     const parsed = webhookPayloadSchema.parse(samplePayload);
     const events = normalizeWebhook(parsed);
     expect(events.messages).toHaveLength(3);
+    expect(events.skipped).toBe(0);
     const [text, button, image] = events.messages;
     expect(text).toMatchObject({ waMessageId: "wamid.TEXT", type: "text", text: "Hola, ¿tenés turno mañana?", fromPhoneE164: "+595981123456", displayName: "Juan Pérez", phoneNumberId: "PHONE_ID" });
     expect(button).toMatchObject({ type: "interactive", payloadId: "CONFIRM:abc", text: "Confirmar" });
     expect(image).toMatchObject({ type: "unsupported", rawType: "image" });
     expect(events.statuses[0]).toMatchObject({ waMessageId: "wamid.OUT", status: "delivered", error: null });
     expect(text?.timestamp.toISOString()).toBe(new Date(1760000000 * 1000).toISOString());
+  });
+
+  it("saltea solo los mensajes sin teléfono del remitente (contactos con nombre de usuario)", () => {
+    const payload = structuredClone(samplePayload) as unknown as { entry: { changes: { value: Record<string, unknown> }[] }[] };
+    const value = payload.entry[0]!.changes[0]!.value;
+    value.contacts = [{ profile: { name: "Sin teléfono" } }, { wa_id: "595981123456", profile: { name: "Juan Pérez" } }];
+    value.messages = [
+      { id: "wamid.NOPHONE", timestamp: "1760000004", type: "text", text: { body: "Hola" } },
+      { id: "wamid.BSUID", from: "PY.1234567890123", timestamp: "1760000005", type: "text", text: { body: "Hola" } },
+      { id: "wamid.OK", from: "595981123456", timestamp: "1760000006", type: "text", text: { body: "Quiero un turno" } },
+    ];
+    const parsed = webhookPayloadSchema.safeParse(payload);
+    expect(parsed.success).toBe(true);
+    const events = normalizeWebhook(parsed.data!);
+    expect(events.skipped).toBe(2);
+    expect(events.messages).toHaveLength(1);
+    expect(events.messages[0]).toMatchObject({ waMessageId: "wamid.OK", fromPhoneE164: "+595981123456", displayName: "Juan Pérez" });
+    expect(events.statuses).toHaveLength(1);
   });
 
   it("genera claves de idempotencia distintas por mensaje y por estado", () => {

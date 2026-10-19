@@ -57,6 +57,7 @@ export async function POST(request: NextRequest) {
   }
 
   const events = normalizeWebhook(parsed.data);
+  if (events.skipped > 0) log.warn("Mensajes de WhatsApp sin teléfono del remitente: no se procesan", { skipped: events.skipped });
   if (!env.SUPABASE_SERVICE_ROLE_KEY) return NextResponse.json({ ok: true, ignored: true });
   const admin = createAdminClient();
 

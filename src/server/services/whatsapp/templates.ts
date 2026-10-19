@@ -29,10 +29,10 @@ export async function getTemplate(admin: AdminSupabaseClient, key: string): Prom
   return (data as TemplateRow | null) ?? null;
 }
 
-/** Orden de parámetros para plantillas aprobadas de Meta (posicionales {{1}}, {{2}}…). */
+/** Orden de parámetros para plantillas aprobadas de Meta (posicionales {{1}}, {{2}}…). Meta rechaza parámetros vacíos. */
 export function templateParams(template: TemplateRow, vars: Record<string, string | number | null | undefined>): string[] {
   return template.variables.map((v) => {
     const value = vars[v];
-    return value === null || value === undefined ? "-" : String(value);
+    return value === null || value === undefined || String(value).trim() === "" ? "-" : String(value);
   });
 }

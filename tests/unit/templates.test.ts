@@ -12,4 +12,9 @@ describe("plantillas de mensajes", () => {
     const template = { key: "reminder_24h", channel: "whatsapp", title: null, body: "", variables: ["first_name", "professional_name", "time"], wa_template_name: "x", wa_template_language: "es", is_active: true };
     expect(templateParams(template, { first_name: "Ana", professional_name: "Lic. Sánchez" })).toEqual(["Ana", "Lic. Sánchez", "-"]);
   });
+
+  it("no manda parámetros vacíos (Meta los rechaza)", () => {
+    const template = { key: "reminder_2h", channel: "whatsapp", title: null, body: "", variables: ["first_name", "access_info"], wa_template_name: "x", wa_template_language: "es", is_active: true };
+    expect(templateParams(template, { first_name: "Ana", access_info: "  " })).toEqual(["Ana", "-"]);
+  });
 });

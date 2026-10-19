@@ -22,14 +22,16 @@ export type AppointmentMessageKind =
 
 type Vars = Record<string, string>;
 
-function buildVars(appointment: Appointment, patient: Patient, professionalName: string, tz: string): Vars {
+function buildVars(appointment: Appointment, patient: Patient, professionalName: string, tz: string, officeAddress: string | null): Vars {
+  // Los turnos que reserva el paciente no traen dirección: se usa la del consultorio (Configuración › Identidad).
+  const address = appointment.location || officeAddress;
   const access = appointment.modality === "virtual"
     ? appointment.video_link
       ? `Enlace de la videollamada: ${appointment.video_link}`
       : "Te enviaremos el enlace de la videollamada antes de la sesión."
-    : appointment.location
-      ? `Dirección: ${appointment.location}`
-      : "";
+    : address
+      ? `Dirección: ${address}`
+      : "Te esperamos en el consultorio.";
   return {
     first_name: patient.first_name,
     professional_name: professionalName,
@@ -132,7 +134,8 @@ export async function notifyAppointmentEvent(appointmentId: string, kind: Appoin
       log.warn("Plantilla no encontrada o inactiva", { kind });
       return null;
     }
-    const vars = buildVars(appointment, patient, settings["site.identity"].professional_name, settings.scheduling.timezone);
+    const identity = settings["site.identity"];
+    const vars = buildVars(appointment, patient, identity.professional_name, settings.scheduling.timezone, identity.location_address);
     const body = renderTemplate(template.body, vars);
     const buttons = buttonsFor(kind, appointment.id);
 
