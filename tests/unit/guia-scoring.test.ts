@@ -18,7 +18,7 @@ describe("contenido de la guía", () => {
   it("trae todos los tests, fichas, protocolos y temas", () => {
     expect(TESTS).toHaveLength(15);
     expect(FICHAS).toHaveLength(7);
-    expect(PROTOCOLS).toHaveLength(12);
+    expect(PROTOCOLS).toHaveLength(14);
     expect(TEMAS).toHaveLength(7);
   });
 
@@ -55,6 +55,13 @@ describe("contenido de la guía", () => {
         expect(s.contents.length, `${p.id}.${i}`).toBeGreaterThan(0);
       });
     }
+  });
+
+  it("incluye los dos protocolos EMDR y los enlaza desde la ficha de TEPT", () => {
+    expect(getProtocol(13)?.title).toContain("EMDR estándar");
+    expect(getProtocol(14)?.title).toContain("R-TEP");
+    expect(getFicha("tept")?.protocols).toEqual(expect.arrayContaining([13, 14]));
+    expect(testForName("PCL-5")?.id).toBe("pcl5");
   });
 
   it("las fichas remiten a protocolos que existen", () => {

@@ -2270,5 +2270,596 @@ export const PROTOCOLS: Protocol[] = [
    }
   ],
   "refs": "Bastien et al. (2001); van der Zweerde et al. (2019); van Straten et al. (2018)."
+ },
+ {
+  "id": 13,
+  "title": "EMDR estándar de ocho fases (trauma)",
+  "intro": "Protocolo de desensibilización y reprocesamiento por movimientos oculares (EMDR) para el estrés postraumático y para recuerdos que mantienen síntomas. Sigue las ocho fases del modelo de Shapiro y el abordaje de tres tiempos: pasado, presente y futuro. **Requiere formación en EMDR y supervisión (nivel B).** El esquema de ocho sesiones es orientativo para un trauma único; la cantidad real depende de cuántos recuerdos se trabajen (NICE menciona alrededor de 8 a 12 sesiones, y más si hace falta).",
+  "sections": [
+   {
+    "title": "Guías de referencia y certeza",
+    "blocks": [
+     {
+      "k": "ul",
+      "i": [
+       "**NICE NG116 (2018):** ofrecer EMDR a adultos con TEPT o síntomas importantes que consultan más de 3 meses después de un trauma no relacionado con combate; considerarlo entre 1 y 3 meses si la persona lo prefiere. No ofrecer debriefing psicológico. **Certeza: moderada a sólida.**",
+       "**OMS (2013; mhGAP 2023):** TCC focalizada en el trauma o EMDR como tratamientos psicológicos del TEPT. **Certeza: moderada a sólida.**",
+       "**VA/DoD (2023):** incluye el EMDR entre las psicoterapias recomendadas para el TEPT, junto con la terapia de procesamiento cognitivo y la exposición prolongada.",
+       "**ISTSS (2019):** incluye el EMDR entre los tratamientos efectivos para el TEPT en adultos.",
+       "**Lo que sigue en discusión:** el aporte específico de los movimientos oculares frente al resto del procedimiento. Los estudios muestran una eficacia comparable a otras terapias focalizadas en el trauma, sin superioridad demostrada. **Certeza: moderada.**"
+      ]
+     }
+    ]
+   },
+   {
+    "title": "Criterios para usar este protocolo o derivar",
+    "blocks": [
+     {
+      "k": "ul",
+      "i": [
+       "**Usar:** TEPT o síntomas postraumáticos con uno o más recuerdos identificables que mantienen el malestar; amenaza actual controlada; el paciente usa al menos dos recursos de regulación de forma autónoma; hay alianza suficiente; el terapeuta tiene formación y supervisión.",
+       "**Estabilizar primero (no pasar a la fase 3):** riesgo suicida alto o autolesiones activas; consumo activo y descontrolado; violencia o amenaza vigente; disociación marcada (derivar a evaluación especializada); una crisis vital que desborda.",
+       "**Coordinar con el médico:** psicosis; epilepsia; enfermedad cardíaca o respiratoria grave; embarazo con complicaciones; cualquier condición en la que la activación pueda ser un riesgo."
+      ]
+     },
+     {
+      "k": "note",
+      "t": "**Precaución clínica.** No se procesa material traumático sin formación ni supervisión en EMDR. Un procesamiento mal conducido puede aumentar el malestar, la disociación y el abandono del tratamiento."
+     }
+    ]
+   },
+   {
+    "title": "Las ocho fases de un vistazo",
+    "blocks": [
+     {
+      "k": "table",
+      "h": [
+       "Fase",
+       "Qué se hace",
+       "Qué se registra"
+      ],
+      "r": [
+       [
+        "**1. Historia y planificación**",
+        "Historia del trauma y de los síntomas, riesgo, consumo y disociación; lista de recuerdos del pasado, disparadores del presente y situaciones temidas del futuro.",
+        "PCL-5, PHQ-9, riesgo suicida, cribado de disociación"
+       ],
+       [
+        "**2. Preparación**",
+        "Psicoeducación, lugar seguro o contenedor, señal de pare, ventana de tolerancia.",
+        "Recursos que funcionan"
+       ],
+       [
+        "**3. Evaluación**",
+        "Imagen que representa lo peor, creencia negativa, creencia positiva, emoción y sensación corporal.",
+        "SUD (0 a 10) y VOC (1 a 7) iniciales"
+       ],
+       [
+        "**4. Desensibilización**",
+        "Series de estimulación bilateral y observación de lo que surge, sin dirigir el contenido.",
+        "SUD después de cada serie, hasta 0 o un nivel ecológicamente válido"
+       ],
+       [
+        "**5. Instalación**",
+        "Fortalecer la creencia positiva con estimulación.",
+        "VOC (meta: 6 o 7)"
+       ],
+       [
+        "**6. Escaneo corporal**",
+        "Recuerdo y creencia positiva juntos, buscando tensión residual.",
+        "Sensación corporal residual"
+       ],
+       [
+        "**7. Cierre**",
+        "Al final de cada sesión: contención y aviso de lo que puede aparecer entre sesiones.",
+        "Estado al salir; SUD si quedó abierto"
+       ],
+       [
+        "**8. Reevaluación**",
+        "Al inicio de la sesión siguiente: ¿se sostiene el cambio?",
+        "SUD del recuerdo anterior; PCL-5 periódico"
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "title": "Reglas de decisión durante el procesamiento",
+    "blocks": [
+     {
+      "k": "table",
+      "h": [
+       "Situación",
+       "Decisión"
+      ],
+      "r": [
+       [
+        "El SUD no baja después de varias series o el procesamiento se detiene",
+        "Considerar un entrelazado cognitivo con un dato o una creencia nueva. Si persiste, revisar si hay un recuerdo anterior, una creencia de fondo o falta de preparación."
+       ],
+       [
+        "Activación muy intensa que sale de la ventana de tolerancia",
+        "Bajar el ritmo, volver al presente con anclaje y recursos de la fase 2, y valorar si hace falta más estabilización."
+       ],
+       [
+        "Disociación durante la sesión",
+        "Detener el procesamiento, reorientar al presente y cerrar. Evaluar antes de retomar; derivar si es marcada."
+       ],
+       [
+        "Se acaba el tiempo con el recuerdo abierto",
+        "Cierre con contención, registrar el SUD y avisar qué puede aparecer entre sesiones. Retomar en la siguiente."
+       ],
+       [
+        "Aparecen ideas de hacerse daño durante o después",
+        "Evaluar el riesgo antes de que la persona se retire y activar el plan de seguridad (protocolo 8)."
+       ],
+       [
+        "Sin cambio tras varias sesiones y sin descenso de la PCL-5",
+        "Reevaluar el diagnóstico, la preparación y la adecuación del tratamiento. Considerar TCC focalizada en el trauma (protocolo 7)."
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "title": "Ejemplo clínico (caso didáctico compuesto)",
+    "blocks": [
+     {
+      "k": "p",
+      "t": "Un hombre de 35 años presenta síntomas postraumáticos desde un accidente de tránsito ocurrido hace ocho meses: imágenes repetidas, evitación de manejar y sueño interrumpido. En las sesiones 1 y 2 se evalúa el riesgo, se aplica la PCL-5 (48 puntos) y se practica el lugar seguro. En la sesión 3 se elige la imagen del impacto, con la creencia negativa «estoy en peligro», la positiva «ahora estoy a salvo», VOC 2 y SUD 8. Entre las sesiones 3 y 5 el SUD baja a 1 y el VOC sube a 6. En la sesión 7 trabaja la plantilla futura de volver a manejar, y en la sesión 8 la PCL-5 es de 24."
+     }
+    ]
+   }
+  ],
+  "sessions": [
+   {
+    "n": "1",
+    "name": "Fase 1: historia clínica, riesgo y planificación",
+    "objective": "conocer la historia, evaluar la seguridad y elegir los recuerdos con los que se va a trabajar.",
+    "contents": [
+     "Encuadre de control: el paciente decide cuánto cuenta",
+     "Historia breve del evento y de los síntomas, sin relato detallado",
+     "Cribado de riesgo suicida, consumo y amenaza actual",
+     "PCL-5, PHQ-9 y cribado de disociación",
+     "Lista de recuerdos objetivo: pasado, presente (disparadores) y futuro (situaciones temidas)",
+     "Decisión compartida sobre el tratamiento, con información sobre la evidencia"
+    ],
+    "examples": [
+     "No necesito que me cuente el recuerdo completo. Con una idea general de lo que pasó y de cómo le afecta hoy, alcanza para empezar."
+    ],
+    "homework": "registrar los momentos de malestar y sus disparadores durante la semana.",
+    "measures": "PCL-5, PHQ-9, C-SSRS de cribado, escala de experiencias disociativas (DES-II).",
+    "extra": []
+   },
+   {
+    "n": "2",
+    "name": "Fase 2: preparación y estabilización",
+    "objective": "dar recursos para tolerar la activación y acordar cómo se trabaja.",
+    "contents": [
+     "Psicoeducación sobre el trauma y sobre el procedimiento: qué se hace y qué puede aparecer",
+     "Lugar seguro o contenedor, practicado con estimulación bilateral lenta",
+     "Señal de pare: el paciente puede interrumpir cuando quiera",
+     "Ventana de tolerancia: reconocer activación alta y baja",
+     "Sueño y consumo (protocolos 12 y 9)"
+    ],
+    "examples": [
+     "Usted conduce el ritmo. Si en algún momento quiere parar, levante la mano y paramos."
+    ],
+    "homework": "practicar el recurso elegido una vez por día.",
+    "measures": "uso y utilidad del recurso; PHQ-9 si cambia el ánimo.",
+    "extra": [
+     {
+      "k": "note",
+      "t": "**Criterio para avanzar:** usa al menos dos recursos de forma autónoma, hay alianza suficiente y no hay riesgo agudo. Si no se cumple, se extiende la fase 2."
+     }
+    ]
+   },
+   {
+    "n": "3",
+    "name": "Fase 3 y comienzo de la fase 4: evaluación del recuerdo",
+    "objective": "definir el recuerdo objetivo y sus componentes de base.",
+    "contents": [
+     "Elegir el primer recuerdo (el más temprano o el peor, según el caso)",
+     "Imagen que representa lo peor, creencia negativa, creencia positiva deseada y VOC (1 a 7)",
+     "Emoción, SUD (0 a 10) y localización en el cuerpo",
+     "Inicio de la desensibilización si hay tiempo y el paciente está estable",
+     "Cierre de la sesión con contención"
+    ],
+    "examples": [
+     "Cuando piensa en ese recuerdo, ¿qué imagen representa lo peor? ¿Qué frase negativa sobre usted aparece ahora?"
+    ],
+    "homework": "anotar sueños, recuerdos o emociones que aparezcan.",
+    "measures": "SUD, VOC, PCL-5 cada dos semanas.",
+    "extra": []
+   },
+   {
+    "n": "4",
+    "name": "Fase 4: desensibilización",
+    "objective": "reducir la carga del recuerdo con series de estimulación bilateral.",
+    "contents": [
+     "Series de estimulación bilateral con observación de lo que surge, sin dirigir el contenido",
+     "Control del SUD entre series; volver al recuerdo original cuando las asociaciones se alejan",
+     "Entrelazado cognitivo si el procesamiento se detiene",
+     "Seguimiento de la ventana de tolerancia",
+     "Cierre con contención si no se completó"
+    ],
+    "examples": [
+     "Simplemente note lo que viene. Deje que pase lo que tenga que pasar y avíseme si algo cambia."
+    ],
+    "homework": "anotar lo que aparezca y usar los recursos de la fase 2.",
+    "measures": "SUD al final de cada serie y al cierre.",
+    "extra": []
+   },
+   {
+    "n": "5",
+    "name": "Fases 5 y 6: instalación y escaneo corporal",
+    "objective": "fortalecer la creencia positiva y comprobar que no queda tensión corporal.",
+    "contents": [
+     "Con el SUD en 0 o ecológicamente válido, volver al recuerdo y a la creencia positiva",
+     "Instalación con estimulación hasta que el VOC sea 6 o 7",
+     "Escaneo corporal: recuerdo y creencia positiva, buscando tensión residual",
+     "Procesar la sensación residual si aparece",
+     "Cierre"
+    ],
+    "examples": [
+     "Piense en el recuerdo y en la frase «ahora estoy a salvo». ¿Cuánto la siente verdadera, de 1 a 7?"
+    ],
+    "homework": "notar situaciones en las que la nueva creencia se sostiene.",
+    "measures": "VOC, SUD y sensación corporal residual.",
+    "extra": []
+   },
+   {
+    "n": "6",
+    "name": "Fase 8: reevaluación y siguiente recuerdo",
+    "objective": "comprobar que el cambio se sostiene y pasar al siguiente objetivo.",
+    "contents": [
+     "Revisión del recuerdo anterior: SUD y VOC",
+     "PCL-5 de seguimiento",
+     "Evaluación y procesamiento del siguiente recuerdo del pasado o del presente",
+     "Revisión de lo ocurrido entre sesiones",
+     "Cierre"
+    ],
+    "examples": [
+     "La semana pasada ese recuerdo estaba en 8. Hoy, cuando lo piensa, ¿cuánto le molesta?"
+    ],
+    "homework": "seguir con el registro y con los recursos.",
+    "measures": "SUD y VOC del recuerdo anterior, PCL-5.",
+    "extra": []
+   },
+   {
+    "n": "7",
+    "name": "Presente y futuro: disparadores y plantilla futura",
+    "objective": "procesar los disparadores actuales y ensayar el afrontamiento de las situaciones temidas.",
+    "contents": [
+     "Disparadores presentes que todavía generan malestar",
+     "Plantilla futura: imaginar la situación temida afrontada con un recurso o una conducta nueva",
+     "Exposición gradual en la vida real a lo evitado, con registro",
+     "Cierre"
+    ],
+    "examples": [
+     "Imagine que vuelve a esa situación dentro de una semana. ¿Cómo le gustaría estar ahí?"
+    ],
+    "homework": "una situación evitada por semana, con registro de SUD antes y después.",
+    "measures": "SUD de los disparadores y de la situación futura.",
+    "extra": []
+   },
+   {
+    "n": "8",
+    "name": "Fase 8: reevaluación final y prevención de recaídas",
+    "objective": "medir el cambio y planificar el seguimiento.",
+    "contents": [
+     "PCL-5 y PHQ-9, comparados con la sesión 1",
+     "Revisión de lo aprendido y de lo que cambió",
+     "Plan de recaídas: señales de alerta y qué hacer",
+     "Seguimiento al mes y a los tres meses",
+     "Si los síntomas persisten, decidir otro tratamiento focalizado en el trauma (protocolo 7)"
+    ],
+    "examples": [
+     "En la primera sesión su puntaje era alto. Hoy bajó bastante. ¿Qué nota distinto en su vida?"
+    ],
+    "homework": "mantener la exposición gradual a lo evitado y usar el plan de recaídas.",
+    "measures": "PCL-5, PHQ-9.",
+    "extra": []
+   }
+  ],
+  "tests": [
+   {
+    "name": "PCL-5",
+    "when": "Sesión 1, cada 2 a 4 sesiones y sesión 8",
+    "why": "Gravedad del TEPT y cambio"
+   },
+   {
+    "name": "PHQ-9",
+    "when": "Sesiones 1 y 8",
+    "why": "Depresión comórbida; revisar siempre el ítem 9"
+   },
+   {
+    "name": "C-SSRS (versión de cribado)",
+    "when": "Sesión 1 y siempre que haya riesgo",
+    "why": "Ideación y conducta suicida"
+   },
+   {
+    "name": "Escala de experiencias disociativas (DES-II)",
+    "when": "Sesión 1",
+    "why": "Cribado de disociación antes de procesar"
+   },
+   {
+    "name": "SUD y VOC",
+    "when": "En cada recuerdo trabajado",
+    "why": "Malestar subjetivo (0 a 10) y validez de la creencia positiva (1 a 7)"
+   }
+  ],
+  "refs": "Shapiro (2018); Organización Mundial de la Salud (2013); NICE (2018, NG116); VA/DoD (2023); ISTSS (2019); Lewis et al. (2020). Verificar los datos de cada referencia antes de citarla en un documento formal."
+ },
+ {
+  "id": 14,
+  "title": "EMDR para eventos traumáticos recientes (R-TEP)",
+  "intro": "Intervención temprana con EMDR para quien vive un episodio traumático reciente, desde los primeros días hasta unas semanas después. Sigue el esquema del protocolo de episodio traumático reciente (R-TEP, Shapiro y Laub): narración del episodio con estimulación bilateral lenta, búsqueda de puntos de perturbación y procesamiento escalonado. **Requiere formación específica en EMDR y en R-TEP (nivel B). La evidencia es preliminar:** en los primeros días la prioridad es la seguridad y el apoyo, y las guías priorizan otras opciones durante el primer mes.",
+  "sections": [
+   {
+    "title": "Guías de referencia y certeza",
+    "blocks": [
+     {
+      "k": "ul",
+      "i": [
+       "**NICE NG116 (2018):** durante el primer mes, para estrés agudo o síntomas postraumáticos importantes, considerar TCC focalizada en el trauma. EMDR entre 1 y 3 meses solo si la persona lo prefiere. No ofrecer debriefing psicológico. **Certeza: moderada.**",
+       "**EMDR temprano:** una revisión sistemática con metaanálisis de 11 ensayos aleatorizados en personas expuestas a un evento en los 3 meses previos encontró beneficio en los síntomas postraumáticos al terminar y a los 3 meses, sin diferencias en los demás momentos ni frente a otras intervenciones. Calidad baja, pocos estudios y muestras pequeñas. **Certeza: baja.**",
+       "**R-TEP:** la base de evidencia son sobre todo descripciones de casos y estudios pequeños. **Certeza: baja.** Por eso se informa al paciente y se acuerda la elección.",
+       "**Evolución natural:** una parte importante de las reacciones agudas disminuye sin tratamiento específico. En las primeras horas y días corresponden los primeros auxilios psicológicos: seguridad, necesidades básicas, apoyo social e información."
+      ]
+     }
+    ]
+   },
+   {
+    "title": "Criterios para usar este protocolo o derivar",
+    "blocks": [
+     {
+      "k": "ul",
+      "i": [
+       "**Usar:** episodio traumático reciente (de días a pocas semanas, según el criterio del terapeuta); amenaza actual controlada; necesidades básicas cubiertas; síntomas que persisten o interfieren (insomnio, reexperimentación, evitación); el paciente fue informado y prefiere esta opción.",
+       "**Acompañar y estabilizar primero:** crisis aguda sin seguridad, primeras horas o días tras el evento, lesión médica pendiente de atender.",
+       "**Derivar o coordinar:** riesgo suicida alto (protocolo 8), psicosis, disociación marcada, consumo descontrolado, violencia vigente (priorizar la protección)."
+      ]
+     },
+     {
+      "k": "note",
+      "t": "**Precaución clínica.** Esta intervención no es un debriefing: no se pide un relato detallado en la primera sesión ni se procesa antes de la preparación. Sin formación específica en EMDR y R-TEP, se ofrece apoyo y estabilización, o se deriva."
+     }
+    ]
+   },
+   {
+    "title": "Pasos del protocolo",
+    "blocks": [
+     {
+      "k": "table",
+      "h": [
+       "Paso",
+       "Qué se hace",
+       "Qué se registra"
+      ],
+      "r": [
+       [
+        "**Fase 1: historia**",
+        "Historia breve: gravedad, motivación y recursos.",
+        "PCL-5 si pasó más de un mes; riesgo"
+       ],
+       [
+        "**Fase 2: preparación**",
+        "Contención, lugar calmo, cuatro elementos y señal de pare.",
+        "Recursos que funcionan"
+       ],
+       [
+        "**Narración del episodio**",
+        "El paciente cuenta el episodio en voz alta con estimulación bilateral lenta y continua. Nunca durante las fases 1 y 2.",
+        "Dónde sube la perturbación"
+       ],
+       [
+        "**Búsqueda de puntos de perturbación**",
+        "Recorrer el episodio sin orden cronológico, con estimulación lenta, hasta encontrar el primer punto de perturbación.",
+        "Punto identificado"
+       ],
+       [
+        "**Procesamiento escalonado**",
+        "Por cada punto: evaluación, desensibilización, instalación y cierre. Se empieza por la forma más contenida (EMD) y se avanza (EMDr, EMDR) solo si el paciente se mantiene en su ventana de tolerancia.",
+        "SUD de cada punto"
+       ],
+       [
+        "**Nivel episodio**",
+        "SUD del episodio completo, qué aprendió, creencia positiva, instalación y escaneo corporal.",
+        "SUD y VOC del episodio"
+       ],
+       [
+        "**Cierre y reevaluación**",
+        "Cierre ampliado y seguimiento.",
+        "Síntomas, sueño, PCL-5 si corresponde"
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "title": "Reglas de decisión",
+    "blocks": [
+     {
+      "k": "table",
+      "h": [
+       "Situación",
+       "Decisión"
+      ],
+      "r": [
+       [
+        "Mucha activación al narrar el episodio",
+        "Volver al presente y a los recursos; narrar de forma más breve y con estimulación más lenta. No avanzar."
+       ],
+       [
+        "No se identifica un punto de perturbación claro",
+        "Repetir la búsqueda con estimulación lenta, preguntando por la parte más difícil. No forzar."
+       ],
+       [
+        "Aparecen ideas suicidas o riesgo",
+        "Evaluar y activar el plan de seguridad (protocolo 8) antes de seguir."
+       ],
+       [
+        "Los síntomas no ceden tras varias sesiones o ya pasaron 3 meses",
+        "Reevaluar y pasar a un tratamiento con más evidencia: EMDR estándar (protocolo 13) o TCC focalizada en el trauma (protocolo 7)."
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "title": "Ejemplo clínico (caso didáctico compuesto)",
+    "blocks": [
+     {
+      "k": "p",
+      "t": "Una mujer de 28 años sufrió un asalto con arma hace tres semanas. Tiene insomnio, sobresaltos y evita la calle donde ocurrió. En la sesión 1 se confirma que está a salvo y se acuerda esta intervención tras explicar el nivel de evidencia. En la sesión 3 cuenta el episodio con estimulación lenta y el punto de mayor perturbación es el momento en que el agresor se acerca. En la sesión 4 el SUD de ese punto baja de 9 a 1 con procesamiento escalonado. En la sesión 6 el SUD del episodio es 1 y la creencia positiva es «sobreviví y me protegí». En la sesión 7 duerme mejor y retoma el camino habitual."
+     }
+    ]
+   }
+  ],
+  "sessions": [
+   {
+    "n": "1",
+    "name": "Seguridad y evaluación inicial",
+    "objective": "confirmar que no hay amenaza actual, evaluar necesidades y decidir con el paciente si esta intervención es adecuada.",
+    "contents": [
+     "Encuadre de control e información sobre el nivel de evidencia",
+     "Seguridad actual, necesidades básicas y apoyo social",
+     "Historia breve del episodio y de los síntomas, sin relato detallado",
+     "Riesgo suicida, consumo y sueño",
+     "PCL-5 si pasó más de un mes",
+     "Decisión compartida: esta intervención u otra opción (por ejemplo, TCC focalizada en el trauma)"
+    ],
+    "examples": [
+     "Lo que vivió fue muy fuerte y sus reacciones son comprensibles. Hoy no necesita contarme todo: primero me interesa saber cómo está y qué necesita."
+    ],
+    "homework": "dormir y comer con regularidad, mantener contacto con una persona de confianza y anotar los momentos de mayor malestar.",
+    "measures": "PCL-5 (si corresponde), C-SSRS de cribado, sueño.",
+    "extra": []
+   },
+   {
+    "n": "2",
+    "name": "Preparación y contención",
+    "objective": "dar recursos para tolerar el relato y los recuerdos.",
+    "contents": [
+     "Psicoeducación: las reacciones agudas son comunes y muchas ceden con el tiempo",
+     "Contenedor, lugar calmo y cuatro elementos",
+     "Señal de pare y ventana de tolerancia",
+     "Sueño y rutinas (protocolo 12)"
+    ],
+    "examples": [
+     "Usted decide el ritmo. Si algo es demasiado, paramos y volvemos a lo que lo calma."
+    ],
+    "homework": "practicar el recurso elegido una vez por día.",
+    "measures": "uso y utilidad del recurso.",
+    "extra": []
+   },
+   {
+    "n": "3",
+    "name": "Narración del episodio y puntos de perturbación",
+    "objective": "contar el episodio con estimulación lenta e identificar dónde está la mayor perturbación.",
+    "contents": [
+     "Narración del episodio completo en voz alta, con estimulación bilateral lenta y continua",
+     "Recorrido no secuencial hasta identificar el primer punto de perturbación",
+     "Evaluación del punto: imagen, creencia, emoción, SUD y sensación corporal",
+     "Cierre ampliado"
+    ],
+    "examples": [
+     "Cuénteme lo que pasó desde el principio, a su ritmo. Si algo es muy difícil, lo marcamos y seguimos."
+    ],
+    "homework": "usar los recursos y anotar lo que aparezca.",
+    "measures": "SUD del primer punto de perturbación.",
+    "extra": []
+   },
+   {
+    "n": "4",
+    "name": "Procesamiento escalonado",
+    "objective": "reducir la perturbación de cada punto con el nivel de procesamiento que tolere el paciente.",
+    "contents": [
+     "Empezar por la forma más contenida y avanzar solo si el paciente permanece en su ventana de tolerancia",
+     "Desensibilización hasta SUD 0 o ecológicamente válido",
+     "Instalación de la creencia positiva del punto",
+     "Cierre ampliado"
+    ],
+    "examples": [
+     "Note lo que viene, sin forzar nada. Si se hace muy intenso, me avisa."
+    ],
+    "homework": "anotar lo que aparezca y usar los recursos.",
+    "measures": "SUD de cada punto.",
+    "extra": []
+   },
+   {
+    "n": "5",
+    "name": "Siguientes puntos de perturbación",
+    "objective": "repetir la búsqueda y el procesamiento hasta cubrir los puntos relevantes.",
+    "contents": [
+     "Nueva búsqueda de puntos de perturbación",
+     "Procesamiento escalonado de cada punto",
+     "Revisión de lo ocurrido entre sesiones",
+     "Cierre ampliado"
+    ],
+    "examples": [],
+    "homework": "registrar sueño y reacciones.",
+    "measures": "SUD de cada punto; síntomas.",
+    "extra": []
+   },
+   {
+    "n": "6",
+    "name": "Nivel episodio",
+    "objective": "cerrar el episodio como un todo.",
+    "contents": [
+     "SUD del episodio completo",
+     "Qué aprendió el paciente del episodio y creencia positiva",
+     "Instalación de la creencia positiva y escaneo corporal",
+     "Cierre"
+    ],
+    "examples": [
+     "Cuando piensa en todo lo que pasó, ¿qué siente ahora?, ¿qué aprendió de usted?"
+    ],
+    "homework": "retomar actividades evitadas que sean seguras.",
+    "measures": "SUD y VOC del episodio.",
+    "extra": []
+   },
+   {
+    "n": "7",
+    "name": "Reevaluación y seguimiento",
+    "objective": "comprobar el cambio y decidir si hace falta otro tratamiento.",
+    "contents": [
+     "Síntomas, sueño y funcionamiento",
+     "PCL-5 si pasó más de un mes del evento",
+     "Plan de seguimiento al mes y a los tres meses",
+     "Si los síntomas persisten, pasar al protocolo 13 o a TCC focalizada en el trauma (protocolo 7)"
+    ],
+    "examples": [
+     "Si más adelante vuelven las pesadillas o el miedo, avíseme: es parte de cómo se cuida uno después de algo así."
+    ],
+    "homework": "mantener rutinas de sueño, actividad y contacto social.",
+    "measures": "PCL-5 (si corresponde), sueño.",
+    "extra": []
+   }
+  ],
+  "tests": [
+   {
+    "name": "PCL-5",
+    "when": "Sesión 1 si pasó más de un mes, y sesión 7",
+    "why": "Gravedad y cambio"
+   },
+   {
+    "name": "C-SSRS (versión de cribado)",
+    "when": "Sesión 1 y siempre que haya riesgo",
+    "why": "Ideación y conducta suicida"
+   },
+   {
+    "name": "PHQ-9",
+    "when": "Sesiones 1 y 7",
+    "why": "Ánimo; revisar el ítem 9"
+   },
+   {
+    "name": "SUD y VOC",
+    "when": "En cada punto de perturbación y en el episodio",
+    "why": "Malestar subjetivo (0 a 10) y validez de la creencia positiva (1 a 7)"
+   }
+  ],
+  "refs": "Shapiro y Laub (2008); NICE (2018, NG116); Organización Mundial de la Salud (2013); revisión sistemática con metaanálisis de EMDR temprano (11 ensayos; verificar autores y año antes de citar). Verificar los datos de cada referencia antes de citarla en un documento formal."
  }
 ];

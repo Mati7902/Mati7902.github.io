@@ -497,7 +497,9 @@ export const FICHAS: Ficha[] = [
   ],
   "protocols": [
    7,
-   11
+   11,
+   13,
+   14
   ],
   "blocks": [
    {
