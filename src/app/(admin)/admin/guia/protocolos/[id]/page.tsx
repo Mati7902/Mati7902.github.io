@@ -34,7 +34,7 @@ export default async function ProtocolPage({ params }: Props) {
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow={`Protocolo ${protocol.id} · ${protocol.sessions.length} sesiones`} title={protocol.title} description={protocol.intro} actions={<BackToGuide />} />
+      <PageHeader eyebrow={`Protocolo ${protocol.id} · ${protocol.sessions.length} sesiones`} title={protocol.title} description={protocol.intro.replace(/\*\*/g, "")} actions={<BackToGuide />} />
 
       {fichas.length ? (
         <div className="flex flex-wrap items-center gap-2 text-sm">
