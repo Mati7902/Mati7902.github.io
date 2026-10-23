@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import { cn } from "@/lib/utils";
 
 /** "Texto con **negrita**" → nodos con <strong>. React escapa el resto. */
-function inline(text: string) {
+export function inline(text: string) {
   return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
     part.startsWith("**") && part.endsWith("**") && part.length > 4 ? (
       <strong key={i} className="font-semibold text-foreground">

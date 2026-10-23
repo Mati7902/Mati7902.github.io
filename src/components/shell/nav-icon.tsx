@@ -1,6 +1,7 @@
 import {
   Activity,
   BadgeDollarSign,
+  BookOpen,
   Calendar,
   Home,
   LayoutDashboard,
@@ -22,6 +23,7 @@ const ICONS: Record<string, LucideIcon> = {
   users: Users,
   "layout-dashboard": LayoutDashboard,
   "badge-dollar-sign": BadgeDollarSign,
+  "book-open": BookOpen,
   "message-circle": MessageCircle,
   activity: Activity,
   settings: Settings,
